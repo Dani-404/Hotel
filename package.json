@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "scripts": {
+    "watch": "npm-run-all --parallel watch:client watch:stylesheets",
+    "build:client": "npx tsc",
+    "watch:client": "npx tsc -w",
+    "build:stylesheets": "sass src/stylesheets/index.scss build/stylesheets/index.css",
+    "watch:stylesheets": "sass --watch src/stylesheets/index.scss build/stylesheets/index.css"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "sass": "^1.97.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
