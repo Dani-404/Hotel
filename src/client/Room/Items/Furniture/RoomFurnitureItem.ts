@@ -11,16 +11,23 @@ import { RoomPosition } from "@/Interfaces/RoomPosition.js";
 export default class RoomFurnitureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
-    constructor(private readonly furnitureRenderer: FurnitureRenderer, position: RoomPosition) {
+    constructor(public readonly furnitureRenderer: FurnitureRenderer, position: RoomPosition) {
         super();
 
         this.setPosition(position);
 
-        this.furnitureRenderer.render().then((sprites) => {
-            this.sprites = sprites.map((sprite) => new RoomFurnitureSprite(this, sprite));
-        });
+        this.render();
     }
     
-    process(): void {
+    process(frame: number): void {
+        if(this.furnitureRenderer.isAnimated) {
+            this.render(frame);
+        }
+    }
+
+    render(frame: number = 0) {
+        this.furnitureRenderer.render(frame).then((sprites) => {
+            this.sprites = sprites.map((sprite) => new RoomFurnitureSprite(this, sprite));
+        });
     }
 }

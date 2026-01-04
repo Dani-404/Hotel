@@ -15,6 +15,12 @@ export default class RoomRenderer extends EventTarget {
 
     public readonly items: RoomItemInterface[] = [];
 
+    public frame: number = 0;
+
+    private readonly framesPerSecond: number = 24;
+    private readonly millisecondsPerFrame: number = 1000 / this.framesPerSecond;
+    private lastFrameTimestamp: number = performance.now();
+
     private center: MousePosition = {
         left: 0,
         top: 0
@@ -40,6 +46,13 @@ export default class RoomRenderer extends EventTarget {
     }
 
     private render() {
+        const millisecondsElapsedSinceLastFrame = performance.now() - this.lastFrameTimestamp;
+
+        if(millisecondsElapsedSinceLastFrame >= this.millisecondsPerFrame) {
+            this.frame = (this.frame + 1) % this.framesPerSecond;
+            this.lastFrameTimestamp = performance.now();
+        }
+
         const boundingRectangle = this.parent.getBoundingClientRect();
 
         this.center = {
@@ -78,7 +91,7 @@ export default class RoomRenderer extends EventTarget {
         Performance.startPerformanceCheck("Process room items", 5);
 
         for(let index = 0; index < this.items.length; index++) {
-            this.items[index].process();
+            this.items[index].process(this.frame);
         }
 
         Performance.endPerformanceCheck("Process room items");

@@ -11,7 +11,7 @@ export default class RoomItem implements RoomItemInterface {
 
     }
 
-    process(): void {
+    process(frame: number): void {
         
     }
 

@@ -9,10 +9,36 @@ export type FurnitureVisualization = {
         layers: {
             id: number;
             zIndex: number;
+            ink?: string;
+            ignoreMouse?: boolean;
+            alpha?: number;
         }[];
 
         directions: {
             id: number;
+        }[];
+
+        colors: {
+            id: number;
+
+            layers: {
+                id: number;
+                color: string;
+            }[];
+        }[];
+
+        animations: {
+            id: number;
+
+            layers: {
+                id: number;
+                loopCount?: number;
+                frameRepeat?: number;
+
+                frameSequence: {
+                    id: number;
+                }[];
+            }[];
         }[];
     }[];
 };

@@ -14,6 +14,14 @@ export default class RoomFurnitureSprite extends RoomSprite {
     }
 
     render(context: OffscreenCanvasRenderingContext2D) {
+        if(this.sprite.ink) {
+            context.globalCompositeOperation = this.sprite.ink;
+        }
+
+        if(this.sprite.alpha) {
+            context.globalAlpha = this.sprite.alpha / 255;
+        }
+
         context.drawImage(this.sprite.image, this.sprite.x + 64, this.sprite.y + 16);
     }
 

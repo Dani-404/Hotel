@@ -1,46 +1,104 @@
 import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError.js";
 import FurnitureAssets from "../Assets/FurnitureAssets.js";
 import { FurnitureData } from "../Interfaces/Furniture/FurnitureData.js";
+import { FurnitureIndex } from "@/Interfaces/Furniture/FurnitureIndex.js";
+import { FurnitureVisualization } from "@/Interfaces/Furniture/FurnitureVisualization.js";
 
 export type FurnitureRendererSprite = {
     image: OffscreenCanvas;
     x: number;
     y: number;
 
+    ink?: GlobalCompositeOperation;
+
     zIndex: number;
+    alpha?: number;
 }
 
 export default class FurnitureRenderer {
     public isReady: boolean = false;
 
-    constructor(private readonly type: string, public readonly size: number, public direction: number) {
+    public isAnimated: boolean = false;
+
+    private data?: FurnitureData;
+    private visualization?: FurnitureVisualization["visualizations"][0];
+
+    constructor(public readonly type: string, public readonly size: number, public direction: number, public animation: number = 0, public color: number = 0) {
     }
 
-    public async render() {
-        const data = await FurnitureAssets.getFurnitureData(this.type);
+    public async render(frame: number = 0) {
+        if(!this.data) {
+            this.data = await FurnitureAssets.getFurnitureData(this.type);
+        }
 
         const sprites: FurnitureRendererSprite[] = [];
 
-        const visualization = data.visualization.visualizations.find((visualization) => visualization.size == this.size && visualization.directions.find((direction) => direction.id === this.direction));
+        if(!this.visualization) {
+            this.visualization = this.data.visualization.visualizations.find((visualization) => visualization.size == this.size && visualization.directions.find((direction) => direction.id === this.direction));
+        }
 
-        if(!visualization) {
+        if(!this.visualization) {
             throw new Error("Visualization does not exist for size.");
         }
 
-        for(let layer = 0; layer < visualization.layerCount; layer++) {
-            const assetName = `${this.type}_${this.size}_${String.fromCharCode(97 + layer)}_${this.direction}_0`; // 0 = frame
+        const animation = this.visualization.animations?.find((animation) => animation.id === this.animation);
 
-            const assetData = data.assets.find((asset) => asset.name === assetName);
+        this.isAnimated = Boolean(animation);
+
+        for(let layer = 0; layer < this.visualization.layerCount; layer++) {
+            const animationLayer = animation?.layers?.find((animationLayer) => animationLayer.id === layer);
+
+            let spriteFrame = 0;
+
+            if(animationLayer) {
+                let frameSequenceIndex = frame % animationLayer.frameSequence.length;
+
+                if(animationLayer.frameRepeat && animationLayer.frameRepeat > 1) {
+                    frameSequenceIndex = Math.floor((frame % (animationLayer.frameSequence.length * animationLayer.frameRepeat)) / animationLayer.frameRepeat);
+                    /*console.log({
+                        frame,
+                        frameSequenceLength: animationLayer.frameSequence.length,
+                        frameRepeat: animationLayer.frameRepeat
+                    });*/
+                }
+
+                spriteFrame = animationLayer?.frameSequence[frameSequenceIndex].id;
+            }
+
+            const assetName = `${this.type}_${this.size}_${String.fromCharCode(97 + layer)}_${this.direction}_${spriteFrame}`;
+
+            if(FurnitureAssets.assetSprites.has(`${assetName}_${this.color}`)) {
+                const assetSprite = FurnitureAssets.assetSprites.get(`${assetName}_${this.color}`);
+
+                if(assetSprite) {
+                    sprites.push(assetSprite);
+                }
+
+                continue;
+            }
+
+            console.log("Asset sprite is not in memory, rendering new sprite: " + assetName);
+
+            const assetData = this.data.assets.find((asset) => asset.name === assetName);
 
             if(!assetData) {
-                throw new Error("Failed to find asset data for " + assetName);
+                console.warn("Failed to find asset data for " + assetName);
+    
+                FurnitureAssets.assetSprites.set(`${assetName}_${this.color}`, null);
+
+                continue;
             }
 
-            const spriteData = data.sprites.find((sprite) => sprite.name === (assetData?.source ?? assetName));
+            const spriteData = this.data.sprites.find((sprite) => sprite.name === (assetData?.source ?? assetName));
             
             if(!spriteData) {
-                throw new Error("Failed to find sprite data for " + assetName + " (source " + assetData.source + ")");
+                //console.warn("Failed to find sprite data for " + assetName + " (source " + assetData.source + ")");
+                FurnitureAssets.assetSprites.set(`${assetName}_${this.color}`, null);
+
+                continue;
             }
+
+            const colorData = this.visualization.colors?.find((color) => color.id === this.color);
 
             const sprite = await FurnitureAssets.getFurnitureSprite(this.type, {
                 x: spriteData.x,
@@ -49,10 +107,12 @@ export default class FurnitureRenderer {
                 width: spriteData.width,
                 height: spriteData.height,
 
-                flipHorizontal: assetData.flipHorizontal
+                flipHorizontal: assetData.flipHorizontal,
+
+                color: colorData?.layers?.find((colorLayer) => colorLayer.id === layer)?.color
             });
 
-            const layerData = visualization.layers.find((layerData) => layerData.id === layer);
+            const layerData = this.visualization.layers.find((layerData) => layerData.id === layer);
 
             let x = assetData.x;
 
@@ -60,14 +120,21 @@ export default class FurnitureRenderer {
                 x = (assetData.x * -1) - spriteData.width;
             }
 
-            sprites.push({
-                image: sprite.image,
+            const assetSprite: FurnitureRendererSprite = {
+                image: sprite,
                 
                 x,
                 y: assetData.y,
 
-                zIndex: layerData?.zIndex ?? 0
-            });
+                ink: this.getGlobalCompositeModeFromInk(layerData?.ink),
+
+                zIndex: layerData?.zIndex ?? 0,
+                alpha: layerData?.alpha
+            };
+
+            FurnitureAssets.assetSprites.set(`${assetName}_${this.color}`, assetSprite);
+
+            sprites.push(assetSprite);
         }
 
         return sprites;
@@ -107,9 +174,40 @@ export default class FurnitureRenderer {
         }
 
         for(let sprite of sprites.sort((a, b) => a.zIndex - b.zIndex)) {
+            context.save();
+
+            if(sprite.ink) {
+                context.globalCompositeOperation = sprite.ink;
+            }
+
+            if(sprite.alpha) {
+                context.globalAlpha = sprite.alpha / 255;
+            }
+
             context.drawImage(sprite.image, minimumX + sprite.x, minimumY + sprite.y);
         }
 
         return canvas;
+    }
+
+    private getGlobalCompositeModeFromInk(ink?: string): GlobalCompositeOperation | undefined {
+        switch(ink) {
+            case "ADD":
+                return "lighter";
+
+            case "SUBTRACT":
+                return "luminosity";
+
+            case "COPY":
+                return "source-over";
+
+            case undefined:
+                return undefined;
+
+            default:
+                console.warn(`Furniture ink mode ${ink} is not recognized.`);
+
+                return undefined;
+        }
     }
 }

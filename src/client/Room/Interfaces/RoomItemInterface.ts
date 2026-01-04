@@ -7,5 +7,5 @@ export default interface RoomItemInterface {
     sprites: RoomItemSpriteInterface[];
     disabled: boolean;
 
-    process(): void;
+    process(frame: number): void;
 };

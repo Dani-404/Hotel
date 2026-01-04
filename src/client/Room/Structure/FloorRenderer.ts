@@ -172,7 +172,6 @@ export default class FloorRenderer {
                 }
 
                 if(parseInt(this.getTileDepth(row - 1, column)) === parseInt(this.getTileDepth(row, column)) + 1) {
-                    console.log("step");
                     for(let step = 0; step < 4; step++) {
                         rectangles.push({
                             row: row + (step * .25),

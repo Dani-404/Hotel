@@ -11,12 +11,13 @@ export type AssetSpriteProperties = {
     flipHorizontal?: boolean;
 
     source?: string;
+    color?: string;
 };
 
 export default class AssetFetcher {
     private static json: Map<string, Promise<FurnitureData>> = new Map();
     private static images: Map<string, Promise<HTMLImageElement>> = new Map();
-    private static sprites: Record<string, (AssetSpriteProperties & { image: OffscreenCanvas })[]> = {};
+    private static sprites: Record<string, (AssetSpriteProperties & { image: Promise<OffscreenCanvas> })[]> = {};
 
     public static async fetchJson(url: string): Promise<FurnitureData> {
         if(this.json.has(url)) {
@@ -58,27 +59,27 @@ export default class AssetFetcher {
         return result;
     }
 
-    public static async fetchImageSprite(url: string, properties: AssetSpriteProperties) {
+    public static async fetchImageSprite(url: string, properties: AssetSpriteProperties): Promise<OffscreenCanvas> {
         if(!this.sprites[url]) {
             this.sprites[url] = [];
         }
 
-        const existingSprite = this.sprites[url].find(({ x, y, width, height, flipHorizontal }) => properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal);
+        const existingSprite = this.sprites[url].find(({ x, y, width, height, flipHorizontal, color }) => properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal && properties.color === color);
 
         if(existingSprite) {
-            return existingSprite;
+            return await existingSprite.image;
         }
-        
-        const image = await this.drawSprite(url, properties);
 
-        const result: AssetSpriteProperties & { image: OffscreenCanvas } = {
-            image,
-            ...properties
-        };
+        return new Promise(async (resolve) => {
+            const result: AssetSpriteProperties & { image: Promise<OffscreenCanvas> } = {
+                image: this.drawSprite(url, properties),
+                ...properties
+            };
 
-        this.sprites[url].push(result);
+            this.sprites[url].push(result);
 
-        return result;
+            resolve(await result.image);
+        });
     }
 
     private static async drawSprite(url: string, properties: AssetSpriteProperties) {
@@ -98,6 +99,26 @@ export default class AssetFetcher {
         }
 
         context.drawImage(image, properties.x, properties.y, properties.width, properties.height, 0, 0, properties.width, properties.height);
+
+        if(properties.color) {
+            console.log(properties.color);
+
+            const colorCanvas = new OffscreenCanvas(properties.width, properties.height);
+            const colorContext = colorCanvas.getContext("2d");
+
+            if(!colorContext) {
+                throw new ContextNotAvailableError();
+            }
+
+            colorContext.drawImage(image, properties.x, properties.y, properties.width, properties.height, 0, 0, properties.width, properties.height);
+
+            colorContext.globalCompositeOperation = "multiply";
+            colorContext.fillStyle = '#' + properties.color;
+            colorContext.fillRect(0, 0, canvas.width, canvas.height);
+
+            context.globalCompositeOperation = "source-in";
+            context.drawImage(colorCanvas, 0, 0);
+        }
 
         return canvas;
     }

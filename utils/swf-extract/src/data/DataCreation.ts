@@ -93,14 +93,49 @@ export function createVisualizationData(collection: SwfExtractionCollection): Fu
                 layers: getValueAsArray(visualization["layers"]?.["layer"]).map((layer: any) => {
                     return {
                         id: parseInt(layer["@_id"]),
-                        zIndex: parseInt(layer["@_z"])
-                    } satisfies FurnitureVisualization["visualizations"][0]["layers"][0]
+                        zIndex: parseInt(layer["@_z"]),
+                        ink: layer["@_ink"],
+                        ignoreMouse: layer["@_ignoreMouse"] === '1',
+                        alpha: layer["@_alpha"] ? parseInt(layer["@_alpha"]) : undefined,
+                    }
                 }),
 
                 directions: getValueAsArray(visualization["directions"]["direction"]).map((direction: any) => {
                     return {
                         id: parseInt(direction["@_id"])
                     } satisfies FurnitureVisualization["visualizations"][0]["directions"][0]
+                }),
+
+                colors: getValueAsArray(visualization["colors"]?.["color"]).map((color: any) => {
+                    return {
+                        id: parseInt(color["@_id"]),
+                        layers: getValueAsArray(color["colorLayer"]).map((layer: any) => {
+                            return {
+                                id: parseInt(layer["@_id"]),
+                                color: layer["@_color"]
+                            }
+                        })
+                    }
+                }),
+
+                animations: getValueAsArray(visualization["animations"]?.["animation"]).map((animation: any) => {
+                    return {
+                        id: parseInt(animation["@_id"]),
+
+                        layers: getValueAsArray(animation["animationLayer"]).map((layer: any) => {
+                            return {
+                                id: parseInt(layer["@_id"]),
+                                loopCount: layer["@_loopCount"] ? parseInt(layer["@_loopCount"]) : undefined,
+                                frameRepeat: layer["@_frameRepeat"] ? parseInt(layer["@_frameRepeat"]) : undefined,
+
+                                frameSequence: getValueAsArray(layer["frameSequence"]?.["frame"]).map((frame: any) => {
+                                    return {
+                                        id: parseInt(frame["@_id"])
+                                    }
+                                })
+                            }
+                        })
+                    }
                 })
             } satisfies FurnitureVisualization["visualizations"][0]
         })
