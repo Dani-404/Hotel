@@ -2,3 +2,5 @@ node_modules/
 build/
 utils/swf-extract/temp/
 utils/swf-extract/assets/
+assets/furniture/
+assets/furniture2/
