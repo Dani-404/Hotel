@@ -6,6 +6,7 @@ export default interface RoomItemInterface {
     position?: RoomPosition;
     sprites: RoomItemSpriteInterface[];
     disabled: boolean;
+    type: string;
 
     process(frame: number): void;
 };

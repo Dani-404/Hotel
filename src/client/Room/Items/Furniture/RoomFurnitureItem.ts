@@ -12,7 +12,7 @@ export default class RoomFurnitureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
     constructor(public readonly furnitureRenderer: FurnitureRenderer, position: RoomPosition) {
-        super();
+        super("furniture");
 
         this.setPosition(position);
 

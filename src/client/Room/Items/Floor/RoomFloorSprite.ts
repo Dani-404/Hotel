@@ -8,13 +8,15 @@ import RoomSprite from "../RoomSprite.js";
 export default class RoomFloorSprite extends RoomSprite {
     priority = -1000;
 
-    private readonly image: OffscreenCanvas;
+    private image?: OffscreenCanvas;
     private readonly offset: MousePosition;
 
     constructor(public readonly item: RoomItemInterface, private readonly floorRenderer: FloorRenderer) {
         super(item);
 
-        this.image = this.floorRenderer.renderOffScreen();
+        this.floorRenderer.renderOffScreen().then((image) => {
+            this.image = image;
+        });
 
         this.offset = {
             left: -(floorRenderer.rows * 32),
@@ -23,10 +25,18 @@ export default class RoomFloorSprite extends RoomSprite {
     }
 
     render(context: OffscreenCanvasRenderingContext2D) {
+        if(!this.image) {
+            return;
+        }
+
         context.drawImage(this.image, this.offset.left - this.floorRenderer.structure.wall.thickness, this.offset.top);
     }
 
     mouseover(position: MousePosition) {
+        if(!this.image) {
+            return null;
+        }
+
         const context = this.image.getContext("2d");
 
         if(!context) {

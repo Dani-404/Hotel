@@ -1,6 +1,7 @@
 import { RoomPattern } from "@/Interfaces/RoomPattern.js";
 import ContextNotAvailableError from "../../Exceptions/ContextNotAvailableError.js";
 import { RoomStructure } from "../../Interfaces/RoomStructure.js";
+import RoomAssets from "../../Assets/RoomAssets.js";
 
 type FloorRectangle = {
     row: number;
@@ -26,7 +27,7 @@ export default class FloorRenderer {
     public columns: number;
     public depth: number;
 
-    constructor(public readonly structure: RoomStructure, private readonly patterns: RoomPattern) {
+    constructor(public readonly structure: RoomStructure, private readonly floorId: string, private readonly size: number) {
         this.rows = this.structure.grid.length;
         this.columns = Math.max(...this.structure.grid.map((row) => row.length));
         this.depth = 0;
@@ -46,7 +47,73 @@ export default class FloorRenderer {
         }
     }
 
-    public renderOffScreen() {
+    public async renderOffScreen() {
+        const data = await RoomAssets.getRoomData("HabboRoomContent");
+        const visualization = data.visualization.floorData.floors.find((floor) => floor.id === this.floorId)?.visualizations.find((visualization) => visualization.size === this.size);
+        
+        if(!visualization) {
+            throw new Error("Room visualization data does not exist for id and size.");
+        }
+
+        const material = data.visualization.floorData.materials.find((material) => material.id === visualization.materialId);
+        
+        if(!material) {
+            throw new Error("Room material data does not exist.");
+        }
+
+        const texture = data.visualization.floorData.textures.find((texture) => texture.id === material?.textureId);
+
+        if(!texture) {
+            throw new Error("Room texture data does not exist.");
+        }
+
+        const assetData = data.assets.find((asset) => asset.name === texture.assetName);
+
+        if(!assetData) {
+            throw new Error("Room asset data does not exist.");
+        }
+
+        const spriteData = data.sprites.find((sprite) => sprite.name === (assetData.source ?? assetData.name));
+
+        if(!spriteData) {
+            throw new Error("Sprite data does not exist for room texture.");
+        }
+
+        const tileImage = await RoomAssets.getRoomSprite("HabboRoomContent", {
+            x: spriteData.x,
+            y: spriteData.y,
+
+            width: spriteData.width,
+            height: spriteData.height,
+
+            color: visualization.color,
+            flipHorizontal: assetData.flipHorizontal
+        });
+
+        const leftEdgeImage = await RoomAssets.getRoomSprite("HabboRoomContent", {
+            x: spriteData.x,
+            y: spriteData.y,
+
+            width: spriteData.width,
+            height: spriteData.height,
+
+            color: [visualization.color, "BBB"],
+            flipHorizontal: assetData.flipHorizontal
+        });
+
+        const rightEdgeImage = await RoomAssets.getRoomSprite("HabboRoomContent", {
+            x: spriteData.x,
+            y: spriteData.y,
+
+            width: spriteData.width,
+            height: spriteData.height,
+
+            destinationHeight: Math.min(spriteData.height, material.width * 2),
+
+            color: [visualization.color, "666"],
+            flipHorizontal: assetData.flipHorizontal
+        });
+
         const width = (this.rows * 32) + (this.columns * 32) + (this.structure.wall.thickness * 2);
         const height = (this.rows * 16) + (this.columns * 16) + this.structure.floor.thickness + (this.depth * 16) + 10;
 
@@ -65,20 +132,18 @@ export default class FloorRenderer {
         for(let currentDepth = 0; currentDepth <= this.depth; currentDepth++) {
             const currentRectangles = rectangles.filter((rectangle) => Math.ceil(rectangle.depth) === currentDepth);
 
-            this.renderLeftEdges(context, currentRectangles);
-            this.renderRightEdges(context, currentRectangles);
-            this.renderTiles(context, currentRectangles);
+            this.renderLeftEdges(context, currentRectangles, leftEdgeImage.image);
+            this.renderRightEdges(context, currentRectangles, rightEdgeImage.image);
+            this.renderTiles(context, currentRectangles, tileImage.image);
         }
 
         return canvas;
     }
 
-    private renderLeftEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[]) {
+    private renderLeftEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
         context.beginPath();
-
         context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
-                
-        context.fillStyle = this.patterns.left;
+        context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(let index in rectangles) {
             const rectangle = rectangles[index];
@@ -95,12 +160,10 @@ export default class FloorRenderer {
         context.fill();
     }
 
-    private renderRightEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[]) {
+    private renderRightEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
         context.beginPath();
-
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
-                
-        context.fillStyle = this.patterns.right;
+        context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(let index in rectangles) {
             const rectangle = rectangles[index];
@@ -121,10 +184,10 @@ export default class FloorRenderer {
         context.fill();
     }
 
-    private renderTiles(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[]) {
+    private renderTiles(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
         context.beginPath();
-
         context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
+        context.fillStyle = context.createPattern(image, "repeat")!;
                 
         const tiles = new Path2D();
 
@@ -142,8 +205,6 @@ export default class FloorRenderer {
             
             tiles.addPath(path);
         }
-
-        context.fillStyle = this.patterns.tile;
 
         context.fill(tiles);
     }

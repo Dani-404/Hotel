@@ -1,10 +1,13 @@
 import DebugRoomFurniture from "./Debug/DebugRoomFurniture.js";
 import FurnitureRenderer from "./Furniture/FurnitureRenderer.js";
+import { RoomStructure } from "./Interfaces/RoomStructure.js";
 import RoomFloorSprite from "./Room/Items/Floor/RoomFloorSprite.js";
+import RoomWallSprite from "./Room/Items/Floor/RoomWallSprite.js";
 import RoomFurnitureItem from "./Room/Items/Furniture/RoomFurnitureItem.js";
 import RoomItem from "./Room/Items/RoomItem.js";
 import RoomRenderer from "./Room/Renderer.js";
 import FloorRenderer from "./Room/Structure/FloorRenderer.js";
+import WallRenderer from "./Room/Structure/WallRenderer.js";
 
 console.log("Hello world");
 
@@ -13,73 +16,74 @@ const root = document.getElementById("game");
 if(root) {
     const roomRenderer = new RoomRenderer(root);
 
-    const floorItem = new RoomItem([]);
+    const floorItem = new RoomItem("floor", []);
 
-    const floorSprite = new RoomFloorSprite(
+    const roomStructure: RoomStructure = {
+        grid: [
+            "XXXXXXXXXXXXXXXXXXXXXXXXX",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X22222222222222222222222X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X11111111111111111111111X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "XXXXXXXXXXX000XXXXXXXXXXX",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "X00000000000000000000000X",
+            "XXXXXXXXXXXXXXXXXXXXXXXXX"
+        ],
+        floor: {
+            thickness: 8
+        },
+        wall: {
+            thickness: 8
+        }
+    };
+
+    floorItem.sprites.push(new RoomFloorSprite(
         floorItem,
-        new FloorRenderer({
-            grid: [
-                "XXXXXXXXXXXXXXXXXXXXXXXXX",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X22222222222222222222222X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X11111111111111111111111X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "XXXXXXXXXXX000XXXXXXXXXXX",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "X00000000000000000000000X",
-                "XXXXXXXXXXXXXXXXXXXXXXXXX"
-            ],
-            floor: {
-                thickness: 8
-            },
-            wall: {
-                thickness: 8
-            }
-        }, {
-            left: "#CCC",
-            right: "#DDD",
-            tile: "#FFF"
-        })
-    );
+        new FloorRenderer(roomStructure, "101", 64)
+    ));
 
-    floorItem.sprites.push(floorSprite);
+    floorItem.sprites.push(new RoomWallSprite(
+        floorItem,
+        new WallRenderer(roomStructure, "2301", 64)
+    ));
 
     roomRenderer.items.push(floorItem);
 
@@ -100,6 +104,18 @@ if(root) {
         
         const furnitureItem = new RoomFurnitureItem(furnitureRenderer, {
             row: 3,
+            column: 1,
+            depth: 2
+        });
+
+        roomRenderer.items.push(furnitureItem);
+    }
+
+    {
+        const furnitureRenderer = new FurnitureRenderer("country_fnc3", 64, 0);
+        
+        const furnitureItem = new RoomFurnitureItem(furnitureRenderer, {
+            row: 5,
             column: 1,
             depth: 2
         });
@@ -163,7 +179,7 @@ if(root) {
         new DebugRoomFurniture(roomRenderer, furnitureItem);
     }
 
-    {
+    /*{
         const canvas = document.createElement("canvas");
         canvas.classList.add("debug");
         document.body.appendChild(canvas);
@@ -178,5 +194,5 @@ if(root) {
         furnitureRenderer.renderToCanvas().then((canvas) => {
             context?.drawImage(canvas, 0, 0);
         });
-    }
+    }*/
 }

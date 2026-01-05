@@ -5,9 +5,10 @@ import RoomItemInterface from "@/Room/Interfaces/RoomItemInterface.js";
 import RoomItemSpriteInterface from "@/Room/Interfaces/RoomItemSpriteInterface";
 import FloorRenderer from "@/Room/Structure/FloorRenderer";
 import RoomSprite from "../RoomSprite.js";
+import RoomFurnitureItem from "./RoomFurnitureItem.js";
 
 export default class RoomFurnitureSprite extends RoomSprite {
-    constructor(public readonly item: RoomItemInterface, private readonly sprite: FurnitureRendererSprite) {
+    constructor(public readonly item: RoomFurnitureItem, private readonly sprite: FurnitureRendererSprite) {
         super(item);
 
         this.priority = this.sprite.zIndex;
@@ -26,6 +27,33 @@ export default class RoomFurnitureSprite extends RoomSprite {
     }
 
     mouseover(position: MousePosition) {
-        return null;
+        if(this.sprite.ignoreMouse) {
+            return null;
+        }
+        
+        const relativePosition: MousePosition = {
+            left: position.left - (this.sprite.x + 64),
+            top: position.top - (this.sprite.y + 16)
+        };
+
+        if(relativePosition.left < 0 || relativePosition.top < 0) {
+            return null;
+        }
+
+        if(relativePosition.left > this.sprite.image.width || relativePosition.top > this.sprite.image.height) {
+            return null;
+        }
+
+        const pixel = ((relativePosition.left + relativePosition.top * this.sprite.imageData.width) * 4) + 3;
+
+        if(this.sprite.imageData.data[pixel] < 50) {
+            return null;
+        }
+
+        return {
+            row: this.item.position!.row,
+            column: this.item.position!.column,
+            depth: this.item.position!.depth
+        };
     }
 }

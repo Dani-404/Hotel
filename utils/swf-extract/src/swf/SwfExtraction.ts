@@ -61,6 +61,10 @@ export async function extractSwf(assetName: string, filePath: string) {
                 case "assets":
                     collection.data[dataType] = fileOutput;
                     break;
+
+                case "room_assets":
+                    collection.data["assets"] = fileOutput;
+                    break;
             }
 
             fs.writeFileSync(fileOutput, tag.data.slice(6));

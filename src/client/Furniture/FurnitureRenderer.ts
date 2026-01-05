@@ -6,6 +6,8 @@ import { FurnitureVisualization } from "@/Interfaces/Furniture/FurnitureVisualiz
 
 export type FurnitureRendererSprite = {
     image: OffscreenCanvas;
+    imageData: ImageData;
+
     x: number;
     y: number;
 
@@ -13,6 +15,7 @@ export type FurnitureRendererSprite = {
 
     zIndex: number;
     alpha?: number;
+    ignoreMouse?: boolean;
 }
 
 export default class FurnitureRenderer {
@@ -100,7 +103,7 @@ export default class FurnitureRenderer {
 
             const colorData = this.visualization.colors?.find((color) => color.id === this.color);
 
-            const sprite = await FurnitureAssets.getFurnitureSprite(this.type, {
+            const { image, imageData } = await FurnitureAssets.getFurnitureSprite(this.type, {
                 x: spriteData.x,
                 y: spriteData.y,
 
@@ -121,7 +124,8 @@ export default class FurnitureRenderer {
             }
 
             const assetSprite: FurnitureRendererSprite = {
-                image: sprite,
+                image,
+                imageData,
                 
                 x,
                 y: assetData.y,
@@ -129,7 +133,8 @@ export default class FurnitureRenderer {
                 ink: this.getGlobalCompositeModeFromInk(layerData?.ink),
 
                 zIndex: layerData?.zIndex ?? 0,
-                alpha: layerData?.alpha
+                alpha: layerData?.alpha,
+                ignoreMouse: layerData?.ignoreMouse
             };
 
             FurnitureAssets.assetSprites.set(`${assetName}_${this.color}`, assetSprite);

@@ -1,6 +1,7 @@
 import FurnitureRenderer from "../Furniture/FurnitureRenderer.js";
 import RoomRenderer from "./Renderer";
 import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem.js";
+import RoomFloorSprite from "./Items/Floor/RoomFloorSprite.js";
 
 export default class RoomCursor {
     private readonly furnitureItem: RoomFurnitureItem;
@@ -19,10 +20,11 @@ export default class RoomCursor {
         this.roomRenderer.items.push(this.furnitureItem);
 
         this.roomRenderer.addEventListener("render", this.render.bind(this));
+        this.roomRenderer.addEventListener("frame", this.frame.bind(this));
     }
 
     private render() {
-        const entity = this.roomRenderer.getItemAtPosition();
+        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === "floor");
 
         if(!entity) {
             this.furnitureItem.disabled = true;
@@ -37,5 +39,17 @@ export default class RoomCursor {
         });
 
         this.furnitureItem.disabled = false;
+    }
+
+    private frame() {
+        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === "furniture");
+
+        if(!entity) {
+            this.roomRenderer.element.style.cursor = "default";
+
+            return;
+        }
+
+        this.roomRenderer.element.style.cursor = "pointer";
     }
 }

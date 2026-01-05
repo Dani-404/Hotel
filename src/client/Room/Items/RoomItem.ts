@@ -7,7 +7,7 @@ export default class RoomItem implements RoomItemInterface {
     priority: number = 0;
     disabled: boolean = false;
 
-    constructor(public sprites: RoomItemSpriteInterface[] = []) {
+    constructor(public type: string, public sprites: RoomItemSpriteInterface[] = []) {
 
     }
 

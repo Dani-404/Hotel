@@ -2,8 +2,9 @@ import { copyFileSync, existsSync, mkdirSync, rmdirSync, rmSync, writeFileSync }
 import { createSpritesheet } from "./spritesheet/SpritesheetCreation.ts";
 import { extractSwf } from "./swf/SwfExtraction.ts";
 import path from "path";
-import { createAssetsData, createIndexData, createLogicData, createVisualizationData } from "./data/DataCreation.ts";
+import { createAssetsData, createIndexData, createLogicData, createRoomVisualizationData, createVisualizationData } from "./data/DataCreation.ts";
 import type { FurnitureData } from "../../../src/client/Interfaces/Furniture/FurnitureData.ts"
+import type { RoomData } from "../../../src/client/Interfaces/Room/RoomData.ts"
 
 const assetName = process.argv[2];
 const extractOnly = process.argv[3] === "extract-only";
@@ -26,26 +27,9 @@ if(existsSync(path.join("temp", assetName))) {
         return;
     }
 
-    const assets = createAssetsData(swfCollection);
-    const logic = createLogicData(swfCollection);
-    const visualization = createVisualizationData(swfCollection);
-    const index = createIndexData(swfCollection);
-
-    //console.log(JSON.stringify(index, undefined, 4));
-
     const spritesheet = await createSpritesheet(assetName, swfCollection.images);
 
-    //console.log(spritesheet32Collection);
-
-    const data: FurnitureData = {
-        index,
-        visualization,
-        logic,
-        assets,
-        sprites: spritesheet
-    };
-
-    const outputPath = path.join("..", "..", "assets", "furniture", assetName);
+    const outputPath = path.join("..", "..", "assets", (assetName === "HabboRoomContent")?("room"):("furniture"), assetName);
 
     if(existsSync(outputPath)) {
         rmSync(outputPath, {
@@ -57,11 +41,41 @@ if(existsSync(path.join("temp", assetName))) {
     mkdirSync(outputPath, {
         recursive: true
     });
-
-    writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
-        encoding: "utf-8"
-    });
     
     copyFileSync(path.join("temp", assetName, "spritesheets", `${assetName}.png`), path.join(outputPath, `${assetName}.png`));
-})();
+    
+    if(assetName === "HabboRoomContent") {
+        const assets = createAssetsData(swfCollection);
+        const index = createIndexData(swfCollection);
+        const visualization = createRoomVisualizationData(swfCollection);
 
+        const data: RoomData = {
+            index,
+            visualization,
+            assets,
+            sprites: spritesheet
+        };
+
+        writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
+            encoding: "utf-8"
+        });
+    }
+    else {
+        const assets = createAssetsData(swfCollection);
+        const logic = createLogicData(swfCollection);
+        const visualization = createVisualizationData(swfCollection);
+        const index = createIndexData(swfCollection);
+
+        const data: FurnitureData = {
+            index,
+            visualization,
+            logic,
+            assets,
+            sprites: spritesheet
+        };
+
+        writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
+            encoding: "utf-8"
+        });
+    }
+})();

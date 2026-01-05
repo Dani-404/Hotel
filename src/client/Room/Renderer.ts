@@ -8,6 +8,7 @@ import RoomCursor from "./RoomCursor.js";
 import { RoomPosition } from "../Interfaces/RoomPosition";
 import RoomSprite from "./Items/RoomSprite";
 import Performance from "../Utilities/Performance.js";
+import RoomFrameEvent from "../Events/RoomFrameEvent.js";
 
 export default class RoomRenderer extends EventTarget {
     public readonly element: HTMLCanvasElement;
@@ -51,6 +52,8 @@ export default class RoomRenderer extends EventTarget {
         if(millisecondsElapsedSinceLastFrame >= this.millisecondsPerFrame) {
             this.frame = (this.frame + 1) % this.framesPerSecond;
             this.lastFrameTimestamp = performance.now();
+
+            this.dispatchEvent(new RoomFrameEvent());
         }
 
         const boundingRectangle = this.parent.getBoundingClientRect();
@@ -139,22 +142,40 @@ export default class RoomRenderer extends EventTarget {
         return canvas;
     }
 
-    public getItemAtPosition(): RoomPointerPosition | null {
+    public getItemAtPosition(filter?: (item: RoomItemInterface) => boolean): RoomPointerPosition | null {
         if(this.camera.mousePosition) {
             const offsetMousePosition = {
                 left: this.camera.mousePosition.left - this.renderedOffset.left,
                 top: this.camera.mousePosition.top - this.renderedOffset.top
             };
 
-            const sprites = this.items.flatMap((item) => item.sprites).sort((a, b) => a.priority - b.priority);
+            let filteredItems = this.items;
+
+            if(filter) {
+                filteredItems = filteredItems.filter(filter);
+            }
+
+            const sprites = filteredItems.flatMap((item) => item.sprites).sort((a, b) => this.getSpritePriority(b) - this.getSpritePriority(a));
 
             for(let index = 0; index < sprites.length; index++) {
-                const tile = sprites[index].mouseover(offsetMousePosition);
+                const sprite = sprites[index];
+
+                const relativeMousePosition: MousePosition = {
+                    left: offsetMousePosition.left,
+                    top: offsetMousePosition.top
+                };
+
+                if(sprite.item.position) {
+                    relativeMousePosition.left = offsetMousePosition.left - Math.floor(-(sprite.item.position.row * 32) + (sprite.item.position.column * 32) - 64);
+                    relativeMousePosition.top = offsetMousePosition.top - Math.floor((sprite.item.position.column * 16) + (sprite.item.position.row * 16) - (sprite.item.position.depth * 32));
+                }
+
+                const tile = sprite.mouseover(relativeMousePosition);
 
                 if(tile) {
                     return {
-                        item: sprites[index].item,
-                        sprite: sprites[index],
+                        item: sprite.item,
+                        sprite: sprite,
                         position: tile
                     }
                 }

@@ -11,20 +11,22 @@ export type AssetSpriteProperties = {
     flipHorizontal?: boolean;
 
     source?: string;
-    color?: string;
+    color?: string | string[];
+
+    destinationHeight?: number;
 };
 
 export default class AssetFetcher {
-    private static json: Map<string, Promise<FurnitureData>> = new Map();
+    private static json: Map<string, Promise<unknown>> = new Map();
     private static images: Map<string, Promise<HTMLImageElement>> = new Map();
-    private static sprites: Record<string, (AssetSpriteProperties & { image: Promise<OffscreenCanvas> })[]> = {};
+    private static sprites: Record<string, (AssetSpriteProperties & { sprite: Promise<{ image: OffscreenCanvas, imageData: ImageData }> })[]> = {};
 
-    public static async fetchJson(url: string): Promise<FurnitureData> {
+    public static async fetchJson<T>(url: string): Promise<T> {
         if(this.json.has(url)) {
-            return await this.json.get(url)!;
+            return await this.json.get(url)! as T;
         }
 
-        const result = new Promise<FurnitureData>(async (resolve) => {
+        const result = new Promise<T>(async (resolve) => {
             const response = await fetch(url, {
                 method: "GET"
             });
@@ -59,7 +61,7 @@ export default class AssetFetcher {
         return result;
     }
 
-    public static async fetchImageSprite(url: string, properties: AssetSpriteProperties): Promise<OffscreenCanvas> {
+    public static async fetchImageSprite(url: string, properties: AssetSpriteProperties): Promise<{ image: OffscreenCanvas, imageData: ImageData }> {
         if(!this.sprites[url]) {
             this.sprites[url] = [];
         }
@@ -67,25 +69,25 @@ export default class AssetFetcher {
         const existingSprite = this.sprites[url].find(({ x, y, width, height, flipHorizontal, color }) => properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal && properties.color === color);
 
         if(existingSprite) {
-            return await existingSprite.image;
+            return await existingSprite.sprite;
         }
 
         return new Promise(async (resolve) => {
-            const result: AssetSpriteProperties & { image: Promise<OffscreenCanvas> } = {
-                image: this.drawSprite(url, properties),
+            const result: AssetSpriteProperties & { sprite: Promise<{ image: OffscreenCanvas, imageData: ImageData }> } = {
+                sprite: this.drawSprite(url, properties),
                 ...properties
             };
 
             this.sprites[url].push(result);
 
-            resolve(await result.image);
+            resolve(await result.sprite);
         });
     }
 
     private static async drawSprite(url: string, properties: AssetSpriteProperties) {
         const image = await this.fetchImage(url);
 
-        const canvas = new OffscreenCanvas(properties.width, properties.height);
+        const canvas = new OffscreenCanvas(properties.width, properties.destinationHeight ?? properties.height);
         const context = canvas.getContext("2d");
 
         if(!context) {
@@ -98,28 +100,35 @@ export default class AssetFetcher {
             context.scale(-1, 1);
         }
 
-        context.drawImage(image, properties.x, properties.y, properties.width, properties.height, 0, 0, properties.width, properties.height);
+        context.drawImage(image, properties.x, properties.y, properties.width, properties.destinationHeight ?? properties.height, 0, 0, properties.width, properties.height);
 
         if(properties.color) {
             console.log(properties.color);
 
-            const colorCanvas = new OffscreenCanvas(properties.width, properties.height);
+            const colorCanvas = new OffscreenCanvas(properties.width, properties.destinationHeight ?? properties.height);
             const colorContext = colorCanvas.getContext("2d");
 
             if(!colorContext) {
                 throw new ContextNotAvailableError();
             }
 
-            colorContext.drawImage(image, properties.x, properties.y, properties.width, properties.height, 0, 0, properties.width, properties.height);
+            colorContext.drawImage(image, properties.x, properties.y, properties.width, properties.height, 0, 0, properties.width, properties.destinationHeight ?? properties.height);
 
-            colorContext.globalCompositeOperation = "multiply";
-            colorContext.fillStyle = '#' + properties.color;
-            colorContext.fillRect(0, 0, canvas.width, canvas.height);
+            const colors = (typeof properties.color === "string")?([properties.color]):(properties.color);
+
+            for(let color of colors) {
+                colorContext.globalCompositeOperation = "multiply";
+                colorContext.fillStyle = '#' + color;
+                colorContext.fillRect(0, 0, canvas.width, canvas.height);
+            }
 
             context.globalCompositeOperation = "source-in";
             context.drawImage(colorCanvas, 0, 0);
         }
 
-        return canvas;
+        return {
+            image: canvas,
+            imageData: context.getImageData(0, 0, canvas.width, canvas.height)
+        };
     }
 }

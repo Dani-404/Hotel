@@ -2,6 +2,7 @@ import type { SwfExtractionCollection } from "../swf/SwfExtraction.ts";
 import type { FurnitureAsset, FurnitureAssets } from "../../../../src/client/Interfaces/Furniture/FurnitureAssets.ts"
 import type { FurnitureLogic } from "../../../../src/client/Interfaces/Furniture/FurnitureLogic.ts"
 import type { FurnitureVisualization } from "../../../../src/client/Interfaces/Furniture/FurnitureVisualization.ts"
+import type { RoomVisualization } from "../../../../src/client/Interfaces/Room/RoomVisualization.ts"
 import type { FurnitureIndex } from "../../../../src/client/Interfaces/Furniture/FurnitureIndex.ts"
 import { XMLParser } from "fast-xml-parser";
 import { readFileSync } from "fs";
@@ -158,4 +159,80 @@ export function createIndexData(collection: SwfExtractionCollection): FurnitureI
         visualization: document["object"]["@_visualization"],
         logic: document["object"]["@_logic"],
     } satisfies FurnitureIndex;
+}
+
+export function createRoomVisualizationData(collection: SwfExtractionCollection): RoomVisualization {
+    if(!collection.data.visualization) {
+        console.log(collection.data);
+        throw new Error("Room visualization data doesn't exist.");
+    }
+
+    const parser = new XMLParser({
+        ignoreAttributes: false
+    });
+
+    const document = parser.parse(readFileSync(collection.data.visualization, { encoding: "utf-8" }), true);
+
+    return {
+        wallData: {
+            walls: getValueAsArray(document["visualizationData"]["wallData"]["walls"]["wall"]).map((wall: any) => {
+                return {
+                    id: wall["@_id"],
+
+                    visualizations: getValueAsArray(wall["visualization"]).map((visualization: any) => {
+                        return {
+                            size: parseInt(visualization["@_size"]),
+                            color: visualization["visualizationLayer"]["@_color"].substring(2),
+                            materialId: visualization["visualizationLayer"]["@_materialId"],
+                        };
+                    })
+                };
+            }),
+
+            materials: getValueAsArray(document["visualizationData"]["wallData"]["materials"]["material"]).map((material: any) => {
+                return {
+                    id: material["@_id"],
+                    width: parseInt(material["materialCellMatrix"]["materialCellColumn"]["@_width"]),
+                    textureId: material["materialCellMatrix"]["materialCellColumn"]["materialCell"]["@_textureId"]
+                };
+            }),
+
+            textures: getValueAsArray(document["visualizationData"]["wallData"]["textures"]["texture"]).map((texture: any) => {
+                return {
+                    id: texture["@_id"],
+                    assetName: texture["bitmap"]["@_assetName"]
+                };
+            })
+        },
+        floorData: {
+            floors: getValueAsArray(document["visualizationData"]["floorData"]["floors"]["floor"]).map((floor: any) => {
+                return {
+                    id: floor["@_id"],
+
+                    visualizations: getValueAsArray(floor["visualization"]).map((visualization: any) => {
+                        return {
+                            size: parseInt(visualization["@_size"]),
+                            color: visualization["visualizationLayer"]["@_color"].substring(2),
+                            materialId: visualization["visualizationLayer"]["@_materialId"],
+                        };
+                    })
+                };
+            }),
+
+            materials: getValueAsArray(document["visualizationData"]["floorData"]["materials"]["material"]).map((material: any) => {
+                return {
+                    id: material["@_id"],
+                    width: parseInt(material["materialCellMatrix"]["materialCellColumn"]["@_width"]),
+                    textureId: material["materialCellMatrix"]["materialCellColumn"]["materialCell"]["@_textureId"]
+                };
+            }),
+
+            textures: getValueAsArray(document["visualizationData"]["floorData"]["textures"]["texture"]).map((texture: any) => {
+                return {
+                    id: texture["@_id"],
+                    assetName: texture["bitmap"]["@_assetName"]
+                };
+            })
+        }
+    } satisfies RoomVisualization;
 }
