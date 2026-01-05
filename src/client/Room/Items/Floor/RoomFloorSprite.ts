@@ -4,23 +4,19 @@ import RoomItemInterface from "@/Room/Interfaces/RoomItemInterface.js";
 import RoomItemSpriteInterface from "@/Room/Interfaces/RoomItemSpriteInterface";
 import FloorRenderer from "@/Room/Structure/FloorRenderer";
 import RoomSprite from "../RoomSprite.js";
+import RoomMapItem from "../Map/RoomFurnitureItem.js";
 
 export default class RoomFloorSprite extends RoomSprite {
-    priority = -1000;
+    priority = -100000;
 
-    private image?: OffscreenCanvas;
     private readonly offset: MousePosition;
 
-    constructor(public readonly item: RoomItemInterface, private readonly floorRenderer: FloorRenderer) {
+    constructor(public readonly item: RoomMapItem, private readonly image: OffscreenCanvas) {
         super(item);
 
-        this.floorRenderer.renderOffScreen().then((image) => {
-            this.image = image;
-        });
-
         this.offset = {
-            left: -(floorRenderer.rows * 32),
-            top: -(floorRenderer.depth * 16)
+            left: -(this.item.floorRenderer.rows * 32),
+            top: -(this.item.floorRenderer.depth * 16) - 16
         }
     }
 
@@ -29,7 +25,7 @@ export default class RoomFloorSprite extends RoomSprite {
             return;
         }
 
-        context.drawImage(this.image, this.offset.left - this.floorRenderer.structure.wall.thickness, this.offset.top);
+        context.drawImage(this.image, this.offset.left - this.item.floorRenderer.structure.wall.thickness, this.offset.top);
     }
 
     mouseover(position: MousePosition) {
@@ -43,19 +39,19 @@ export default class RoomFloorSprite extends RoomSprite {
             throw new ContextNotAvailableError();
         }
 
-        context.setTransform(1, .5, -1, .5, this.offset.left + (this.floorRenderer.rows * 32), 0);
+        context.setTransform(1, .5, -1, .5, this.offset.left + (this.item.floorRenderer.rows * 32), 0);
 
-        for(let path = this.floorRenderer.tiles.length - 1; path != -1; path--) {
-            if(!context.isPointInPath(this.floorRenderer.tiles[path].path, position.left, position.top)) {
+        for(let path = this.item.floorRenderer.tiles.length - 1; path != -1; path--) {
+            if(!context.isPointInPath(this.item.floorRenderer.tiles[path].path, position.left, position.top)) {
                 continue;
             }
 
-            //console.log(this.floorRenderer.tiles[path]);
+            //console.log(this.item.floorRenderer.tiles[path]);
 
             return {
-                row: this.floorRenderer.tiles[path].row,
-                column: this.floorRenderer.tiles[path].column,
-                depth: this.floorRenderer.tiles[path].depth
+                row: this.item.floorRenderer.tiles[path].row,
+                column: this.item.floorRenderer.tiles[path].column,
+                depth: this.item.floorRenderer.tiles[path].depth
             };
         }
 

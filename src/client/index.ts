@@ -4,6 +4,7 @@ import { RoomStructure } from "./Interfaces/RoomStructure.js";
 import RoomFloorSprite from "./Room/Items/Floor/RoomFloorSprite.js";
 import RoomWallSprite from "./Room/Items/Floor/RoomWallSprite.js";
 import RoomFurnitureItem from "./Room/Items/Furniture/RoomFurnitureItem.js";
+import RoomMapItem from "./Room/Items/Map/RoomFurnitureItem.js";
 import RoomItem from "./Room/Items/RoomItem.js";
 import RoomRenderer from "./Room/Renderer.js";
 import FloorRenderer from "./Room/Structure/FloorRenderer.js";
@@ -16,17 +17,19 @@ const root = document.getElementById("game");
 if(root) {
     const roomRenderer = new RoomRenderer(root);
 
-    const floorItem = new RoomItem("floor", []);
-
     const roomStructure: RoomStructure = {
+        door: {
+            row: 6,
+            column: 0
+        },
         grid: [
-            "XXXXXXXXXXXXXXXXXXXXXXXXX",
+            "XXXXXX2XXXXXXXXXXXXXXXXXX",
             "X22222222222222222222222X",
             "X22222222222222222222222X",
             "X22222222222222222222222X",
             "X22222222222222222222222X",
             "X22222222222222222222222X",
-            "X22222222222222222222222X",
+            "222222222222222222222222X",
             "X22222222222222222222222X",
             "X22222222222222222222222X",
             "X22222222222222222222222X",
@@ -75,17 +78,10 @@ if(root) {
         }
     };
 
-    floorItem.sprites.push(new RoomFloorSprite(
-        floorItem,
-        new FloorRenderer(roomStructure, "101", 64)
-    ));
-
-    floorItem.sprites.push(new RoomWallSprite(
-        floorItem,
+    roomRenderer.items.push(new RoomMapItem(
+        new FloorRenderer(roomStructure, "101", 64),
         new WallRenderer(roomStructure, "2301", 64)
     ));
-
-    roomRenderer.items.push(floorItem);
 
     {
         const furnitureRenderer = new FurnitureRenderer("bed_armas_two", 64, 2);
@@ -96,7 +92,7 @@ if(root) {
             depth: 2
         });
 
-        roomRenderer.items.push(furnitureItem);
+        //roomRenderer.items.push(furnitureItem);
     }
 
     {
@@ -115,7 +111,19 @@ if(root) {
         const furnitureRenderer = new FurnitureRenderer("country_fnc3", 64, 0);
         
         const furnitureItem = new RoomFurnitureItem(furnitureRenderer, {
-            row: 5,
+            row: 6,
+            column: 0,
+            depth: 2
+        });
+
+        roomRenderer.items.push(furnitureItem);
+    }
+
+    {
+        const furnitureRenderer = new FurnitureRenderer("country_fnc3", 64, 0);
+        
+        const furnitureItem = new RoomFurnitureItem(furnitureRenderer, {
+            row: 7,
             column: 1,
             depth: 2
         });

@@ -115,7 +115,7 @@ export default class FloorRenderer {
         });
 
         const width = (this.rows * 32) + (this.columns * 32) + (this.structure.wall.thickness * 2);
-        const height = (this.rows * 16) + (this.columns * 16) + this.structure.floor.thickness + (this.depth * 16) + 10;
+        const height = (this.rows * 16) + (this.columns * 16) + this.structure.floor.thickness + (this.depth * 16);
 
         const canvas = new OffscreenCanvas(width, height);
 
@@ -142,7 +142,7 @@ export default class FloorRenderer {
 
     private renderLeftEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
         context.beginPath();
-        context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
+        context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, (this.depth + 1) * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(let index in rectangles) {
@@ -162,7 +162,7 @@ export default class FloorRenderer {
 
     private renderRightEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
         context.beginPath();
-        context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
+        context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, (this.depth + 1) * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(let index in rectangles) {
@@ -186,7 +186,7 @@ export default class FloorRenderer {
 
     private renderTiles(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
         context.beginPath();
-        context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
+        context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * 32, (this.depth + 1) * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;
                 
         const tiles = new Path2D();

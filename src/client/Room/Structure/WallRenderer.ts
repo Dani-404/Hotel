@@ -2,6 +2,7 @@ import { RoomPattern } from "@/Interfaces/RoomPattern.js";
 import ContextNotAvailableError from "../../Exceptions/ContextNotAvailableError.js";
 import { RoomStructure } from "../../Interfaces/RoomStructure.js";
 import RoomAssets from "../../Assets/RoomAssets.js";
+import { RoomData } from "@/Interfaces/Room/RoomData.js";
 
 type WallRectangle = {
     row: number;
@@ -44,6 +45,32 @@ export default class WallRenderer {
                 this.depth = parseInt(column);
             }
         }
+    }
+
+    private async getDoorMask(data: RoomData) {
+        const assetData = data.assets.find((asset) => asset.name === `door_${this.size}`);
+
+        if(!assetData) {
+            throw new Error("Room asset data does not exist.");
+        }
+
+        const spriteData = data.sprites.find((sprite) => sprite.name === (assetData.source ?? assetData.name));
+
+        if(!spriteData) {
+            throw new Error("Sprite data does not exist for room texture.");
+        }
+
+        const doorMask = await RoomAssets.getRoomSprite("HabboRoomContent", {
+            x: spriteData.x,
+            y: spriteData.y,
+
+            width: spriteData.width,
+            height: spriteData.height,
+
+            flipHorizontal: assetData.flipHorizontal
+        });
+
+        return doorMask;
     }
 
     public async renderOffScreen() {
@@ -112,6 +139,8 @@ export default class WallRenderer {
             color: [visualization.color, "BBB"],
             flipHorizontal: assetData.flipHorizontal
         });
+
+        const doorMask = await this.getDoorMask(data);
         
         const width = (this.rows * 32) + (this.columns * 32) + (this.structure.floor.thickness * 2);
         const height = (this.rows * 16) + (this.columns * 16) + (this.depth * 16) + this.structure.floor.thickness + 10;
@@ -132,14 +161,36 @@ export default class WallRenderer {
             this.renderLeftWalls(context, currentRectangles, leftWallImage.image);
             this.renderRightWalls(context, currentRectangles, rightWallImage.image);
             this.renderWallTops(context, rectangles, topWallImage.image);
+
+            context.globalCompositeOperation = "destination-out";
+
+            this.renderDoorMask(context, rectangles, doorMask.image);
+
+            context.globalCompositeOperation = "source-over";
         }
 
-        return canvas;
+        const doorMaskCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+        const doorMaskContext = doorMaskCanvas.getContext("2d");
+
+        if(!doorMaskContext) {
+            throw new ContextNotAvailableError();
+        }
+
+        this.renderDoorMask(doorMaskContext, rectangles, doorMask.image, 1);
+        this.renderDoorMask(doorMaskContext, rectangles, doorMask.image, 2);
+
+        doorMaskContext.resetTransform();
+
+        doorMaskContext.globalCompositeOperation = "source-atop";
+        doorMaskContext.drawImage(canvas, 0, 0);
+
+        return {
+            wall: canvas,
+            doorMask: doorMaskCanvas
+        };
     }
 
     private renderLeftWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: OffscreenCanvas) {
-        const leftRectangles = rectangles.filter((rectangle) => rectangle.direction === 4);
-
         context.beginPath();
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -156,7 +207,7 @@ export default class WallRenderer {
             if(rectangle.direction == 4) {
                 column++;
                 
-                if(this.getTileDepth(row, column) != 'X') {
+                if(this.getTileDepth(row, column, false) != 'X') {
                     continue;
                 }
 
@@ -200,7 +251,7 @@ export default class WallRenderer {
             else if(rectangle.direction == 2) {
                 row++;
                 
-                if(this.getTileDepth(row, column) != 'X') {
+                if(this.getTileDepth(row, column, false) != 'X') {
                     continue;
                 }
 
@@ -265,6 +316,35 @@ export default class WallRenderer {
         context.closePath();
     }
 
+    private renderDoorMask(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: OffscreenCanvas, overlappingWalls: number = 0) {
+        if(rectangles.some((rectangle) => rectangle.row === this.structure.door.row && rectangle.column === this.structure.door.column + 1 && rectangle.direction === 2)) {
+            context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
+
+            const row = this.structure.door.row + overlappingWalls;
+            const column = this.structure.door.column;
+
+            const left = -(row * 32) + (column * 32);
+            const top = (column * 32) - (this.depth * 16);
+
+            const doorDepth = parseInt(this.getTileDepth(this.structure.door.row, this.structure.door.column, false));
+
+            context.drawImage(image, left, top + (doorDepth * 32) - this.structure.floor.thickness);
+        }
+        else if(rectangles.some((rectangle) => rectangle.row === this.structure.door.row + 1 && rectangle.column === this.structure.door.column && rectangle.direction === 4)) {
+            context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);        
+
+            const row = this.structure.door.row;
+            const column = this.structure.door.column + overlappingWalls;
+
+            const left = (column * 32) - (row * 32);
+            const top = (row * 32) - (this.depth * 16);
+
+            const doorDepth = parseInt(this.getTileDepth(this.structure.door.row, this.structure.door.column, false));
+
+            context.drawImage(image, left - image.width, top + (doorDepth * 32) - this.structure.floor.thickness);
+        }
+    }
+
     private getRectangles() {
         const rectangles: WallRectangle[] = [];
 
@@ -272,6 +352,10 @@ export default class WallRenderer {
         for(let row = 0; row < this.structure.grid.length; row++) {
             for(let column = 0; column < this.structure.grid[row].length; column++) {
                 if(this.structure.grid[row][column] === 'X') {
+                    continue;
+                }
+
+                if(this.structure.door.row === row && this.structure.door.column === column) {
                     continue;
                 }
 
@@ -311,6 +395,10 @@ export default class WallRenderer {
         for(let row = 0; row < this.structure.grid.length; row++) {
             for(let column = 0; column < this.structure.grid[row].length; column++) {
                 if(this.structure.grid[row][column] === 'X') {
+                    continue;
+                }
+
+                if(this.structure.door.row === row && this.structure.door.column === column) {
                     continue;
                 }
 
@@ -356,7 +444,11 @@ export default class WallRenderer {
         return rectangles;
     }
 
-    private getTileDepth(row: number, column: number): string {
+    private getTileDepth(row: number, column: number, excludeDoor: boolean = true): string {
+        if(excludeDoor && this.structure.door.row === row && this.structure.door.column === column) {
+            return 'X';
+        }
+
         if(this.structure.grid[row] && this.structure.grid[row][column]) {
             return this.structure.grid[row][column];
         }

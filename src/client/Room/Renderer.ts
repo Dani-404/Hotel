@@ -196,9 +196,13 @@ export default class RoomRenderer extends EventTarget {
         let priority = sprite.priority;
 
         if(sprite.item.position) {
-            priority += (Math.round(sprite.item.position.row) * 1000) + (Math.round(sprite.item.position.column) * 1000) + (sprite.item.position.depth * 100);
+            priority += RoomRenderer.getPositionPriority(sprite.item.position);
         }
 
         return priority;
+    }
+
+    public static getPositionPriority(position: RoomPosition) {
+        return (Math.round(position.row) * 1000) + (Math.round(position.column) * 1000) + (position.depth * 100);
     }
 }

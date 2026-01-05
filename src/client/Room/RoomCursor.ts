@@ -24,7 +24,7 @@ export default class RoomCursor {
     }
 
     private render() {
-        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === "floor");
+        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === "map");
 
         if(!entity) {
             this.furnitureItem.disabled = true;
