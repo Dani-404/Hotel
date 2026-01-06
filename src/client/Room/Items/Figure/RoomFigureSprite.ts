@@ -11,13 +11,13 @@ export default class RoomFigureSprite extends RoomSprite {
     }
 
     render(context: OffscreenCanvasRenderingContext2D) {
-        context.drawImage(this.sprite.image, this.sprite.x + 32, this.sprite.y + 16);
+        context.drawImage(this.sprite.image, this.sprite.x + 64, this.sprite.y - 16);
     }
 
     mouseover(position: MousePosition) {
         const relativePosition: MousePosition = {
-            left: position.left - (this.sprite.x + 32),
-            top: position.top - (this.sprite.y + 16)
+            left: position.left - (this.sprite.x + 64),
+            top: position.top - (this.sprite.y - 16)
         };
 
         if(relativePosition.left < 0 || relativePosition.top < 0) {

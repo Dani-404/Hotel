@@ -26,35 +26,35 @@ if(root) {
             column: 0
         },
         grid: [
-            "XXXXXX2XXXXXXXXXXXXXXXXXX",
-            "X22222222222222222222222X",
-            "X22222222222222222222222X",
-            "X22222222222222222222222X",
-            "X22222222222222222222222X",
-            "X22222222222222222222222X",
-            "222222222222222222222222X",
-            "X22222222222222222222222X",
-            "X22222222222222222222222X",
-            "X22222222222222222222222X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X11111111111111111111111X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
-            "X00000000000000000000000X",
+            "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "222222222222222222222222XX22222222222222222222222X",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "X22222222222222222222222XX22222222222222222222222X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X11111111111111111111111XX11111111111111111111111X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
+            "X00000000000000000000000XX00000000000000000000000X",
             "XXXXXXXXXXX000XXXXXXXXXXX",
             "XXXXXXXXXXX000XXXXXXXXXXX",
             "XXXXXXXXXXX000XXXXXXXXXXX",
@@ -212,12 +212,12 @@ if(root) {
         canvas.classList.add("debug");
         document.body.appendChild(canvas);
         
-        canvas.width = 200;
-        canvas.height = 200;
+        canvas.width = 256;
+        canvas.height = 256;
 
         const context = canvas.getContext("2d");
 
-        const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hr-831-1041.hd-185-1026.ch-805-1134.lg-285-1200.sh-300-1195.ha-0-1041"));
+        const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"), 1);
 
         /*const figureRenderer = new FigureRenderer([
             {
@@ -227,8 +227,8 @@ if(root) {
             }
         ]);*/
 
-        figureRenderer.renderToCanvas().then((canvas) => {
-            context?.drawImage(canvas, 0, 0);
+        figureRenderer.renderToCanvas(2 * 8).then(({ image }) => {
+            context?.drawImage(image, 0, 0);
         });
 
         const figureItem = new RoomFigureItem(figureRenderer, {
@@ -248,5 +248,37 @@ if(root) {
                 figureItem.setPosition(event.floorEntity.position); 
             }
         });
+    }
+
+    const generateRandomFigures = true;
+
+    if(generateRandomFigures) {
+        for(let row = 1; row < 9; row++) {
+            for(let column = 26; column < 49; column++) {
+                const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hr-831-1041.hd-185-1026.ch-805-1134.lg-285-1200.sh-300-1195.ha-0-1041"), row - 1);
+
+                const figureItem = new RoomFigureItem(figureRenderer, {
+                    row,
+                    column,
+                    depth: 2
+                });
+
+                roomRenderer.items.push(figureItem);
+            }
+        }
+
+        for(let row = 11; row < 18; row++) {
+            for(let column = 26; column < 49; column++) {
+                const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"), row - 11);
+
+                const figureItem = new RoomFigureItem(figureRenderer, {
+                    row,
+                    column,
+                    depth: 1
+                });
+
+                roomRenderer.items.push(figureItem);
+            }
+        }
     }
 }

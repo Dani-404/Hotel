@@ -27,7 +27,10 @@ export async function extractSwf(assetName: string, filePath: string) {
 
     const swf = SWFReader.readSync(filePath);
 
+    //console.log(swf.tags.map((tag: any) => tag.header));
+
     const map = swf.tags.find((tag: any) => tag.header.code === 76).symbols.map((symbol: any) => {
+        //console.log(symbol);
         symbol.name = symbol.name.substr(assetName.length + 1);
 
         return symbol;
@@ -74,9 +77,13 @@ export async function extractSwf(assetName: string, filePath: string) {
 
         // image
         if (tag.header.code === 36) {
-            const symbol = map.find((symbol: any) => symbol.id === tag.characterId);
+            const symbols = map.filter((symbol: any) => symbol.id === tag.characterId && symbol.name);
 
-            if (!symbol || !symbol.name) {
+            if (!symbols.length) {
+                console.log("Found tag without a symbol", {
+                    tag
+                });
+
                 continue;
             }
 
@@ -100,13 +107,11 @@ export async function extractSwf(assetName: string, filePath: string) {
                 }
             }
 
-            const spriteName = symbol.name.substring(assetName.length + 1);
-
-            const imageOutput = path.join(output, "images", `${symbol.name}.png`);
-
-            collection.images.push(imageOutput);
-
-            await image.write(imageOutput as any);
+            for(let symbol of symbols) {
+                const imageOutput = path.join(output, "images", `${symbol.name}.png`);
+                collection.images.push(imageOutput);
+                await image.write(imageOutput as any);
+            }
         }
     }
 

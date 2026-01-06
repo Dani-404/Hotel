@@ -57,8 +57,6 @@ export function createAssetsDataFromManifest(collection: SwfExtractionCollection
     const document = parser.parse(readFileSync(collection.data.manifest, { encoding: "utf-8" }), true);
 
     return document.manifest.library.assets.asset.filter((asset: any) => asset["@_mimeType"] === 'image/png').map((asset: any) => {
-        console.log(asset);
-
         const offset = getValueAsArray(asset["param"]).find((asset: any) => asset["@_key"] === 'offset')?.["@_value"]?.split(',');
 
         return {

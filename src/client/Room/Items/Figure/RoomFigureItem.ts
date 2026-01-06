@@ -16,11 +16,18 @@ export default class RoomFigureItem extends RoomItem {
     }
     
     process(frame: number): void {
+        this.render(frame);
     }
 
     render(frame: number = 0) {
-        this.figureRenderer.render().then((sprites) => {
-            this.sprites = sprites.map((sprite) => new RoomFigureSprite(this, sprite));
-        });
+            /*this.figureRenderer.render(frame).then((sprites) => {
+                this.sprites = sprites.map((sprite) => new RoomFigureSprite(this, sprite));
+                //this.sprites = [new RoomFigureSprite(this, sprites[0])];
+            });*/
+            
+            this.figureRenderer.renderToCanvas(frame).then((sprite) => {
+                //this.sprites = sprites.map((sprite) => new RoomFigureSprite(this, sprite));
+                this.sprites = [new RoomFigureSprite(this, sprite)];
+            });
     }
 }

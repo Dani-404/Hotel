@@ -94,3 +94,40 @@ export function createFiguredataData(): any {
         })
     }
 }
+
+export function createAvatarActionsData(): any {
+    const parser = new XMLParser({
+        ignoreAttributes: false
+    });
+
+    const document = parser.parse(readFileSync("assets/HabboAvatarActions.xml", { encoding: "utf-8" }), true);
+
+    return document.actions.action.map((action: any) => {
+        return {
+            id: action["@_id"],
+            state: action["@_state"],
+            precedence: parseInt(action["@_precedence"]),
+            main: action["@_main"] === '1',
+            isDefault: action["@_isdefault"] === '1',
+            geometryType: action["@_geometrytype"],
+            activePartSet: action["@_activepartset"],
+            assetPartDefinition: action["@_assetpartdefinition"],
+            prevents: action["@_prevents"]?.split(','),
+            animation: action["@_animation"] === '1',
+            types: getValueAsArray(action.type).map((type: any) => {
+                return {
+                    id: parseInt(type["@_id"]),
+                    animated: type["@_animated"] == 'true',
+                    prevents: type["@_prevents"]?.split(','),
+                    preventHeadTurn: type["@_preventheadturn"] === 'true'
+                }
+            }),
+            params: getValueAsArray(action.param).map((param: any) => {
+                return {
+                    id: param["@_id"],
+                    value: parseInt(param["@_value"]),
+                }
+            })
+        };
+    });
+}

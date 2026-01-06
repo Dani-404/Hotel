@@ -55,6 +55,14 @@ export default class RoomRenderer extends EventTarget {
             this.frame = (this.frame + 1) % this.framesPerSecond;
             this.lastFrameTimestamp = performance.now();
 
+            Performance.startPerformanceCheck("Process room items", 5);
+
+            for(let index = 0; index < this.items.length; index++) {
+                this.items[index].process(this.frame);
+            }
+
+            Performance.endPerformanceCheck("Process room items");
+
             this.dispatchEvent(new RoomFrameEvent());
         }
 
@@ -92,14 +100,6 @@ export default class RoomRenderer extends EventTarget {
         if(!context) {
             throw new ContextNotAvailableError();
         }
-
-        Performance.startPerformanceCheck("Process room items", 5);
-
-        for(let index = 0; index < this.items.length; index++) {
-            this.items[index].process(this.frame);
-        }
-
-        Performance.endPerformanceCheck("Process room items");
 
         this.renderedOffset = {
             left: this.center.left + this.camera.cameraPosition.left,

@@ -1,4 +1,4 @@
-export const figureRenderPriority = {
+export const figureRenderPriority: Record<string, Record<string, string[]>> = {
     "std": {
         "0": ["li","lh","ls","ri","bd","sh","lg","ch","wa","ca","rh","rs","hd","fc","ey","hr","hrb","fa","ea","ha","he"],
         "1": ["li","lh","ls","bd","sh","lg","ch","wa","ca","ri","rh","rs","hd","fc","ey","hr","hrb","fa","ea","ha","he"],

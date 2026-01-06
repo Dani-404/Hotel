@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import path from "path";
-import { createFiguredataData, createFiguremapData } from "./data/DataCreation.ts";
+import { createAvatarActionsData, createFiguredataData, createFiguremapData } from "./data/DataCreation.ts";
 
 const assetName = process.argv[2];
 
@@ -35,6 +35,13 @@ if(existsSync(path.join("temp", assetName))) {
         const data = createFiguredataData();
 
         writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
+            encoding: "utf-8"
+        });
+    }
+    else if(assetName === "HabboAvatarActions") {
+        const data = createAvatarActionsData();
+
+        writeFileSync(path.join(outputPath, `avataractions.json`), JSON.stringify(data, undefined, 2), {
             encoding: "utf-8"
         });
     }
