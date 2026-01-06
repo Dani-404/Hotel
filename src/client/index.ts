@@ -1,4 +1,5 @@
 import DebugRoomFurniture from "./Debug/DebugRoomFurniture.js";
+import FigureRenderer from "./Figure/FigureRenderer.js";
 import FurnitureRenderer from "./Furniture/FurnitureRenderer.js";
 import { RoomStructure } from "./Interfaces/RoomStructure.js";
 import RoomFloorSprite from "./Room/Items/Floor/RoomFloorSprite.js";
@@ -203,4 +204,29 @@ if(root) {
             context?.drawImage(canvas, 0, 0);
         });
     }*/
+
+    {
+        const canvas = document.createElement("canvas");
+        canvas.classList.add("debug");
+        document.body.appendChild(canvas);
+        
+        canvas.width = 200;
+        canvas.height = 200;
+
+        const context = canvas.getContext("2d");
+
+        const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hr-831-1041.hd-185-1026.ch-805-1134.lg-285-1200.sh-300-1195.ha-0-1041"));
+
+        /*const figureRenderer = new FigureRenderer([
+            {
+                type: "hr",
+                setId: "831",
+                colorIndex: 1
+            }
+        ]);*/
+
+        figureRenderer.renderToCanvas().then((canvas) => {
+            context?.drawImage(canvas, 0, 0);
+        });
+    }
 }

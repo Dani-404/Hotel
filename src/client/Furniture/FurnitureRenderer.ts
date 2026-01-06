@@ -80,7 +80,7 @@ export default class FurnitureRenderer {
                 continue;
             }
 
-            console.log("Asset sprite is not in memory, rendering new sprite: " + assetName);
+            console.debug("Asset sprite is not in memory, rendering new sprite: " + assetName);
 
             const assetData = this.data.assets.find((asset) => asset.name === assetName);
 

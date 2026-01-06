@@ -25,7 +25,7 @@ export function createFiguremapData(): any {
             id: library["@_id"],
             parts: getValueAsArray(library.part).map((part: any) => {
                 return {
-                    id: parseInt(part["@_id"]),
+                    id: part["@_id"],
                     type: part["@_type"]
                 }
             })
@@ -58,17 +58,17 @@ export function createFiguredataData(): any {
             }
         }),
 
-        sets: document["figuredata"]["sets"]["settype"].map((settype: any) => {
+        settypes: document["figuredata"]["sets"]["settype"].map((settype: any) => {
             return {
                 type: settype["@_type"],
                 paletteId: parseInt(settype["@_paletteid"]),
                 mandatoryGender: {
-                    male: [ parseInt(settype["@_mand_m_0"]), parseInt(settype["@_mand_m_1"]) ],
-                    female: [ parseInt(settype["@_mand_m_0"]), parseInt(settype["@_mand_m_1"]) ]
+                    male: [ parseInt(settype["@_mand_m_0"]) === 1, parseInt(settype["@_mand_m_1"]) === 1 ],
+                    female: [ parseInt(settype["@_mand_m_0"]) === 1, parseInt(settype["@_mand_m_1"]) === 1 ]
                 },
                 sets: settype["set"].map((set: any) => {
                     return {
-                        id: parseInt(set["@_id"]),
+                        id: set["@_id"],
                         gender: set["@_gender"],
                         club: set["@_club"] === '1',
                         colorable: set["@_colorable"] === '1',
@@ -77,8 +77,8 @@ export function createFiguredataData(): any {
 
                         parts: getValueAsArray(set["part"]).map((part: any) => {
                             return {
-                                id: parseInt(part["@_id"]),
-                                type: part["@_part"],
+                                id: part["@_id"],
+                                type: part["@_type"],
                                 colorable: set["@_colorable"] === '1',
                                 index: parseInt(part["@_index"]),
                                 colorIndex: parseInt(part["@_colorindex"])

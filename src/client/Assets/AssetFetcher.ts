@@ -103,8 +103,6 @@ export default class AssetFetcher {
         context.drawImage(image, properties.x, properties.y, properties.width, properties.destinationHeight ?? properties.height, 0, 0, properties.width, properties.height);
 
         if(properties.color) {
-            console.log(properties.color);
-
             const colorCanvas = new OffscreenCanvas(properties.width, properties.destinationHeight ?? properties.height);
             const colorContext = colorCanvas.getContext("2d");
 
