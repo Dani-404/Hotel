@@ -14,6 +14,7 @@ export type AssetSpriteProperties = {
     color?: string | string[];
 
     destinationHeight?: number;
+    ignoreImageData?: boolean;
 };
 
 export default class AssetFetcher {
@@ -126,7 +127,7 @@ export default class AssetFetcher {
 
         return {
             image: canvas,
-            imageData: context.getImageData(0, 0, canvas.width, canvas.height)
+            imageData: (!properties.ignoreImageData)?(context.getImageData(0, 0, canvas.width, canvas.height)):(new ImageData(canvas.width, canvas.height))
         };
     }
 }

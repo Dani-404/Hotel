@@ -6,10 +6,16 @@ import { FigureRendererSprite } from "@/Figure/FigureRenderer.js";
 import { AvatarActionsData } from "@/Interfaces/Figure/Avataractions.js";
 
 export default class FigureAssets {
-    public static figuremap?: FiguremapData;
-    public static figuredata?: FiguredataData;
-    public static avataractions?: AvatarActionsData;
+    public static figuremap: FiguremapData;
+    public static figuredata: FiguredataData;
+    public static avataractions: AvatarActionsData;
 
+    public static async loadAssets() {
+        FigureAssets.figuremap = await FigureAssets.getFiguremapData();
+        FigureAssets.figuredata = await FigureAssets.getFiguredataData();
+        FigureAssets.avataractions = await FigureAssets.getAvataractionsData();
+    }
+    
     public static async getFiguremapData() {
         return await AssetFetcher.fetchJson<FiguremapData>(`../assets/figure/figuremap.json`);
     }
@@ -35,6 +41,6 @@ export default class FigureAssets {
     }
 
     public static readonly assetSprites: Map<string, FigureRendererSprite | null> = new Map();
-    public static readonly figureCollection: Map<string, FigureRendererSprite[]> = new Map();
-    public static readonly figureImage: Map<string, FigureRendererSprite> = new Map();
+    public static readonly figureCollection: Map<string, Promise<FigureRendererSprite[]>> = new Map();
+    public static readonly figureImage: Map<string, Promise<FigureRendererSprite>> = new Map();
 }
