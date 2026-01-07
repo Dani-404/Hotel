@@ -50,8 +50,6 @@ export async function extractSwf(assetName: string, filePath: string) {
                 continue;
             }
 
-            console.log(symbol.name);
-
             const fileOutput = path.join(output, `${symbol.name}.xml`);
 
             const baseName = path.basename(fileOutput, ".xml");

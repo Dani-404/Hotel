@@ -1,10 +1,10 @@
 import type { SwfExtractionCollection } from "../swf/SwfExtraction.js";
-import type { FurnitureAsset, FurnitureAssets } from "../../../../src/client/Interfaces/Furniture/FurnitureAssets.ts"
-import type { FigureAssets } from "../../../../src/client/Interfaces/Figure/FigureAssets.ts"
-import type { FurnitureLogic } from "../../../../src/client/Interfaces/Furniture/FurnitureLogic.ts"
-import type { FurnitureVisualization } from "../../../../src/client/Interfaces/Furniture/FurnitureVisualization.ts"
-import type { RoomVisualization } from "../../../../src/client/Interfaces/Room/RoomVisualization.ts"
-import type { FurnitureIndex } from "../../../../src/client/Interfaces/Furniture/FurnitureIndex.ts"
+import type { FurnitureAsset, FurnitureAssets } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureAssets.ts"
+import type { FigureAssets } from "../../../../packages/client/src/Interfaces/Figure/FigureAssets.ts"
+import type { FurnitureLogic } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureLogic.ts"
+import type { FurnitureVisualization } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureVisualization.ts"
+import type { RoomVisualization } from "../../../../packages/client/src/Interfaces/Room/RoomVisualization.ts"
+import type { FurnitureIndex } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureIndex.ts"
 import { XMLParser } from "fast-xml-parser";
 import { readFileSync } from "fs";
 

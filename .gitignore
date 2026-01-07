@@ -1,2 +1,6 @@
 build/
 packages/*/node_modules/
+utils/*/node_modules/
+
+assets/*/
+!assets/fonts/
