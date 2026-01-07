@@ -39,19 +39,7 @@ export default class FigureRenderer {
         eye: "ea"
     };
 
-    private renderCache?: {
-        configurationPart: FigureConfiguration[0],
-        setPartData: FiguredataData["settypes"][0]["sets"][0]["parts"][0],
-        settypeData: FiguredataData["settypes"][0],
-        figureData: FigureData,
-        setPartAssetData: FiguremapData[0]
-    }[];
-
-    private isRendering: boolean = false;
-
-    public readonly actions: string[] =  ["Default", "Move"];
-
-    constructor(private readonly configuration: FigureConfiguration, public readonly direction: number) {
+    constructor(private readonly configuration: FigureConfiguration, public direction: number, public readonly actions: string[] =  ["Default"]) {
 
     }
 
@@ -79,7 +67,7 @@ export default class FigureRenderer {
 
     public getSpriteFrameFromSequence(frame: number) {
         const frameSequence = 4;
-        const frameRepeat = 3;
+        const frameRepeat = 2;
         const spriteFrame = Math.floor((frame % (frameSequence * frameRepeat)) / frameRepeat);
 
         return spriteFrame;
@@ -98,11 +86,7 @@ export default class FigureRenderer {
             return await FigureAssets.figureCollection.get(renderName)!;
         }
 
-        this.isRendering = true;
-
         const sprites: Promise<FigureRendererSprite[]> = new Promise(async (resolve) => {
-            console.time("Rendering new figure (" + renderName + ")");
-
             const avatarActionsData = this.getAvatarActionsData(FigureAssets.avataractions, this.actions);
 
             //if(!this.renderCache) {
@@ -224,16 +208,12 @@ export default class FigureRenderer {
 
             const sprites: FigureRendererSprite[] = spritePromises.filter<PromiseFulfilledResult<FigureRendererSprite>>((result) => result.status === "fulfilled").map((result) => result.value);
 
-            console.timeEnd("Rendering new figure (" + renderName + ")");
-
             resolve(sprites);
         });
 
         FigureAssets.figureCollection.set(renderName, sprites);
 
         const result = await sprites;
-
-        this.isRendering = false;
 
         return result;
     }
@@ -405,5 +385,21 @@ export default class FigureRenderer {
             default:
                 return "std";
         }
+    }
+
+    public addAction(id: string) {
+        if(this.actions.includes(id)) {
+            return;
+        }
+
+        this.actions.push(id);
+    }
+
+    public removeAction(id: string) {
+        if(!this.actions.includes(id)) {
+            return;
+        }
+
+        this.actions.splice(this.actions.indexOf(id), 1);
     }
 }

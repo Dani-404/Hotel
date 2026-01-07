@@ -45,7 +45,7 @@ export default class RoomItem implements RoomItemInterface {
             relativePosition,
 
             startTimestamp: performance.now(),
-            durationInMilliseconds: (Math.abs(relativePosition.row) + Math.abs(relativePosition.column) + Math.abs(relativePosition.depth)) * 500
+            durationInMilliseconds: /*Math.max(1, (Math.abs(relativePosition.row) + Math.abs(relativePosition.column) + Math.abs(relativePosition.depth))) */ 500
         };
     }
 
@@ -57,10 +57,8 @@ export default class RoomItem implements RoomItemInterface {
         const elapsedSincedStart = performance.now() - this.positionPathData.startTimestamp;
 
         if(elapsedSincedStart >= this.positionPathData.durationInMilliseconds) {
-            this.setPosition(this.positionPathData.toPosition);
-
-            this.positionPathData = undefined;
-
+            this.finishPositionPath();
+            
             return;
         }
 
@@ -69,5 +67,15 @@ export default class RoomItem implements RoomItemInterface {
             column: this.positionPathData.fromPosition.column + ((this.positionPathData.relativePosition.column / this.positionPathData.durationInMilliseconds) * elapsedSincedStart),
             depth: this.positionPathData.fromPosition.depth + ((this.positionPathData.relativePosition.depth / this.positionPathData.durationInMilliseconds) * elapsedSincedStart)
         });
+    }
+
+    public finishPositionPath() {
+        if(!this.positionPathData) {
+            return;
+        }
+
+        this.setPosition(this.positionPathData.toPosition);
+
+        this.positionPathData = undefined;
     }
 }

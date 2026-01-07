@@ -221,7 +221,7 @@ const root = document.getElementById("game");
 
             const context = canvas.getContext("2d");
 
-            const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"), 1);
+            const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"), 2);
 
             /*const figureRenderer = new FigureRenderer([
                 {
@@ -259,7 +259,7 @@ const root = document.getElementById("game");
         if(generateRandomFigures) {
             for(let row = 1; row < 9; row++) {
                 for(let column = 26; column < 49; column++) {
-                    const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hr-831-1041.hd-185-1026.ch-805-1134.lg-285-1200.sh-300-1195.ha-0-1041"), row - 1);
+                    const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hr-831-1041.hd-185-1026.ch-805-1134.lg-285-1200.sh-300-1195.ha-0-1041"), row - 1, ["Default", "Move"]);
 
                     const figureItem = new RoomFigureItem(figureRenderer, {
                         row,
@@ -273,7 +273,7 @@ const root = document.getElementById("game");
 
             for(let row = 11; row < 18; row++) {
                 for(let column = 26; column < 49; column++) {
-                    const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"), row - 11);
+                    const figureRenderer = new FigureRenderer(FigureRenderer.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"), row - 11, ["Default", "Move"]);
 
                     const figureItem = new RoomFigureItem(figureRenderer, {
                         row,
