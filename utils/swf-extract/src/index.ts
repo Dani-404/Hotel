@@ -1,8 +1,8 @@
 import { copyFileSync, existsSync, mkdirSync, readdirSync, rmdirSync, rmSync, writeFileSync } from "fs";
-import { createSpritesheet } from "./spritesheet/SpritesheetCreation.ts";
-import { extractSwf } from "./swf/SwfExtraction.ts";
+import { createSpritesheet } from "./spritesheet/SpritesheetCreation.js";
+import { extractSwf } from "./swf/SwfExtraction.js";
 import path from "path";
-import { createAssetsData, createAssetsDataFromManifest, createIndexData, createLogicData, createRoomVisualizationData, createVisualizationData } from "./data/DataCreation.ts";
+import { createAssetsData, createAssetsDataFromManifest, createIndexData, createLogicData, createRoomVisualizationData, createVisualizationData } from "./data/DataCreation.js";
 import type { FurnitureData } from "../../../src/client/Interfaces/Furniture/FurnitureData.ts"
 import type { FigureData } from "../../../src/client/Interfaces/Figure/FigureData.ts"
 import type { RoomData } from "../../../src/client/Interfaces/Room/RoomData.ts"

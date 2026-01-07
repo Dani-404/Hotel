@@ -1,4 +1,4 @@
-import type { SwfExtractionCollection } from "../swf/SwfExtraction.ts";
+import type { SwfExtractionCollection } from "../swf/SwfExtraction.js";
 import type { FurnitureAsset, FurnitureAssets } from "../../../../src/client/Interfaces/Furniture/FurnitureAssets.ts"
 import type { FigureAssets } from "../../../../src/client/Interfaces/Figure/FigureAssets.ts"
 import type { FurnitureLogic } from "../../../../src/client/Interfaces/Furniture/FurnitureLogic.ts"

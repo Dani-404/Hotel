@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import path from "path";
-import { createAvatarActionsData, createFiguredataData, createFiguremapData } from "./data/DataCreation.ts";
+import { createAvatarActionsData, createFiguredataData, createFiguremapData } from "./data/DataCreation.js";
 
 const assetName = process.argv[2];
 

@@ -1,11 +1,1 @@
-node_modules/
-build/
-assets/furniture/
-assets/room/
-assets/figure/
-
-utils/swf-extract/temp/
-utils/swf-extract/assets/
-
-utils/furnidata-extract/temp/
-utils/furnidata-extract/assets/
+packages/*/node_modules/
