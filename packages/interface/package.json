@@ -1,10 +1,15 @@
 {
-  "type": "module",
   "scripts": {
-    "build": "sass src/index.scss ../../build/stylesheets/index.css",
-    "watch": "sass --watch src/index.scss ../../build/stylesheets/index.css"
+    "build": "npx parcel build src/index.tsx --dist-dir ../../build/interface",
+    "watch": "npx parcel watch src/index.tsx --dist-dir ../../build/interface"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "sass": "^1.97.1"
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "parcel": "^2.14.0"
   }
 }
