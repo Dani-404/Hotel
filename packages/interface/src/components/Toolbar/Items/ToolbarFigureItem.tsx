@@ -10,9 +10,7 @@ export default function ToolbarFigureItem() {
     const [figureImage, setFigureImage] = useState<OffscreenCanvas>();
 
     useEffect(() => {
-        internalEventTarget.addEventListener("ClientFigureResponse", (_event) => {
-            const event = _event as ClientFigureResponse;
-
+        internalEventTarget.addEventListener<ClientFigureResponse>("ClientFigureResponse", (event) => {
             console.log("Received ClientFigureResponse in interface");
 
             setFigureImage(event.image);

@@ -4,11 +4,11 @@ import InterfaceInstance from './components/InterfaceInstance';
 
 import "./styles/fonts.css";
 import "./styles/index.css";
-import { InternalEventTargetContext } from './app/InternalEventTargetContext';
+import { InternalEventTargetContext, TypedEventTarget } from './app/InternalEventTargetContext';
 import Dialog from './components/Dialogs/Dialog';
 import Toolbar from './components/Toolbar/Toolbar';
 
-(window as any).createInterfaceInstance = function createInterfaceInstance(element: HTMLElement, internalEventTarget: EventTarget) {
+(window as any).createInterfaceInstance = function createInterfaceInstance(element: HTMLElement, internalEventTarget: TypedEventTarget) {
   const root = createRoot(element);
 
   root.render(

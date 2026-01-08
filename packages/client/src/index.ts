@@ -12,8 +12,9 @@ import WallRenderer from "@/Room/Structure/WallRenderer.js";
 import ClientInstance from "./ClientInstance.js";
 import ClientFigureRequest from "@shared/interfaces/requests/ClientFigureRequest.js";
 import ClientFigureResponse from "@shared/interfaces/responses/ClientFigureResponse.js";
+import type { TypedEventTarget } from "@/Interfaces/TypedEventTarget.js";
 
-(window as any).createClientInstance = async function createClientInstance(element: HTMLElement, internalEventTarget: EventTarget) {
+(window as any).createClientInstance = async function createClientInstance(element: HTMLElement, internalEventTarget: TypedEventTarget) {
     await FigureAssets.loadAssets();
 
     const clientInstance = new ClientInstance(element, internalEventTarget);
@@ -212,9 +213,7 @@ import ClientFigureResponse from "@shared/interfaces/responses/ClientFigureRespo
             }
         });
 
-        internalEventTarget.addEventListener("ClientFigureRequest", (_event) => {
-            // const event = _event as ClientFigureRequest;
-
+        internalEventTarget.addEventListener<ClientFigureRequest>("ClientFigureRequest", (event) => {
             console.log("Received ClientFigureRequest from interface");
 
             figureRenderer.renderToCanvas(2 * 8).then(({ image }) => {
