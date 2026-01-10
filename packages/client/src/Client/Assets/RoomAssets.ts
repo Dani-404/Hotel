@@ -11,7 +11,7 @@ export default class RoomAssets {
         return await AssetFetcher.fetchImage(`/assets/room/${assetName}/${assetName}.png`);
     }
 
-    public static async getRoomSprite(assetName: string, properties: AssetSpriteProperties): Promise<{ image: OffscreenCanvas, imageData: ImageData }> {
+    public static async getRoomSprite(assetName: string, properties: AssetSpriteProperties): Promise<{ image: ImageBitmap, imageData: ImageData }> {
         return await AssetFetcher.fetchImageSprite(`/assets/room/${assetName}/${assetName}.png`, properties);
     }
 

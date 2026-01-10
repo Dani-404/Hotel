@@ -189,7 +189,7 @@ export default class WallRenderer {
         };
     }
 
-    private renderLeftWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: OffscreenCanvas) {
+    private renderLeftWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap) {
         context.beginPath();
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -230,7 +230,7 @@ export default class WallRenderer {
         context.closePath();
     }
 
-    private renderRightWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: OffscreenCanvas) {
+    private renderRightWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap) {
         context.beginPath();
         context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);        
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -270,7 +270,7 @@ export default class WallRenderer {
         context.closePath();
     }
 
-    private renderWallTops(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: OffscreenCanvas) {
+    private renderWallTops(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap) {
         context.beginPath();
         context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * 32, this.depth * 16);     
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -315,7 +315,7 @@ export default class WallRenderer {
         context.closePath();
     }
 
-    private renderDoorMask(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: OffscreenCanvas, overlappingWalls: number = 0) {
+    private renderDoorMask(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap, overlappingWalls: number = 0) {
         if(rectangles.some((rectangle) => rectangle.row === this.structure.door.row && rectangle.column === this.structure.door.column + 1 && rectangle.direction === 2)) {
             context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, this.depth * 16);
 

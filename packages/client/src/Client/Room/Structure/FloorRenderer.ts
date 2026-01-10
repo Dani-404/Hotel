@@ -139,7 +139,7 @@ export default class FloorRenderer {
         return canvas;
     }
 
-    private renderLeftEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
+    private renderLeftEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
         context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, (this.depth + 1) * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -159,7 +159,7 @@ export default class FloorRenderer {
         context.fill();
     }
 
-    private renderRightEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
+    private renderRightEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, (this.depth + 1) * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -183,7 +183,7 @@ export default class FloorRenderer {
         context.fill();
     }
 
-    private renderTiles(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: OffscreenCanvas) {
+    private renderTiles(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
         context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * 32, (this.depth + 1) * 16);
         context.fillStyle = context.createPattern(image, "repeat")!;

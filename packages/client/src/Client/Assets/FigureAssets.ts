@@ -36,7 +36,7 @@ export default class FigureAssets {
         return await AssetFetcher.fetchImage(`/assets/figure/${name}/${name}.png`);
     }
 
-    public static async getFigureSprite(name: string, properties: AssetSpriteProperties): Promise<{ image: OffscreenCanvas, imageData: ImageData }> {
+    public static async getFigureSprite(name: string, properties: AssetSpriteProperties): Promise<{ image: ImageBitmap, imageData: ImageData }> {
         return await AssetFetcher.fetchImageSprite(`/assets/figure/${name}/${name}.png`, properties);
     }
 

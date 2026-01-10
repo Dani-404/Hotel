@@ -20,7 +20,7 @@ export type AssetSpriteProperties = {
 export default class AssetFetcher {
     private static json: Map<string, Promise<unknown>> = new Map();
     private static images: Map<string, Promise<ImageBitmap>> = new Map();
-    private static sprites: Record<string, (AssetSpriteProperties & { sprite: Promise<{ image: OffscreenCanvas, imageData: ImageData }> })[]> = {};
+    private static sprites: Record<string, (AssetSpriteProperties & { sprite: Promise<{ image: ImageBitmap, imageData: ImageData }> })[]> = {};
 
     public static async fetchJson<T>(url: string): Promise<T> {
         if(this.json.has(url)) {
@@ -80,7 +80,7 @@ export default class AssetFetcher {
         return result;
     }
 
-    public static async fetchImageSprite(url: string, properties: AssetSpriteProperties): Promise<{ image: OffscreenCanvas, imageData: ImageData }> {
+    public static async fetchImageSprite(url: string, properties: AssetSpriteProperties): Promise<{ image: ImageBitmap, imageData: ImageData }> {
         if(!this.sprites[url]) {
             this.sprites[url] = [];
         }
@@ -92,7 +92,7 @@ export default class AssetFetcher {
         }
 
         return new Promise(async (resolve) => {
-            const result: AssetSpriteProperties & { sprite: Promise<{ image: OffscreenCanvas, imageData: ImageData }> } = {
+            const result: AssetSpriteProperties & { sprite: Promise<{ image: ImageBitmap, imageData: ImageData }> } = {
                 sprite: this.drawSprite(url, properties),
                 ...properties
             };
@@ -144,7 +144,7 @@ export default class AssetFetcher {
         }
 
         return {
-            image: canvas,
+            image: await createImageBitmap(canvas),
             imageData: (!properties.ignoreImageData)?(context.getImageData(0, 0, canvas.width, canvas.height)):(new ImageData(canvas.width, canvas.height))
         };
     }

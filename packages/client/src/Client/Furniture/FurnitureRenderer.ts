@@ -5,7 +5,7 @@ import { FurnitureIndex } from "@/Interfaces/Furniture/FurnitureIndex.js";
 import { FurnitureVisualization } from "@/Interfaces/Furniture/FurnitureVisualization.js";
 
 export type FurnitureRendererSprite = {
-    image: OffscreenCanvas;
+    image: ImageBitmap;
     imageData: ImageData;
 
     x: number;

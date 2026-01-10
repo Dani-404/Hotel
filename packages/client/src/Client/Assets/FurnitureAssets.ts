@@ -11,7 +11,7 @@ export default class FurnitureAssets {
         return await AssetFetcher.fetchImage(`/assets/furniture/${furnitureName}/${furnitureName}.png`);
     }
 
-    public static async getFurnitureSprite(furnitureName: string, properties: AssetSpriteProperties): Promise<{ image: OffscreenCanvas, imageData: ImageData }> {
+    public static async getFurnitureSprite(furnitureName: string, properties: AssetSpriteProperties): Promise<{ image: ImageBitmap, imageData: ImageData }> {
         return await AssetFetcher.fetchImageSprite(`/assets/furniture/${furnitureName}/${furnitureName}.png`, properties);
     }
 
