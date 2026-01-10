@@ -1,8 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "build": "npx parcel build src/index.tsx --dist-dir ../../build/interface",
-    "watch": "npx parcel watch src/index.tsx --dist-dir ../../build/interface",
+    "build": "npx parcel build src/index.tsx --dist-dir ../../build/user-interface",
+    "watch": "npx parcel watch src/index.tsx --dist-dir ../../build/user-interface",
     "spritesheet": "npx ts-node utils/generateSpritesheet.ts"
   },
   "dependencies": {
