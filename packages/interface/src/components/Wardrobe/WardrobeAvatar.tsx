@@ -3,14 +3,19 @@ import { AppContext } from "../../contexts/AppContext";
 import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest";
 import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
+import { FigureConfiguration } from "@shared/interfaces/figure/FigureConfiguration";
 
-export default function WardrobeAvatar() {
+export type WardrobeAvatarProps = {
+    configuration: FigureConfiguration;
+};
+
+export default function WardrobeAvatar({ configuration }: WardrobeAvatarProps) {
     const { internalEventTarget } = useContext(AppContext);
 
-    const [figureImage, setFigureImage] = useState<OffscreenCanvas>();
+    const [figureImage, setFigureImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        const requestEvent = new ClientFigureRequest("user", 4);
+        const requestEvent = new ClientFigureRequest(configuration, 4);
 
         const listener = (event: ClientFigureResponse) => {
             if(event.id !== requestEvent.id) {
@@ -27,20 +32,19 @@ export default function WardrobeAvatar() {
         return () => {
             internalEventTarget.removeEventListener("ClientFigureResponse", listener);
         };
-    }, []);
+    }, [ configuration ]);
 
     return (
         <div style={{
             width: "100%",
-            height: 200,
+            height: 300,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             position: "relative",
             overflow: "hidden"
         }}>
-            {(figureImage) && (<OffscreenCanvasRender offscreenCanvas={figureImage} scale={2} style={{
-            }}/>)}
+            {(figureImage) && (<OffscreenCanvasRender offscreenCanvas={figureImage} scale={2}/>)}
         </div>
     );
 }

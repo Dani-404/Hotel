@@ -1,7 +1,7 @@
 import { CSSProperties, useEffect, useRef } from "react";
 
 export type OffscreenCanvasRenderProps = {
-    offscreenCanvas: OffscreenCanvas | Promise<OffscreenCanvas>;
+    offscreenCanvas: ImageBitmap | Promise<ImageBitmap>;
     scale?: number;
     style?: CSSProperties;
 }
@@ -33,6 +33,6 @@ export default function OffscreenCanvasRender({ offscreenCanvas, style, scale = 
     }, [canvasRef, offscreenCanvas]);
 
     return (
-        <canvas ref={canvasRef} style={style}/>
+        <canvas ref={canvasRef} style={style} width={0} height={0}/>
     );
 }

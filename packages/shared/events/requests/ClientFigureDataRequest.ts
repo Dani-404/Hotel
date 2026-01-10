@@ -3,7 +3,8 @@ export default class ClientFigureDataRequest extends Event {
 
     constructor(
         public readonly part: string,
-        public readonly gender: "male" | "female"
+        public readonly gender: "male" | "female",
+        public readonly colorId: number | undefined
     ) {
         super("ClientFigureDataRequest");
     }

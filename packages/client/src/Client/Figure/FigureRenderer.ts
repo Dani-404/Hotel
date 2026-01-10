@@ -39,37 +39,21 @@ export default class FigureRenderer {
     }
 
     public async renderToCanvas(frame: number, cropped: boolean = false) {
-        const renderName = `${this.getConfigurationAsString()}_${this.direction}_${FigureWorkerRenderer.getSpriteFrameFromSequence(frame)}_${this.actions.join('_')}`;
+        let renderName = `${this.getConfigurationAsString()}_${this.direction}_${FigureWorkerRenderer.getSpriteFrameFromSequence(frame)}_${this.actions.join('_')}`;
 
-        if(!cropped && FigureAssets.figureImage.has(renderName)) {
+        if(cropped) {
+            renderName += "_cropped";
+        }
+
+        if(FigureAssets.figureImage.has(renderName)) {
             return await FigureAssets.figureImage.get(renderName)!;
         }
         
         const result = FigureWorker.renderInWebWorker(this, frame, cropped);
         
-        if(!cropped) {
-            FigureAssets.figureImage.set(renderName, result);
-        }
+        FigureAssets.figureImage.set(renderName, result);
 
         return await result;
-    }
-
-    public static getConfigurationFromString(figureString: string): FigureConfiguration {
-        const parts = figureString.split('.');
-
-        const configuration: FigureConfiguration = [];
-
-        for(let part of parts) {
-            const sections = part.split('-');
-
-            configuration.push({
-                type: sections[0] as FigurePartKeyAbbreviation,
-                setId: sections[1],
-                colorIndex: (sections[2])?(parseInt(sections[2])):(undefined)
-            });
-        }
-
-        return configuration;
     }
 
     public getConfigurationAsString(): string {

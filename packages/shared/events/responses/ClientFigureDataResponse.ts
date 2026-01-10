@@ -1,5 +1,5 @@
 type Item = {
-    image: Promise<OffscreenCanvas>;
+    image: Promise<ImageBitmap>;
     setId: string;
     colorable: boolean;
 };

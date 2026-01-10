@@ -30,7 +30,7 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
 
         requestedData.current = true;
 
-        const requestEvent = new ClientFigureDataRequest(part, "male");
+        const requestEvent = new ClientFigureDataRequest(part, "male", undefined);
 
         const listener = (event: ClientFigureDataResponse) => {
             if(event.id !== requestEvent.id) {
@@ -52,85 +52,72 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
     return (
         <div style={{
             display: "flex",
-            flexDirection: "row"
+            flexDirection: "column",
+            gap: 10,
+
+            width: 6 * 50,
         }}>
             <div style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 10,
+                height: 4 * 50,
 
-                width: 6 * 50,
+                overflowY: "overlay"
             }}>
                 <div style={{
-                    height: 4 * 50,
-
-                    overflowY: "overlay"
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
                 }}>
-                    <div style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                    }}>
-                        {(!figureDataResponse?.mandatory) && (
-                            <WardrobeSelectionItem active={!activeConfiguration} onClick={() => {
-                                onFigureConfigurationChange(figureConfiguration.filter((configuration) => configuration.type !== part));
-                            }}>
-                                <div className="sprite_dialog_remove_selection"/>
-                            </WardrobeSelectionItem>
-                        )}
+                    {(!figureDataResponse?.mandatory) && (
+                        <WardrobeSelectionItem active={!activeConfiguration} onClick={() => {
+                            onFigureConfigurationChange(figureConfiguration.filter((configuration) => configuration.type !== part));
+                        }}>
+                            <div className="sprite_dialog_remove_selection"/>
+                        </WardrobeSelectionItem>
+                    )}
 
-                        {figureDataResponse?.items?.map(({ image, setId, colorable }) => (
-                            <WardrobeSelectionItem key={setId} active={Boolean(activeConfiguration) && (activeConfiguration?.setId === setId)} onClick={() => {
-                                onFigureConfigurationChange(
-                                    figureConfiguration
-                                        .filter((configuration) => configuration.type !== part)
-                                        .concat([
-                                            {
-                                                type: part,
-                                                setId,
-                                                colorIndex: (colorable) ? (activeConfiguration?.colorIndex ?? figureDataResponse.colors[0].id) : (undefined)
-                                            }
-                                        ])
-                                );
-                            }}>
-                                <OffscreenCanvasRender offscreenCanvas={image}/>
-                            </WardrobeSelectionItem>
-                        ))}
-                    </div>
-                </div>
-
-                {(figureDataResponse?.colors) && (
-                    <WardrobeSelectionColors
-                        disabled={!activeConfiguration || !figureDataResponse.items.find((item) => item.setId === activeConfiguration.setId)?.colorable}
-                        colors={figureDataResponse?.colors}
-                        activeColor={activeConfiguration?.colorIndex}
-                        onColorChange={(color) => {
-                            if(!activeConfiguration) {
-                                return;
-                            }
-
+                    {figureDataResponse?.items?.map(({ image, setId, colorable }) => (
+                        <WardrobeSelectionItem key={setId} active={Boolean(activeConfiguration) && (activeConfiguration?.setId === setId)} onClick={() => {
                             onFigureConfigurationChange(
                                 figureConfiguration
                                     .filter((configuration) => configuration.type !== part)
                                     .concat([
                                         {
                                             type: part,
-                                            setId: activeConfiguration.setId,
-                                            colorIndex: color
+                                            setId,
+                                            colorIndex: (colorable) ? (activeConfiguration?.colorIndex ?? figureDataResponse.colors[0].id) : (undefined)
                                         }
                                     ])
                             );
-                        }}/>
-                )}
+                        }}>
+                            <OffscreenCanvasRender offscreenCanvas={image}/>
+                        </WardrobeSelectionItem>
+                    ))}
+                </div>
             </div>
 
-            <div style={{
-                flex: 1,
-                width: 130,
-                height: "100%"
-            }}>
-                <WardrobeAvatar/>
-            </div>
+            {(figureDataResponse?.colors) && (
+                <WardrobeSelectionColors
+                    disabled={!activeConfiguration || !figureDataResponse.items.find((item) => item.setId === activeConfiguration.setId)?.colorable}
+                    colors={figureDataResponse?.colors}
+                    activeColor={activeConfiguration?.colorIndex}
+                    onColorChange={(color) => {
+                        if(!activeConfiguration) {
+                            return;
+                        }
+
+                        onFigureConfigurationChange(
+                            figureConfiguration
+                                .filter((configuration) => configuration.type !== part)
+                                .concat([
+                                    {
+                                        type: part,
+                                        setId: activeConfiguration.setId,
+                                        colorIndex: color
+                                    }
+                                ])
+                        );
+                    }}/>
+            )}
         </div>
     );
 }

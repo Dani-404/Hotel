@@ -7,10 +7,10 @@ export default function ToolbarFigureItem() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const {internalEventTarget} = useContext(AppContext);
 
-    const [figureImage, setFigureImage] = useState<OffscreenCanvas>();
+    const [figureImage, setFigureImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        const requestEvent = new ClientFigureRequest("user", 2);
+        const requestEvent = new ClientFigureRequest("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62", 2);
 
         const listener = (event: ClientFigureResponse) => {
             if(event.id !== requestEvent.id) {

@@ -2,9 +2,11 @@ import { useState } from "react";
 import Dialog from "../Dialog/Dialog";
 import DialogSubTabs from "../Dialog/DialogSubTabs";
 import DialogTabs from "../Dialog/DialogTabs";
-import WardrobeSelection from "./Selection/WardrobeSelection";
 
 import { FigureConfiguration, FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration";
+import FigureConfigurationHelper from "@shared/figure/FigureConfigurationHelper";
+import WardrobeAvatar from "./WardrobeAvatar";
+import WardrobeSelection from "./Selection/WardrobeSelection";
 
 const wardrobeTabs = [
     {
@@ -35,13 +37,7 @@ const wardrobeTabs = [
 ];
 
 export default function WardrobeDialog() {
-    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>([
-        {
-            type: "hr",
-            setId: "831",
-            colorIndex: undefined
-        }
-    ]);
+    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(FigureConfigurationHelper.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"));
     
     return (
         <Dialog title="Wardrobe">
@@ -67,13 +63,26 @@ export default function WardrobeDialog() {
                     return {
                         icon: (<div className={wardrobeTab.spriteName}/>),
                         element: (
-                            <DialogSubTabs tabs={wardrobeTab.tabs.map((tab) => {
-                                return {
-                                    icon: (<div className={tab.spriteName}/>),
-                                    activeIcon: (<div className={`${tab.spriteName}_on`}/>),
-                                    element: (<WardrobeSelection part={tab.part as FigurePartKeyAbbreviation} figureConfiguration={figureConfiguration} onFigureConfigurationChange={setFigureConfiguration}/>)
-                                };
-                            })}/>
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "row"
+                            }}>
+                                <DialogSubTabs tabs={wardrobeTab.tabs.map((tab) => {
+                                    return {
+                                        icon: (<div className={tab.spriteName}/>),
+                                        activeIcon: (<div className={`${tab.spriteName}_on`}/>),
+                                        element: (<WardrobeSelection part={tab.part as FigurePartKeyAbbreviation} figureConfiguration={figureConfiguration} onFigureConfigurationChange={setFigureConfiguration}/>)
+                                    };
+                                })}/>
+
+                                <div style={{
+                                    flex: 1,
+                                    width: 130,
+                                    height: "100%"
+                                }}>
+                                    <WardrobeAvatar configuration={figureConfiguration}/>
+                                </div>
+                            </div>
                         )
                     }
                 }),
