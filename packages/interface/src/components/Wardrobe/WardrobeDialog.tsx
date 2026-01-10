@@ -54,6 +54,23 @@ const wardrobeTabs = [
                 spriteName: "sprite_wardrobe_top_accessories",
             }
         ]
+    },
+    {
+        spriteName: "sprite_wardrobe_legs_tab",
+        tabs: [
+            {
+                part: "lg" satisfies FigurePartKeyAbbreviation,
+                spriteName: "sprite_wardrobe_trousers",
+            },
+            {
+                part: "sh" satisfies FigurePartKeyAbbreviation,
+                spriteName: "sprite_wardrobe_shoes",
+            },
+            {
+                part: "wa" satisfies FigurePartKeyAbbreviation,
+                spriteName: "sprite_wardrobe_accessories",
+            }
+        ]
     }
 ];
 
@@ -106,15 +123,7 @@ export default function WardrobeDialog() {
                             </div>
                         )
                     }
-                }),
-                {
-                    icon: (<div className="sprite_wardrobe_torso_tab"/>),
-                    element: <div>test</div>
-                },
-                {
-                    icon: (<div className="sprite_wardrobe_legs_tab"/>),
-                    element: <div>test</div>
-                }
+                })
             ]}/>
         </Dialog>
     )

@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 
 export type WardrobeSelectionColorsProps = PropsWithChildren & {
     disabled: boolean;
-    colors: ClientFigureDataResponse["colors"];
+    colors?: ClientFigureDataResponse["colors"];
     activeColor: number | undefined;
     onColorChange: (color: number) => void;
 };
@@ -26,7 +26,7 @@ export default function WardrobeSelectionColors({ disabled, colors, activeColor,
                 gap: 2,
                 rowGap: 4,
             }}>
-                {colors.map(({ id, color }) => (
+                {colors?.map(({ id, color }) => (
                     <div key={id} style={{
                         backgroundColor: "#24221D",
                         borderRadius: 3,

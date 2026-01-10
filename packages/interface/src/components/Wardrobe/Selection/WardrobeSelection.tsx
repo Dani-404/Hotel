@@ -95,29 +95,27 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
                 </div>
             </div>
 
-            {(figureDataResponse?.colors) && (
-                <WardrobeSelectionColors
-                    disabled={!activeConfiguration || !figureDataResponse.items.find((item) => item.setId === activeConfiguration.setId)?.colorable}
-                    colors={figureDataResponse?.colors}
-                    activeColor={activeConfiguration?.colorIndex}
-                    onColorChange={(color) => {
-                        if(!activeConfiguration) {
-                            return;
-                        }
+            <WardrobeSelectionColors
+                disabled={!activeConfiguration || !figureDataResponse?.items.find((item) => item.setId === activeConfiguration.setId)?.colorable}
+                colors={figureDataResponse?.colors}
+                activeColor={activeConfiguration?.colorIndex}
+                onColorChange={(color) => {
+                    if(!activeConfiguration) {
+                        return;
+                    }
 
-                        onFigureConfigurationChange(
-                            figureConfiguration
-                                .filter((configuration) => configuration.type !== part)
-                                .concat([
-                                    {
-                                        type: part,
-                                        setId: activeConfiguration.setId,
-                                        colorIndex: color
-                                    }
-                                ])
-                        );
-                    }}/>
-            )}
+                    onFigureConfigurationChange(
+                        figureConfiguration
+                            .filter((configuration) => configuration.type !== part)
+                            .concat([
+                                {
+                                    type: part,
+                                    setId: activeConfiguration.setId,
+                                    colorIndex: color
+                                }
+                            ])
+                    );
+                }}/>
         </div>
     );
 }

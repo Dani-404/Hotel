@@ -154,7 +154,14 @@ export default class FigureWorkerRenderer {
 
                             const priorityDirection = (this.direction > 3 && this.direction < 7)?(6 - this.direction):(this.direction);
 
-                            const partPriority = figureRenderPriority[this.getFigureRenderPriority(avatarAction.assetPartDefinition)][priorityDirection.toString()].indexOf(setPartData.type);
+                            const priorityTypes: Partial<Record<FigurePartKeyAbbreviation, FigurePartKeyAbbreviation>> = {
+                                "cp": "ch",
+                                "cc": "ch",
+                                "lc": "ls",
+                                "rc": "rs"
+                            };
+
+                            const partPriority = figureRenderPriority[this.getFigureRenderPriority(avatarAction.assetPartDefinition)][priorityDirection.toString()].indexOf(priorityTypes[setPartData.type] ?? setPartData.type);
 
                             if(partPriority === -1) {
                                 return reject();
@@ -264,7 +271,7 @@ export default class FigureWorkerRenderer {
             try {
                 const sprites = await this.render();
 
-                let minimumX = 128, minimumY = 128, maximumWidth = 256, maximumHeight = 256;
+                let minimumX = 128, minimumY = 128, maximumWidth = 128, maximumHeight = 128;
             
                 if(cropped) {
                     minimumX = 0;
@@ -277,21 +284,21 @@ export default class FigureWorkerRenderer {
                             minimumX = sprite.x * -1;
                         }
                         
-                        if(minimumY < Math.abs(sprite.y)) {
-                            minimumY = Math.abs(sprite.y);
+                        if(minimumY < sprite.y * -1) {
+                            minimumY = sprite.y * -1;
                         }
 
                         if(sprite.x + sprite.image.width > maximumWidth) {
                             maximumWidth = sprite.x + sprite.image.width;
                         }
 
-                        if(Math.max(sprite.y, 0) + sprite.image.height > maximumHeight) {
-                            maximumHeight = Math.max(sprite.y, 0) + sprite.image.height;
+                        if(sprite.y + sprite.image.height > maximumHeight) {
+                            maximumHeight = sprite.y + sprite.image.height;
                         }
                     }
                 }
 
-                const canvas = new OffscreenCanvas(minimumX + maximumWidth, maximumHeight);
+                const canvas = new OffscreenCanvas(minimumX + maximumWidth, minimumY + maximumHeight);
 
                 if(!sprites.length) {
                     return reject();
