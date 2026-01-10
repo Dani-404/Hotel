@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import ClientFigureRequest from "@shared/interfaces/requests/ClientFigureRequest";
-import ClientFigureResponse from "@shared/interfaces/responses/ClientFigureResponse";
+import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest";
+import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse";
 import { AppContext } from "../../../contexts/AppContext";
 
 export default function ToolbarFigureItem() {

@@ -5,15 +5,7 @@ import { FiguredataData } from "@/Interfaces/Figure/FiguredataData.js";
 import { figureRenderPriority } from "./FigureRenderPriority.js";
 import { AvatarActionsData } from "@/Interfaces/Figure/Avataractions.js";
 import { FigureData } from "@/Interfaces/Figure/FigureData.js";
-
-export type FigurePartKeyAbbreviation = "hr" | "lg" | "ch" | "hd" | "sh" | "he" | "wa" | "ha" | "ca" | "ea";
-export type FigurePartKey = "hair" | "leg" | "shirt" | "body" | "shoe" | "head" | "waist" | "hat" | "chest" | "eye";
-
-export type FigureConfiguration = {
-    type: FigurePartKeyAbbreviation;
-    setId: string;
-    colorIndex?: number;
-}[];
+import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration.js";
 
 export type FigureRendererSprite = {
     image: OffscreenCanvas;
@@ -36,7 +28,8 @@ export default class FigureRenderer {
         waist: "wa",
         hat: "ha",
         chest: "ca",
-        eye: "ea"
+        eye: "ea",
+        face: "fa"
     };
 
     constructor(private readonly configuration: FigureConfiguration, public direction: number, public readonly actions: string[] =  ["Default"]) {
@@ -305,7 +298,7 @@ export default class FigureRenderer {
             try {
                 const sprites = await this.render(frame);
 
-                let minimumX = 128, minimumY = 128, maximumWidth = 128, maximumHeight = 128;
+                let minimumX = 128, minimumY = 128, maximumWidth = 256, maximumHeight = 256;
             
                 if(cropped) {
                     minimumX = 0;
@@ -318,23 +311,27 @@ export default class FigureRenderer {
                             minimumX = Math.abs(sprite.x);
                         }
                         
-                        if(minimumY < (sprite.y * -1)) {
-                            minimumY = sprite.y * -1;
+                        if(minimumY < Math.abs(sprite.y)) {
+                            minimumY = Math.abs(sprite.y);
                         }
 
-                        if(sprite.x + sprite.image.width > maximumWidth) {
-                            maximumWidth = sprite.x + sprite.image.width;
+                        if(Math.max(sprite.x, 0) + sprite.image.width > maximumWidth) {
+                            maximumWidth = Math.max(sprite.x, 0) + sprite.image.width;
                         }
 
-                        if(sprite.y + sprite.image.height > maximumHeight) {
-                            maximumHeight = sprite.y + sprite.image.height;
+                        if(Math.max(sprite.y, 0) + sprite.image.height > maximumHeight) {
+                            maximumHeight = Math.max(sprite.y, 0) + sprite.image.height;
                         }
                     }
                 }
 
-                const canvas = new OffscreenCanvas(minimumX + maximumWidth, minimumY + maximumHeight);
+                const canvas = new OffscreenCanvas(maximumWidth, maximumHeight);
 
                 if(!sprites.length) {
+                    if(renderName.startsWith("hr-831_")) {
+                        console.log("no sprites");
+                    }
+
                     return reject();
                 }
 

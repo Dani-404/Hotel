@@ -1,7 +1,7 @@
 import FigureAssets from "@/Assets/FigureAssets.js";
 import type { TypedEventTarget } from "@/Interfaces/TypedEventTarget.js";
-import ClientFigureDataRequest from "@shared/interfaces/requests/ClientFigureDataRequest.js";
-import ClientFigureDataResponse from "@shared/interfaces/responses/ClientFigureDataResponse.js";
+import ClientFigureDataRequest from "@shared/events/requests/ClientFigureDataRequest.js";
+import ClientFigureDataResponse from "@shared/events/responses/ClientFigureDataResponse.js";
 import FigureRenderer from "./FigureRenderer.js";
 
 export default function registerFigureEvents(internalEventTarget: TypedEventTarget) {
@@ -12,8 +12,6 @@ export default function registerFigureEvents(internalEventTarget: TypedEventTarg
             return;
         }
 
-        console.log(event);
-
         const imagePromises = await Promise.allSettled(
             settype.sets.filter((set) => set.selectable && (set.gender === 'U' || (set.gender === 'M' && event.gender === "male") || (set.gender === 'F' && event.gender === "female"))).map(async (set) => {
                 const figureRenderer = new FigureRenderer([
@@ -23,11 +21,14 @@ export default function registerFigureEvents(internalEventTarget: TypedEventTarg
                     }
                 ], 2);
 
-                const { image } = await figureRenderer.renderToCanvas(0, true);
+                const image = new Promise<OffscreenCanvas>((resolve, reject) => {
+                    figureRenderer.renderToCanvas(0, true).then(({ image }) => resolve(image)).catch(reject);
+                });
 
                 return {
-                    image: image,
+                    image,
                     setId: set.id,
+                    colorable: set.colorable,
                 };
             })
         );
@@ -37,13 +38,13 @@ export default function registerFigureEvents(internalEventTarget: TypedEventTarg
 
         const palette = FigureAssets.figuredata.palettes.find((palette) => palette.id === settype.paletteId);
 
-        const colors = palette?.colors.map((color) => {
+        const colors = palette?.colors.sort((a, b) => a.index - b.index).map((color) => {
             return {
                 id: color.id,
                 color: color.color
             };
         }) ?? [];
 
-        internalEventTarget.dispatchEvent(new ClientFigureDataResponse(event.id, items, colors));
+        internalEventTarget.dispatchEvent(new ClientFigureDataResponse(event.id, items, colors, settype.mandatoryGender[event.gender][0]));
     });
 }

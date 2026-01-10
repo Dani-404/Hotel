@@ -24,6 +24,8 @@ else if(process.argv[2] === "generate-all") {
             .map((directory) => directory.name)
         );
 
+    console.log(existingAssetNames);
+
     assetNames = readdirSync(path.join("assets"), { withFileTypes: true })
     .filter((file) => file.isFile())
     .map((file) => path.basename(file.name, ".swf"))
@@ -51,6 +53,10 @@ else if(process.argv[2] === "generate-all") {
             const swfCollection = await extractSwf(assetName, (existsSync(`assets/${assetName}/${assetName}.swf`))?(`assets/${assetName}/${assetName}.swf`):(`assets/${assetName}.swf`));
 
             if(extractOnly) {
+                continue;
+            }
+
+            if(!swfCollection.images.length) {
                 continue;
             }
 

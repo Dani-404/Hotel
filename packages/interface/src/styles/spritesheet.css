@@ -42,8 +42,9 @@
 .sprite_wardrobe_torso_tab { background-image: url('./spritesheet.png'); background-position: -180px -227px; width: 41px; height: 22px; }
 .sprite_wardrobe_top_jacket_on { background-image: url('./spritesheet.png'); background-position: -264px -137px; width: 31px; height: 29px; }
 .sprite_wardrobe_top_jacket { background-image: url('./spritesheet.png'); background-position: -264px -166px; width: 31px; height: 29px; }
-.sprite_toolbar_logo { background-image: url('./spritesheet.png'); background-position: -264px -195px; width: 28px; height: 28px; }
-.sprite_wardrobe_wardrobe_tab { background-image: url('./spritesheet.png'); background-position: -231px -43px; width: 29px; height: 21px; }
-.sprite_dialog_close:active { background-image: url('./spritesheet.png'); background-position: -231px -64px; width: 19px; height: 20px; }
-.sprite_dialog_close:hover { background-image: url('./spritesheet.png'); background-position: -231px -84px; width: 19px; height: 20px; }
-.sprite_dialog_close { background-image: url('./spritesheet.png'); background-position: -231px -104px; width: 19px; height: 20px; }
+.sprite_dialog_remove_selection { background-image: url('./spritesheet.png'); background-position: -264px -195px; width: 29px; height: 29px; }
+.sprite_toolbar_logo { background-image: url('./spritesheet.png'); background-position: -231px -43px; width: 28px; height: 28px; }
+.sprite_wardrobe_wardrobe_tab { background-image: url('./spritesheet.png'); background-position: -231px -71px; width: 29px; height: 21px; }
+.sprite_dialog_close:active { background-image: url('./spritesheet.png'); background-position: -231px -92px; width: 19px; height: 20px; }
+.sprite_dialog_close:hover { background-image: url('./spritesheet.png'); background-position: -231px -112px; width: 19px; height: 20px; }
+.sprite_dialog_close { background-image: url('./spritesheet.png'); background-position: -231px -132px; width: 19px; height: 20px; }

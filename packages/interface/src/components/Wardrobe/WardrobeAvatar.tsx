@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../contexts/AppContext";
-import ClientFigureRequest from "@shared/interfaces/requests/ClientFigureRequest";
-import ClientFigureResponse from "@shared/interfaces/responses/ClientFigureResponse";
+import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest";
+import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
 
 export default function WardrobeAvatar() {

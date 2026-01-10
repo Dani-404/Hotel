@@ -10,8 +10,8 @@ import RoomRenderer from "@/Room/Renderer.js";
 import FloorRenderer from "@/Room/Structure/FloorRenderer.js";
 import WallRenderer from "@/Room/Structure/WallRenderer.js";
 import ClientInstance from "./ClientInstance.js";
-import ClientFigureRequest from "@shared/interfaces/requests/ClientFigureRequest.js";
-import ClientFigureResponse from "@shared/interfaces/responses/ClientFigureResponse.js";
+import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest.js";
+import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse.js";
 import type { TypedEventTarget } from "@/Interfaces/TypedEventTarget.js";
 
 (window as any).createClientInstance = async function createClientInstance(element: HTMLElement, internalEventTarget: TypedEventTarget) {

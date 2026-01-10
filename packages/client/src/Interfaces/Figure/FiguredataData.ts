@@ -1,4 +1,4 @@
-import { FigurePartKeyAbbreviation } from "@/Figure/FigureRenderer";
+import { FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration";
 
 export type FiguredataData = {
     palettes: {

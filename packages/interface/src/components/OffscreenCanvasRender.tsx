@@ -1,7 +1,7 @@
 import { CSSProperties, useEffect, useRef } from "react";
 
 export type OffscreenCanvasRenderProps = {
-    offscreenCanvas: OffscreenCanvas;
+    offscreenCanvas: OffscreenCanvas | Promise<OffscreenCanvas>;
     scale?: number;
     style?: CSSProperties;
 }
@@ -10,22 +10,26 @@ export default function OffscreenCanvasRender({ offscreenCanvas, style, scale = 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        if(!canvasRef.current || !offscreenCanvas) {
-            return;
-        }
+        (async () => {
+            if(!canvasRef.current || !offscreenCanvas) {
+                return;
+            }
 
-        canvasRef.current.width = offscreenCanvas.width * scale;
-        canvasRef.current.height = offscreenCanvas.height * scale;
+            const image = await offscreenCanvas;
 
-        const context = canvasRef.current.getContext("2d");
+            canvasRef.current.width = image.width * scale;
+            canvasRef.current.height = image.height * scale;
 
-        if(!context) {
-            return;
-        }
+            const context = canvasRef.current.getContext("2d");
 
-        context.imageSmoothingEnabled = false;
+            if(!context) {
+                return;
+            }
 
-        context.drawImage(offscreenCanvas, 0, 0, offscreenCanvas.width, offscreenCanvas.height, 0, 0, canvasRef.current.width, canvasRef.current.height);
+            context.imageSmoothingEnabled = false;
+
+            context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvasRef.current.width, canvasRef.current.height);
+        })();
     }, [canvasRef, offscreenCanvas]);
 
     return (
