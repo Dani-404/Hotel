@@ -75,7 +75,11 @@ const wardrobeTabs = [
     }
 ];
 
-export default function WardrobeDialog() {
+export type WardrobeDialogProps = {
+    onClose?: () => void;
+};
+
+export default function WardrobeDialog({ onClose }: WardrobeDialogProps) {
     const { user } = useContext(AppContext);
 
     const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(user?.figureConfiguration ?? []);
@@ -89,7 +93,7 @@ export default function WardrobeDialog() {
     }, [user?.figureConfiguration]);
     
     return (
-        <Dialog title="Wardrobe">
+        <Dialog title="Wardrobe" onClose={onClose}>
             <DialogTabs initialActiveIndex={1} tabs={[
                 {
                     icon: (<div className="sprite_wardrobe_generic_tab"/>),

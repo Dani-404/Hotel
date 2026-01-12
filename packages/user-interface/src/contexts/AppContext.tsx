@@ -8,23 +8,25 @@ export type TypedEventTarget = EventTarget & {
 };
 
 export type Dialog = {
-    name: string;
+    id: string;
     element: ReactElement;
 }
 
 export type App = {
     user?: UserDataUpdated;
 
-    dialogs: Dialog[];
-    addUniqueDialog: (dialog: Dialog) => void;
+    //dialogs: Dialog[];
+    addUniqueDialog: (id: string, element: ReactElement) => void;
+    closeDialog: (id: string) => void;
 
     webSocketClient: WebSocketClient;
     internalEventTarget: TypedEventTarget;
 };
 
 export const AppContext = createContext<App>({
-    dialogs: [],
+    //dialogs: [],
     addUniqueDialog: () => {},
+    closeDialog: () => {},
 
     webSocketClient: null as any as WebSocketClient,
     internalEventTarget: new EventTarget() as TypedEventTarget

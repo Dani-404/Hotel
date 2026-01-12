@@ -3,9 +3,10 @@ import DialogHeader, { MousePosition } from "./DialogHeader";
 
 export type DialogProps = PropsWithChildren & {
     title: string;
+    onClose?: () => void;
 };
 
-export default function Dialog({ title, children }: DialogProps) {
+export default function Dialog({ title, children, onClose }: DialogProps) {
     const elementRef = useRef<HTMLDivElement>(null);
     const positionRef = useRef<MousePosition>({
         left: 200,
@@ -73,7 +74,7 @@ export default function Dialog({ title, children }: DialogProps) {
 
             pointerEvents: "auto"
         }}>
-            <DialogHeader title={title} onDialogMove={onDialogMove}/>
+            <DialogHeader title={title} onDialogMove={onDialogMove} onClose={onClose}/>
 
             <div style={{
                 height: 1,

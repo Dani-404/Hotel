@@ -5,7 +5,7 @@ import { AppContext } from "../../contexts/AppContext";
 import WardrobeDialog from "../Wardrobe/WardrobeDialog";
 
 export default function Toolbar() {
-    const { addUniqueDialog } = useContext(AppContext);
+    const { addUniqueDialog, closeDialog } = useContext(AppContext);
 
     return (
         <div style={{
@@ -39,12 +39,7 @@ export default function Toolbar() {
                     <div className="sprite_toolbar_logo"/>
                 </ToolbarItem>*/}
 
-                <ToolbarItem onClick={() => {
-                    addUniqueDialog({
-                        name: "wardrobe",
-                        element: (<WardrobeDialog/>)
-                    })
-                }}>
+                <ToolbarItem onClick={() => addUniqueDialog("wardrobe", (<WardrobeDialog onClose={() => closeDialog("wardrobe")}/>))}>
                     <ToolbarFigureItem/>
                 </ToolbarItem>
             </div>

@@ -9,9 +9,10 @@ export type MousePosition = {
 export type DialogHeaderProps = {
     title: string;
     onDialogMove: (event: MouseEvent) => void;
+    onClose?: () => void;
 };
 
-export default function DialogHeader({ title, onDialogMove }: DialogHeaderProps) {
+export default function DialogHeader({ title, onDialogMove, onClose }: DialogHeaderProps) {
     const [mouseDown, setMouseDown] = useState<boolean>();
     
     useEffect(() => {
@@ -73,7 +74,7 @@ export default function DialogHeader({ title, onDialogMove }: DialogHeaderProps)
                 right: 6,
                 top: 4
             }}>
-                <div className="sprite_dialog_close" style={{
+                <div className="sprite_dialog_close" onClick={onClose} style={{
                     cursor: "pointer"
                 }}/>
             </div>
