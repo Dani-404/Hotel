@@ -1,0 +1,40 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    "target": "es2024",
+		/* Specify a set of bundled library declaration files that describe the target runtime environment. */
+		"lib": ["es2024"],
+		/* Specify what JSX code is generated. */
+		"jsx": "react-jsx",
+		"outDir": "build/",
+		"rootDir": "src/",
+		/* Specify what module code is generated. */
+		"module": "es2022",
+		/* Specify how TypeScript looks up a file from a given module specifier. */
+		"moduleResolution": "node",
+		"isolatedModules": true,
+		/* Allow 'import x from y' when a module doesn't have a default export. */
+		"allowSyntheticDefaultImports": true,
+		/* Ensure that casing is correct in imports. */
+		"forceConsistentCasingInFileNames": true,
+		"types": [],
+		"sourceMap": true,
+		"declaration": true,
+		"declarationMap": true,
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"strict": true,
+		"verbatimModuleSyntax": false,
+		"noUncheckedSideEffectImports": true,
+		"moduleDetection": "force",
+		"skipLibCheck": true,
+		"paths": {
+			"@shared/*": ["../shared/*"],
+		},
+	},
+	"references": [
+		{
+			"path": "../shared/"
+		}
+	]
+}

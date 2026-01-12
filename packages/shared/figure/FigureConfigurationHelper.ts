@@ -1,4 +1,4 @@
-import { FigureConfiguration, FigurePartKeyAbbreviation } from "../interfaces/figure/FigureConfiguration.js";
+import { FigureConfiguration, FigurePartKeyAbbreviation } from "../Interfaces/figure/FigureConfiguration.js";
 
 export default class FigureConfigurationHelper {
     public static getConfigurationFromString(figureString: string): FigureConfiguration {

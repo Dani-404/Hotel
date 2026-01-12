@@ -1,14 +1,14 @@
 import registerFigureEvents from "@/Figure/Events/FigureEvents.js";
-import { TypedEventTarget } from "./Interfaces/TypedEventTarget.js";
+import registerRoomEvents from "@/Room/Events/RoomEvents.js";
+import { TypedEventTarget } from "@shared/Interfaces/TypedEventTarget";
+import WebSocketClient from "@shared/WebSocket/WebSocketClient.js";
+import RoomInstance from "./Room/RoomInstance.js";
 
 export default class ClientInstance {
-    constructor(public readonly element: HTMLElement, public readonly internalEventTarget: TypedEventTarget) {
-        internalEventTarget.addEventListener("interface", (event) => {
-            //console.log("Received interface ping in client instance.", event);
-        });
+    public roomInstance?: RoomInstance;
 
-        internalEventTarget.dispatchEvent(new Event("client"));
-
-        registerFigureEvents(internalEventTarget);
+    constructor(public readonly element: HTMLElement, public readonly internalEventTarget: TypedEventTarget, public readonly webSocketClient: WebSocketClient) {
+        registerRoomEvents(this);
+        registerFigureEvents(this);
     }
 }

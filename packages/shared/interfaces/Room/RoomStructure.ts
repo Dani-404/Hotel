@@ -7,10 +7,12 @@ export type RoomStructure = {
     };
 
     wall: {
+        id: string;
         thickness: number;
     }
 
     floor: {
+        id: string;
         thickness: number;
     }
 };

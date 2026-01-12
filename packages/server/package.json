@@ -1,0 +1,24 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "npx tsc && node build/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.6",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.47",
+    "astar-typescript": "^1.2.7",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
+    "ws": "^8.19.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "*"
+  }
+}

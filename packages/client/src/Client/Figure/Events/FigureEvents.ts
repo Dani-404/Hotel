@@ -1,15 +1,15 @@
 import FigureAssets from "@/Assets/FigureAssets.js";
-import type { TypedEventTarget } from "@/Interfaces/TypedEventTarget.js";
 import ClientFigureDataRequest from "@shared/events/requests/ClientFigureDataRequest.js";
 import ClientFigureDataResponse from "@shared/events/responses/ClientFigureDataResponse.js";
 import FigureRenderer from "../FigureRenderer.js";
 import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest.js";
 import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse.js";
-import FigureConfigurationHelper from "@shared/figure/FigureConfigurationHelper.js";
+import FigureConfigurationHelper from "@shared/Figure/FigureConfigurationHelper.js";
 import FigureWorker from "../Worker/FigureWorker.js";
+import ClientInstance from "@/ClientInstance.js";
 
-export default function registerFigureEvents(internalEventTarget: TypedEventTarget) {
-    internalEventTarget.addEventListener<ClientFigureDataRequest>("ClientFigureDataRequest", async (event) => {
+export default function registerFigureEvents(clientInstance: ClientInstance) {
+    clientInstance.internalEventTarget.addEventListener<ClientFigureDataRequest>("ClientFigureDataRequest", async (event) => {
         const settype = FigureAssets.figuredata.settypes.find((settype) => settype.type === event.part);
 
         if(!settype) {
@@ -51,20 +51,20 @@ export default function registerFigureEvents(internalEventTarget: TypedEventTarg
             };
         }) ?? [];
 
-        internalEventTarget.dispatchEvent(new ClientFigureDataResponse(event.id, items, colors, settype.mandatoryGender[event.gender][0]));
+        clientInstance.internalEventTarget.dispatchEvent(new ClientFigureDataResponse(event.id, items, colors, settype.mandatoryGender[event.gender][0]));
 
         Promise.allSettled(items.map((item) => item.image)).then(() => {
             figureWorker.terminate();
         });
     });
     
-    internalEventTarget.addEventListener<ClientFigureRequest>("ClientFigureRequest", (event) => {
+    clientInstance.internalEventTarget.addEventListener<ClientFigureRequest>("ClientFigureRequest", (event) => {
         const configuration = (typeof event.configuration === "string")?(FigureConfigurationHelper.getConfigurationFromString(event.configuration)):(event.configuration);
 
         const figureRenderer = new FigureRenderer(configuration, event.direction);
 
         figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0).then(({ image }) => {
-            internalEventTarget.dispatchEvent(new ClientFigureResponse(event.id, image));
+            clientInstance.internalEventTarget.dispatchEvent(new ClientFigureResponse(event.id, image));
         });
     });
 }

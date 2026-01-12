@@ -11,6 +11,7 @@
         <div id="client"></div>
         <div id="interface"></div>
 
+        <script type="module" src="./build/shared/WebSocket/WebSocketClient.js"></script>
         <script type="module" src="./build/client/Client/index.js"></script>
         <script type="module" src="./build/user-interface/index.js"></script>
 
@@ -20,8 +21,12 @@
 
             const internalEventTarget = new EventTarget();
 
-            await window.createClientInstance(clientElement, internalEventTarget);
-            window.createInterfaceInstance(interfaceElement, internalEventTarget);
+            const webSocketClient = new WebSocketClient({
+                userId: "user1"
+            });
+
+            await window.createClientInstance(clientElement, internalEventTarget, webSocketClient);
+            window.createInterfaceInstance(interfaceElement, internalEventTarget, webSocketClient);
         </script>
     </body>
 </html>

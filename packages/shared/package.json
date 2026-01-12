@@ -1,6 +1,10 @@
 {
   "type": "module",
   "composite": true,
+  "scripts": {
+    "build": "npx tsc",
+    "watch": "npx tsc -w"
+  },
   "devDependencies": {
     "typescript": "^5.9.3"
   }

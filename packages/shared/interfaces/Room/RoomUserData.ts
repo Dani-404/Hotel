@@ -1,0 +1,14 @@
+import { FigureConfiguration } from "../figure/FigureConfiguration.js";
+
+export type RoomUserData = {
+    id: string;
+    name: string;
+    figureConfiguration: FigureConfiguration;
+    
+    position: {
+        row: number;
+        column: number;
+        depth: number;
+    };
+    direction: number;
+};

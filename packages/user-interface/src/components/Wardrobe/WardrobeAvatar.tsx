@@ -3,7 +3,7 @@ import { AppContext } from "../../contexts/AppContext";
 import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest";
 import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
-import { FigureConfiguration } from "@shared/interfaces/figure/FigureConfiguration";
+import { FigureConfiguration } from "@shared/Interfaces/figure/FigureConfiguration";
 
 export type WardrobeAvatarProps = {
     configuration: FigureConfiguration;

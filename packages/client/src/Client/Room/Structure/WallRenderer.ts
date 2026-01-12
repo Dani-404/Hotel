@@ -1,7 +1,7 @@
 import ContextNotAvailableError from "@/Exceptions/ContextNotAvailableError.js";
-import { RoomStructure } from "@/Interfaces/RoomStructure.js";
 import RoomAssets from "@/Assets/RoomAssets.js";
 import { RoomData } from "@/Interfaces/Room/RoomData.js";
+import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure";
 
 type WallRectangle = {
     row: number;

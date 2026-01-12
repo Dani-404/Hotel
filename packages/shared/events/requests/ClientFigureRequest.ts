@@ -1,4 +1,4 @@
-import { FigureConfiguration } from "../../interfaces/figure/FigureConfiguration.js";
+import { FigureConfiguration } from "../../Interfaces/figure/FigureConfiguration.js";
 
 export default class ClientFigureRequest extends Event {
     public readonly id: number = Math.random();

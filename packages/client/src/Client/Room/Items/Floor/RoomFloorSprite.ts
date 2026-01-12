@@ -4,7 +4,7 @@ import RoomSprite from "../RoomSprite.js";
 import RoomMapItem from "../Map/RoomFurnitureItem.js";
 
 export default class RoomFloorSprite extends RoomSprite {
-    priority = -100000;
+    priority = -1000;
 
     private readonly offset: MousePosition;
 
@@ -46,8 +46,8 @@ export default class RoomFloorSprite extends RoomSprite {
             //console.log(this.item.floorRenderer.tiles[path]);
 
             return {
-                row: this.item.floorRenderer.tiles[path].row,
-                column: this.item.floorRenderer.tiles[path].column,
+                row: Math.floor(this.item.floorRenderer.tiles[path].row),
+                column: Math.floor(this.item.floorRenderer.tiles[path].column),
                 depth: this.item.floorRenderer.tiles[path].depth
             };
         }

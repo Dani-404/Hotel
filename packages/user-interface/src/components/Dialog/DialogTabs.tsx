@@ -1,5 +1,6 @@
-import { act, ReactNode, useState } from "react";
+import { act, ReactNode, useContext, useState } from "react";
 import DialogContent from "./DialogContent";
+import { AppContext } from "../../contexts/AppContext";
 
 export type DialogTabsProps = {
     initialActiveIndex?: number;
@@ -11,6 +12,8 @@ export type DialogTabsProps = {
 };
 
 export default function DialogTabs({ initialActiveIndex = 1, tabs }: DialogTabsProps) {
+    const { user } = useContext(AppContext);
+
     const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
 
     return (
@@ -40,7 +43,7 @@ export default function DialogTabs({ initialActiveIndex = 1, tabs }: DialogTabsP
 
                     alignItems: "center"
                 }}>
-                    <h2>Muff1n-Pixel</h2>
+                    <h2>{user?.name}</h2>
                 </div>
 
                 <div style={{

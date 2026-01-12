@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Dialog from "../Dialog/Dialog";
 import DialogSubTabs from "../Dialog/DialogSubTabs";
 import DialogTabs from "../Dialog/DialogTabs";
 
-import { FigureConfiguration, FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration";
 import FigureConfigurationHelper from "@shared/figure/FigureConfigurationHelper";
 import WardrobeAvatar from "./WardrobeAvatar";
 import WardrobeSelection from "./Selection/WardrobeSelection";
+import { FigureConfiguration, FigurePartKeyAbbreviation } from "@shared/Interfaces/figure/FigureConfiguration";
+import { AppContext } from "../../contexts/AppContext";
 
 const wardrobeTabs = [
     {
@@ -75,7 +76,17 @@ const wardrobeTabs = [
 ];
 
 export default function WardrobeDialog() {
-    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(FigureConfigurationHelper.getConfigurationFromString("hd-180-2.hr-828-31.ea-3196-62.ch-255-1415.lg-3216-110.sh-305-62"));
+    const { user } = useContext(AppContext);
+
+    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(user?.figureConfiguration ?? []);
+
+    useEffect(() => {
+        if(!user) {
+            return;
+        }
+
+        setFigureConfiguration(user.figureConfiguration);
+    }, [user?.figureConfiguration]);
     
     return (
         <Dialog title="Wardrobe">

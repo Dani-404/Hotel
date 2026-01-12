@@ -2,13 +2,14 @@ import { createRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
 import InterfaceInstance from './components/InterfaceInstance';
 import { TypedEventTarget } from './contexts/AppContext';
+import WebSocketClient from "@shared/WebSocket/WebSocketClient";
 
 import "./styles/fonts.css";
 import "./styles/index.css";
 import "./styles/spritesheet.css";
 import "./styles/spritesheet.png";
 
-(window as any).createInterfaceInstance = function createInterfaceInstance(element: HTMLElement, internalEventTarget: TypedEventTarget) {
+(window as any).createInterfaceInstance = function createInterfaceInstance(element: HTMLElement, internalEventTarget: TypedEventTarget, webSocketClient: WebSocketClient) {
   const root = createRoot(element);
 
   root.render(
@@ -26,7 +27,7 @@ import "./styles/spritesheet.png";
 
         color: "white"
       }}>
-        <InterfaceInstance internalEventTarget={internalEventTarget}/>
+        <InterfaceInstance internalEventTarget={internalEventTarget} webSocketClient={webSocketClient}/>
       </div>
     </StrictMode>
   );
