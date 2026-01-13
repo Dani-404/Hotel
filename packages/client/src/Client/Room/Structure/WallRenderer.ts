@@ -437,6 +437,10 @@ export default class WallRenderer {
                 continue;
             }
 
+            if(!rectangles.some(x => (x.direction == 2 && x.row == rectangle.row + 1 && x.column == rectangle.column))) {
+                continue;
+            }
+
             rectangles.push({ row: rectangle.row, column: rectangle.column, depth: rectangle.depth, direction: 1 });
         }
 
