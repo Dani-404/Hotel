@@ -7,6 +7,8 @@ import RoomFigureSprite from "./RoomFigureSprite.js";
 export default class RoomFigureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
+    public readonly id = Math.random();
+
     constructor(public readonly figureRenderer: FigureRenderer, position: RoomPosition) {
         super("figure");
 

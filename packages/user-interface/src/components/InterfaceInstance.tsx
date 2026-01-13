@@ -6,6 +6,7 @@ import WebSocketEvent from "@shared/WebSocket/Events/WebSocketEvent";
 import { UserDataUpdated } from "@shared/WebSocket/Events/User/UserDataUpdated";
 import { EnterRoom } from "@shared/WebSocket/Events/Rooms/EnterRoom";
 import { createRoot, Root } from "react-dom/client";
+import RoomInterface from "./Room/RoomInterface";
 
 export type InterfaceInstanceProps = {
     internalEventTarget: TypedEventTarget;
@@ -116,6 +117,8 @@ export default function InterfaceInstance({ internalEventTarget, webSocketClient
             internalEventTarget,
             webSocketClient
         }}>
+            <RoomInterface/>
+
             <div ref={dialogContainerRef}/>
 
             <Toolbar/>

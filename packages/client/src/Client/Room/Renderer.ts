@@ -10,6 +10,7 @@ import Performance from "@/Utilities/Performance.js";
 import RoomFrameEvent from "@/Events/RoomFrameEvent.js";
 import RoomItem from "./Items/RoomItem.js";
 import ClientInstance from "@/ClientInstance.js";
+import RoomInstance from "./RoomInstance.js";
 
 export default class RoomRenderer extends EventTarget {
     public readonly element: HTMLCanvasElement;
@@ -34,7 +35,7 @@ export default class RoomRenderer extends EventTarget {
         top: 0
     };
 
-    constructor(private readonly instance: ClientInstance) {
+    constructor(public readonly clientInstance: ClientInstance, public readonly roomInstance?: RoomInstance) {
         super();
 
         this.element = document.createElement("canvas");
@@ -43,7 +44,7 @@ export default class RoomRenderer extends EventTarget {
         this.camera = new RoomCamera(this);
         this.cursor = new RoomCursor(this);
 
-        this.instance.element.appendChild(this.element);
+        this.clientInstance.element.appendChild(this.element);
 
         window.requestAnimationFrame(this.render.bind(this));
     }
@@ -66,7 +67,7 @@ export default class RoomRenderer extends EventTarget {
             this.dispatchEvent(new RoomFrameEvent());
         }
 
-        const boundingRectangle = this.instance.element.getBoundingClientRect();
+        const boundingRectangle = this.clientInstance.element.getBoundingClientRect();
 
         this.center = {
             left: Math.floor(boundingRectangle.width / 2),
@@ -124,10 +125,9 @@ export default class RoomRenderer extends EventTarget {
             context.save();
 
             if(sprite.item.position) {
-                context.translate(
-                    Math.floor(-(sprite.item.position.row * 32) + (sprite.item.position.column * 32) - 64),
-                    Math.floor((sprite.item.position.column * 16) + (sprite.item.position.row * 16) - (sprite.item.position.depth * 32))
-                );
+                const translatePosition = this.getCoordinatePosition(sprite.item.position);
+
+                context.translate(translatePosition.left, translatePosition.top);
             }
 
             sprite.render(context);
@@ -206,5 +206,21 @@ export default class RoomRenderer extends EventTarget {
 
     public static getPositionPriority(position: RoomPosition) {
         return (Math.round(position.row) * 1000) + (Math.round(position.column) * 1000) + (position.depth * 100);
+    }
+
+    public getItemScreenPosition(item: RoomItem): MousePosition {
+        if(!item.position) {
+            return {
+                left: this.renderedOffset.left,
+                top: this.renderedOffset.top
+            };
+
+        }
+        const translatePosition = this.getCoordinatePosition(item.position);
+
+        return {
+            left: this.renderedOffset.left + translatePosition.left,
+            top: this.renderedOffset.top + translatePosition.top
+        };
     }
 }

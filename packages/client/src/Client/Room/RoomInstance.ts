@@ -29,8 +29,8 @@ export default class RoomInstance {
     private readonly users: RoomItem<RoomUserData, RoomFigureItem>[] = [];
     private readonly furnitures: RoomItem<RoomFurnitureData, RoomFurnitureItem>[] = [];
 
-    constructor(private readonly clientInstance: ClientInstance, event: LoadRoom) {
-        this.roomRenderer = new RoomRenderer(clientInstance);
+    constructor(public readonly clientInstance: ClientInstance, event: LoadRoom) {
+        this.roomRenderer = new RoomRenderer(clientInstance, this);
         
         this.roomRenderer.items.push(new RoomMapItem(
             new FloorRenderer(event.structure, event.structure.floor.id, 64),
@@ -88,6 +88,16 @@ export default class RoomInstance {
 
     private getUserById(userId: string) {
         const user = this.users.find((user) => user.data.id === userId);
+
+        if(!user) {
+            throw new Error("User does not exist in room.");
+        }
+
+        return user;
+    }
+
+    public getUserByItem(item: RoomFigureItem) {
+        const user = this.users.find((user) => user.item.id === item.id);
 
         if(!user) {
             throw new Error("User does not exist in room.");
