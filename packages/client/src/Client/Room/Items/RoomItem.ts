@@ -12,7 +12,6 @@ export default class RoomItem implements RoomItemInterface {
     }
 
     process(frame: number): void {
-        this.processPositionPath();
     }
 
     public setPosition(position: RoomPosition, index: number = 0) {

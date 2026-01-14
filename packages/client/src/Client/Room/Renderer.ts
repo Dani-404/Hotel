@@ -67,6 +67,10 @@ export default class RoomRenderer extends EventTarget {
             this.dispatchEvent(new RoomFrameEvent());
         }
 
+        for(let index = 0; index < this.items.length; index++) {
+            this.items[index].processPositionPath();
+        }
+
         const boundingRectangle = this.clientInstance.element.getBoundingClientRect();
 
         this.center = {
