@@ -30,9 +30,15 @@ export default class ShopEvents {
             pages: shopPages.map((shopPage) => {
                 return {
                     id: shopPage.id,
+
                     title: shopPage.title,
-                    type: shopPage.type,
+                    description: shopPage.description,
+                    
                     icon: shopPage.icon ?? undefined,
+                    header: shopPage.header ?? undefined,
+                    
+                    type: shopPage.type,
+                    
                     children: shopPage.children.map((shopPage) => {
                         return {
                             id: shopPage.id,

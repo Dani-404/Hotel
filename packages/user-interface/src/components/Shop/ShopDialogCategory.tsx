@@ -7,12 +7,14 @@ import { ShopPagesRequest } from "@shared/WebSocket/Events/Shop/ShopPagesRequest
 import { AppContext } from "../../contexts/AppContext";
 import WebSocketEvent from "@shared/WebSocket/Events/WebSocketEvent";
 import ShopPage from "./Pages/ShopPage";
+import { DialogTabHeaderProps } from "../Dialog/Tabs/DialogTabs";
 
 export type ShopDialogCategoryProps = {
     category: "frontpage" | "furniture" | "clothing" | "pets";
+    onHeaderChange: (header: DialogTabHeaderProps) => void;
 }
 
-export default function ShopDialogCategory({ category }: ShopDialogCategoryProps) {
+export default function ShopDialogCategory({ category, onHeaderChange }: ShopDialogCategoryProps) {
     const { webSocketClient } = useContext(AppContext);
     
     const [activeShopPage, setActiveShopPage] = useState<ShopPageData>();
@@ -38,6 +40,16 @@ export default function ShopDialogCategory({ category }: ShopDialogCategoryProps
         };
     }, []);
 
+    useEffect(() => {
+        onHeaderChange({
+            title: activeShopPage?.title,
+            description: activeShopPage?.description,
+
+            iconImage: (activeShopPage?.icon)?(`./assets/shop/icons/${activeShopPage.icon}`):(undefined),
+            backgroundImage: (activeShopPage?.header)?(`./assets/shop/headers/${activeShopPage.header}`):(undefined)
+        });
+    }, [ activeShopPage ]);
+
     return (
         <div style={{
             flex: 1,
@@ -53,7 +65,7 @@ export default function ShopDialogCategory({ category }: ShopDialogCategoryProps
                                 key={shopPage.id}
                                 active={activeShopPage?.id === shopPage.id}
                                 title={shopPage.title}
-                                icon={(shopPage.icon)?(<img src={`./assets/shop/icons/${shopPage.icon}.png`}/>):(undefined)}
+                                icon={(shopPage.icon)?(<img src={`./assets/shop/icons/${shopPage.icon}`}/>):(undefined)}
                                 onClick={() => setActiveShopPage(shopPage)}>
                                 {(activeShopPage && (activeShopPage.id === shopPage.id || shopPage.children?.includes(activeShopPage))) && shopPage.children?.map((shopSubPage) => (
                                     <DialogPanelListItem
@@ -61,7 +73,7 @@ export default function ShopDialogCategory({ category }: ShopDialogCategoryProps
                                         subItem={true}
                                         active={activeShopPage?.id === shopSubPage.id}
                                         title={shopSubPage.title}
-                                        icon={(shopSubPage.icon)?(<img src={`./assets/shop/icons/${shopSubPage.icon}.png`}/>):(undefined)}
+                                        icon={(shopSubPage.icon)?(<img src={`./assets/shop/icons/${shopSubPage.icon}`}/>):(undefined)}
                                         onClick={() => setActiveShopPage(shopSubPage)}/>
                                 ))}
                             </DialogPanelListItem>

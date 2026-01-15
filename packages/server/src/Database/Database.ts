@@ -67,8 +67,18 @@ ShopPage.init(
       type: new DataTypes.STRING(32),
       allowNull: false
     },
+    description: {
+      type: new DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null
+    },
     icon: {
       type: new DataTypes.STRING(32),
+      allowNull: true,
+      defaultValue: null
+    },
+    header: {
+      type: new DataTypes.STRING,
       allowNull: true,
       defaultValue: null
     }
@@ -241,7 +251,10 @@ const typeCategory = await ShopPage.create<ShopPage>({
   id: randomUUID(),
   category: "furniture",
   title: "By type",
-  icon: "icon_72"
+  description: "Lalallala",
+
+  icon: "icon_72.png",
+  header: "catalog_frontpage_headline_shop_EN.gif"
 });
 
 await ShopPageFurniture.bulkCreate<ShopPageFurniture>([

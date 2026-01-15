@@ -6,7 +6,7 @@ export type DialogTabHeaderProps = {
     iconImage?: string;
     backgroundImage?: string;
 
-    label?: string;
+    title?: string;
     description?: string;
 }
 
@@ -115,8 +115,8 @@ export default function DialogTabs({ initialActiveIndex = 1, tabs, header, withL
                                 flexDirection: "column",
                                 justifyContent: "center"
                             }}>
-                                {(currentHeader.label) && (
-                                    <h2>{currentHeader.label}</h2>
+                                {(currentHeader.title) && (
+                                    <h2>{currentHeader.title}</h2>
                                 )}
 
                                 {(currentHeader.description) && (
