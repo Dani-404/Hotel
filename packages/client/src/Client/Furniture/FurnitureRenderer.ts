@@ -3,6 +3,7 @@ import FurnitureAssets from "../Assets/FurnitureAssets.js";
 import { FurnitureData } from "../Interfaces/Furniture/FurnitureData.js";
 import { FurnitureIndex } from "@/Interfaces/Furniture/FurnitureIndex.js";
 import { FurnitureVisualization } from "@/Interfaces/Furniture/FurnitureVisualization.js";
+import { RoomPosition } from "@/Interfaces/RoomPosition.js";
 
 export type FurnitureRendererSprite = {
     image: ImageBitmap;
@@ -234,4 +235,29 @@ export default class FurnitureRenderer {
                 return undefined;
         }
     }
+
+    
+    getDimensions() {
+        let result = { row: 0, column: 0, depth: 0 };
+
+        if(!this.data) {
+            return result;
+        }
+        
+        result = {
+            row: this.data.logic.model.dimensions.x,
+            column: this.data.logic.model.dimensions.y,
+            depth: this.data.logic.model.dimensions.z
+        };
+
+        if(this.direction === 0 || this.direction === 4) {
+            result = {
+                row: this.data.logic.model.dimensions.y,
+                column: this.data.logic.model.dimensions.x,
+                depth: this.data.logic.model.dimensions.z
+            };
+        }
+
+        return result;
+    };
 }

@@ -4,7 +4,7 @@ import RoomSprite from "../RoomSprite.js";
 import RoomFurnitureItem from "./RoomFurnitureItem.js";
 
 export default class RoomFurnitureSprite extends RoomSprite {
-    constructor(public readonly item: RoomFurnitureItem, private readonly sprite: FurnitureRendererSprite) {
+    constructor(public readonly item: RoomFurnitureItem, public readonly sprite: FurnitureRendererSprite) {
         super(item);
 
         this.priority = this.sprite.zIndex;

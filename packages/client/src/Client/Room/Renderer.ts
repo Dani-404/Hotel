@@ -11,6 +11,8 @@ import RoomFrameEvent from "@/Events/RoomFrameEvent.js";
 import RoomItem from "./Items/RoomItem.js";
 import ClientInstance from "@/ClientInstance.js";
 import RoomInstance from "./RoomInstance.js";
+import RoomFurnitureSprite from "./Items/Furniture/RoomFurnitureSprite.js";
+import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem.js";
 
 export default class RoomRenderer extends EventTarget {
     public readonly element: HTMLCanvasElement;
@@ -227,7 +229,7 @@ export default class RoomRenderer extends EventTarget {
         return (Math.round(position.row) * 1000) + (Math.round(position.column) * 1000) + (position.depth * 100);
     }
 
-    public getItemScreenPosition(item: RoomItem): MousePosition {
+    public getItemScreenPosition(item: RoomItem, origin: MousePosition = this.renderedOffset): MousePosition {
         if(!item.position) {
             return {
                 left: this.renderedOffset.left,
@@ -235,11 +237,31 @@ export default class RoomRenderer extends EventTarget {
             };
 
         }
+
         const translatePosition = this.getCoordinatePosition(item.position);
 
         return {
             left: this.renderedOffset.left + translatePosition.left,
             top: this.renderedOffset.top + translatePosition.top
         };
+    }
+
+    public panToItem(item: RoomItem) {
+        if(item instanceof RoomFurnitureItem) {
+            if(!item.position) {
+                return;
+            }
+
+            const dimensions = item.furnitureRenderer.getDimensions();
+
+            const position = this.getCoordinatePosition({
+                row: item.position.row - dimensions.row,
+                column: item.position.column - dimensions.column,
+                depth: item.position.depth - dimensions.depth,
+            });
+            
+            this.camera.cameraPosition.left = position.left + 64;
+            this.camera.cameraPosition.top = position.top / 2;
+        }
     }
 }

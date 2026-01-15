@@ -23,6 +23,12 @@ export default function registerRoomUserInterfaceEvents(clientInstance: ClientIn
 
         roomRenderer = new RoomRenderer(event.element, clientInstance);
 
+        roomRenderer.addEventListener("render", () => {
+            if(roomRenderer && roomItem) {
+                roomRenderer.panToItem(roomItem);
+            }
+        });
+
         const roomStructure: RoomStructure = {
             grid: [
                 "0000000",
@@ -60,8 +66,9 @@ export default function registerRoomUserInterfaceEvents(clientInstance: ClientIn
             roomRenderer.items.splice(roomRenderer.items.indexOf(roomItem), 1);
         }
 
-        roomItem = new RoomFurnitureItem(
-            new FurnitureRenderer(event.type, event.size, event.direction, event.animation, event.color), {
+        const furnitureRenderer = new FurnitureRenderer(event.type, event.size, event.direction, event.animation, event.color);
+
+        roomItem = new RoomFurnitureItem(furnitureRenderer, {
                 row: 1,
                 column: 1,
                 depth: 0
