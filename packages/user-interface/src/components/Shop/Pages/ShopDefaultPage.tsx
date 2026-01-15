@@ -21,14 +21,17 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
     
     const [activeFurniture, setActiveFurniture] = useState<ShopPageFurnitureData>();
     const [shopFurnitures, setShopFurnitures] = useState<ShopPageFurnitureData[]>([]);
-    const shopFurnituresRequested = useRef<boolean>(false);
+    const shopFurnituresRequested = useRef<string>("");
 
     useEffect(() => {
-        if(shopFurnituresRequested.current) {
+        if(shopFurnituresRequested.current === page.id) {
             return;
         }
 
-        shopFurnituresRequested.current = true;
+        shopFurnituresRequested.current = page.id;
+
+        setActiveFurniture(undefined);
+        setShopFurnitures([]);
 
         const listener = (event: WebSocketEvent<ShopPageFurnitureResponse>) => {
             if(event.data.pageId === page.id) {
@@ -43,7 +46,7 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
         webSocketClient.send<ShopPageFurnitureRequest>("ShopPageFurnitureRequest", {
             pageId: page.id
         });
-    }, []);
+    }, [page]);
 
     useEffect(() => {
         if(!roomRef.current) {
@@ -111,7 +114,10 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
                     display: "flex",
                     flexDirection: "row",
                     flexWrap: "wrap",
-                    padding: 4
+                    padding: 4,
+
+                    height: 240,
+                    overflowY: "scroll"
                 }}>
                     {shopFurnitures.map((furniture) => (
                         <div key={furniture.id} style={{

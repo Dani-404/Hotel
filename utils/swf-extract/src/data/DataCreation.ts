@@ -1,10 +1,10 @@
 import type { SwfExtractionCollection } from "../swf/SwfExtraction.js";
-import type { FurnitureAsset, FurnitureAssets } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureAssets.ts"
-import type { FigureAssets } from "../../../../packages/client/src/Interfaces/Figure/FigureAssets.ts"
-import type { FurnitureLogic } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureLogic.ts"
-import type { FurnitureVisualization } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureVisualization.ts"
-import type { RoomVisualization } from "../../../../packages/client/src/Interfaces/Room/RoomVisualization.ts"
-import type { FurnitureIndex } from "../../../../packages/client/src/Interfaces/Furniture/FurnitureIndex.ts"
+import type { FurnitureAsset, FurnitureAssets } from "../../../../packages/client/src/Client/Interfaces/Furniture/FurnitureAssets.ts"
+import type { FigureAssets } from "../../../../packages/client/src/Client/Interfaces/Figure/FigureAssets.ts"
+import type { FurnitureLogic } from "../../../../packages/client/src/Client/Interfaces/Furniture/FurnitureLogic.ts"
+import type { FurnitureVisualization } from "../../../../packages/client/src/Client/Interfaces/Furniture/FurnitureVisualization.ts"
+import type { RoomVisualization } from "../../../../packages/client/src/Client/Interfaces/Room/RoomVisualization.ts"
+import type { FurnitureIndex } from "../../../../packages/client/src/Client/Interfaces/Furniture/FurnitureIndex.ts"
 import { XMLParser } from "fast-xml-parser";
 import { readFileSync } from "fs";
 
@@ -142,7 +142,7 @@ export function createVisualizationData(collection: SwfExtractionCollection): Fu
                     }
                 }),
 
-                directions: getValueAsArray(visualization["directions"]["direction"]).map((direction: any) => {
+                directions: getValueAsArray(visualization["directions"]?.["direction"]).map((direction: any) => {
                     return {
                         id: parseInt(direction["@_id"])
                     } satisfies FurnitureVisualization["visualizations"][0]["directions"][0]
@@ -276,4 +276,40 @@ export function createRoomVisualizationData(collection: SwfExtractionCollection)
             })
         }
     } satisfies RoomVisualization;
+}
+
+
+export function createFurnitureData(assetName: string) {
+    const parser = new XMLParser({
+        ignoreAttributes: false
+    });
+
+    const document = parser.parse(readFileSync("furnidata.xml", { encoding: "utf-8" }), false);
+
+    let furniTypes = document["furnidata"]["roomitemtypes"]["furnitype"].filter((furniType: any) => furniType["@_classname"].split('*')[0] === assetName);
+    let isWallFurniture = false;
+    
+    if(!furniTypes.length) {
+        furniTypes = document["furnidata"]["wallitemtypes"]["furnitype"].filter((furniType: any) => furniType["@_classname"].split('*')[0] === assetName);
+        isWallFurniture = true;
+    }
+
+    if(!furniTypes.length) {
+        console.error("Failed to find furni type in furnidata for " + assetName);
+
+        return null;
+    }
+
+    return furniTypes.map((furniType: any) => {
+        const color = furniType["@_classname"].split('*')[1];
+
+        return {
+            name: furniType["name"],
+            description: furniType["description"],
+
+            color: (color)?(parseInt(color)):(undefined),
+
+            placement: (isWallFurniture)?("wall"):("floor"),
+        };
+    });
 }

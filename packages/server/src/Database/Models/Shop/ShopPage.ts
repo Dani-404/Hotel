@@ -1,5 +1,5 @@
-import { Model, NonAttribute } from "sequelize";
-import { ShopPageFurniture } from "./ShopPageFurniture";
+import { DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
+import { ShopPageFurniture } from "./ShopPageFurniture.js";
 
 export class ShopPage extends Model {
     declare id: string;
@@ -15,4 +15,52 @@ export class ShopPage extends Model {
     
     declare children: NonAttribute<ShopPage[]>;
     declare furniture: NonAttribute<ShopPageFurniture[]>;
+}
+
+export function initializeShopPageModel(sequelize: Sequelize) {
+    ShopPage.init(
+        {
+          id: {
+            type: DataTypes.UUID,
+            primaryKey: true
+          },
+          category: {
+            type: new DataTypes.STRING(32),
+            allowNull: false
+          },
+          type: {
+            type: new DataTypes.STRING(32),
+            allowNull: false,
+            defaultValue: "default"
+          },
+          title: {
+            type: new DataTypes.STRING(32),
+            allowNull: false
+          },
+          description: {
+            type: new DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null
+          },
+          icon: {
+            type: new DataTypes.STRING(32),
+            allowNull: true,
+            defaultValue: null
+          },
+          header: {
+            type: new DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null
+          }
+        },
+        {
+          tableName: "shop_pages",
+          sequelize
+        }
+    );
+    
+    ShopPage.hasMany(ShopPage, {
+        as: "children",
+        foreignKey: "parentId"
+    });
 }

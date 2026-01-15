@@ -8,6 +8,10 @@ import OutgoingEvent from "./Events/Interfaces/OutgoingEvent.js";
 import "./Rooms/Events/EnterRoom.js";
 import "./Users/Events/RequestUserData.js";
 import ShopEvents from "./Shop/ShopEvents.js";
+import { initializeDevelopmentData, initializeModels } from "./Database/Database.js";
+
+await initializeModels();
+await initializeDevelopmentData();
 
 eventHandler.addListener("ClientPingEvent", (userClient: UserClient) => {
 	userClient.send(new OutgoingEvent<UserDataUpdated>("UserDataUpdated", {

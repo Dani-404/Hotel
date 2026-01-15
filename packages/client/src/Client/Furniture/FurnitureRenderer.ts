@@ -43,11 +43,11 @@ export default class FurnitureRenderer {
         const sprites: FurnitureRendererSprite[] = [];
 
         if(!this.visualization) {
-            this.visualization = this.data.visualization.visualizations.find((visualization) => visualization.size == this.size && visualization.directions.find((direction) => direction.id === this.direction));
+            this.visualization = this.data.visualization.visualizations.find((visualization) => visualization.size == this.size);
         }
 
         if(!this.visualization) {
-            throw new Error("Visualization does not exist for size.");
+            throw new Error("Visualization for " + this.type + " does not exist for size: " + this.size + ".");
         }
 
         const animation = this.visualization.animations?.find((animation) => animation.id === this.animation);
@@ -59,7 +59,7 @@ export default class FurnitureRenderer {
 
             let spriteFrame = 0;
 
-            if(animationLayer) {
+            if(animationLayer?.frameSequence?.length) {
                 let frameSequenceIndex = frame % animationLayer.frameSequence.length;
 
                 if(animationLayer.frameRepeat && animationLayer.frameRepeat > 1) {
@@ -71,7 +71,12 @@ export default class FurnitureRenderer {
                     });*/
                 }
 
-                spriteFrame = animationLayer?.frameSequence[frameSequenceIndex].id;
+                if(!animationLayer?.frameSequence[frameSequenceIndex]) {
+                    console.warn("Animation layer does not exist for " + this.type + ", frame index " + frameSequenceIndex);                    
+                }
+                else {
+                    spriteFrame = animationLayer?.frameSequence[frameSequenceIndex].id;
+                }
             }
 
             let assetName = `${this.type}_${this.size}_${String.fromCharCode(97 + layer)}_${this.direction}_${spriteFrame}`;

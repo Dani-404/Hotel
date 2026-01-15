@@ -2,7 +2,7 @@ import { copyFileSync, existsSync, mkdirSync, readdirSync, rmdirSync, rmSync, wr
 import { createSpritesheet } from "./spritesheet/SpritesheetCreation.ts";
 import { extractSwf } from "./swf/SwfExtraction.ts";
 import path from "path";
-import { createAssetsData, createAssetsDataFromManifest, createIndexData, createLogicData, createRoomVisualizationData, createVisualizationData } from "./data/DataCreation.ts";
+import { createAssetsData, createAssetsDataFromManifest, createFurnitureData, createIndexData, createLogicData, createRoomVisualizationData, createVisualizationData } from "./data/DataCreation.ts";
 import type { FurnitureData } from "../../../packages/client/src/Client/Interfaces/Furniture/FurnitureData.ts"
 import type { FigureData } from "../../../packages/client/src/Client/Interfaces/Figure/FigureData.ts"
 import type { RoomData } from "../../../packages/client/src/Client/Interfaces/Room/RoomData.ts"
@@ -36,6 +36,11 @@ else if(process.argv[2] === "generate-all") {
     .map((file) => path.basename(file.name, ".swf"))
     .filter((file) => !existingAssetNames.includes(file));
 }
+else if(process.argv[2] === "generate-furniture") {
+    assetNames = readdirSync(path.join("assets", "furniture"), { withFileTypes: true })
+    .filter((directory) => directory.isFile())
+    .map((directory) => directory.name.split('.')[0]);
+}
 
 (async () => {
     for(let assetName of assetNames) {
@@ -55,7 +60,7 @@ else if(process.argv[2] === "generate-all") {
                 });
             }
 
-            const swfCollection = await extractSwf(assetName, (existsSync(`assets/${assetName}/${assetName}.swf`))?(`assets/${assetName}/${assetName}.swf`):(`assets/${assetName}.swf`));
+            const swfCollection = await extractSwf(assetName, (existsSync(`assets/furniture/${assetName}.swf`))?(`assets/furniture/${assetName}.swf`):(`assets/${assetName}.swf`));
 
             if(extractOnly) {
                 continue;
@@ -151,6 +156,8 @@ else if(process.argv[2] === "generate-all") {
                 const visualization = createVisualizationData(swfCollection);
                 const index = createIndexData(swfCollection);
 
+                const furnitureData = createFurnitureData(assetName);
+
                 const data: FurnitureData = {
                     index,
                     visualization,
@@ -162,6 +169,13 @@ else if(process.argv[2] === "generate-all") {
                 writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
                     encoding: "utf-8"
                 });
+
+                // TODO: output SQL statements?
+                if(furnitureData) {
+                    writeFileSync(path.join(outputPath, `${assetName}_serverdata.json`), JSON.stringify(furnitureData, undefined, 2), {
+                        encoding: "utf-8"
+                    });
+                }
             }
         }
         catch(error) {
