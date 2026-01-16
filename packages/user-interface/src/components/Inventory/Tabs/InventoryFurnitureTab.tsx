@@ -1,51 +1,40 @@
-import { useContext, useEffect, useRef, useState } from "react";
 import FurnitureIcon from "../../Furniture/FurnitureIcon";
-import CreateRoomRendererEvent, { RoomRendererOptions } from "@shared/Events/Room/Renderer/CreateRoomRendererEvent";
-import { AppContext } from "../../../contexts/AppContext";
 import DialogButton from "../../Dialog/Button/DialogButton";
+import RoomRenderer from "../../Room/Renderer/RoomRenderer";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AppContext } from "../../../contexts/AppContext";
+import { UserFurnitureData } from "@shared/Interfaces/User/UserFurnitureData";
+import WebSocketEvent from "@shared/WebSocket/Events/WebSocketEvent";
+import { UserFurnitureDataUpdated } from "@shared/WebSocket/Events/User/Inventory/UserFurnitureDataUpdated";
 
 export default function InventoryFurnitureTab() {
-    const { internalEventTarget } = useContext(AppContext);
+    const { webSocketClient } = useContext(AppContext);
 
-    const roomRef = useRef<HTMLDivElement>(null);
-    const roomRendererRequested = useRef<boolean>(false);
-    const [roomRendererOptions, setRoomRendererOptions] = useState<RoomRendererOptions>();
-    
+    const [activeFurniture, setActiveFurniture] = useState<UserFurnitureData>();
+    const [userFurniture, setUserFurniture] = useState<UserFurnitureData[]>([]);
+    const userFurnitureRequested = useRef<boolean>(false);
+
     useEffect(() => {
-        if(!roomRef.current) {
+        if(userFurnitureRequested.current) {
             return;
         }
 
-        if(roomRendererRequested.current) {
-            return;
+        userFurnitureRequested.current = true;
+
+        const listener = (event: WebSocketEvent<UserFurnitureDataUpdated>) => {
+            setUserFurniture(event.data.userFurniture);
+
+            if(event.data.userFurniture.length) {
+                setActiveFurniture(event.data.userFurniture[0]);
+            }
         }
 
-        roomRendererRequested.current = true;
-
-        const requestEvent = new CreateRoomRendererEvent(roomRef.current, { withoutWalls: true }, (roomRendererOptions) => {
-            setRoomRendererOptions(roomRendererOptions);
+        webSocketClient.addEventListener<WebSocketEvent<UserFurnitureDataUpdated>>("UserFurnitureDataUpdated", listener, {
+            once: true
         });
 
-        internalEventTarget.dispatchEvent(requestEvent);
-    }, [roomRef]);
-
-    useEffect(() => {
-        if(!roomRendererOptions) {
-            return;
-        }
-
-        roomRendererOptions.setFurniture("rare_dragonlamp", 64, undefined, 0, 1);
-    }, [roomRendererOptions]);
-
-    useEffect(() => {
-        if(!roomRendererOptions) {
-            return;
-        }
-
-        return () => {
-            roomRendererOptions.terminate();
-        };
-    }, [roomRendererOptions]);
+        webSocketClient.send("RequestUserFurnitureData", null);
+    }, []);
 
     return (
         <div style={{
@@ -64,62 +53,36 @@ export default function InventoryFurnitureTab() {
 
                 overflowY: "scroll"
             }}>
-                <div style={{
-                    display: "flex",
-
-                    width: 40,
-                    height: 40,
-
-                    boxSizing: "border-box",
-
-                    border: "1px solid black",
-                    borderRadius: 6,
-
-                    cursor: "pointer"
-                }}>
+                {userFurniture?.map((userFurniture) => (
                     <div style={{
-                        flex: 1,
+                        display: "flex",
 
-                        border: "2px solid white",
+                        width: 40,
+                        height: 40,
+
+                        boxSizing: "border-box",
+
+                        border: "1px solid black",
                         borderRadius: 6,
 
-                        background: "#CBCBCB",
+                        cursor: "pointer"
+                    }} onClick={() => setActiveFurniture(userFurniture)}>
+                        <div style={{
+                            flex: 1,
 
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}>
-                        <FurnitureIcon furnitureData={{ type: "rare_dragonlamp", color: 1, name: "Dragon" }}/>
+                            border: (activeFurniture?.id === userFurniture.id)?("2px solid white"):("none"),
+                            borderRadius: 6,
+
+                            background: "#CBCBCB",
+
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}>
+                            <FurnitureIcon furnitureData={userFurniture.furnitureData}/>
+                        </div>
                     </div>
-                </div>
-
-                <div style={{
-                    display: "flex",
-
-                    width: 40,
-                    height: 40,
-
-                    boxSizing: "border-box",
-
-                    border: "1px solid black",
-                    borderRadius: 6,
-
-                    cursor: "pointer"
-                }}>
-                    <div style={{
-                        flex: 1,
-
-                        borderRadius: 6,
-
-                        background: "#CBCBCB",
-
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}>
-                        <FurnitureIcon furnitureData={{ type: "roomdimmer", color: 0, name: "Dimmer" }}/>
-                    </div>
-                </div>
+                ))}
             </div>
 
             <div style={{
@@ -129,14 +92,14 @@ export default function InventoryFurnitureTab() {
                 flexDirection: "column",
                 gap: 10
             }}>
-                <div ref={roomRef} style={{
+                <RoomRenderer options={{ withoutWalls: true }} furnitureData={activeFurniture?.furnitureData} style={{
                     height: 130,
                     width: "100%",
                 }}/>
 
                 <div style={{ flex: 1 }}>
-                    <b>Rare dragonlamp</b>
-                    <p>Rare dragonlamp</p>
+                    <b>{activeFurniture?.furnitureData.name}</b>
+                    <p>{activeFurniture?.furnitureData.description}</p>
                 </div>
 
                 <DialogButton>Place in room</DialogButton>

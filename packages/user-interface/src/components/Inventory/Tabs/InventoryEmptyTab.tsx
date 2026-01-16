@@ -23,7 +23,7 @@ export default function InventoryEmptyTab() {
             </div>
 
             <div style={{
-                width: 170,
+                width: 200,
 
                 display: "flex",
                 gap: 10,

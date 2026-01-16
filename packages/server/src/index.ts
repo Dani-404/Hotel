@@ -7,8 +7,11 @@ import OutgoingEvent from "./Events/Interfaces/OutgoingEvent.js";
 
 import "./Rooms/Events/EnterRoom.js";
 import "./Users/Events/RequestUserData.js";
+import "./Users/Inventory/Events/RequestUserFurnitureData.js";
+
 import ShopEvents from "./Shop/ShopEvents.js";
-import { initializeDevelopmentData, initializeModels } from "./Database/Database.js";
+import { initializeModels } from "./Database/Database.js";
+import { initializeDevelopmentData } from "./Database/Development/DatabaseDevelopmentData.js";
 
 await initializeModels();
 await initializeDevelopmentData();

@@ -6,7 +6,7 @@ import { ShopPageFurnitureRequest } from "@shared/WebSocket/Events/Shop/ShopPage
 import { ShopPageFurnitureData, ShopPageFurnitureResponse } from "@shared/WebSocket/Events/Shop/ShopPageFurnitureResponse";
 import WebSocketEvent from "@shared/WebSocket/Events/WebSocketEvent";
 import FurnitureIcon from "../../Furniture/FurnitureIcon";
-import CreateRoomRendererEvent, { RoomRendererOptions } from "@shared/Events/Room/Renderer/CreateRoomRendererEvent";
+import CreateRoomRendererEvent, { RoomRendererResult } from "@shared/Events/Room/Renderer/CreateRoomRendererEvent";
 import DialogButton from "../../Dialog/Button/DialogButton";
 
 export default function ShopDefaultPage({ page }: ShopPageProps) {
@@ -15,7 +15,7 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
     const roomRef = useRef<HTMLDivElement>(null);
     const roomRendererRequested = useRef<boolean>(false);
 
-    const [roomRendererOptions, setRoomRendererOptions] = useState<RoomRendererOptions>();
+    const [roomRendererResult, setRoomRendererResult] = useState<RoomRendererResult>();
     
     const [activeFurniture, setActiveFurniture] = useState<ShopPageFurnitureData>();
     const [shopFurnitures, setShopFurnitures] = useState<ShopPageFurnitureData[]>([]);
@@ -57,34 +57,34 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
 
         roomRendererRequested.current = true;
 
-        const requestEvent = new CreateRoomRendererEvent(roomRef.current, {}, (roomRendererOptions) => {
-            setRoomRendererOptions(roomRendererOptions);
+        const requestEvent = new CreateRoomRendererEvent(roomRef.current, {}, (roomRendererResult) => {
+            setRoomRendererResult(roomRendererResult);
         });
 
         internalEventTarget.dispatchEvent(requestEvent);
     }, [roomRef]);
 
     useEffect(() => {
-        if(!roomRendererOptions || !activeFurniture) {
+        if(!roomRendererResult || !activeFurniture) {
             return;
         }
 
-        roomRendererOptions.setFurniture(activeFurniture.furniture.type, 64, undefined, 0, activeFurniture.furniture.color ?? 0);
-    }, [roomRendererOptions, activeFurniture]);
+        roomRendererResult.setFurniture(activeFurniture.furniture.type, 64, undefined, 0, activeFurniture.furniture.color ?? 0);
+    }, [roomRendererResult, activeFurniture]);
 
     useEffect(() => {
-        if(!roomRendererOptions) {
+        if(!roomRendererResult) {
             return;
         }
 
         return () => {
-            roomRendererOptions.terminate();
+            roomRendererResult.terminate();
         };
-    }, [roomRendererOptions]);
+    }, [roomRendererResult]);
 
     const onRoomRendererClick = useCallback(() => {
-        roomRendererOptions?.progressFurnitureAnimation();
-    }, [roomRendererOptions]);
+        roomRendererResult?.progressFurnitureAnimation();
+    }, [roomRendererResult]);
 
     return (
         <div style={{
