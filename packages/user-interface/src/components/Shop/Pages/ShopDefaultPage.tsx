@@ -101,7 +101,9 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
             display: "flex",
             flexDirection: "column",
 
-            gap: 10
+            gap: 10,
+
+            overflow: "hidden"
         }}>
             <div ref={roomRef} style={{
                 background: "#000",
@@ -109,14 +111,13 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
                 width: "100%"
             }}/>
 
-            <DialogPanel style={{ flex: 1 }}>
+            <DialogPanel style={{ flex: "1 1 0", overflow: "hidden" }} contentStyle={{ display: "flex", flex: 1 }}>
                 <div style={{
                     display: "flex",
                     flexDirection: "row",
                     flexWrap: "wrap",
+                    
                     padding: 4,
-
-                    height: 240,
                     overflowY: "scroll"
                 }}>
                     {shopFurnitures.map((furniture) => (

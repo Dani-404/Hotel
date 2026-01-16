@@ -2,9 +2,10 @@ import { CSSProperties, PropsWithChildren } from "react";
 
 export type DialogPanelProps = PropsWithChildren & {
     style?: CSSProperties;
+    contentStyle?: CSSProperties;
 }
 
-export default function DialogPanel({ style, children }: DialogPanelProps) {
+export default function DialogPanel({ style, contentStyle, children }: DialogPanelProps) {
     return (
         <div style={{
             display: "flex",
@@ -21,6 +22,8 @@ export default function DialogPanel({ style, children }: DialogPanelProps) {
                 background: "#D2D1CB",
                 border: "2px solid #F4F4F0",
                 borderRadius: 5,
+
+                ...contentStyle
             }}>
                 {children}
             </div>

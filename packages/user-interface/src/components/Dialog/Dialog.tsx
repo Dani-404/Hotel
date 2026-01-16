@@ -62,7 +62,7 @@ export default function Dialog({ title, children, onClose, width, height }: Dial
             backgroundColor: "#ECEAE0",
 
             width,
-            minHeight: height,
+            height: height,
 
             left: 0,
             top: 0,
