@@ -14,7 +14,7 @@ export type InterfaceInstanceProps = {
 }
 
 export default function InterfaceInstance({ internalEventTarget, webSocketClient }: InterfaceInstanceProps) {
-    const [dialogs, setDialogs] = useState<Dialog[]>([{ id:"shop", type: "shop", data: null }]);
+    const [dialogs, setDialogs] = useState<Dialog[]>([{ id:"inventory", type: "inventory", data: null }]);
 
     const ready = useRef<boolean>(false);
     const [user, setUser] = useState<UserDataUpdated>();

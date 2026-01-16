@@ -81,7 +81,9 @@ export default function Dialog({ title, children, onClose, width, height }: Dial
             <div style={{
                 height: 1,
                 width: "100%",
-                backgroundColor: "black"
+                backgroundColor: "black",
+
+                overflow: "hidden"
             }}/>
 
             {children}

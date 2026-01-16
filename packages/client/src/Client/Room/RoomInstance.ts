@@ -43,6 +43,7 @@ export default class RoomInstance {
         this.furnitures.push(this.addFurniture({
             id: "x",
             furniture: {
+                name: "Dimmer",
                 type: "roomdimmer"
             },
             position: {

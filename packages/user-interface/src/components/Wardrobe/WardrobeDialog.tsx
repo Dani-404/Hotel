@@ -93,7 +93,7 @@ export default function WardrobeDialog({ onClose }: WardrobeDialogProps) {
     }, [user?.figureConfiguration]);
     
     return (
-        <Dialog title="Wardrobe" onClose={onClose} width={500} height={400}>
+        <Dialog title="Wardrobe" onClose={onClose} width={500} height={530}>
             <DialogTabs initialActiveIndex={1} header={{ title: user?.name }} tabs={[
                 {
                     icon: (<div className="sprite_wardrobe_generic_tab"/>),

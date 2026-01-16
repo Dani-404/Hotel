@@ -57,7 +57,7 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
 
         roomRendererRequested.current = true;
 
-        const requestEvent = new CreateRoomRendererEvent(roomRef.current, (roomRendererOptions) => {
+        const requestEvent = new CreateRoomRendererEvent(roomRef.current, {}, (roomRendererOptions) => {
             setRoomRendererOptions(roomRendererOptions);
         });
 

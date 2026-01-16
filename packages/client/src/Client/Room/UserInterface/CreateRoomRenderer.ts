@@ -5,7 +5,6 @@ import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
 import RoomMapItem from "../Items/Map/RoomFurnitureItem.js";
 import FloorRenderer from "../Structure/FloorRenderer.js";
 import WallRenderer from "../Structure/WallRenderer.js";
-import RoomItem from "../Items/RoomItem.js";
 import RoomFurnitureItem from "../Items/Furniture/RoomFurnitureItem.js";
 import FurnitureRenderer from "@/Furniture/FurnitureRenderer.js";
 import FurnitureAssets from "@/Assets/FurnitureAssets.js";
@@ -17,7 +16,10 @@ export default function registerUserInterfaceRoomRenderer(clientInstance: Client
 
         roomRenderer.addEventListener("render", () => {
             if(roomRenderer && roomItem) {
-                roomRenderer.panToItem(roomItem);
+                roomRenderer.panToItem(roomItem, {
+                    left: 0,
+                    top: (event.options.withoutWalls)?(-16):(0)
+                });
             }
         });
 
@@ -43,7 +45,7 @@ export default function registerUserInterfaceRoomRenderer(clientInstance: Client
     
         roomRenderer.items.push(new RoomMapItem(
             new FloorRenderer(roomStructure, roomStructure.floor.id, 64),
-            new WallRenderer(roomStructure, roomStructure.wall.id, 64)
+            (!event.options.withoutWalls)?(new WallRenderer(roomStructure, roomStructure.wall.id, 64)):(undefined)
         ));
 
         event.resolve({

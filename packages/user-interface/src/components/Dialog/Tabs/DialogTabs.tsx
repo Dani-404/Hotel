@@ -15,6 +15,7 @@ export type DialogTabsProps = {
     withLargeTabs?: boolean;
 
     header?: DialogTabHeaderProps;
+    withoutHeader?: boolean;
 
     tabs: {
         icon: ReactNode;
@@ -23,25 +24,29 @@ export type DialogTabsProps = {
     }[];
 };
 
-export default function DialogTabs({ initialActiveIndex = 1, tabs, header, withLargeTabs = false }: DialogTabsProps) {
+export default function DialogTabs({ initialActiveIndex = 0, withoutHeader, tabs, header, withLargeTabs = false }: DialogTabsProps) {
     const { user } = useContext(AppContext);
 
     const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
 
-    const currentHeader = tabs[activeIndex].header ?? header;
+    const currentHeader = tabs[activeIndex]?.header ?? header;
+
+    const inactiveBackgroundColor = (withoutHeader)?("#C3C1B7"):("#7E8C8A");
 
     return (
         <div style={{
             flex: 1,
 
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
+
+            overflow: "hidden"
         }}>
             <div style={{
-                height: 119,
+                height: (withoutHeader)?(40):(119),
                 width: "100%",
                
-                background: "#0E3F52",
+                background: (withoutHeader)?(undefined):("#0E3F52"),
                 borderBottom: "1px solid black",
                 boxSizing: "border-box",
 
@@ -152,16 +157,16 @@ export default function DialogTabs({ initialActiveIndex = 1, tabs, header, withL
                             <div style={{
                                 flex: 1,
 
-                                background: (activeIndex === index)?("#ECEAE0"):("#7E8C8A"),
+                                background: (activeIndex === index)?("#ECEAE0"):(inactiveBackgroundColor),
 
-                                borderLeft: (activeIndex === index)?("2px solid white"):("2px solid #7E8C8A"),
-                                borderTop: (activeIndex === index)?("2px solid white"):("2px solid #7E8C8A"),
-                                borderRight: (activeIndex === index)?("2px solid white"):("2px solid #7E8C8A"),
+                                borderLeft: (activeIndex === index)?("2px solid white"):("2px solid " + inactiveBackgroundColor),
+                                borderTop: (activeIndex === index)?("2px solid white"):("2px solid " + inactiveBackgroundColor),
+                                borderRight: (activeIndex === index)?("2px solid white"):("2px solid " + inactiveBackgroundColor),
                                 
                                 borderTopLeftRadius: 8,
                                 borderTopRightRadius: 8,
 
-                                padding: (withLargeTabs)?("6px 6px"):("0 6px"),
+                                padding: (withLargeTabs)?("6px 10px"):("0 10px"),
 
                                 display: "flex",
                                 justifyContent: "center",

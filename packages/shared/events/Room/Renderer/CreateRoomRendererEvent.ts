@@ -7,6 +7,9 @@ export type RoomRendererOptions = {
 export default class CreateRoomRendererEvent extends Event {
     constructor(
         public readonly element: HTMLDivElement,
+        public readonly options: {
+            withoutWalls?: boolean;
+        },
         public readonly resolve: (options: RoomRendererOptions) => void
     ) {
         super("CreateRoomRendererEvent");

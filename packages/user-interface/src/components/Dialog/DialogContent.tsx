@@ -14,7 +14,9 @@ export default function DialogContent({ children }: PropsWithChildren) {
 
             color: "black",
             fontSize: 13,
-            padding: 10
+            padding: 10,
+
+            overflow: "hidden"
         }}>
             {children}
         </div>

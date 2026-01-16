@@ -246,7 +246,7 @@ export default class RoomRenderer extends EventTarget {
         };
     }
 
-    public panToItem(item: RoomItem) {
+    public panToItem(item: RoomItem, offset: MousePosition) {
         if(item instanceof RoomFurnitureItem) {
             if(!item.position) {
                 return;
@@ -263,8 +263,8 @@ export default class RoomRenderer extends EventTarget {
             this.camera.cameraPosition.left = position.left + 64;
             this.camera.cameraPosition.top = position.top / 2;*/
 
-            this.camera.cameraPosition.left = (Math.max(dimensions.row - 1, 0) * 16) + (Math.max(dimensions.column - 1, 0) * -16);
-            this.camera.cameraPosition.top = (Math.max(dimensions.row - 1, 0) * -8) + (Math.max(dimensions.column - 1, 0) * -8);
+            this.camera.cameraPosition.left = (Math.max(dimensions.row - 1, 0) * 16) + (Math.max(dimensions.column - 1, 0) * -16) + offset.left;
+            this.camera.cameraPosition.top = (Math.max(dimensions.row - 1, 0) * -8) + (Math.max(dimensions.column - 1, 0) * -8) + offset.top;
         }
     }
 }

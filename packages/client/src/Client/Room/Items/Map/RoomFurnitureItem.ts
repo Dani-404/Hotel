@@ -9,7 +9,7 @@ import RoomDoorMaskSprite from "../Floor/RoomDoorMaskSprite.js";
 export default class RoomMapItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
-    constructor(public readonly floorRenderer: FloorRenderer, public readonly wallRenderer: WallRenderer) {
+    constructor(public readonly floorRenderer: FloorRenderer, public readonly wallRenderer?: WallRenderer) {
         super("map");
 
         this.render();
@@ -24,10 +24,10 @@ export default class RoomMapItem extends RoomItem {
         });
 
         
-        this.wallRenderer.renderOffScreen().then(({ wall, doorMask }) => {
+        this.wallRenderer?.renderOffScreen().then(({ wall, doorMask }) => {
             this.sprites.push(new RoomWallSprite(this, wall));
 
-            if(this.wallRenderer.structure.door) {
+            if(this.wallRenderer!.structure.door) {
                 this.sprites.push(new RoomDoorMaskSprite(this, doorMask));
                 this.sprites.push(new RoomDoorMaskSprite(this, doorMask));
             }

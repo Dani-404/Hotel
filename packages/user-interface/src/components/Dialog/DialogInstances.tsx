@@ -2,6 +2,7 @@ import { Fragment, useContext, useEffect } from "react";
 import { AppContext, Dialog } from "../../contexts/AppContext";
 import WardrobeDialog from "../Wardrobe/WardrobeDialog";
 import ShopDialog from "../Shop/ShopDialog";
+import InventoryDialog from "../Inventory/InventoryDialog";
 
 export type DialogInstancesProps = {
     dialogs: Dialog[];
@@ -19,6 +20,9 @@ export default function DialogInstances({  }: DialogInstancesProps) {
                         
                     case "shop":
                         return (<ShopDialog key={dialog.id} onClose={() => closeDialog(dialog.id)}/>);
+                        
+                    case "inventory":
+                        return (<InventoryDialog key={dialog.id} onClose={() => closeDialog(dialog.id)}/>);
                 }
             })}
         </Fragment>

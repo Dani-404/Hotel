@@ -4,6 +4,8 @@ import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 export class Furniture extends Model {
     declare id: string;
     declare type: string;
+    declare name: string;
+    declare description?: string;
     declare placement: "floor" | "wall";
     declare dimensions: RoomPosition;
     declare color?: number;
