@@ -4,7 +4,6 @@ import "@/../Workers/Figure/FigureRendererWorker.js";
 import "@/Figure/Worker/FigureWorkerRenderer.js";
 import WebSocketClient from "@shared/WebSocket/WebSocketClient.js";
 import { TypedEventTarget } from "@shared/Interfaces/TypedEventTarget.js";
-import FigureConfigurationHelper from "@shared/Figure/FigureConfigurationHelper.js";
 
 (window as any).createClientInstance = async function createClientInstance(element: HTMLElement, internalEventTarget: TypedEventTarget, webSocketClient: WebSocketClient) {
     await FigureAssets.loadAssets();

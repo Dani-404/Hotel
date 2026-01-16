@@ -6,10 +6,7 @@ import { ShopPageFurnitureRequest } from "@shared/WebSocket/Events/Shop/ShopPage
 import { ShopPageFurnitureData, ShopPageFurnitureResponse } from "@shared/WebSocket/Events/Shop/ShopPageFurnitureResponse";
 import WebSocketEvent from "@shared/WebSocket/Events/WebSocketEvent";
 import FurnitureIcon from "../../Furniture/FurnitureIcon";
-import StartRoomRenderer from "@shared/Events/Room/Renderer/StartRoomRenderer";
-import RoomRendererStarted from "@shared/Events/Room/Renderer/RoomRendererStarted";
-import SetRoomRendererFurniture from "@shared/Events/Room/Renderer/SetRoomRendererFurniture";
-import TerminateRoomRenderer from "@shared/Events/Room/Renderer/TerminateRoomRenderer";
+import CreateRoomRendererEvent, { RoomRendererOptions } from "@shared/Events/Room/Renderer/CreateRoomRendererEvent";
 import DialogButton from "../../Dialog/Button/DialogButton";
 
 export default function ShopDefaultPage({ page }: ShopPageProps) {
@@ -17,7 +14,8 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
 
     const roomRef = useRef<HTMLDivElement>(null);
     const roomRendererRequested = useRef<boolean>(false);
-    const [roomRendererStarted, setRoomRendererStarted] = useState<boolean>(false);
+
+    const [roomRendererOptions, setRoomRendererOptions] = useState<RoomRendererOptions>();
     
     const [activeFurniture, setActiveFurniture] = useState<ShopPageFurnitureData>();
     const [shopFurnitures, setShopFurnitures] = useState<ShopPageFurnitureData[]>([]);
@@ -59,40 +57,30 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
 
         roomRendererRequested.current = true;
 
-        const requestEvent = new StartRoomRenderer(roomRef.current);
-
-        const listener = (event: RoomRendererStarted) => {
-            if(event.id !== requestEvent.id) {
-                return;
-            }
-
-            setRoomRendererStarted(true);
-        };
-
-        internalEventTarget.addEventListener("RoomRendererStarted", listener, {
-            once: true
+        const requestEvent = new CreateRoomRendererEvent(roomRef.current, (roomRendererOptions) => {
+            setRoomRendererOptions(roomRendererOptions);
         });
 
         internalEventTarget.dispatchEvent(requestEvent);
     }, [roomRef]);
 
     useEffect(() => {
-        if(!roomRendererRequested || !activeFurniture) {
+        if(!roomRendererOptions || !activeFurniture) {
             return;
         }
 
-        internalEventTarget.dispatchEvent(new SetRoomRendererFurniture(activeFurniture.furniture.type, 64, undefined, 0, activeFurniture.furniture.color));
-    }, [roomRendererStarted, activeFurniture]);
+        roomRendererOptions.setFurniture(activeFurniture.furniture.type, 64, undefined, 0, activeFurniture.furniture.color ?? 0);
+    }, [roomRendererOptions, activeFurniture]);
 
     useEffect(() => {
-        if(!roomRendererStarted) {
+        if(!roomRendererOptions) {
             return;
         }
 
         return () => {
-            internalEventTarget.dispatchEvent(new TerminateRoomRenderer());
+            roomRendererOptions.terminate();
         };
-    }, [roomRendererStarted]);
+    }, [roomRendererOptions]);
 
     return (
         <div style={{
