@@ -229,6 +229,9 @@ export default class FurnitureRenderer {
             case undefined:
                 return undefined;
 
+            case "scrn":
+                return "screen";
+
             default:
                 console.warn(`Furniture ink mode ${ink} is not recognized.`);
 
@@ -236,7 +239,6 @@ export default class FurnitureRenderer {
         }
     }
 
-    
     getDimensions() {
         let result = { row: 0, column: 0, depth: 0 };
 
@@ -260,4 +262,22 @@ export default class FurnitureRenderer {
 
         return result;
     };
+
+    public getNextAnimation() {
+        if(!this.visualization) {
+            return 0;
+        }
+
+        const currentAnimationIndex = this.visualization.animations.findIndex((animation) => animation.id === this.animation);
+
+        if(currentAnimationIndex === -1) {
+            return 0;
+        }
+
+        if(!this.visualization.animations[currentAnimationIndex + 1]) {
+            return this.visualization.animations[0].id;
+        }
+
+        return this.visualization.animations[currentAnimationIndex + 1].id;
+    }
 }

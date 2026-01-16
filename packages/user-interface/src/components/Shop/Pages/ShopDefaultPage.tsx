@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import DialogPanel from "../../Dialog/Panels/DialogPanel";
 import { ShopPageProps } from "./ShopPage";
 import { AppContext } from "../../../contexts/AppContext";
@@ -82,6 +82,10 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
         };
     }, [roomRendererOptions]);
 
+    const onRoomRendererClick = useCallback(() => {
+        roomRendererOptions?.progressFurnitureAnimation();
+    }, [roomRendererOptions]);
+
     return (
         <div style={{
             flex: 1,
@@ -96,8 +100,9 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
             <div ref={roomRef} style={{
                 background: "#000",
                 height: 240,
-                width: "100%"
-            }}/>
+                width: "100%",
+                cursor: "pointer"
+            }} onClick={onRoomRendererClick}/>
 
             <DialogPanel style={{ flex: "1 1 0", overflow: "hidden" }} contentStyle={{ display: "flex", flex: 1 }}>
                 <div style={{

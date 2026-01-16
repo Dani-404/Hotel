@@ -1,5 +1,6 @@
 export type RoomRendererOptions = {
     setFurniture: (type: string, size: number, direction: number | undefined, animation: number, color: number) => Promise<void>,
+    progressFurnitureAnimation: () => void,
     terminate: () => void
 };
 

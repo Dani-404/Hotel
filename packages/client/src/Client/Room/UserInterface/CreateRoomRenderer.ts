@@ -13,7 +13,7 @@ import FurnitureAssets from "@/Assets/FurnitureAssets.js";
 export default function registerUserInterfaceRoomRenderer(clientInstance: ClientInstance) {
     clientInstance.internalEventTarget.addEventListener<CreateRoomRendererEvent>("CreateRoomRendererEvent", (event) => {
         const roomRenderer = new RoomRenderer(event.element, clientInstance);
-        let roomItem: RoomItem | undefined = undefined;
+        let roomItem: RoomFurnitureItem | undefined = undefined;
 
         roomRenderer.addEventListener("render", () => {
             if(roomRenderer && roomItem) {
@@ -59,7 +59,6 @@ export default function registerUserInterfaceRoomRenderer(clientInstance: Client
 
                 const furnitureRenderer = new FurnitureRenderer(type, size, direction, animation, color);
 
-
                 roomItem = new RoomFurnitureItem(furnitureRenderer, (furnitureData.visualization.placement === "wall") ? (
                     {
                         row: 1,
@@ -76,6 +75,13 @@ export default function registerUserInterfaceRoomRenderer(clientInstance: Client
                 );
 
                 roomRenderer.items.push(roomItem);
+            },
+            progressFurnitureAnimation: () => {
+                if(!roomItem) {
+                    return;
+                }
+
+                roomItem.furnitureRenderer.animation = roomItem.furnitureRenderer.getNextAnimation();
             }
         });
     });
