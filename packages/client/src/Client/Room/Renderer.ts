@@ -254,14 +254,17 @@ export default class RoomRenderer extends EventTarget {
 
             const dimensions = item.furnitureRenderer.getDimensions();
 
-            const position = this.getCoordinatePosition({
+            /*const position = this.getCoordinatePosition({
                 row: item.position.row - dimensions.row,
                 column: item.position.column - dimensions.column,
                 depth: item.position.depth - dimensions.depth,
             });
             
             this.camera.cameraPosition.left = position.left + 64;
-            this.camera.cameraPosition.top = position.top / 2;
+            this.camera.cameraPosition.top = position.top / 2;*/
+
+            this.camera.cameraPosition.left = (Math.max(dimensions.row - 1, 0) * 16) + (Math.max(dimensions.column - 1, 0) * -16);
+            this.camera.cameraPosition.top = (Math.max(dimensions.row - 1, 0) * -8) + (Math.max(dimensions.column - 1, 0) * -8);
         }
     }
 }
