@@ -159,7 +159,8 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
                     flexDirection: "row"
                 }}>
                     <div style={{ flex: 1 }}/>
-                    <DialogButton style={{ flex: 1 }}>Add to inventory</DialogButton>
+
+                    <DialogButton disabled={!activeFurniture} style={{ flex: 1 }}>Add to inventory</DialogButton>
                 </div>
             </div>
         </div>
