@@ -97,12 +97,39 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
 
             overflow: "hidden"
         }}>
-            <div ref={roomRef} style={{
+            <div onClick={onRoomRendererClick} style={{
                 background: "#000",
+
                 height: 240,
                 width: "100%",
-                cursor: "pointer"
-            }} onClick={onRoomRendererClick}/>
+
+                cursor: "pointer",
+
+                position: "relative"
+            }}>
+                <div ref={roomRef} style={{
+                    height: "100%",
+                    width: "100%",
+                }}/>
+
+                {(activeFurniture) && (
+                    <div style={{
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+
+                        padding: 10,
+
+                        color: "white"
+                    }}>
+                        <b>{activeFurniture.furniture.name}</b>
+
+                        {(activeFurniture.furniture.description) && (
+                            <p style={{ fontSize: 12 }}>{activeFurniture.furniture.description}</p>
+                        )}
+                    </div>
+                )}
+            </div>
 
             <DialogPanel style={{ flex: "1 1 0", overflow: "hidden" }} contentStyle={{ display: "flex", flex: 1 }}>
                 <div style={{

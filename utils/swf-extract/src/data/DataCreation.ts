@@ -305,9 +305,11 @@ export function createFurnitureData(assetName: string) {
     return furniTypes.map((furniType: any) => {
         const color = furniType["@_classname"].split('*')[1];
 
+        const hasDescription = furniType["description"] && !furniType["description"].endsWith(" desc");
+
         return {
             name: furniType["name"],
-            description: furniType["description"],
+            description: hasDescription && furniType["description"],
 
             color: (color)?(parseInt(color)):(undefined),
 

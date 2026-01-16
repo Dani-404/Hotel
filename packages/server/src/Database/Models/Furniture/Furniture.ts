@@ -20,6 +20,15 @@ export function initializeFurnitureModel(sequelize: Sequelize) {
             type: new DataTypes.STRING(32),
             allowNull: false
           },
+          name: {
+            type: new DataTypes.STRING(32),
+            allowNull: false
+          },
+          description: {
+            type: new DataTypes.STRING(128),
+            allowNull: true,
+            defaultValue: null
+          },
           placement: {
             type: new DataTypes.STRING(32),
             allowNull: false

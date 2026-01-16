@@ -1,6 +1,9 @@
 export type FurnitureData = {
     type: string;
     color?: number;
+    
+    name: string;
+    description?: string;
 }
 
 export type RoomFurnitureData = {
