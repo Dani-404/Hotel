@@ -6,6 +6,7 @@ import WardrobeAvatar from "./WardrobeAvatar";
 import WardrobeSelection from "./Selection/WardrobeSelection";
 import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import { AppContext } from "../../contexts/AppContext";
+import DialogButton from "../Dialog/Button/DialogButton";
 
 const wardrobeTabs = [
     {
@@ -116,8 +117,11 @@ export default function WardrobeDialog({ hidden, onClose }: WardrobeDialogProps)
                         icon: (<div className={wardrobeTab.spriteName}/>),
                         element: (
                             <div style={{
+                                flex: 1,
+
                                 display: "flex",
-                                flexDirection: "row"
+                                flexDirection: "row",
+                                gap: 10
                             }}>
                                 <DialogSubTabs tabs={wardrobeTab.tabs.map((tab) => {
                                     return {
@@ -129,10 +133,21 @@ export default function WardrobeDialog({ hidden, onClose }: WardrobeDialogProps)
 
                                 <div style={{
                                     flex: 1,
-                                    width: 130,
-                                    height: "100%"
+
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center"
                                 }}>
-                                    <WardrobeAvatar configuration={figureConfiguration}/>
+                                    <div style={{
+                                        width: 130,
+                                        height: "100%"
+                                    }}>
+                                        <WardrobeAvatar configuration={figureConfiguration}/>
+                                    </div>
+
+                                    <div style={{ width: "100%" }}>
+                                        <DialogButton>Save my looks</DialogButton>
+                                    </div>
                                 </div>
                             </div>
                         )

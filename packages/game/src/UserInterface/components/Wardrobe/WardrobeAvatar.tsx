@@ -12,9 +12,9 @@ export default function WardrobeAvatar({ configuration }: WardrobeAvatarProps) {
     const [figureImage, setFigureImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        const figureRenderer = new FigureRenderer(configuration, 2);
+        const figureRenderer = new FigureRenderer(configuration, 4);
         
-        figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0, true).then(({ image }) => {
+        figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0, false).then(({ image }) => {
             setFigureImage(image);
         });
     }, [ configuration ]);

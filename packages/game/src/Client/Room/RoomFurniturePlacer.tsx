@@ -50,7 +50,7 @@ export default class RoomFurniturePlacer {
         this.iconElement.style.pointerEvents = "none";
         this.iconElement.style.transform = "translate(-50%, -50%)";
 
-        new FurnitureRenderer(userFurnitureData.furnitureData.type, 1, undefined, 0, userFurnitureData.furnitureData.color).renderToCanvas().then((image) => {
+        new FurnitureRenderer(userFurnitureData.furnitureData.type, 1, 0, 0, userFurnitureData.furnitureData.color).renderToCanvas().then((image) => {
             this.iconElement.width = image.width;
             this.iconElement.height = image.height;
 
