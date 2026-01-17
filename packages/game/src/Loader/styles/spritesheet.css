@@ -1,0 +1,2 @@
+.sprite_splash-background { background-image: url('./spritesheet.png'); background-position: 0 0; width: 500px; height: 434px; }
+.sprite_splash-overlay { background-image: url('./spritesheet.png'); background-position: -500px 0; width: 500px; height: 434px; }

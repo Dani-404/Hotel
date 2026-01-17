@@ -9,16 +9,16 @@ export function createSpritesheet() {
     NodeSpriteGenerator({
         compositor: "jimp",
         src: [
-            "./images/*.png",
-            "./images/**/*.png",
+            "./src/Loader/images/*.png",
+            "./src/Loader/images/**/*.png",
         ],
         layout: "packed",
         stylesheet: "css",
-        spritePath: "src/styles/spritesheet.png",
-        stylesheetPath: "src/styles/spritesheet.css",
+        spritePath: "src/Loader/styles/spritesheet.png",
+        stylesheetPath: "src/Loader/styles/spritesheet.css",
         stylesheetOptions: {
             nameMapping: ((file: string) => {
-                let name = file.split('/').filter((directory) => !(directory === '.' || directory === 'images')).join('_').replace('.png', '');
+                let name = file.split('/').filter((directory) => !(directory === '.' || directory === 'images')).join('_').replace('.png', '').replace('src_Loader_', '');
 
                 if(name.endsWith("_hover")) {
                     name = name.substring(0, name.length - "_hover".length) + ":hover";

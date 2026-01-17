@@ -3,7 +3,8 @@
   "scripts": {
     "build": "npx parcel build src/index.tsx --dist-dir ../../build/game",
     "watch": "npx parcel watch src/index.tsx --dist-dir ../../build/game",
-    "spritesheet": "npx ts-node utils/generateSpritesheet.ts"
+    "spritesheet": "npx ts-node src/UserInterface/utils/generateSpritesheet.ts",
+    "spritesheet:loader": "npx ts-node src/loader/utils/generateSpritesheet.ts"
   },
   "dependencies": {
     "react": "^19.1.0",
