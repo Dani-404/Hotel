@@ -13,6 +13,7 @@ export default class RoomCursor extends EventTarget {
     private readonly furnitureItem: RoomFurnitureItem;
     private hoveringFigure?: RoomFigureItem;
     private followingFigure?: RoomFigureItem;
+    public cursorDisabled: boolean = false;
 
     constructor(private readonly roomRenderer: RoomRenderer) {
         super();
@@ -52,7 +53,7 @@ export default class RoomCursor extends EventTarget {
             this.roomRenderer.clientInstance.internalEventTarget.dispatchEvent(new FollowingFigure(user.data.id, screenPosition));
         }
         
-        if(!entity) {
+        if(!entity || this.cursorDisabled) {
             this.furnitureItem.disabled = true;
 
             return;

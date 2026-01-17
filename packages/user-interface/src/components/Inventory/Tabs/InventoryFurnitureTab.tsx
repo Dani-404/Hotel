@@ -1,18 +1,21 @@
 import FurnitureIcon from "../../Furniture/FurnitureIcon";
 import DialogButton from "../../Dialog/Button/DialogButton";
 import RoomRenderer from "../../Room/Renderer/RoomRenderer";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../../../contexts/AppContext";
 import { UserFurnitureData } from "@shared/Interfaces/User/UserFurnitureData";
 import WebSocketEvent from "@shared/WebSocket/Events/WebSocketEvent";
 import { UserFurnitureDataUpdated } from "@shared/WebSocket/Events/User/Inventory/UserFurnitureDataUpdated";
+import StartPlacingFurnitureInRoom, { PlaceFurnitureInRoomProperties } from "@shared/Events/Room/Cursor/StartPlacingFurnitureInRoom";
 
 export default function InventoryFurnitureTab() {
-    const { webSocketClient } = useContext(AppContext);
+    const { webSocketClient, internalEventTarget } = useContext(AppContext);
 
     const [activeFurniture, setActiveFurniture] = useState<UserFurnitureData>();
     const [userFurniture, setUserFurniture] = useState<UserFurnitureData[]>([]);
     const userFurnitureRequested = useRef<boolean>(false);
+
+    const [roomPlacer, setRoomPlacer] = useState<PlaceFurnitureInRoomProperties>();
 
     useEffect(() => {
         if(userFurnitureRequested.current) {
@@ -48,6 +51,27 @@ export default function InventoryFurnitureTab() {
             webSocketClient.removeEventListener<WebSocketEvent<UserFurnitureDataUpdated>>("UserFurnitureDataUpdated", listener);
         };
     }, [userFurniture]);
+
+    const onPlaceInRoomClick = useCallback(() => {
+        if(!activeFurniture) {
+            return;
+        }
+
+        if(roomPlacer) {
+            roomPlacer.terminate();
+        }
+
+        /*internalEventTarget.dispatchEvent(new StartPlacingFurnitureInRoom(activeFurniture.furnitureData, {
+            onPlace: (roomPlacer, position) => {
+                
+            },
+            onCancel: (roomPlacer) => {
+                roomPlacer.terminate();
+            },
+        }, (roomPlacer) => {
+            setRoomPlacer(roomPlacer);
+        }));*/
+    }, [activeFurniture, roomPlacer]);
 
     return (
         <div style={{
@@ -137,7 +161,7 @@ export default function InventoryFurnitureTab() {
                     <p>{activeFurniture?.furnitureData.description}</p>
                 </div>
 
-                <DialogButton>Place in room</DialogButton>
+                <DialogButton onClick={onPlaceInRoomClick}>Place in room</DialogButton>
             </div>
         </div>
     );

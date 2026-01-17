@@ -24,7 +24,7 @@ type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigure
 
 
 export default class RoomInstance {
-    private readonly roomRenderer: RoomRenderer;
+    public readonly roomRenderer: RoomRenderer;
 
     private readonly users: RoomItem<RoomUserData, RoomFigureItem>[] = [];
     private readonly furnitures: RoomItem<RoomFurnitureData, RoomFurnitureItem>[] = [];
@@ -71,6 +71,10 @@ export default class RoomInstance {
 
         this.roomRenderer.cursor?.addEventListener("click", (event: Event) => {
             if(!(event instanceof RoomClickEvent)) {
+                return;
+            }
+
+            if(this.roomRenderer.cursor?.cursorDisabled) {
                 return;
             }
 

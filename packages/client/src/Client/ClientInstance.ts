@@ -2,6 +2,7 @@ import registerFigureEvents from "@/Figure/Events/FigureEvents.js";
 import registerFurnitureEvents from "@/Furniture/Events/FurnitureEvents.js";
 import registerRoomEvents from "@/Room/Events/RoomEvents.js";
 import registerUserInterfaceRoomRenderer from "@/Room/UserInterface/CreateRoomRenderer.js";
+import registerRoomInventoryEvents from "@/Room/UserInterface/StartPlacingFurnitureInRoom.js";
 import { TypedEventTarget } from "@shared/Interfaces/TypedEventTarget";
 import WebSocketClient from "@shared/WebSocket/WebSocketClient.js";
 import RoomInstance from "./Room/RoomInstance.js";
@@ -14,5 +15,6 @@ export default class ClientInstance {
         registerUserInterfaceRoomRenderer(this);
         registerFigureEvents(this);
         registerFurnitureEvents(this);
+        registerRoomInventoryEvents(this);
     }
 }
