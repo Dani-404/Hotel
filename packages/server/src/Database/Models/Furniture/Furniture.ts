@@ -9,6 +9,7 @@ export class Furniture extends Model {
     declare placement: "floor" | "wall";
     declare dimensions: RoomPosition;
     declare color?: number;
+    declare walkable: boolean;
 }
 
 export function initializeFurnitureModel(sequelize: Sequelize) {
@@ -48,6 +49,11 @@ export function initializeFurnitureModel(sequelize: Sequelize) {
           color: {
             type: DataTypes.NUMBER,
             defaultValue: null
+          },
+          walkable: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false
           }
         },
         {
