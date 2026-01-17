@@ -1,6 +1,6 @@
-import FigureAssets from "@/Assets/FigureAssets.js";
-import FigureWorkerRenderer from "@/Figure/Worker/FigureWorkerRenderer.js";
-import { FigureRenderEvent } from "@/Figure/Interfaces/FigureRenderEvent.js";
+import FigureAssets from "@/Assets/FigureAssets";
+import FigureWorkerRenderer from "@/Figure/Worker/FigureWorkerRenderer";
+import { FigureRenderEvent } from "@/Figure/Interfaces/FigureRenderEvent";
 
 onmessage = async (event: MessageEvent<FigureRenderEvent>) => {
     await FigureAssets.loadAssets();

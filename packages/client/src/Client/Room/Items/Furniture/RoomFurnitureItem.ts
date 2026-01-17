@@ -1,8 +1,8 @@
-import FurnitureRenderer from "@/Furniture/FurnitureRenderer.js";
+import FurnitureRenderer from "@/Furniture/FurnitureRenderer";
 import RoomItemSpriteInterface from "@/Room/Interfaces/RoomItemSpriteInterface";
-import RoomFurnitureSprite from "./RoomFurnitureSprite.js";
-import RoomItem from "../RoomItem.js";
-import { RoomPosition } from "@/Interfaces/RoomPosition.js";
+import RoomFurnitureSprite from "./RoomFurnitureSprite";
+import RoomItem from "../RoomItem";
+import { RoomPosition } from "@/Interfaces/RoomPosition";
 
 export default class RoomFurnitureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];

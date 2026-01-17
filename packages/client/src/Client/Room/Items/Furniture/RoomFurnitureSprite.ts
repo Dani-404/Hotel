@@ -1,7 +1,7 @@
-import { FurnitureRendererSprite } from "@/Furniture/FurnitureRenderer.js";
+import { FurnitureRendererSprite } from "@/Furniture/FurnitureRenderer";
 import { MousePosition } from "@/Interfaces/MousePosition";
-import RoomSprite from "../RoomSprite.js";
-import RoomFurnitureItem from "./RoomFurnitureItem.js";
+import RoomSprite from "../RoomSprite";
+import RoomFurnitureItem from "./RoomFurnitureItem";
 
 export default class RoomFurnitureSprite extends RoomSprite {
     constructor(public readonly item: RoomFurnitureItem, public readonly sprite: FurnitureRendererSprite) {

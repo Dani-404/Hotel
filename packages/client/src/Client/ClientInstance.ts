@@ -1,11 +1,11 @@
-import registerFigureEvents from "@/Figure/Events/FigureEvents.js";
-import registerFurnitureEvents from "@/Furniture/Events/FurnitureEvents.js";
-import registerRoomEvents from "@/Room/Events/RoomEvents.js";
-import registerUserInterfaceRoomRenderer from "@/Room/UserInterface/CreateRoomRenderer.js";
-import registerRoomInventoryEvents from "@/Room/UserInterface/StartPlacingFurnitureInRoom.js";
+import registerFigureEvents from "@/Figure/Events/FigureEvents";
+import registerFurnitureEvents from "@/Furniture/Events/FurnitureEvents";
+import registerRoomEvents from "@/Room/Events/RoomEvents";
+import registerUserInterfaceRoomRenderer from "@/Room/UserInterface/CreateRoomRenderer";
+import registerRoomInventoryEvents from "@/Room/UserInterface/StartPlacingFurnitureInRoom";
 import { TypedEventTarget } from "@shared/Interfaces/TypedEventTarget";
-import WebSocketClient from "@shared/WebSocket/WebSocketClient.js";
-import RoomInstance from "./Room/RoomInstance.js";
+import WebSocketClient from "@shared/WebSocket/WebSocketClient";
+import RoomInstance from "./Room/RoomInstance";
 
 export default class ClientInstance {
     public roomInstance?: RoomInstance;

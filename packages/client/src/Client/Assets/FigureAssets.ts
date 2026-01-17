@@ -1,9 +1,9 @@
-import { FiguremapData } from "@/Interfaces/Figure/FiguremapData.js";
-import AssetFetcher, { AssetSpriteProperties } from "./AssetFetcher.js";
-import { FigureData } from "@/Interfaces/Figure/FigureData.js";
-import { FiguredataData } from "@/Interfaces/Figure/FiguredataData.js";
-import { AvatarActionsData } from "@/Interfaces/Figure/Avataractions.js";
-import { FigureRendererSprite } from "@/Figure/Worker/FigureWorkerRenderer.js";
+import { FiguremapData } from "@/Interfaces/Figure/FiguremapData";
+import AssetFetcher, { AssetSpriteProperties } from "./AssetFetcher";
+import { FigureData } from "@/Interfaces/Figure/FigureData";
+import { FiguredataData } from "@/Interfaces/Figure/FiguredataData";
+import { AvatarActionsData } from "@/Interfaces/Figure/Avataractions";
+import { FigureRendererSprite } from "@/Figure/Worker/FigureWorkerRenderer";
 
 export default class FigureAssets {
     public static figuremap: FiguremapData;

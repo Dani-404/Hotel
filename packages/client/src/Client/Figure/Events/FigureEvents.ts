@@ -1,12 +1,12 @@
-import FigureAssets from "@/Assets/FigureAssets.js";
-import ClientFigureDataRequest from "@shared/events/requests/ClientFigureDataRequest.js";
-import ClientFigureDataResponse from "@shared/events/responses/ClientFigureDataResponse.js";
-import FigureRenderer from "../FigureRenderer.js";
-import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest.js";
-import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse.js";
-import FigureConfigurationHelper from "@shared/Figure/FigureConfigurationHelper.js";
-import FigureWorker from "../Worker/FigureWorker.js";
-import ClientInstance from "@/ClientInstance.js";
+import FigureAssets from "@/Assets/FigureAssets";
+import ClientFigureDataRequest from "@shared/events/requests/ClientFigureDataRequest";
+import ClientFigureDataResponse from "@shared/events/responses/ClientFigureDataResponse";
+import FigureRenderer from "../FigureRenderer";
+import ClientFigureRequest from "@shared/events/requests/ClientFigureRequest";
+import ClientFigureResponse from "@shared/events/responses/ClientFigureResponse";
+import FigureConfigurationHelper from "@shared/Figure/FigureConfigurationHelper";
+import FigureWorker from "../Worker/FigureWorker";
+import ClientInstance from "@/ClientInstance";
 
 export default function registerFigureEvents(clientInstance: ClientInstance) {
     clientInstance.internalEventTarget.addEventListener<ClientFigureDataRequest>("ClientFigureDataRequest", async (event) => {

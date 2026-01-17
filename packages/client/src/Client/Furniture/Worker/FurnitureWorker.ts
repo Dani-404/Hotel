@@ -1,6 +1,6 @@
-import { FurnitureRendererSprite } from "../Interfaces/FurnitureRendererSprite.js";
-import { FurnitureRenderEvent, FurnitureRenderResultEvent } from "../Interfaces/FurnitureRenderEvent.js";
-import FurnitureRenderer from "../FurnitureRenderer.js";
+import { FurnitureRendererSprite } from "../Interfaces/FurnitureRendererSprite";
+import { FurnitureRenderEvent, FurnitureRenderResultEvent } from "../Interfaces/FurnitureRenderEvent";
+import FurnitureRenderer from "../FurnitureRenderer";
 
 export default class FurnitureWorker {
     private static worker = (() => {

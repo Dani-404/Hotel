@@ -1,12 +1,12 @@
-import { FiguremapData } from "@/Interfaces/Figure/FiguremapData.js";
-import FigureAssets from "../../Assets/FigureAssets.js";
-import ContextNotAvailableError from "../../Exceptions/ContextNotAvailableError.js";
-import { FiguredataData } from "@/Interfaces/Figure/FiguredataData.js";
-import { figureRenderPriority } from "../FigureRenderPriority.js";
-import { AvatarActionsData } from "@/Interfaces/Figure/Avataractions.js";
-import { FigureData } from "@/Interfaces/Figure/FigureData.js";
-import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration.js";
-import FigureWorker from "./FigureWorker.js";
+import { FiguremapData } from "@/Interfaces/Figure/FiguremapData";
+import FigureAssets from "../../Assets/FigureAssets";
+import ContextNotAvailableError from "../../Exceptions/ContextNotAvailableError";
+import { FiguredataData } from "@/Interfaces/Figure/FiguredataData";
+import { figureRenderPriority } from "../FigureRenderPriority";
+import { AvatarActionsData } from "@/Interfaces/Figure/Avataractions";
+import { FigureData } from "@/Interfaces/Figure/FigureData";
+import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration";
+import FigureWorker from "./FigureWorker";
 
 export type FigureRendererSprite = {
     image: ImageBitmap;

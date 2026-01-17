@@ -1,7 +1,7 @@
 import { MousePosition } from "@/Interfaces/MousePosition";
-import RoomSprite from "../RoomSprite.js";
-import RoomFigureItem from "./RoomFigureItem.js";
-import { FigureRendererSprite } from "@/Figure/Worker/FigureWorkerRenderer.js";
+import RoomSprite from "../RoomSprite";
+import RoomFigureItem from "./RoomFigureItem";
+import { FigureRendererSprite } from "@/Figure/Worker/FigureWorkerRenderer";
 
 export default class RoomFigureSprite extends RoomSprite {
     constructor(public readonly item: RoomFigureItem, private readonly sprite: FigureRendererSprite) {

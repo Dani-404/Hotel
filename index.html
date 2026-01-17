@@ -5,28 +5,12 @@
 
         <title>Hotel</title>
 
-        <link rel="stylesheet" href="./build/user-interface/index.css"/>
+        <link rel="stylesheet" href="./build/client/index.css"/>
     </head>
     <body>
         <div id="client"></div>
         <div id="interface"></div>
 
-        <script type="module" src="./build/shared/WebSocket/WebSocketClient.js"></script>
-        <script type="module" src="./build/client/Client/index.js"></script>
-        <script type="module" src="./build/user-interface/index.js"></script>
-
-        <script type="module">
-            const clientElement = document.getElementById("client");
-            const interfaceElement = document.getElementById("interface");
-
-            const internalEventTarget = new EventTarget();
-
-            const webSocketClient = new WebSocketClient({
-                userId: "user1"
-            });
-
-            await window.createClientInstance(clientElement, internalEventTarget, webSocketClient);
-            window.createInterfaceInstance(interfaceElement, internalEventTarget, webSocketClient);
-        </script>
+        <script type="module" src="./build/client/index.js"></script>
     </body>
 </html>

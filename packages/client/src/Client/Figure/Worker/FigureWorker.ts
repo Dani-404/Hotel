@@ -1,10 +1,10 @@
-import FigureRenderer from "../FigureRenderer.js";
-import { FigureRenderEvent, FigureRenderResultEvent } from "../Interfaces/FigureRenderEvent.js";
-import { FigureRendererSprite } from "./FigureWorkerRenderer.js";
+import FigureRenderer from "../FigureRenderer";
+import { FigureRenderEvent, FigureRenderResultEvent } from "../Interfaces/FigureRenderEvent";
+import { FigureRendererSprite } from "./FigureWorkerRenderer";
 
 export default class FigureWorker {
     private worker = (() => {
-        const worker = new Worker("build/client/Workers/Figure/FigureRendererWorker.js", {
+        const worker = new Worker(new URL("/src/Workers/Figure/FigureRendererWorker.ts", import.meta.url), {
             type: "module"
         });
         

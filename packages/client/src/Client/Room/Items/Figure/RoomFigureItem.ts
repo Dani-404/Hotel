@@ -1,8 +1,8 @@
 import RoomItemSpriteInterface from "@/Room/Interfaces/RoomItemSpriteInterface";
-import RoomItem from "../RoomItem.js";
-import { RoomPosition } from "@/Interfaces/RoomPosition.js";
-import FigureRenderer from "@/Figure/FigureRenderer.js";
-import RoomFigureSprite from "./RoomFigureSprite.js";
+import RoomItem from "../RoomItem";
+import { RoomPosition } from "@/Interfaces/RoomPosition";
+import FigureRenderer from "@/Figure/FigureRenderer";
+import RoomFigureSprite from "./RoomFigureSprite";
 
 export default class RoomFigureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];

@@ -9,7 +9,7 @@ import "./styles/index.css";
 import "./styles/spritesheet.css";
 import "./styles/spritesheet.png";
 
-(window as any).createInterfaceInstance = function createInterfaceInstance(element: HTMLElement, internalEventTarget: TypedEventTarget, webSocketClient: WebSocketClient) {
+export function createInterfaceInstance(element: HTMLElement, internalEventTarget: TypedEventTarget, webSocketClient: WebSocketClient) {
   const root = createRoot(element);
 
   root.render(

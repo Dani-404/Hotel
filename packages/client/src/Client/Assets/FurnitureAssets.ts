@@ -1,6 +1,6 @@
-import { FurnitureRendererSprite } from "@/Furniture/FurnitureRenderer.js";
-import AssetFetcher, { AssetSpriteProperties } from "./AssetFetcher.js";
-import { FurnitureData } from "@/Interfaces/Furniture/FurnitureData.js";
+import { FurnitureRendererSprite } from "@/Furniture/FurnitureRenderer";
+import AssetFetcher, { AssetSpriteProperties } from "./AssetFetcher";
+import { FurnitureData } from "@/Interfaces/Furniture/FurnitureData";
 
 export default class FurnitureAssets {
     public static async getFurnitureData(furnitureName: string) {

@@ -1,13 +1,13 @@
-import FurnitureRenderer from "@/Furniture/FurnitureRenderer.js";
-import RoomRenderer from "./Renderer.js";
-import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem.js";
-import RoomClickEvent from "@/Events/RoomClickEvent.js";
-import RoomFigureItem from "./Items/Figure/RoomFigureItem.js";
-import StoppedHoveringFigure from "@shared/Events/Room/StoppedHoveringFigure.js";
-import FollowingFigure from "@shared/Events/Room/FollowingFigure.js";
-import StartedHoveringFigure from "@shared/Events/Room/StartedHoveringFigure.js";
-import StartedFollowingFigure from "@shared/Events/Room/StartedFollowingFigure.js";
-import StoppedFollowingFigure from "@shared/Events/Room/StoppedFollowingFigure.js";
+import FurnitureRenderer from "@/Furniture/FurnitureRenderer";
+import RoomRenderer from "./Renderer";
+import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem";
+import RoomClickEvent from "@/Events/RoomClickEvent";
+import RoomFigureItem from "./Items/Figure/RoomFigureItem";
+import StoppedHoveringFigure from "@shared/Events/Room/StoppedHoveringFigure";
+import FollowingFigure from "@shared/Events/Room/FollowingFigure";
+import StartedHoveringFigure from "@shared/Events/Room/StartedHoveringFigure";
+import StartedFollowingFigure from "@shared/Events/Room/StartedFollowingFigure";
+import StoppedFollowingFigure from "@shared/Events/Room/StoppedFollowingFigure";
 
 export default class RoomCursor extends EventTarget {
     private readonly furnitureItem: RoomFurnitureItem;

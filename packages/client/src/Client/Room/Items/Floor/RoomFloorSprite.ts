@@ -1,7 +1,7 @@
-import ContextNotAvailableError from "@/Exceptions/ContextNotAvailableError.js";
+import ContextNotAvailableError from "@/Exceptions/ContextNotAvailableError";
 import { MousePosition } from "@/Interfaces/MousePosition";
-import RoomSprite from "../RoomSprite.js";
-import RoomMapItem from "../Map/RoomFurnitureItem.js";
+import RoomSprite from "../RoomSprite";
+import RoomMapItem from "../Map/RoomFurnitureItem";
 
 export default class RoomFloorSprite extends RoomSprite {
     priority = -1000;

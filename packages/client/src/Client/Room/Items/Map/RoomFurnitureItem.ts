@@ -1,10 +1,10 @@
 import RoomItemSpriteInterface from "@/Room/Interfaces/RoomItemSpriteInterface";
 import FloorRenderer from "@/Room/Structure/FloorRenderer";
-import RoomItem from "../RoomItem.js";
-import WallRenderer from "@/Room/Structure/WallRenderer.js";
-import RoomFloorSprite from "../Floor/RoomFloorSprite.js";
-import RoomWallSprite from "../Floor/RoomWallSprite.js";
-import RoomDoorMaskSprite from "../Floor/RoomDoorMaskSprite.js";
+import RoomItem from "../RoomItem";
+import WallRenderer from "@/Room/Structure/WallRenderer";
+import RoomFloorSprite from "../Floor/RoomFloorSprite";
+import RoomWallSprite from "../Floor/RoomWallSprite";
+import RoomDoorMaskSprite from "../Floor/RoomDoorMaskSprite";
 
 export default class RoomMapItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];

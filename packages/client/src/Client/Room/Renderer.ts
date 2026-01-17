@@ -1,18 +1,18 @@
 import { MousePosition } from "@/Interfaces/MousePosition";
-import RoomCamera from "./RoomCamera.js";
-import { RoomPointerPosition } from "@/Interfaces/RoomPointerPosition.js";
-import ContextNotAvailableError from "@/Exceptions/ContextNotAvailableError.js";
-import RoomRenderEvent from "@/Events/RoomRenderEvent.js";
-import RoomCursor from "./RoomCursor.js";
+import RoomCamera from "./RoomCamera";
+import { RoomPointerPosition } from "@/Interfaces/RoomPointerPosition";
+import ContextNotAvailableError from "@/Exceptions/ContextNotAvailableError";
+import RoomRenderEvent from "@/Events/RoomRenderEvent";
+import RoomCursor from "./RoomCursor";
 import { RoomPosition } from "@/Interfaces/RoomPosition";
-import RoomSprite from "./Items/RoomSprite.js";
-import Performance from "@/Utilities/Performance.js";
-import RoomFrameEvent from "@/Events/RoomFrameEvent.js";
-import RoomItem from "./Items/RoomItem.js";
-import ClientInstance from "@/ClientInstance.js";
-import RoomInstance from "./RoomInstance.js";
-import RoomFurnitureSprite from "./Items/Furniture/RoomFurnitureSprite.js";
-import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem.js";
+import RoomSprite from "./Items/RoomSprite";
+import Performance from "@/Utilities/Performance";
+import RoomFrameEvent from "@/Events/RoomFrameEvent";
+import RoomItem from "./Items/RoomItem";
+import ClientInstance from "@/ClientInstance";
+import RoomInstance from "./RoomInstance";
+import RoomFurnitureSprite from "./Items/Furniture/RoomFurnitureSprite";
+import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem";
 
 export default class RoomRenderer extends EventTarget {
     public readonly element: HTMLCanvasElement;

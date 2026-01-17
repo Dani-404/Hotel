@@ -1,7 +1,7 @@
-import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration.js";
-import FigureWorkerRenderer from "./Worker/FigureWorkerRenderer.js";
-import FigureAssets from "@/Assets/FigureAssets.js";
-import FigureWorker from "./Worker/FigureWorker.js";
+import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@shared/interfaces/figure/FigureConfiguration";
+import FigureWorkerRenderer from "./Worker/FigureWorkerRenderer";
+import FigureAssets from "@/Assets/FigureAssets";
+import FigureWorker from "./Worker/FigureWorker";
 
 export default class FigureRenderer {
     public static readonly figureWorker: FigureWorker = new FigureWorker(false);

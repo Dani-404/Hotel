@@ -1,7 +1,7 @@
-import ClientFurnitureRequest from "@shared/events/Furniture/ClientFurnitureRequest.js";
-import ClientFurnitureResponse from "@shared/events/Furniture/ClientFurnitureResponse.js";
-import ClientInstance from "@/ClientInstance.js";
-import FurnitureRenderer from "../FurnitureRenderer.js";
+import ClientFurnitureRequest from "@shared/events/Furniture/ClientFurnitureRequest";
+import ClientFurnitureResponse from "@shared/events/Furniture/ClientFurnitureResponse";
+import ClientInstance from "@/ClientInstance";
+import FurnitureRenderer from "../FurnitureRenderer";
 
 export default function registerFurnitureEvents(clientInstance: ClientInstance) {
     clientInstance.internalEventTarget.addEventListener<ClientFurnitureRequest>("ClientFurnitureRequest", (event) => {

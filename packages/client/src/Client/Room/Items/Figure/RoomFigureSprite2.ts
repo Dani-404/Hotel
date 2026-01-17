@@ -1,7 +1,7 @@
 import { MousePosition } from "@/Interfaces/MousePosition";
-import RoomSprite from "../RoomSprite.js";
-import RoomFigureItem from "./RoomFigureItem.js";
-import { FigureRendererSprite } from "@/Figure/FigureRenderer.js";
+import RoomSprite from "../RoomSprite";
+import RoomFigureItem from "./RoomFigureItem";
+import { FigureRendererSprite } from "@/Figure/FigureRenderer";
 
 export default class RoomFigureSprite2 extends RoomSprite {
     constructor(public readonly item: RoomFigureItem, private readonly image: OffscreenCanvas) {

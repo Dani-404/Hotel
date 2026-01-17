@@ -1,9 +1,9 @@
-import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError.js";
-import FurnitureAssets from "../Assets/FurnitureAssets.js";
-import { FurnitureData } from "../Interfaces/Furniture/FurnitureData.js";
-import { FurnitureIndex } from "@/Interfaces/Furniture/FurnitureIndex.js";
-import { FurnitureVisualization } from "@/Interfaces/Furniture/FurnitureVisualization.js";
-import { RoomPosition } from "@/Interfaces/RoomPosition.js";
+import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError";
+import FurnitureAssets from "../Assets/FurnitureAssets";
+import { FurnitureData } from "../Interfaces/Furniture/FurnitureData";
+import { FurnitureIndex } from "@/Interfaces/Furniture/FurnitureIndex";
+import { FurnitureVisualization } from "@/Interfaces/Furniture/FurnitureVisualization";
+import { RoomPosition } from "@/Interfaces/RoomPosition";
 
 export type FurnitureRendererSprite = {
     image: ImageBitmap;

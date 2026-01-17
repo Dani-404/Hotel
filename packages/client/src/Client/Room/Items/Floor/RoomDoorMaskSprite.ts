@@ -1,7 +1,7 @@
 import { MousePosition } from "@/Interfaces/MousePosition";
-import RoomSprite from "../RoomSprite.js";
-import RoomMapItem from "../Map/RoomFurnitureItem.js";
-import RoomRenderer from "@/Room/Renderer.js";
+import RoomSprite from "../RoomSprite";
+import RoomMapItem from "../Map/RoomFurnitureItem";
+import RoomRenderer from "@/Room/Renderer";
 
 export default class RoomDoorMaskSprite extends RoomSprite {
     priority = -2000;

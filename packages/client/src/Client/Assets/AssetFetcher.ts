@@ -1,5 +1,5 @@
-import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError.js";
-import { FurnitureData } from "../Interfaces/Furniture/FurnitureData.js";
+import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError";
+import { FurnitureData } from "../Interfaces/Furniture/FurnitureData";
 
 export type AssetSpriteProperties = {
     x: number;
