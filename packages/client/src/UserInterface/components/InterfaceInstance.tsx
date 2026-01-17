@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppContext, Dialog, TypedEventTarget } from "../contexts/AppContext";
 import Toolbar from "./Toolbar/Toolbar";
-import WebSocketClient from "@Shared/WebSocket/WebSocketClient";
+import WebSocketClient from "../../WebSocket/WebSocketClient";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { UserDataUpdated } from "@Shared/WebSocket/Events/User/UserDataUpdated";
 import { EnterRoom } from "@Shared/WebSocket/Events/Rooms/EnterRoom";

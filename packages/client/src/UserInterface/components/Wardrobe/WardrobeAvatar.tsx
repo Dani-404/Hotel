@@ -1,37 +1,22 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../contexts/AppContext";
-import ClientFigureRequest from "@Shared/events/requests/ClientFigureRequest";
-import ClientFigureResponse from "@Shared/events/responses/ClientFigureResponse";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
-import { FigureConfiguration } from "@Shared/Interfaces/figure/FigureConfiguration";
+import FigureRenderer from "@Client/Figure/FigureRenderer";
+import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 
 export type WardrobeAvatarProps = {
     configuration: FigureConfiguration;
 };
 
 export default function WardrobeAvatar({ configuration }: WardrobeAvatarProps) {
-    const { internalEventTarget } = useContext(AppContext);
-
     const [figureImage, setFigureImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        const requestEvent = new ClientFigureRequest(configuration, 4);
-
-        const listener = (event: ClientFigureResponse) => {
-            if(event.id !== requestEvent.id) {
-                return;
-            }
-
-            setFigureImage(event.image);
-        };
-
-        internalEventTarget.addEventListener("ClientFigureResponse", listener);
-
-        internalEventTarget.dispatchEvent(requestEvent);
-
-        return () => {
-            internalEventTarget.removeEventListener("ClientFigureResponse", listener);
-        };
+        const figureRenderer = new FigureRenderer(configuration, 2);
+        
+        figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0, true).then(({ image }) => {
+            setFigureImage(image);
+        });
     }, [ configuration ]);
 
     return (

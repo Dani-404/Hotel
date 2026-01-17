@@ -13,7 +13,7 @@ import "@Client/../Workers/Figure/FigureRendererWorker";
 import "@Client/Figure/Worker/FigureWorkerRenderer";
 import FigureConfigurationHelper from "@Shared/Figure/FigureConfigurationHelper";
 import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
-import WebSocketClient from "@Shared/WebSocket/WebSocketClient";
+import WebSocketClient from "../WebSocket/WebSocketClient";
 import { TypedEventTarget } from "@Shared/Interfaces/TypedEventTarget";
 
 (window as any).createClientInstance = async function createClientInstance(element: HTMLElement, internalEventTarget: TypedEventTarget, webSocketClient: WebSocketClient) {

@@ -1,10 +1,9 @@
-import { CSSProperties, Ref, useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../contexts/AppContext";
-import CreateRoomRendererEvent, { RoomRendererProperties, RoomRendererResult } from "@Shared/Events/Room/Renderer/CreateRoomRendererEvent";
+import { CSSProperties, useEffect, useRef, useState } from "react";
+import RoomFurnitureRenderer, { RoomFurnitureRendererOptions } from "@Client/Room/RoomFurnitureRenderer";
 
 export type RoomRendererProps = {
     style?: CSSProperties;
-    options?: RoomRendererProperties;
+    options?: RoomFurnitureRendererOptions;
     furnitureData?: {
         type: string;
         size?: number;
@@ -15,11 +14,9 @@ export type RoomRendererProps = {
 };
 
 export default function RoomRenderer({ style, options, furnitureData }: RoomRendererProps) {
-    const { internalEventTarget } = useContext(AppContext);
-
     const roomRef = useRef<HTMLDivElement>(null);
     const roomRendererRequested = useRef<boolean>(false);
-    const [roomRendererResult, setRoomRendererResult] = useState<RoomRendererResult>();
+    const [roomFurnitureRenderer, setRoomFurnitureRenderer] = useState<RoomFurnitureRenderer>();
 
     useEffect(() => {
         if(!roomRef.current) {
@@ -32,30 +29,28 @@ export default function RoomRenderer({ style, options, furnitureData }: RoomRend
 
         roomRendererRequested.current = true;
 
-        const requestEvent = new CreateRoomRendererEvent(roomRef.current, options ?? {}, (RoomRendererResult) => {
-            setRoomRendererResult(RoomRendererResult);
-        });
-
-        internalEventTarget.dispatchEvent(requestEvent);
+        setRoomFurnitureRenderer(
+            new RoomFurnitureRenderer(roomRef.current, options ?? {})
+        );
     }, [roomRef]);
 
     useEffect(() => {
-        if(!roomRendererResult || !furnitureData) {
+        if(!roomFurnitureRenderer || !furnitureData) {
             return;
         }
 
-        roomRendererResult.setFurniture(furnitureData.type, furnitureData.size ?? 64, furnitureData.direction, furnitureData.animation ?? 0, furnitureData.color ?? 0);
-    }, [roomRendererResult, furnitureData]);
+        roomFurnitureRenderer.setFurniture(furnitureData.type, furnitureData.size ?? 64, furnitureData.direction, furnitureData.animation ?? 0, furnitureData.color ?? 0);
+    }, [roomFurnitureRenderer, furnitureData]);
 
     useEffect(() => {
-        if(!roomRendererResult) {
+        if(!roomFurnitureRenderer) {
             return;
         }
 
         return () => {
-            roomRendererResult.terminate();
+            roomFurnitureRenderer.terminate();
         };
-    }, [roomRendererResult]);
+    }, [roomFurnitureRenderer]);
 
     return (
         <div ref={roomRef} style={style}/>

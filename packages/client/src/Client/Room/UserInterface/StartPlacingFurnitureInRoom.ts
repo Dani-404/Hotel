@@ -1,13 +1,6 @@
 import ClientInstance from "@Client/ClientInstance";
-import CreateRoomRendererEvent from "@Shared/Events/Room/Renderer/CreateRoomRendererEvent";
-import RoomRenderer from "../Renderer";
-import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
-import RoomMapItem from "../Items/Map/RoomFurnitureItem";
-import FloorRenderer from "../Structure/FloorRenderer";
-import WallRenderer from "../Structure/WallRenderer";
 import RoomFurnitureItem from "../Items/Furniture/RoomFurnitureItem";
 import FurnitureRenderer from "@Client/Furniture/FurnitureRenderer";
-import FurnitureAssets from "@Client/Assets/FurnitureAssets";
 import StartPlacingFurnitureInRoom, { PlaceFurnitureInRoomProperties } from "@Shared/Events/Room/Cursor/StartPlacingFurnitureInRoom";
 import RoomClickEvent from "@Client/Events/RoomClickEvent";
 

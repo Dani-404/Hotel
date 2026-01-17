@@ -1,13 +1,9 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../contexts/AppContext";
-import ClientFigureDataRequest from "@Shared/events/requests/ClientFigureDataRequest";
-import ClientFigureDataResponse from "@Shared/events/responses/ClientFigureDataResponse";
+import { useEffect, useRef, useState } from "react";
 import OffscreenCanvasRender from "../../OffscreenCanvasRender";
-import WardrobeAvatar from "../WardrobeAvatar";
-
 import WardrobeSelectionItem from "./WardrobeSelectionItem";
 import WardrobeSelectionColors from "./WardrobeSelectionColors";
-import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/figure/FigureConfiguration";
+import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import FigureWardrobe, { FigureWardrobeColor, FigureWardrobeItem } from "@Client/Figure/FigureWardrobe";
 
 export type WardrobeSelectionProps = {
     part: FigurePartKeyAbbreviation;
@@ -17,11 +13,13 @@ export type WardrobeSelectionProps = {
 };
 
 export default function WardrobeSelection({ part, figureConfiguration, onFigureConfigurationChange }: WardrobeSelectionProps) {
-    const { internalEventTarget } = useContext(AppContext);
-    
     const requestedData = useRef(false);
 
-    const [figureDataResponse, setFigureDataResponse] = useState<ClientFigureDataResponse>();
+    const [figureDataResponse, setFigureDataResponse] = useState<{
+        items: FigureWardrobeItem[],
+        colors: FigureWardrobeColor[],
+        mandatory: boolean
+    }>();
 
     useEffect(() => {
         if(requestedData.current) {
@@ -30,21 +28,7 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
 
         requestedData.current = true;
 
-        const requestEvent = new ClientFigureDataRequest(part, "male", undefined);
-
-        const listener = (event: ClientFigureDataResponse) => {
-            if(event.id !== requestEvent.id) {
-                return;
-            }
-
-            internalEventTarget.removeEventListener("ClientFigureDataResponse", listener);
-
-            setFigureDataResponse(event);
-        };
-
-        internalEventTarget.addEventListener("ClientFigureDataResponse", listener);
-
-        internalEventTarget.dispatchEvent(requestEvent);
+        FigureWardrobe.getWardrobePartTypes(part, undefined, "male").then(async (data) => setFigureDataResponse(data));
     }, []);
 
     const activeConfiguration = figureConfiguration.find((configuration) => configuration.type === part);

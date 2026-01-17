@@ -1,4 +1,4 @@
-import { FigureConfiguration } from "../figure/FigureConfiguration.js";
+import { FigureConfiguration } from "../Figure/FigureConfiguration.js";
 
 export type RoomUserData = {
     id: string;

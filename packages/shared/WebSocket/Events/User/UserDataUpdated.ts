@@ -1,4 +1,4 @@
-import { FigureConfiguration } from "../../../Interfaces/figure/FigureConfiguration.js"
+import { FigureConfiguration } from "../../../Interfaces/Figure/FigureConfiguration.js";
 
 export type UserDataUpdated = {
     id: string;

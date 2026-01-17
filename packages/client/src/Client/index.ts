@@ -2,7 +2,7 @@ import FigureAssets from "@Client/Assets/FigureAssets";
 import ClientInstance from "./ClientInstance";
 import "@Client/../Workers/Figure/FigureRendererWorker";
 import "@Client/Figure/Worker/FigureWorkerRenderer";
-import WebSocketClient from "@Shared/WebSocket/WebSocketClient";
+import WebSocketClient from "../WebSocket/WebSocketClient";
 import { TypedEventTarget } from "@Shared/Interfaces/TypedEventTarget";
 
 export async function createClientInstance(element: HTMLElement, internalEventTarget: TypedEventTarget, webSocketClient: WebSocketClient) {

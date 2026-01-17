@@ -1,11 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import ClientFigureResponse from "@Shared/events/responses/ClientFigureResponse";
 import { AppContext } from "../../../contexts/AppContext";
-import ClientFigureRequest from "@Shared/events/requests/ClientFigureRequest";
+import FigureRenderer from "@Client/Figure/FigureRenderer";
 
 export default function ToolbarFigureItem() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { user, internalEventTarget } = useContext(AppContext);
+    const { user } = useContext(AppContext);
 
     const [figureImage, setFigureImage] = useState<ImageBitmap>();
 
@@ -14,23 +13,11 @@ export default function ToolbarFigureItem() {
             return;
         }
 
-        const requestEvent = new ClientFigureRequest(user.figureConfiguration, 2);
+        const figureRenderer = new FigureRenderer(user.figureConfiguration, 2);
 
-        const listener = (event: ClientFigureResponse) => {
-            if(event.id !== requestEvent.id) {
-                return;
-            }
-
-            setFigureImage(event.image);
-        };
-
-        internalEventTarget.addEventListener("ClientFigureResponse", listener);
-
-        internalEventTarget.dispatchEvent(requestEvent);
-
-        return () => {
-            internalEventTarget.removeEventListener("ClientFigureResponse", listener);
-        };
+        figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0).then(({ image }) => {
+            setFigureImage(image);
+        });
     }, [user]);
 
     useEffect(() => {

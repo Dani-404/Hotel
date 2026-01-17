@@ -1,5 +1,5 @@
 import { UserDataUpdated } from "@Shared/WebSocket/Events/User/UserDataUpdated";
-import WebSocketClient from "@Shared/WebSocket/WebSocketClient";
+import WebSocketClient from "../../WebSocket/WebSocketClient";
 import { createContext, ReactElement } from "react";
 
 export type TypedEventTarget = EventTarget & {
