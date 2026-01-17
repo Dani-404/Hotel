@@ -16,8 +16,9 @@ export default function Dialog({ title, children, onClose, width, height }: Dial
     });
 
     useEffect(() => {
-        if(elementRef) {
-            elementRef.current!.style.transform = `translate(${positionRef.current.left}px, ${positionRef.current.top}px)`;
+        if(elementRef.current) {
+            elementRef.current.style.transform = `translate(${positionRef.current.left}px, ${positionRef.current.top}px)`;
+            elementRef.current.style.zIndex = Math.round(performance.now()).toString();
         }
     }, [elementRef]);
 
@@ -54,6 +55,14 @@ export default function Dialog({ title, children, onClose, width, height }: Dial
         // TODO: pass down the new position to re-align the mouse start position to avoid offsets when hitting the document edges
     }, []);
 
+    const onMouseDown = useCallback(() => {
+        if(!elementRef.current) {
+            return;
+        }
+
+        elementRef.current.style.zIndex = Math.round(performance.now()).toString();
+    }, [elementRef]);
+
     return (
         <div ref={elementRef} style={{
             border: "1px solid black",
@@ -75,7 +84,7 @@ export default function Dialog({ title, children, onClose, width, height }: Dial
             flexDirection: "column",
 
             pointerEvents: "auto"
-        }}>
+        }} onMouseDown={onMouseDown}>
             <DialogHeader title={title} onDialogMove={onDialogMove} onClose={onClose}/>
 
             <div style={{
