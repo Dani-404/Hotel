@@ -319,32 +319,54 @@ export default class WallRenderer {
         if(!this.structure.door) {
             return;
         }
-        
+
+        let extraTile = (overlappingWalls === 1)?(1):(0);
+
         if(rectangles.some((rectangle) => rectangle.row === this.structure.door!.row && rectangle.column === this.structure.door!.column + 1 && rectangle.direction === 2)) {
             context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, (this.depth * 16) + this.structure.wall.thickness);
 
-            const row = this.structure.door.row + overlappingWalls;
+            const row = this.structure.door.row + extraTile;
             const column = this.structure.door.column;
 
             const left = -(row * 32) + (column * 32);
-            const top = (column * 32) - (this.depth * 16);
+            let top = (column * 32) - (this.depth * 16);
 
             const doorDepth = parseInt(this.getTileDepth(this.structure.door.row, this.structure.door.column, false));
 
+            if(overlappingWalls === 2) {
+                top -= image.height;
+            }
+
             context.drawImage(image, left, top + (doorDepth * 32) - this.structure.floor.thickness);
+            
+            if(overlappingWalls === 1) {
+                top -= image.height;
+                
+                context.drawImage(image, left, top + (doorDepth * 32) - this.structure.floor.thickness);
+            }
         }
         else if(rectangles.some((rectangle) => rectangle.row === this.structure.door!.row + 1 && rectangle.column === this.structure.door!.column && rectangle.direction === 4)) {
             context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, (this.depth * 16) + this.structure.wall.thickness);
 
             const row = this.structure.door.row;
-            const column = this.structure.door.column + overlappingWalls;
+            const column = this.structure.door.column + extraTile;
 
             const left = (column * 32) - (row * 32);
-            const top = (row * 32) - (this.depth * 16);
+            let top = (row * 32) - (this.depth * 16);
 
             const doorDepth = parseInt(this.getTileDepth(this.structure.door.row, this.structure.door.column, false));
 
+            if(overlappingWalls === 2) {
+                top -= image.height;
+            }
+
             context.drawImage(image, left - image.width, top + (doorDepth * 32) - this.structure.floor.thickness);
+
+            if(overlappingWalls === 1) {
+                top -= image.height;
+
+                context.drawImage(image, left - image.width, top + (doorDepth * 32) - this.structure.floor.thickness);
+            }
         }
     }
 
