@@ -11,9 +11,11 @@ import RoomFurniturePlacer from "@Client/Room/RoomFurniturePlacer";
 import { PlaceFurnitureInRoom } from "@Shared/WebSocket/Events/Rooms/Furniture/PlaceFurnitureInRoom";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import InventoryEmptyTab from "./InventoryEmptyTab";
+import { useRoomInstance } from "../../../hooks/useRoomInstance";
 
 export default function InventoryFurnitureTab() {
     const { setDialogHidden } = useContext(AppContext);
+    const room = useRoomInstance();
 
     const [activeFurniture, setActiveFurniture] = useState<UserFurnitureData>();
     const [userFurniture, setUserFurniture] = useState<UserFurnitureData[]>([]);
@@ -214,7 +216,7 @@ export default function InventoryFurnitureTab() {
                             <p>{activeFurniture?.furnitureData.description}</p>
                         </div>
 
-                        <DialogButton onClick={onPlaceInRoomClick}>Place in room</DialogButton>
+                        <DialogButton disabled={!room} onClick={onPlaceInRoomClick}>Place in room</DialogButton>
                     </Fragment>
                 )}
             </div>

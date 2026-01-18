@@ -104,9 +104,7 @@ export default class RoomCursor extends EventTarget {
         const floorEntity = this.roomRenderer.getItemAtPosition((item) => item.type === "floor");
         const otherEntity = this.roomRenderer.getItemAtPosition((item) => item.type !== "floor" && item.type !== "wall");
 
-        if(floorEntity || otherEntity) {
-            this.dispatchEvent(new RoomClickEvent(floorEntity, otherEntity));
-        }
+        this.dispatchEvent(new RoomClickEvent(floorEntity, otherEntity));
 
         if(this.roomRenderer.roomInstance) {
             if(otherEntity?.item instanceof RoomFigureItem) {

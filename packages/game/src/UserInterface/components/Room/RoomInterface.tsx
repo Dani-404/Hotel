@@ -1,8 +1,16 @@
+import { useRoomInstance } from "../../hooks/useRoomInstance";
+import RoomItemProfile from "./Item/RoomItemProfile";
 import UserContextMenu from "./Users/UserContextMenu";
 
 export default function RoomInterface() {
+    const room = useRoomInstance();
+
+    if(!room) {
+        return null;
+    }
+
     return (
-        <div style={{
+        <div key={room.key} style={{
             position: "fixed",
 
             left: 0,
@@ -14,6 +22,8 @@ export default function RoomInterface() {
             pointerEvents: "none"
         }}>
             <UserContextMenu/>
+
+            <RoomItemProfile room={room}/>
         </div>
     );
 }

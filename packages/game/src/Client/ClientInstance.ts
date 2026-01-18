@@ -1,8 +1,29 @@
 import registerRoomEvents from "@Client/Room/Events/RoomEvents";
 import RoomInstance from "./Room/RoomInstance";
 
+type Listener<T> = (value: T | undefined) => void;
+
 export default class ClientInstance extends EventTarget {
-    public roomInstance?: RoomInstance;
+    private _roomInstance?: RoomInstance;
+    private listeners = new Set<Listener<RoomInstance>>();
+
+    get roomInstance() {
+        return this._roomInstance;
+    }
+
+    set roomInstance(value: RoomInstance | undefined) {
+        this._roomInstance = value;
+
+        this.listeners.forEach((listener) => listener(value));
+    }
+
+    subscribe(listener: Listener<RoomInstance>) {
+        this.listeners.add(listener);
+
+        return () => {
+            this.listeners.delete(listener);
+        };
+    }
 
     constructor(public readonly element: HTMLElement) {
         super();

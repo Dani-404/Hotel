@@ -7,6 +7,8 @@ import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 export default class RoomFurnitureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
+    public readonly id = Math.random();
+    
     constructor(public readonly furnitureRenderer: FurnitureRenderer, position: RoomPosition) {
         super("furniture");
 

@@ -27,6 +27,8 @@ type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigure
 
 
 export default class RoomInstance {
+    public readonly key = Math.random();
+
     public readonly roomRenderer: RoomRenderer;
 
     private readonly users: RoomItem<RoomUserData, RoomFigureItem>[] = [];
@@ -50,7 +52,8 @@ export default class RoomInstance {
             id: "x",
             furniture: {
                 name: "Dimmer",
-                type: "roomdimmer"
+                type: "roomdimmer",
+                placement: "wall"
             },
             position: {
                 row: 2.5,
@@ -147,5 +150,15 @@ export default class RoomInstance {
             data: furnitureData,
             item
         };
+    }
+
+    public getFurnitureByItem(item: RoomFurnitureItem) {
+        const furniture = this.furnitures.find((furniture) => furniture.item.id === item.id);
+
+        if(!furniture) {
+            throw new Error("User does not exist in room.");
+        }
+
+        return furniture;
     }
 }
