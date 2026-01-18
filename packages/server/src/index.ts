@@ -1,6 +1,6 @@
 import { WebSocketServer } from "ws";
 import { eventHandler } from "./Events/EventHandler.js";
-import UserClient from "./Clients/UserClient.js";
+import User from "./Users/User.js";
 import { UserModel } from "./Database/Models/Users/UserModel.js";
 import { UserDataUpdated } from "@shared/WebSocket/Events/User/UserDataUpdated.js";
 import OutgoingEvent from "./Events/Interfaces/OutgoingEvent.js";
@@ -16,11 +16,11 @@ import { initializeDevelopmentData } from "./Database/Development/DatabaseDevelo
 await initializeModels();
 await initializeDevelopmentData();
 
-eventHandler.addListener("ClientPingEvent", (userClient: UserClient) => {
-	userClient.send(new OutgoingEvent<UserDataUpdated>("UserDataUpdated", {
-        id: userClient.user.id,
-		name: userClient.user.name,
-		figureConfiguration: userClient.user.figureConfiguration
+eventHandler.addListener("ClientPingEvent", (user: User) => {
+	user.send(new OutgoingEvent<UserDataUpdated>("UserDataUpdated", {
+        id: user.model.id,
+		name: user.model.name,
+		figureConfiguration: user.model.figureConfiguration
 	}));
 });
 
@@ -49,23 +49,23 @@ webSocketServer.on("connection", async (webSocket, request) => {
         return webSocket.close();
     }
 
-    const user = await UserModel.findByPk(userId);
+    const model = await UserModel.findByPk(userId);
 
-    if(!user) {
+    if(!model) {
 		console.warn("User does not exist.");
 
         return webSocket.close();
     }
 
-    const userClient = new UserClient(webSocket, user);
+    const user = new User(webSocket, model);
 
     webSocket.on("error", console.error);
 
     webSocket.on("message", (rawData) => {
-        eventHandler.decodeAndDispatchMessages(userClient, rawData);
+        eventHandler.decodeAndDispatchMessages(user, rawData);
     });
 
     webSocket.on("close", () => {
-        userClient.emit("close", userClient);
+        user.emit("close", user);
     });
 });

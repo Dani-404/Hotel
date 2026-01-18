@@ -1,6 +1,6 @@
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
-import UserClient from "../../Clients/UserClient.js";
-import RoomInstance from "../RoomInstance.js";
+import User from "../../Users/User.js";
+import Room from "../Room.js";
 import OutgoingEvent from "../../Events/Interfaces/OutgoingEvent.js";
 import { UserLeftRoom } from "@shared/WebSocket/Events/Rooms/Users/UserLeftRoom.js";
 import { StartWalking } from "@shared/WebSocket/Events/Rooms/Users/StartWalking.js";
@@ -17,11 +17,11 @@ export default class RoomUser {
 
     public path?: Omit<RoomPosition, "depth">[];
 
-    constructor(private readonly room: RoomInstance, public readonly userClient: UserClient) {
+    constructor(private readonly room: Room, public readonly user: User) {
         this.position = {
-            row: room.room.structure.door?.row ?? 0,
-            column: room.room.structure.door?.column ?? 0,
-            depth: parseInt(room.room.structure.grid[room.room.structure.door?.row ?? 0]?.[room.room.structure.door?.column ?? 0]!)
+            row: room.model.structure.door?.row ?? 0,
+            column: room.model.structure.door?.column ?? 0,
+            depth: parseInt(room.model.structure.grid[room.model.structure.door?.row ?? 0]?.[room.model.structure.door?.column ?? 0]!)
         };
 
         this.direction = 2;
@@ -32,9 +32,9 @@ export default class RoomUser {
         
         this.room.sendRoomEvent(userEnteredRoomEvent);
         
-        this.userClient.send([
+        this.user.send([
             new OutgoingEvent<LoadRoom>("LoadRoom", {
-                structure: this.room.room.structure,
+                structure: this.room.model.structure,
                 users: this.room.users.map((user) => user.getRoomUserData()),
                 furnitures: this.room.furnitures.map((furniture) => furniture.getFurnitureData())
             }),
@@ -44,9 +44,9 @@ export default class RoomUser {
     
     private getRoomUserData(): RoomUserData {
         return {
-            id: this.userClient.user.id,
-            name: this.userClient.user.name,
-            figureConfiguration: this.userClient.user.figureConfiguration,
+            id: this.user.model.id,
+            name: this.user.model.name,
+            figureConfiguration: this.user.model.figureConfiguration,
 
             position: this.position,
             direction: this.direction
@@ -54,23 +54,23 @@ export default class RoomUser {
     }
 
     private addEventListeners() {
-        this.userClient.addListener("close", this.disconnectListener);
-        this.userClient.addListener<StartWalking>("StartWalking", this.startWalkingListener);
-        this.userClient.addListener<PlaceFurnitureInRoom>("PlaceFurnitureInRoom", this.placeFurnitureListener);
+        this.user.addListener("close", this.disconnectListener);
+        this.user.addListener<StartWalking>("StartWalking", this.startWalkingListener);
+        this.user.addListener<PlaceFurnitureInRoom>("PlaceFurnitureInRoom", this.placeFurnitureListener);
     }
 
     private removeEventListeners() {
-        this.userClient.removeListener("close", this.disconnectListener);
-        this.userClient.removeListener("StartWalking", this.startWalkingListener);
-        this.userClient.removeListener("PlaceFurnitureInRoom", this.placeFurnitureListener);
+        this.user.removeListener("close", this.disconnectListener);
+        this.user.removeListener("StartWalking", this.startWalkingListener);
+        this.user.removeListener("PlaceFurnitureInRoom", this.placeFurnitureListener);
     }
 
     private readonly startWalkingListener = this.startWalking.bind(this);
-    private startWalking(client: UserClient, event: StartWalking) {
-        console.log(client.user.name + ": start walking from " + JSON.stringify(this.position));
-        console.log(client.user.name + ": start walking to " + JSON.stringify(event.target));
+    private startWalking(client: User, event: StartWalking) {
+        console.log(client.model.name + ": start walking from " + JSON.stringify(this.position));
+        console.log(client.model.name + ": start walking to " + JSON.stringify(event.target));
 
-        const rows = this.room.room.structure.grid.map((row, rowIndex) => {
+        const rows = this.room.model.structure.grid.map((row, rowIndex) => {
             return row.split('').map((column, columnIndex) => {
                 if(column === 'X') {
                     return 1;
@@ -79,7 +79,7 @@ export default class RoomUser {
                 const furniture = this.room.getUpmostFurnitureAtPosition({ row: rowIndex, column: columnIndex });
 
                 if(furniture) {
-                    if(!furniture.roomFurniture.furniture.flags.walkable) {
+                    if(!furniture.model.furniture.flags.walkable) {
                         return 1;
                     }
                 }
@@ -130,7 +130,7 @@ export default class RoomUser {
         const furniture = this.room.getUpmostFurnitureAtPosition(nextPosition);
 
         if(furniture) {
-            if(!furniture.roomFurniture.furniture.flags.walkable) {
+            if(!furniture.model.furniture.flags.walkable) {
                 this.path = [];
 
                 return [];
@@ -148,7 +148,7 @@ export default class RoomUser {
         const outgoingEvents: OutgoingEvent[] = [];
 
         outgoingEvents.push(new OutgoingEvent<UserWalkTo>("UserWalkTo", {
-            userId: this.userClient.user.id,
+            userId: this.user.model.id,
             from: this.position,
             to: position
         }));
@@ -160,7 +160,7 @@ export default class RoomUser {
     }
 
     private readonly placeFurnitureListener = this.placeFurniture.bind(this);
-    private async placeFurniture(client: UserClient, event: PlaceFurnitureInRoom) {
+    private async placeFurniture(client: User, event: PlaceFurnitureInRoom) {
         const inventory = client.getInventory();
 
         const userFurniture = await inventory.getFurnitureById(event.userFurnitureId);
@@ -181,7 +181,7 @@ export default class RoomUser {
         this.room.users.splice(this.room.users.indexOf(this), 1);
 
         this.room.sendRoomEvent(new OutgoingEvent<UserLeftRoom>("UserLeftRoom", {
-            userId: this.userClient.user.id
+            userId: this.user.model.id
         }));
     }
 }

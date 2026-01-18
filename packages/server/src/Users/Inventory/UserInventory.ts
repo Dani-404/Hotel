@@ -1,12 +1,12 @@
 import { UserFurnitureDataUpdated } from "@shared/WebSocket/Events/User/Inventory/UserFurnitureDataUpdated.js";
-import UserClient from "../../Clients/UserClient.js";
+import User from "../User.js";
 import { FurnitureModel } from "../../Database/Models/Furniture/FurnitureModel.js";
 import { UserFurnitureModel } from "../../Database/Models/Users/Furniture/UserFurnitureModel.js";
 import OutgoingEvent from "../../Events/Interfaces/OutgoingEvent.js";
 import { randomUUID } from "node:crypto";
 
 export default class UserInventory {
-    constructor(private readonly userClient: UserClient) {
+    constructor(private readonly user: User) {
 
     }
 
@@ -25,7 +25,7 @@ export default class UserInventory {
         return await UserFurnitureModel.findOne({
             where: {
                 id: userFurnitureId,
-                userId: this.userClient.user.id
+                userId: this.user.model.id
             },
             include: {
                 model: FurnitureModel,
@@ -37,7 +37,7 @@ export default class UserInventory {
     public async deleteFurniture(userFurniture: UserFurnitureModel) {
         userFurniture.destroy();
 
-        this.userClient.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
             deletedUserFurniture: [
                 {
                     id: userFurniture.id,
@@ -49,7 +49,7 @@ export default class UserInventory {
     public async addFurniture(furniture: FurnitureModel) {
         let userFurniture = await UserFurnitureModel.findOne<UserFurnitureModel>({
             where: {
-                userId: this.userClient.user.id,
+                userId: this.user.model.id,
                 furnitureId: furniture.id
             }
         });
@@ -62,7 +62,7 @@ export default class UserInventory {
         else {
             userFurniture = await UserFurnitureModel.create({
                 id: randomUUID(),
-                userId: this.userClient.user.id,
+                userId: this.user.model.id,
                 furnitureId: furniture.id
             }, {
                 include: {
@@ -72,7 +72,7 @@ export default class UserInventory {
             });
         }
 
-        this.userClient.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
             updatedUserFurniture: [
                 {
                     id: userFurniture.id,
@@ -86,7 +86,7 @@ export default class UserInventory {
     public async updateFurniture(userFurniture: UserFurnitureModel, updatedFurnitureAttributes: Partial<UserFurnitureModel>) {
         await userFurniture.update(updatedFurnitureAttributes);
 
-        this.userClient.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
             updatedUserFurniture: [
                 {
                     id: userFurniture.id,
@@ -100,7 +100,7 @@ export default class UserInventory {
     public async sendFurniture() {
         const userFurniture = await UserFurnitureModel.findAll<UserFurnitureModel>({
             where: {
-                userId: this.userClient.user.id
+                userId: this.user.model.id
             },
             include: {
                 model: FurnitureModel,
@@ -108,7 +108,7 @@ export default class UserInventory {
             }
         });
     
-        this.userClient.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
             allUserFurniture: userFurniture.map((userFurniture) => {
                 return {
                     id: userFurniture.id,

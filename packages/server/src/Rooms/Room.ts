@@ -1,28 +1,27 @@
-import UserClient from "../Clients/UserClient.js";
+import User from "../Users/User.js";
 import { RoomModel } from "../Database/Models/Rooms/RoomModel.js";
 import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
 import RoomUser from "./Users/RoomUser.js";
 import RoomFurnitureItem from "./Items/RoomFurnitureItem.js";
-import { UserWalkTo } from "@shared/WebSocket/Events/Rooms/Users/UserWalkTo.js";
 import { FurnitureModel } from "../Database/Models/Furniture/FurnitureModel.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { RoomFurnitureModel } from "../Database/Models/Rooms/RoomFurnitureModel.js";
 import { randomUUID } from "node:crypto";
 import { RoomFurnitureUpdated } from "@shared/WebSocket/Events/Rooms/Furniture/RoomFurnitureUpdated.js";
 
-export default class RoomInstance {
+export default class Room {
     public readonly users: RoomUser[] = [];
     public readonly furnitures: RoomFurnitureItem[] = [];
 
     // TODO: is there a better way to handle actions instead of an interval?
     private actionsInterval?: NodeJS.Timeout;
 
-    constructor(public readonly room: RoomModel) {
-        this.furnitures = room.roomFurnitures.map((roomFurniture) => new RoomFurnitureItem(this, roomFurniture));
+    constructor(public readonly model: RoomModel) {
+        this.furnitures = model.roomFurnitures.map((roomFurniture) => new RoomFurnitureItem(this, roomFurniture));
     }
 
-    public addUserClient(userClient: UserClient) {
-        this.users.push(new RoomUser(this, userClient));
+    public addUserClient(user: User) {
+        this.users.push(new RoomUser(this, user));
     }
 
     public async addFurniture(furniture: FurnitureModel, position: RoomPosition, direction: number) {
@@ -62,12 +61,12 @@ export default class RoomInstance {
 
     public sendRoomEvent(outgoingEvents: OutgoingEvent | OutgoingEvent[]) {
         this.users.forEach((user) => {
-            user.userClient.send(outgoingEvents);
+            user.user.send(outgoingEvents);
         });
     }
 
-    private getRoomUser(client: UserClient) {
-        const user = this.users.find((user) => user.userClient.user.id === client.user.id);
+    private getRoomUser(client: User) {
+        const user = this.users.find((user) => user.user.model.id === client.model.id);
 
         if(!user) {
             throw new Error("User does not exist in room.");
@@ -108,9 +107,9 @@ export default class RoomInstance {
     public getUpmostFurnitureAtPosition(position: Omit<RoomPosition, "depth">) {
         const furniture = this.furnitures
             .filter((furniture) => 
-                furniture.roomFurniture.position.row === position.row
-                && furniture.roomFurniture.position.column === position.column)
-            .toSorted((a, b) => a.roomFurniture.position.depth - b.roomFurniture.position.depth);
+                furniture.model.position.row === position.row
+                && furniture.model.position.column === position.column)
+            .toSorted((a, b) => a.model.position.depth - b.model.position.depth);
 
         if(!furniture.length) {
             return undefined;
@@ -121,13 +120,13 @@ export default class RoomInstance {
 
     public getUpmostDepthAtPosition(position: Omit<RoomPosition, "depth">, furniture?: RoomFurnitureItem) {
         if(!furniture) {
-            if(!this.room.structure.grid[position.row] || !this.room.structure.grid[position.row]![position.column]) {
+            if(!this.model.structure.grid[position.row] || !this.model.structure.grid[position.row]![position.column]) {
                 return 0;
             }
 
-            return parseInt(this.room.structure.grid[position.row]![position.column]!)
+            return parseInt(this.model.structure.grid[position.row]![position.column]!)
         }
 
-        return furniture.roomFurniture.position.depth + furniture.roomFurniture.furniture.dimensions.depth;
+        return furniture.model.position.depth + furniture.model.furniture.dimensions.depth;
     }
 }

@@ -2,12 +2,12 @@ import type WebSocket from "ws";
 import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
 import { UserModel } from "../Database/Models/Users/UserModel.js";
 import { EventEmitter } from "node:events";
-import UserInventory from "../Users/Inventory/UserInventory.js";
+import UserInventory from "./Inventory/UserInventory.js";
 
-export default class UserClient extends EventEmitter {
+export default class User extends EventEmitter {
     private inventory?: UserInventory;
 
-    constructor(public readonly webSocket: WebSocket, public readonly user: UserModel) {
+    constructor(public readonly webSocket: WebSocket, public readonly model: UserModel) {
         super();
     }
 
@@ -23,7 +23,7 @@ export default class UserClient extends EventEmitter {
         this.webSocket.send(payload);
     };
 
-    addListener<T>(eventName: string | symbol, listener: (client: UserClient, event: T) => void): this {
+    addListener<T>(eventName: string | symbol, listener: (client: User, event: T) => void): this {
         return super.addListener(eventName, listener);
     }
 

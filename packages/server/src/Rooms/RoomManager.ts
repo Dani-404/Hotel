@@ -1,18 +1,18 @@
 import { FurnitureModel } from "../Database/Models/Furniture/FurnitureModel.js";
 import { RoomModel } from "../Database/Models/Rooms/RoomModel.js";
 import { RoomFurnitureModel } from "../Database/Models/Rooms/RoomFurnitureModel.js";
-import RoomInstance from "./RoomInstance.js";
+import Room from "./Room.js";
 
 // TODO: do we really need the Room model in the functions or is it sufficient with a roomId?
 export default class RoomManager {
-    public static instances: RoomInstance[] = [];
+    public static instances: Room[] = [];
 
     public static getOrLoadRoomInstance(roomId: string) {
         return this.getRoomInstance(roomId) ?? this.loadRoomInstance(roomId);
     }
 
     public static getRoomInstance(roomId: string) {
-        const instance = this.instances.find((instance) => instance.room.id === roomId);
+        const instance = this.instances.find((instance) => instance.model.id === roomId);
 
         if(!instance) {
             return null;
@@ -39,7 +39,7 @@ export default class RoomManager {
             return null;
         }
 
-        const instance = new RoomInstance(room);
+        const instance = new Room(room);
 
         this.instances.push(instance);
 
