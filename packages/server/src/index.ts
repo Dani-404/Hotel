@@ -2,12 +2,6 @@ import { WebSocketServer } from "ws";
 import { eventHandler } from "./Events/EventHandler.js";
 import User from "./Users/User.js";
 import { UserModel } from "./Database/Models/Users/UserModel.js";
-import { UserDataUpdated } from "@shared/WebSocket/Events/User/UserDataUpdated.js";
-import OutgoingEvent from "./Events/Interfaces/OutgoingEvent.js";
-
-import "./Users/Events/RequestUserData.js";
-import "./Users/Inventory/Events/RequestUserFurnitureData.js";
-
 import { initializeModels } from "./Database/Database.js";
 import { initializeDevelopmentData } from "./Database/Development/DatabaseDevelopmentData.js";
 import Game from "./Game.js";
@@ -15,17 +9,11 @@ import GetShopPagesEvent from "./Communication/Shop/GetShopPagesEvent.js";
 import GetShopPageFurnitureEvent from "./Communication/Shop/GetShopPageFurnitureEvent.js";
 import PurchaseShopFurnitureEvent from "./Communication/Shop/PurchaseShopFurnitureEvent.js";
 import EnterRoomEvent from "./Communication/Rooms/EnterRoomEvent.js";
+import GetUserEvent from "./Communication/Users/GetUserEvent.js";
+import GetUserFurnitureEvent from "./Communication/Inventory/GetUserFurnitureEvent.js";
 
 await initializeModels();
 await initializeDevelopmentData();
-
-eventHandler.addListener("ClientPingEvent", (user: User) => {
-	user.send(new OutgoingEvent<UserDataUpdated>("UserDataUpdated", {
-        id: user.model.id,
-		name: user.model.name,
-		figureConfiguration: user.model.figureConfiguration
-	}));
-});
 
 // TODO: clean up event handler types
 eventHandler
@@ -35,6 +23,10 @@ eventHandler
     
 eventHandler
     .addIncomingEvent("EnterRoomEvent", new EnterRoomEvent());
+    
+eventHandler
+    .addIncomingEvent("GetUserEvent", new GetUserEvent())
+    .addIncomingEvent("GetUserFurnitureEvent", new GetUserFurnitureEvent());
 
 export const game = new Game();
 

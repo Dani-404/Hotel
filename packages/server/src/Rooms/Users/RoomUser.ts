@@ -9,7 +9,7 @@ import { PlaceFurnitureInRoom } from "@shared/WebSocket/Events/Rooms/Furniture/P
 import { UserEnteredRoom } from "@shared/WebSocket/Events/Rooms/Users/UserEnteredRoom.js";
 import { RoomUserData } from "@shared/Interfaces/Room/RoomUserData.js";
 import { UserWalkTo } from "@shared/WebSocket/Events/Rooms/Users/UserWalkTo.js";
-import { LoadRoomEventData } from "@shared/Communications/Rooms/Responses/LoadRoomEventData.js";
+import { LoadRoomEventData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
 
 export default class RoomUser {
     public position: RoomPosition;

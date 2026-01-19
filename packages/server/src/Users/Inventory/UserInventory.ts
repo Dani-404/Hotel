@@ -1,4 +1,4 @@
-import { UserFurnitureDataUpdated } from "@shared/WebSocket/Events/User/Inventory/UserFurnitureDataUpdated.js";
+import { UserFurnitureEventData } from "@shared/Communications/Responses/Inventory/UserFurnitureEventData.js";
 import User from "../User.js";
 import { FurnitureModel } from "../../Database/Models/Furniture/FurnitureModel.js";
 import { UserFurnitureModel } from "../../Database/Models/Users/Furniture/UserFurnitureModel.js";
@@ -37,7 +37,7 @@ export default class UserInventory {
     public async deleteFurniture(userFurniture: UserFurnitureModel) {
         userFurniture.destroy();
 
-        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
             deletedUserFurniture: [
                 {
                     id: userFurniture.id,
@@ -72,7 +72,7 @@ export default class UserInventory {
             });
         }
 
-        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
             updatedUserFurniture: [
                 {
                     id: userFurniture.id,
@@ -86,7 +86,7 @@ export default class UserInventory {
     public async updateFurniture(userFurniture: UserFurnitureModel, updatedFurnitureAttributes: Partial<UserFurnitureModel>) {
         await userFurniture.update(updatedFurnitureAttributes);
 
-        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
             updatedUserFurniture: [
                 {
                     id: userFurniture.id,
@@ -108,7 +108,7 @@ export default class UserInventory {
             }
         });
     
-        this.user.send(new OutgoingEvent<UserFurnitureDataUpdated>("UserFurnitureDataUpdated", {
+        this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
             allUserFurniture: userFurniture.map((userFurniture) => {
                 return {
                     id: userFurniture.id,

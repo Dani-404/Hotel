@@ -1,6 +1,6 @@
-import { UserFurnitureData } from "../../../../Interfaces/User/UserFurnitureData.js";
+import { UserFurnitureData } from "../../../Interfaces/User/UserFurnitureData.js";
 
-export type UserFurnitureDataUpdated = {
+export type UserFurnitureEventData = {
     allUserFurniture?: UserFurnitureData[];
     updatedUserFurniture?: UserFurnitureData[];
     deletedUserFurniture?: {

@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AppContext, Dialog } from "../contexts/AppContext";
 import Toolbar from "./Toolbar/Toolbar";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
-import { UserDataUpdated } from "@Shared/WebSocket/Events/User/UserDataUpdated";
 import RoomInterface from "./Room/RoomInterface";
 import DialogInstances from "./Dialog/DialogInstances";
 import { webSocketClient } from "../..";
-import { EnterRoomEventData } from "@Shared/Communications/Rooms/Requests/EnterRoomEventData";
+import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterRoomEventData";
+import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
 
 export type InterfaceInstanceProps = {
 }
@@ -15,23 +15,23 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
     const [dialogs, setDialogs] = useState<Dialog[]>([{ id: "navigator", type: "navigator", data: null }]);
 
     const ready = useRef<boolean>(false);
-    const [user, setUser] = useState<UserDataUpdated>();
+    const [user, setUser] = useState<UserEventData>();
 
     useEffect(() => {
-        const listener = (event: WebSocketEvent<UserDataUpdated>) => {
+        const listener = (event: WebSocketEvent<UserEventData>) => {
             setUser(event.data);
         };
 
-        webSocketClient.addEventListener("UserDataUpdated", listener);
+        webSocketClient.addEventListener("UserEvent", listener);
 
         return () => {
-            webSocketClient.removeEventListener("UserDataUpdated", listener);
+            webSocketClient.removeEventListener("UserEvent", listener);
         };
     }, []);
 
     useEffect(() => {
         if(!ready.current) {
-            webSocketClient.send("RequestUserData", null);
+            webSocketClient.send("GetUserEvent", null);
 
             webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
                 roomId: "room3"

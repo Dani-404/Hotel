@@ -1,5 +1,4 @@
-import { UserDataUpdated } from "@Shared/WebSocket/Events/User/UserDataUpdated";
-import WebSocketClient from "../../WebSocket/WebSocketClient";
+import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
 import { createContext, ReactElement } from "react";
 
 export type Dialog = {
@@ -10,7 +9,7 @@ export type Dialog = {
 }
 
 export type App = {
-    user?: UserDataUpdated;
+    user?: UserEventData;
 
     dialogs: Dialog[];
     addUniqueDialog: (type: string) => void;

@@ -18,7 +18,7 @@ import { RoomFurnitureUpdated } from "@Shared/WebSocket/Events/Rooms/Furniture/R
 import { webSocketClient } from "../..";
 import RoomFloorItem from "./Items/Map/RoomFloorItem";
 import RoomWallItem from "./Items/Map/RoomWallItem";
-import { LoadRoomEventData } from "@Shared/Communications/Rooms/Responses/LoadRoomEventData";
+import { LoadRoomEventData } from "@Shared/Communications/Responses/Rooms/LoadRoomEventData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;

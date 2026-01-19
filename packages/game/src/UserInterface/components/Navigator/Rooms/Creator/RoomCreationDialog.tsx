@@ -10,7 +10,8 @@ import { webSocketClient } from "../../../../..";
 import { RoomCreatedRequest } from "@Shared/WebSocket/Events/Rooms/Maps/RoomCreatedRequest";
 import { RoomCreatedResponse } from "@Shared/WebSocket/Events/Rooms/Maps/RoomCreatedResponse";
 import { AppContext } from "../../../../contexts/AppContext";
-import { EnterRoomEventData } from "@Shared/Communications/Rooms/Requests/EnterRoomEventData";
+import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterRoomEventData";
+import useRoomMaps from "./Hooks/useRoomMaps";
 
 export type RoomCreationDialogProps = {
     hidden?: boolean;
@@ -20,33 +21,16 @@ export type RoomCreationDialogProps = {
 export default function RoomCreationDialog({ hidden, onClose }: RoomCreationDialogProps) {
     const { closeDialog } = useContext(AppContext);
 
+    const roomMaps = useRoomMaps();
+
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
 
-    const roomMapsRequested = useRef(false);
-
-    const [roomMaps, setRoomMaps] = useState<RoomMapData[]>([]);
     const [activeRoomMap, setActiveRoomMap] = useState<RoomMapData>();
 
     useEffect(() => {
-        if(roomMapsRequested.current) {
-            return;
-        }
-
-        roomMapsRequested.current = true;
-
-        
-        const listener = (event: WebSocketEvent<RoomMapsResponse>) => {
-            setRoomMaps(event.data);
-            setActiveRoomMap(event.data[0]);
-        };
-
-        webSocketClient.addEventListener<WebSocketEvent<RoomMapsResponse>>("RoomMapsResponse", listener, {
-            once: true
-        });
-
-        webSocketClient.send("RoomMapsRequest", null);
-    }, []);
+        setActiveRoomMap(roomMaps[0]);
+    }, [roomMaps]);
 
     const onCreateRoom = useCallback(() => {
         if(!activeRoomMap) {

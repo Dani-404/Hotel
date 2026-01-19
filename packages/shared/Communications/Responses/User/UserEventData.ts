@@ -1,6 +1,6 @@
 import { FigureConfiguration } from "../../../Interfaces/Figure/FigureConfiguration.js";
 
-export type UserDataUpdated = {
+export type UserEventData = {
     id: string;
     name: string;
     figureConfiguration: FigureConfiguration;

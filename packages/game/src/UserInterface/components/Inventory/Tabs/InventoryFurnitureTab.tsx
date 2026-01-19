@@ -5,13 +5,13 @@ import { act, Fragment, useCallback, useContext, useEffect, useRef, useState } f
 import { AppContext } from "../../../contexts/AppContext";
 import { UserFurnitureData } from "@Shared/Interfaces/User/UserFurnitureData";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
-import { UserFurnitureDataUpdated } from "@Shared/WebSocket/Events/User/Inventory/UserFurnitureDataUpdated";
 import { clientInstance, webSocketClient } from "../../../..";
 import RoomFurniturePlacer from "@Client/Room/RoomFurniturePlacer";
 import { PlaceFurnitureInRoom } from "@Shared/WebSocket/Events/Rooms/Furniture/PlaceFurnitureInRoom";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import InventoryEmptyTab from "./InventoryEmptyTab";
 import { useRoomInstance } from "../../../hooks/useRoomInstance";
+import { UserFurnitureEventData } from "@Shared/Communications/Responses/Inventory/UserFurnitureEventData";
 
 export default function InventoryFurnitureTab() {
     const { setDialogHidden } = useContext(AppContext);
@@ -30,11 +30,11 @@ export default function InventoryFurnitureTab() {
 
         userFurnitureRequested.current = true;
 
-        webSocketClient.send("RequestUserFurnitureData", null);
+        webSocketClient.send("GetUserFurnitureEvent", null);
     }, []);
 
     useEffect(() => {
-        const listener = (event: WebSocketEvent<UserFurnitureDataUpdated>) => {
+        const listener = (event: WebSocketEvent<UserFurnitureEventData>) => {
             if(event.data.allUserFurniture) {
                 setUserFurniture(event.data.allUserFurniture);
             }
@@ -56,10 +56,10 @@ export default function InventoryFurnitureTab() {
             }
         }
 
-        webSocketClient.addEventListener<WebSocketEvent<UserFurnitureDataUpdated>>("UserFurnitureDataUpdated", listener);
+        webSocketClient.addEventListener<WebSocketEvent<UserFurnitureEventData>>("UserFurnitureEvent", listener);
 
         return () => {
-            webSocketClient.removeEventListener<WebSocketEvent<UserFurnitureDataUpdated>>("UserFurnitureDataUpdated", listener);
+            webSocketClient.removeEventListener<WebSocketEvent<UserFurnitureEventData>>("UserFurnitureEvent", listener);
         };
     }, [userFurniture]);
 

@@ -2,10 +2,10 @@ import User from "../../Users/User.js";
 import { ShopPageModel } from "../../Database/Models/Shop/ShopPageModel.js";
 import OutgoingEvent from "../../Events/Interfaces/OutgoingEvent.js";
 import IncomingEvent from "../Interfaces/IncomingEvent.js";
-import { GetShopPageFurnitureEventData } from "@shared/Communications/Shop/Requests/GetShopPageFurnitureEventData.js";
+import { GetShopPageFurnitureEventData } from "@shared/Communications/Requests/Shop/GetShopPageFurnitureEventData.js";
 import { ShopPageFurnitureModel } from "../../Database/Models/Shop/ShopPageFurnitureModel.js";
 import { FurnitureModel } from "../../Database/Models/Furniture/FurnitureModel.js";
-import { ShopPageFurnitureEventData } from "@shared/Communications/Shop/Responses/ShopPageFurnitureEventData.js";
+import { ShopPageFurnitureEventData } from "@shared/Communications/Responses/Shop/ShopPageFurnitureEventData.js";
 
 export default class GetShopPageFurnitureEvent implements IncomingEvent<GetShopPageFurnitureEventData> {
     async handle(user: User, event: GetShopPageFurnitureEventData) {
