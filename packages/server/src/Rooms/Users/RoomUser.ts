@@ -100,7 +100,7 @@ export default class RoomUser {
     }
 
     private readonly disconnectListener = this.disconnect.bind(this);
-    private disconnect() {
+    public disconnect() {
         this.removeEventListeners();
         
         this.room.users.splice(this.room.users.indexOf(this), 1);

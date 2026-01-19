@@ -5,6 +5,12 @@ import { game } from "../../../index.js";
 
 export default class EnterRoomEvent implements IncomingEvent<EnterRoomEventData> {
     async handle(user: User, event: EnterRoomEventData) {
+        if(user.room) {
+            const roomUser = user.room.getRoomUser(user);
+
+            roomUser.disconnect();
+        }
+        
         const roomInstance = await game.roomManager.getOrLoadRoomInstance(event.roomId);
 
         if(!roomInstance) {
