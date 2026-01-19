@@ -2,7 +2,7 @@ import User from "../Users/User.js";
 import { RoomModel } from "../Database/Models/Rooms/RoomModel.js";
 import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
 import RoomUser from "./Users/RoomUser.js";
-import RoomFurnitureItem from "./Items/RoomFurnitureItem.js";
+import RoomFurnitureItem from "./Furniture/RoomFurnitureItem.js";
 import { FurnitureModel } from "../Database/Models/Furniture/FurnitureModel.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { RoomFurnitureModel } from "../Database/Models/Rooms/RoomFurnitureModel.js";

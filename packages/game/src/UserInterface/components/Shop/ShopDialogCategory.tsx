@@ -2,12 +2,12 @@ import DialogPanel from "../Dialog/Panels/DialogPanel";
 import DialogPanelList from "../Dialog/Panels/DialogPanelList";
 import DialogPanelListItem from "../Dialog/Panels/DialogPanelListItem";
 import { useContext, useEffect, useRef, useState } from "react";
-import { ShopPageData, ShopPagesResponse } from "@Shared/WebSocket/Events/Shop/ShopPagesResponse";
-import { ShopPagesRequest } from "@Shared/WebSocket/Events/Shop/ShopPagesRequest";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import ShopPage from "./Pages/ShopPage";
 import { DialogTabHeaderProps } from "../Dialog/Tabs/DialogTabs";
 import { webSocketClient } from "../../..";
+import { GetShopPagesEventData } from "@Shared/Communications/Shop/Requests/GetShopPagesEventData";
+import { ShopPageData, ShopPagesEventData } from "@Shared/Communications/Shop/Responses/ShopPagesEventData";
 
 export type ShopDialogCategoryProps = {
     category: "frontpage" | "furniture" | "clothing" | "pets";
@@ -20,21 +20,21 @@ export default function ShopDialogCategory({ category, onHeaderChange }: ShopDia
     const [shopPages, setShopPages] = useState<ShopPageData[]>([]);
 
     useEffect(() => {
-        const listener = (event: WebSocketEvent<ShopPagesResponse>) => {
+        const listener = (event: WebSocketEvent<ShopPagesEventData>) => {
             if(event.data.category === category) {
                 setShopPages(event.data.pages);
                 setActiveShopPage(event.data.pages[0]);
             }
         }
 
-        webSocketClient.addEventListener<WebSocketEvent<ShopPagesResponse>>("ShopPagesResponse", listener);
+        webSocketClient.addEventListener<WebSocketEvent<ShopPagesEventData>>("ShopPagesEventData", listener);
 
-        webSocketClient.send<ShopPagesRequest>("ShopPagesRequest", {
+        webSocketClient.send<GetShopPagesEventData>("GetShopPagesEvent", {
             category
         });
 
         return () => {
-            webSocketClient.removeEventListener<WebSocketEvent<ShopPagesResponse>>("ShopPagesResponse", listener);
+            webSocketClient.removeEventListener<WebSocketEvent<ShopPagesEventData>>("ShopPagesEventData", listener);
         };
     }, []);
 

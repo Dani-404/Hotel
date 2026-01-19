@@ -2,14 +2,16 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import DialogPanel from "../../Dialog/Panels/DialogPanel";
 import { ShopPageProps } from "./ShopPage";
 import { AppContext } from "../../../contexts/AppContext";
-import { ShopPageFurnitureRequest } from "@Shared/WebSocket/Events/Shop/ShopPageFurnitureRequest";
-import { ShopPageFurnitureData, ShopPageFurnitureResponse } from "@Shared/WebSocket/Events/Shop/ShopPageFurnitureResponse";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import FurnitureIcon from "../../Furniture/FurnitureIcon";
 import DialogButton from "../../Dialog/Button/DialogButton";
-import { PurchaseShopFurnitureRequest, PurchaseShopFurnitureResponse } from "@Shared/WebSocket/Events/Shop/Furniture/PurchaseShopFurniture";
 import RoomFurnitureRenderer from "@Client/Room/RoomFurnitureRenderer";
 import { webSocketClient } from "../../../..";
+import { ShopPageFurnitureData, ShopPageFurnitureEventData } from "@Shared/Communications/Shop/Responses/ShopPageFurnitureEventData";
+import { GetShopPageFurnitureEventData } from "@Shared/Communications/Shop/Requests/GetShopPageFurnitureEventData";
+import { PurchaseShopFurnitureEventData } from "@Shared/Communications/Shop/Requests/PurchaseShopFurnitureEventData";
+import { ShopFurniturePurchasedEventData } from "@Shared/Communications/Shop/Responses/ShopFurniturePurchasedEventData";
+import useShopPageFurniture from "./Hooks/useShopPageFurniture";
 
 export default function ShopDefaultPage({ page }: ShopPageProps) {
     const roomRef = useRef<HTMLDivElement>(null);
@@ -18,33 +20,12 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
     const [roomRenderer, setRoomRenderer] = useState<RoomFurnitureRenderer>();
     
     const [activeFurniture, setActiveFurniture] = useState<ShopPageFurnitureData>();
-    const [shopFurnitures, setShopFurnitures] = useState<ShopPageFurnitureData[]>([]);
-    const shopFurnituresRequested = useRef<string>("");
+
+    const shopFurniture = useShopPageFurniture(page.id);
 
     useEffect(() => {
-        if(shopFurnituresRequested.current === page.id) {
-            return;
-        }
-
-        shopFurnituresRequested.current = page.id;
-
-        setActiveFurniture(undefined);
-        setShopFurnitures([]);
-
-        const listener = (event: WebSocketEvent<ShopPageFurnitureResponse>) => {
-            if(event.data.pageId === page.id) {
-                setShopFurnitures(event.data.furniture);
-            }
-        }
-
-        webSocketClient.addEventListener<WebSocketEvent<ShopPageFurnitureResponse>>("ShopPageFurnitureResponse", listener, {
-            once: true
-        });
-
-        webSocketClient.send<ShopPageFurnitureRequest>("ShopPageFurnitureRequest", {
-            pageId: page.id
-        });
-    }, [page]);
+        setActiveFurniture(shopFurniture[0]);
+    }, [shopFurniture]);
 
     useEffect(() => {
         if(!roomRef.current) {
@@ -90,19 +71,18 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
         }
 
         // TODO: disable dialog
-
-        const listener = (event: WebSocketEvent<PurchaseShopFurnitureResponse>) => {
+        const listener = (event: WebSocketEvent<ShopFurniturePurchasedEventData>) => {
             // TODO: handle error
             if(!event.data.success) {
 
             }
         };
 
-        webSocketClient.addEventListener<WebSocketEvent<PurchaseShopFurnitureResponse>>("PurchaseShopFurnitureResponse", listener, {
+        webSocketClient.addEventListener<WebSocketEvent<ShopFurniturePurchasedEventData>>("ShopFurniturePurchasedEvent", listener, {
             once: true
         });
 
-        webSocketClient.send<PurchaseShopFurnitureRequest>("PurchaseShopFurnitureRequest", {
+        webSocketClient.send<PurchaseShopFurnitureEventData>("PurchaseShopFurnitureEvent", {
             shopFurnitureId: activeFurniture.id
         });
     }, [activeFurniture]);
@@ -161,7 +141,7 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
                     padding: 4,
                     overflowY: "scroll"
                 }}>
-                    {shopFurnitures.map((furniture) => (
+                    {shopFurniture.map((furniture) => (
                         <div key={furniture.id} style={{
                             width: 53,
                             height: 62,

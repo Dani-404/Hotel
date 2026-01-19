@@ -5,14 +5,15 @@ import { UserModel } from "./Database/Models/Users/UserModel.js";
 import { UserDataUpdated } from "@shared/WebSocket/Events/User/UserDataUpdated.js";
 import OutgoingEvent from "./Events/Interfaces/OutgoingEvent.js";
 
-import "./Rooms/Events/EnterRoom.js";
 import "./Users/Events/RequestUserData.js";
 import "./Users/Inventory/Events/RequestUserFurnitureData.js";
 
-import ShopEvents from "./Shop/ShopEvents.js";
 import { initializeModels } from "./Database/Database.js";
 import { initializeDevelopmentData } from "./Database/Development/DatabaseDevelopmentData.js";
-import RoomMaps from "./Rooms/Maps/RoomMaps.js";
+import Game from "./Game.js";
+import GetShopPagesEvent from "./Communication/Shop/GetShopPagesEvent.js";
+import GetShopPageFurnitureEvent from "./Communication/Shop/GetShopPageFurnitureEvent.js";
+import PurchaseShopFurnitureEvent from "./Communication/Shop/PurchaseShopFurnitureEvent.js";
 
 await initializeModels();
 await initializeDevelopmentData();
@@ -25,11 +26,14 @@ eventHandler.addListener("ClientPingEvent", (user: User) => {
 	}));
 });
 
-eventHandler.addListener("ShopPagesRequest", ShopEvents.dispatchShopPages);
-eventHandler.addListener("ShopPageFurnitureRequest", ShopEvents.dispatchShopPageFurniture);
-eventHandler.addListener("PurchaseShopFurnitureRequest", ShopEvents.handlePurchaseShopFurniture);
+// TODO: clean up event handler types
+eventHandler.addListener<any>("GetShopPagesEvent", async (user, event) => await new GetShopPagesEvent().handle(user, event));
+eventHandler.addListener<any>("GetShopPageFurnitureEvent", async (user, event) => await new GetShopPageFurnitureEvent().handle(user, event));
+eventHandler.addListener<any>("PurchaseShopFurnitureEvent", async (user, event) => await new PurchaseShopFurnitureEvent().handle(user, event));
 
-new RoomMaps();
+export const game = new Game();
+
+await game.loadModels();
 
 const webSocketServer = new WebSocketServer({
     port: 7632

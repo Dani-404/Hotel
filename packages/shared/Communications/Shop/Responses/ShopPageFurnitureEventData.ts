@@ -5,7 +5,7 @@ export type ShopPageFurnitureData = {
     furniture: FurnitureData;
 };
 
-export type ShopPageFurnitureResponse = {
+export type ShopPageFurnitureEventData = {
     pageId: string;
     furniture: ShopPageFurnitureData[];
 };

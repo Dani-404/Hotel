@@ -12,7 +12,7 @@ export type ShopPageData = {
     children?: Omit<ShopPageData, "children">[];
 };
 
-export type ShopPagesResponse = {
+export type ShopPagesEventData = {
     category: "frontpage" | "furniture" | "clothing" | "pets";
     pages: ShopPageData[];
 };

@@ -8,36 +8,28 @@ import { RoomModel } from "../../Database/Models/Rooms/RoomModel.js";
 import { randomUUID } from "crypto";
 import { RoomCreatedResponse } from "@shared/WebSocket/Events/Rooms/Maps/RoomCreatedResponse.js";
 
-export default class RoomMaps {
-    private models?: RoomMapModel[];
-
-    private async getModels() {
-        if(!this.models) {
-            this.models = await RoomMapModel.findAll(); 
-        }
-
-        return this.models;
-    }
+export default class RoomNavigatorManager {
+    private maps: RoomMapModel[] = [];
 
     constructor() {
         eventHandler.addListener("RoomMapsRequest", this.onRoomMapsRequest.bind(this));
         eventHandler.addListener("RoomCreatedRequest", this.onRoomCreatedRequest.bind(this));
     }
 
-    private async onRoomMapsRequest(user: User) {
-        const models = await this.getModels();
+    public async loadModels() {
+        this.maps = await RoomMapModel.findAll();
+    }
 
+    private async onRoomMapsRequest(user: User) {
         user.send(
-            new OutgoingEvent<RoomMapsResponse>("RoomMapsResponse", models.map((model) => model.toJSON()))
+            new OutgoingEvent<RoomMapsResponse>("RoomMapsResponse", this.maps.map((map) => map.toJSON()))
         );
     }
 
     private async onRoomCreatedRequest(user: User, event: RoomCreatedRequest) {
-        const models = await this.getModels();
+        const map = this.maps.find((map) => map.id === event.mapId);
 
-        const model = models.find((model) => model.id === event.mapId);
-
-        if(!model) {
+        if(!map) {
             throw new Error("Room map model by id does not exist.");
         }
 
@@ -46,8 +38,8 @@ export default class RoomMaps {
             name: event.name,
 
             structure: {
-                door: model.door,
-                grid: model.grid,
+                door: map.door,
+                grid: map.grid,
                 floor: {
                     id: "default",
                     thickness: 8
