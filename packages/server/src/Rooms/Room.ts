@@ -7,7 +7,7 @@ import { FurnitureModel } from "../Database/Models/Furniture/FurnitureModel.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { RoomFurnitureModel } from "../Database/Models/Rooms/RoomFurnitureModel.js";
 import { randomUUID } from "node:crypto";
-import { RoomFurnitureUpdated } from "@shared/WebSocket/Events/Rooms/Furniture/RoomFurnitureUpdated.js";
+import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
 
 export default class Room {
     public readonly users: RoomUser[] = [];
@@ -44,7 +44,7 @@ export default class Room {
             throw new Error("Created room furniture does not exist.");
         }
 
-        this.sendRoomEvent(new OutgoingEvent<RoomFurnitureUpdated>("RoomFurnitureUpdated", {
+        this.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
             furnitureAdded: [
                 {
                     id: roomFurniture.id,
@@ -65,7 +65,7 @@ export default class Room {
         });
     }
 
-    private getRoomUser(client: User) {
+    public getRoomUser(client: User) {
         const user = this.users.find((user) => user.user.model.id === client.model.id);
 
         if(!user) {

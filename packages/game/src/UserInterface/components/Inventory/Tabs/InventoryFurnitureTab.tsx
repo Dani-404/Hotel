@@ -7,11 +7,10 @@ import { UserFurnitureData } from "@Shared/Interfaces/User/UserFurnitureData";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { clientInstance, webSocketClient } from "../../../..";
 import RoomFurniturePlacer from "@Client/Room/RoomFurniturePlacer";
-import { PlaceFurnitureInRoom } from "@Shared/WebSocket/Events/Rooms/Furniture/PlaceFurnitureInRoom";
-import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import InventoryEmptyTab from "./InventoryEmptyTab";
 import { useRoomInstance } from "../../../hooks/useRoomInstance";
 import { UserFurnitureEventData } from "@Shared/Communications/Responses/Inventory/UserFurnitureEventData";
+import { PlaceFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PlaceFurnitureEventData";
 
 export default function InventoryFurnitureTab() {
     const { setDialogHidden } = useContext(AppContext);
@@ -95,7 +94,7 @@ export default function InventoryFurnitureTab() {
         setDialogHidden("inventory", true);
 
         roomFurniturePlacer.startPlacing((position, direction) => {
-            webSocketClient.send<PlaceFurnitureInRoom>("PlaceFurnitureInRoom", {
+            webSocketClient.send<PlaceFurnitureEventData>("PlaceFurnitureEvent", {
                 userFurnitureId: activeFurniture.id,
                 position,
                 direction

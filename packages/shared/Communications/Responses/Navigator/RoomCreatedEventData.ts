@@ -1,4 +1,4 @@
-export type RoomCreatedResponse = {
+export type RoomCreatedEventData = {
     success: boolean;
     roomId: string;
 };

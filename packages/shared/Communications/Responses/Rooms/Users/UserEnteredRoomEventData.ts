@@ -1,3 +1,3 @@
 import { RoomUserData } from "../../../../Interfaces/Room/RoomUserData.js";
 
-export type UserEnteredRoom = RoomUserData;
+export type UserEnteredRoomEventData = RoomUserData;

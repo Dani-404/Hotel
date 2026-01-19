@@ -5,20 +5,20 @@ import WallRenderer from "./Structure/WallRenderer";
 import { RoomUserData } from "@Shared/Interfaces/Room/RoomUserData";
 import FigureRenderer from "@Client/Figure/FigureRenderer";
 import RoomFigureItem from "./Items/Figure/RoomFigureItem";
-import { UserEnteredRoom } from "@Shared/WebSocket/Events/Rooms/Users/UserEnteredRoom";
+import { UserEnteredRoomEventData } from "@Shared/Communications/Responses/Rooms/Users/UserEnteredRoomEventData";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import FurnitureRenderer from "@Client/Furniture/FurnitureRenderer";
 import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem";
 import RoomClickEvent from "@Client/Events/RoomClickEvent";
-import { StartWalking } from "@Shared/WebSocket/Events/Rooms/Users/StartWalking";
-import { UserWalkTo } from "@Shared/WebSocket/Events/Rooms/Users/UserWalkTo";
-import { UserLeftRoom } from "@Shared/WebSocket/Events/Rooms/Users/UserLeftRoom";
-import { RoomFurnitureUpdated } from "@Shared/WebSocket/Events/Rooms/Furniture/RoomFurnitureUpdated";
+import { UserWalkToEventData } from "@Shared/Communications/Responses/Rooms/Users/UserWalkToEventData";
+import { UserLeftRoomEventData } from "@Shared/Communications/Responses/Rooms/Users/UserLeftRoomEventData";
 import { webSocketClient } from "../..";
 import RoomFloorItem from "./Items/Map/RoomFloorItem";
 import RoomWallItem from "./Items/Map/RoomWallItem";
 import { LoadRoomEventData } from "@Shared/Communications/Responses/Rooms/LoadRoomEventData";
+import { StartWalkingEventData } from "@Shared/Communications/Requests/Rooms/User/StartWalkingEventData";
+import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -74,47 +74,46 @@ export default class RoomInstance {
     }
 
     private registerEventListeners() {
-        webSocketClient.addEventListener<WebSocketEvent<UserEnteredRoom>>("UserEnteredRoom", this.userEnteredRoomListener);
-        webSocketClient.addEventListener<WebSocketEvent<UserLeftRoom>>("UserLeftRoom", this.userLeftRoomListener);
-        webSocketClient.addEventListener<WebSocketEvent<UserWalkTo>>("UserWalkTo", this.userWalkToListener);
-        webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureUpdated>>("RoomFurnitureUpdated", this.roomFurnitureUpdatedListener);
-        this.roomRenderer.cursor?.addEventListener("click", this.clickListener);
+        webSocketClient.addEventListener<WebSocketEvent<UserEnteredRoomEventData>>("UserEnteredRoomEvent", this.userEnteredRoomListener);
+        webSocketClient.addEventListener<WebSocketEvent<UserLeftRoomEventData>>("UserLeftRoomEvent", this.userLeftRoomListener);
+        webSocketClient.addEventListener<WebSocketEvent<UserWalkToEventData>>("UserWalkToEvent", this.userWalkToListener);
+        webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", this.roomFurnitureUpdatedListener);
+        this.roomRenderer.cursor?.addEventListener("click", this.click.bind(this));
     }
 
     private removeEventListeners() {
-        webSocketClient.removeEventListener<WebSocketEvent<UserEnteredRoom>>("UserEnteredRoom", this.userEnteredRoomListener);
-        webSocketClient.removeEventListener<WebSocketEvent<UserLeftRoom>>("UserLeftRoom", this.userLeftRoomListener);
-        webSocketClient.removeEventListener<WebSocketEvent<UserWalkTo>>("UserWalkTo", this.userWalkToListener);
-        webSocketClient.removeEventListener<WebSocketEvent<RoomFurnitureUpdated>>("RoomFurnitureUpdated", this.roomFurnitureUpdatedListener);
-        this.roomRenderer.cursor?.removeEventListener("click", this.clickListener);
+        webSocketClient.removeEventListener<WebSocketEvent<UserEnteredRoomEventData>>("UserEnteredRoomEvent", this.userEnteredRoomListener);
+        webSocketClient.removeEventListener<WebSocketEvent<UserLeftRoomEventData>>("UserLeftRoomEvent", this.userLeftRoomListener);
+        webSocketClient.removeEventListener<WebSocketEvent<UserWalkToEventData>>("UserWalkToEvent", this.userWalkToListener);
+        webSocketClient.removeEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", this.roomFurnitureUpdatedListener);
+        this.roomRenderer.cursor?.removeEventListener("click", this.click.bind(this));
     }
 
     private userEnteredRoomListener = this.userEnteredRoom.bind(this);
-    private userEnteredRoom(event: WebSocketEvent<UserEnteredRoom>) {
+    private userEnteredRoom(event: WebSocketEvent<UserEnteredRoomEventData>) {
         this.users.push(this.addUser(event.data));
     }
 
     private userLeftRoomListener = this.userLeftRoom.bind(this);
-    private userLeftRoom(event: WebSocketEvent<UserLeftRoom>) {
+    private userLeftRoom(event: WebSocketEvent<UserLeftRoomEventData>) {
         this.removeUser(event.data);
     }
 
     private userWalkToListener = this.userWalkTo.bind(this);
-    private userWalkTo(event: WebSocketEvent<UserWalkTo>) {
+    private userWalkTo(event: WebSocketEvent<UserWalkToEventData>) {
         const user = this.getUserById(event.data.userId);
 
         user.item.setPositionPath(event.data.from, event.data.to);
     }
 
     private roomFurnitureUpdatedListener = this.roomFurnitureUpdated.bind(this);
-    private roomFurnitureUpdated(event: WebSocketEvent<RoomFurnitureUpdated>) {
+    private roomFurnitureUpdated(event: WebSocketEvent<RoomFurnitureEventData>) {
         if(event.data.furnitureAdded?.length) {
             this.furnitures.push(...event.data.furnitureAdded.map((roomFurnitureData) => this.addFurniture(roomFurnitureData)));
         }
     }
 
-    private clickListenerListener = this.clickListener.bind(this);
-    private clickListener(event: Event) {
+    private click(event: Event) {
         if(!(event instanceof RoomClickEvent)) {
             return;
         }
@@ -124,7 +123,7 @@ export default class RoomInstance {
         }
 
         if(event.floorEntity) {
-            webSocketClient.send<StartWalking>("StartWalking", {
+            webSocketClient.send<StartWalkingEventData>("StartWalkingEvent", {
                 target: event.floorEntity.position
             });
         }
@@ -142,7 +141,7 @@ export default class RoomInstance {
         };
     }
 
-    private removeUser(event: UserLeftRoom) {
+    private removeUser(event: UserLeftRoomEventData) {
         const user = this.getUserById(event.userId);
 
         this.roomRenderer.items.slice(this.roomRenderer.items.indexOf(user.item), 1);
@@ -185,7 +184,7 @@ export default class RoomInstance {
         const furniture = this.furnitures.find((furniture) => furniture.item.id === item.id);
 
         if(!furniture) {
-            throw new Error("User does not exist in room.");
+            throw new Error("Furniture does not exist in room.");
         }
 
         return furniture;

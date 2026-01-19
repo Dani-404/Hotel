@@ -1,6 +1,6 @@
 import { RoomPosition } from "../../../../Interfaces/Room/RoomPosition.js";
 
-export type PlaceFurnitureInRoom = {
+export type PlaceFurnitureEventData = {
     userFurnitureId: string;
 
     position: RoomPosition;

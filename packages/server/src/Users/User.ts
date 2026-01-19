@@ -3,9 +3,11 @@ import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
 import { UserModel } from "../Database/Models/Users/UserModel.js";
 import { EventEmitter } from "node:events";
 import UserInventory from "./Inventory/UserInventory.js";
+import Room from "../Rooms/Room.js";
 
 export default class User extends EventEmitter {
     private inventory?: UserInventory;
+    public room?: Room;
 
     constructor(public readonly webSocket: WebSocket, public readonly model: UserModel) {
         super();

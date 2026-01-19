@@ -1,4 +1,4 @@
-export type RoomCreatedRequest = {
+export type CreateRoomEventData = {
     name: string;
     description: string;
 

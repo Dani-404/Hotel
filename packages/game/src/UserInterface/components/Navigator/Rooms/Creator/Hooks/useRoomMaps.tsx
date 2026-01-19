@@ -1,4 +1,4 @@
-import { RoomMapData, RoomMapsResponse } from "@Shared/WebSocket/Events/Rooms/Maps/RoomMapsResponse";
+import { RoomMapData, RoomMapsEventData } from "@Shared/Communications/Responses/Navigator/RoomMapsEventData";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { useEffect, useRef, useState } from "react";
 import { webSocketClient } from "../../../../../..";
@@ -15,11 +15,11 @@ export default function useRoomMaps() {
 
         roomMapsRequested.current = true;
 
-        const listener = (event: WebSocketEvent<RoomMapsResponse>) => {
+        const listener = (event: WebSocketEvent<RoomMapsEventData>) => {
             setRoomMaps(event.data);
         };
 
-        webSocketClient.addEventListener<WebSocketEvent<RoomMapsResponse>>("RoomMapsResponse", listener, {
+        webSocketClient.addEventListener<WebSocketEvent<RoomMapsEventData>>("RoomMapsEvent", listener, {
             once: true
         });
 

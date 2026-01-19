@@ -5,10 +5,10 @@ import Input from "../../../Form/Input";
 import DialogButton from "../../../Dialog/Button/DialogButton";
 import RoomMapImage from "../../../Room/Map/RoomMapImage";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
-import { RoomMapData, RoomMapsResponse } from "@Shared/WebSocket/Events/Rooms/Maps/RoomMapsResponse";
+import { RoomMapData } from "@Shared/Communications/Responses/Navigator/RoomMapsEventData";
 import { webSocketClient } from "../../../../..";
-import { RoomCreatedRequest } from "@Shared/WebSocket/Events/Rooms/Maps/RoomCreatedRequest";
-import { RoomCreatedResponse } from "@Shared/WebSocket/Events/Rooms/Maps/RoomCreatedResponse";
+import { CreateRoomEventData } from "@Shared/Communications/Requests/Navigator/CreateRoomEventData";
+import { RoomCreatedEventData } from "@Shared/Communications/Responses/Navigator/RoomCreatedEventData";
 import { AppContext } from "../../../../contexts/AppContext";
 import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterRoomEventData";
 import useRoomMaps from "./Hooks/useRoomMaps";
@@ -37,7 +37,7 @@ export default function RoomCreationDialog({ hidden, onClose }: RoomCreationDial
             return;
         }
 
-        const listener = (event: WebSocketEvent<RoomCreatedResponse>) => {
+        const listener = (event: WebSocketEvent<RoomCreatedEventData>) => {
             if(!event.data.success) {
                 alert("fail");
             }
@@ -49,11 +49,11 @@ export default function RoomCreationDialog({ hidden, onClose }: RoomCreationDial
             });
         };
 
-        webSocketClient.addEventListener<WebSocketEvent<RoomCreatedResponse>>("RoomCreatedResponse", listener, {
+        webSocketClient.addEventListener<WebSocketEvent<RoomCreatedEventData>>("RoomCreatedEvent", listener, {
             once: true
         });
 
-        webSocketClient.send<RoomCreatedRequest>("RoomCreatedRequest", {
+        webSocketClient.send<CreateRoomEventData>("CreateRoomEvent", {
             name,
             description,
 

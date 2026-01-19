@@ -1,5 +1,5 @@
 import { RoomPosition } from "../../../../Interfaces/Room/RoomPosition.js"
 
-export type StartWalking = {
+export type StartWalkingEventData = {
     target: RoomPosition;
 };
