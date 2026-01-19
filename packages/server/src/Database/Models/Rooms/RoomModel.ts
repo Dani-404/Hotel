@@ -6,6 +6,7 @@ export class RoomModel extends Model {
     declare id: string;
     declare name: string;
     declare structure: RoomStructure;
+    declare maxUsers: number;
     
     declare roomFurnitures: NonAttribute<RoomFurnitureModel[]>;
 }
@@ -20,6 +21,11 @@ export function initializeRoomModel(sequelize: Sequelize) {
           name: {
             type: new DataTypes.STRING(32),
             allowNull: false,
+          },
+          maxUsers: {
+            type: new DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 10
           },
           structure: {
               type: DataTypes.TEXT,

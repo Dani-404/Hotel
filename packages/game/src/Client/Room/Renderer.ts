@@ -62,7 +62,7 @@ export default class RoomRenderer extends EventTarget {
     public terminate() {
         this.terminated = true;
 
-        this.parent.removeChild(this.element);
+        this.element.remove();
     }
 
     private render() {

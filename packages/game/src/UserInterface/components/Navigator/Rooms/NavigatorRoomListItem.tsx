@@ -17,13 +17,24 @@ function getUserCountColor(users: number, maxUsers: number) {
 }
 
 export type NavigatorRoomListItemProps = {
+    id: string;
+    name: string;
     users: number;
     maxUsers: number;
+    onClick: () => void;
 }
 
-export default function NavigatorRoomListItem({ users, maxUsers }: NavigatorRoomListItemProps) {
+export default function NavigatorRoomListItem({ id, name, users, maxUsers, onClick }: NavigatorRoomListItemProps) {
     return (
-        <Fragment>
+        <div style={{
+            flex: 1,
+
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            
+            gap: 8
+        }} onClick={onClick}>
             <div style={{
                 borderRadius: 3,
                 background: getUserCountColor(users, maxUsers),
@@ -50,7 +61,7 @@ export default function NavigatorRoomListItem({ users, maxUsers }: NavigatorRoom
                 </div>
             </div>
 
-            Test
-        </Fragment>
+            {name}
+        </div>
     );
 }

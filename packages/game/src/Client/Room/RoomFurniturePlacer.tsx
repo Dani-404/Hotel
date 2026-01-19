@@ -129,7 +129,7 @@ export default class RoomFurniturePlacer {
             this.roomRenderer.cursor.cursorDisabled = false;
         }
 
-        this.roomRenderer.parent.removeChild(this.iconElement);
+        this.iconElement.remove();
 
         this.roomRenderer.removeEventListener("render", this.renderListener);
         this.roomRenderer.element.removeEventListener("click", this.clickListener);

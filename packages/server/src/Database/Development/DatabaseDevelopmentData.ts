@@ -478,8 +478,8 @@ export async function initializeDevelopmentData() {
         name: "My home room",
         structure: {
             door: {
-                row: 0,
-                column: 6
+                row: 6,
+                column: 0
             },
             grid: [
                 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",

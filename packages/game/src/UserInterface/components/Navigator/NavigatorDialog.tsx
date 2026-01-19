@@ -6,6 +6,9 @@ import DialogListContainer from "../Dialog/List/DialogListContainer";
 import NavigatorRoomList from "./Rooms/NavigatorRoomList";
 import { useContext } from "react";
 import { AppContext } from "../../contexts/AppContext";
+import useNavigatorRooms from "./Hooks/useNavigatorRooms";
+import { webSocketClient } from "../../..";
+import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterRoomEventData";
 
 export type NavigatorDialogProps = {
     hidden?: boolean;
@@ -13,7 +16,9 @@ export type NavigatorDialogProps = {
 }
 
 export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProps) {
-    const { addUniqueDialog } = useContext(AppContext);
+    const { addUniqueDialog, closeDialog } = useContext(AppContext);
+
+    const rooms = useNavigatorRooms("all");
 
     return (
         <Dialog title="Navigator" hidden={hidden} onClose={onClose} width={420} height={530}>
@@ -31,24 +36,13 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                             display: "flex",
                             flexDirection: "column"
                         }}>
-                            <NavigatorRoomList rooms={[
-                                {
-                                    users: 100,
-                                    maxUsers: 100
-                                },
-                                {
-                                    users: 91,
-                                    maxUsers: 100
-                                },
-                                {
-                                    users: 20,
-                                    maxUsers: 100
-                                },
-                                {
-                                    users: 0,
-                                    maxUsers: 100
-                                }
-                            ]}/>
+                            <NavigatorRoomList rooms={rooms} onClick={(room) => {
+                                webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
+                                    roomId: room.id
+                                });
+
+                                closeDialog("navigator");
+                            }}/>
                         </div>
                     ),
                 },

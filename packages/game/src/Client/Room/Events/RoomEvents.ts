@@ -8,6 +8,8 @@ export default function registerRoomEvents(clientInstance: ClientInstance) {
     webSocketClient.addEventListener<WebSocketEvent<LoadRoomEventData>>("LoadRoomEvent", (event) => {
         if(clientInstance.roomInstance) {
             clientInstance.roomInstance.terminate();
+
+            delete clientInstance.roomInstance;
             //throw new Error("TODO: room is already loaded!!");
         }
 

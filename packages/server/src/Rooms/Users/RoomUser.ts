@@ -15,6 +15,8 @@ export default class RoomUser {
     public path?: Omit<RoomPosition, "depth">[];
 
     constructor(private readonly room: Room, public readonly user: User) {
+        this.user.room = room;
+
         this.position = {
             row: room.model.structure.door?.row ?? 0,
             column: room.model.structure.door?.column ?? 0,
@@ -37,8 +39,6 @@ export default class RoomUser {
             }),
             userEnteredRoomEvent
         ]);
-
-        this.user.room = room;
     }
     
     private getRoomUserData(): RoomUserData {

@@ -19,15 +19,11 @@ export default function DialogList({ children }: PropsWithChildren) {
                     boxSizing: "border-box",
 
                     display: "flex",
-                    flexDirection: "row",
+                    flexDirection: "column",
                     flexWrap: "nowrap",
                     textWrap: "nowrap",
 
                     borderRadius: 3,
-
-                    alignItems: "center",
-
-                    gap: 8,
 
                     fontSize: 13,
 

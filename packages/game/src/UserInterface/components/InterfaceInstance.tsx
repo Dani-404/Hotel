@@ -34,7 +34,7 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
             webSocketClient.send("GetUserEvent", null);
 
             webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
-                roomId: "room3"
+                roomId: "room1"
             });
 
             ready.current = true;

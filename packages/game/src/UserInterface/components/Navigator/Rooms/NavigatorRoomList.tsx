@@ -4,17 +4,21 @@ import NavigatorRoomListItem from "./NavigatorRoomListItem";
 
 export type NavigatorRoomListProps = {
     rooms: {
+        id: string;
+        name: string;
         users: number;
         maxUsers: number;
     }[];
+
+    onClick: (room: NavigatorRoomListProps["rooms"][0]) => void;
 };
 
-export default function NavigatorRoomList({ rooms }: NavigatorRoomListProps) {
+export default function NavigatorRoomList({ rooms, onClick }: NavigatorRoomListProps) {
     return (
         <DialogListContainer title="Most Popular Rooms">
             <DialogList>
                 {rooms.map((room) => (
-                    <NavigatorRoomListItem users={room.users} maxUsers={room.maxUsers}/>
+                    <NavigatorRoomListItem {...room} onClick={() => onClick(room)}/>
                 ))}
             </DialogList>
         </DialogListContainer>

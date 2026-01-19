@@ -14,6 +14,7 @@ import GetUserFurnitureEvent from "./Communication/Game/Inventory/GetUserFurnitu
 import PlaceFurnitureEvent from "./Communication/Game/Rooms/Furniture/PlaceFurnitureEvent.js";
 import StartWalkingEvent from "./Communication/Game/Rooms/User/StartWalkingEvent.js";
 import CreateRoomEvent from "./Communication/Game/Navigator/CreateRoomEvent.js";
+import GetNavigatorRoomsEvent from "./Communication/Game/Navigator/GetNavigatorRoomsEvent.js";
 
 await initializeModels();
 await initializeDevelopmentData();
@@ -34,7 +35,8 @@ eventHandler
     .addIncomingEvent("GetUserFurnitureEvent", new GetUserFurnitureEvent());
     
 eventHandler
-    .addIncomingEvent("CreateRoomEvent", new CreateRoomEvent());
+    .addIncomingEvent("CreateRoomEvent", new CreateRoomEvent())
+    .addIncomingEvent("GetNavigatorRoomsEvent", new GetNavigatorRoomsEvent());
 
 export const game = new Game();
 

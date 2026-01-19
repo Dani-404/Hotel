@@ -35,10 +35,14 @@ export default function UserContextMenu() {
         }
 
         const listener = (event: StartedHoveringFigure) => {
+            if(!elementRef.current) {
+                return;
+            }
+
             setHoveringFigure(event.userData);
 
-            elementRef.current!.style.left = `${event.position.left}px`;
-            elementRef.current!.style.top = `${event.position.top}px`;
+            elementRef.current.style.left = `${event.position.left}px`;
+            elementRef.current.style.top = `${event.position.top}px`;
         };
 
         clientInstance.addEventListener<StartedHoveringFigure>("StartedHoveringFigure", listener);
