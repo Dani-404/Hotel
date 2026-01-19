@@ -1,0 +1,7 @@
+{
+	"private": true,
+    "scripts": {
+        "start": "npm run start --workspaces --if-present"
+    },
+	"workspaces": ["packages/server", "packages/game"]
+}

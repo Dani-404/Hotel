@@ -64,41 +64,70 @@ export default class RoomInstance {
             animation: 0
         }));
 
-        webSocketClient.addEventListener<WebSocketEvent<UserEnteredRoom>>("UserEnteredRoom", (event) => {
-            this.users.push(this.addUser(event.data));
-        });
+        this.registerEventListeners();
+    }
 
-        webSocketClient.addEventListener<WebSocketEvent<UserLeftRoom>>("UserLeftRoom", (event) => {
-            this.removeUser(event.data);
-        });
+    public terminate() {
+        this.removeEventListeners();
 
-        webSocketClient.addEventListener<WebSocketEvent<UserWalkTo>>("UserWalkTo", (event) => {
-            const user = this.getUserById(event.data.userId);
+        this.roomRenderer.terminate();
+    }
 
-            user.item.setPositionPath(event.data.from, event.data.to);
-        });
+    private registerEventListeners() {
+        webSocketClient.addEventListener<WebSocketEvent<UserEnteredRoom>>("UserEnteredRoom", this.userEnteredRoomListener);
+        webSocketClient.addEventListener<WebSocketEvent<UserLeftRoom>>("UserLeftRoom", this.userLeftRoomListener);
+        webSocketClient.addEventListener<WebSocketEvent<UserWalkTo>>("UserWalkTo", this.userWalkToListener);
+        webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureUpdated>>("RoomFurnitureUpdated", this.roomFurnitureUpdatedListener);
+        this.roomRenderer.cursor?.addEventListener("click", this.clickListener);
+    }
 
-        webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureUpdated>>("RoomFurnitureUpdated", (event) => {
-            if(event.data.furnitureAdded?.length) {
-                this.furnitures.push(...event.data.furnitureAdded.map((roomFurnitureData) => this.addFurniture(roomFurnitureData)));
-            }
-        });
+    private removeEventListeners() {
+        webSocketClient.removeEventListener<WebSocketEvent<UserEnteredRoom>>("UserEnteredRoom", this.userEnteredRoomListener);
+        webSocketClient.removeEventListener<WebSocketEvent<UserLeftRoom>>("UserLeftRoom", this.userLeftRoomListener);
+        webSocketClient.removeEventListener<WebSocketEvent<UserWalkTo>>("UserWalkTo", this.userWalkToListener);
+        webSocketClient.removeEventListener<WebSocketEvent<RoomFurnitureUpdated>>("RoomFurnitureUpdated", this.roomFurnitureUpdatedListener);
+        this.roomRenderer.cursor?.removeEventListener("click", this.clickListener);
+    }
 
-        this.roomRenderer.cursor?.addEventListener("click", (event: Event) => {
-            if(!(event instanceof RoomClickEvent)) {
-                return;
-            }
+    private userEnteredRoomListener = this.userEnteredRoom.bind(this);
+    private userEnteredRoom(event: WebSocketEvent<UserEnteredRoom>) {
+        this.users.push(this.addUser(event.data));
+    }
 
-            if(this.roomRenderer.cursor?.cursorDisabled) {
-                return;
-            }
+    private userLeftRoomListener = this.userLeftRoom.bind(this);
+    private userLeftRoom(event: WebSocketEvent<UserLeftRoom>) {
+        this.removeUser(event.data);
+    }
 
-            if(event.floorEntity) {
-                webSocketClient.send<StartWalking>("StartWalking", {
-                    target: event.floorEntity.position
-                });
-            }
-        });
+    private userWalkToListener = this.userWalkTo.bind(this);
+    private userWalkTo(event: WebSocketEvent<UserWalkTo>) {
+        const user = this.getUserById(event.data.userId);
+
+        user.item.setPositionPath(event.data.from, event.data.to);
+    }
+
+    private roomFurnitureUpdatedListener = this.roomFurnitureUpdated.bind(this);
+    private roomFurnitureUpdated(event: WebSocketEvent<RoomFurnitureUpdated>) {
+        if(event.data.furnitureAdded?.length) {
+            this.furnitures.push(...event.data.furnitureAdded.map((roomFurnitureData) => this.addFurniture(roomFurnitureData)));
+        }
+    }
+
+    private clickListenerListener = this.clickListener.bind(this);
+    private clickListener(event: Event) {
+        if(!(event instanceof RoomClickEvent)) {
+            return;
+        }
+
+        if(this.roomRenderer.cursor?.cursorDisabled) {
+            return;
+        }
+
+        if(event.floorEntity) {
+            webSocketClient.send<StartWalking>("StartWalking", {
+                target: event.floorEntity.position
+            });
+        }
     }
 
     private addUser(userData: RoomUserData): RoomItem<RoomUserData, RoomFigureItem> {

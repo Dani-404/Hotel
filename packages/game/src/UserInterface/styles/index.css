@@ -73,3 +73,12 @@ p {
 ::-webkit-scrollbar {
   display: none;
 }
+
+input {
+  font-family: "Ubuntu";
+  font-size: 12px;
+}
+
+input:active, input:focus {
+  outline: none;
+}

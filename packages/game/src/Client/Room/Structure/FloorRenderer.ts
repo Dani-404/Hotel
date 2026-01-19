@@ -26,29 +26,49 @@ export default class FloorRenderer {
     public columns: number;
     public depth: number;
 
+    private fullSize: number;
+    private halfSize: number;
+
     constructor(public readonly structure: RoomStructure, private readonly floorId: string, private readonly size: number) {
         this.rows = this.structure.grid.length;
         this.columns = Math.max(...this.structure.grid.map((row) => row.length));
         this.depth = 0;
 
-        for(let row in this.structure.grid) {
-            for(let column of this.structure.grid[row]) {
-                if(column === 'X') {
+        for(let row = 0; row < this.structure.grid.length; row++) {
+            for(let column = 0; column < this.structure.grid[row].length; column++) {
+                const depth = this.parseDepth(this.structure.grid[row][column]);
+
+                if(depth === 'X') {
                     continue;
                 }
 
-                if(this.depth > parseInt(column)) {
+                if(this.depth > depth) {
                     continue;
                 }
 
-                this.depth = parseInt(column);
+                this.depth = depth;
             }
+        }
+
+        this.fullSize = size / 2;
+        this.halfSize = this.fullSize / 2;
+    }
+
+    private parseDepth(character: string): number | 'X' {
+        if(character === 'X') {
+            return character;
+        }
+
+        if (character >= '0' && character <= '9') {
+            return parseInt(character);
+        } else {
+            return character.charCodeAt(0) - 55;
         }
     }
 
     public async renderOffScreen() {
         const data = await RoomAssets.getRoomData("HabboRoomContent");
-        const visualization = data.visualization.floorData.floors.find((floor) => floor.id === this.floorId)?.visualizations.find((visualization) => visualization.size === this.size);
+        const visualization = data.visualization.floorData.floors.find((floor) => floor.id === this.floorId)?.visualizations.find((visualization) => visualization.size === 64);
         
         if(!visualization) {
             throw new Error("Room visualization data does not exist for id and size.");
@@ -113,8 +133,8 @@ export default class FloorRenderer {
             flipHorizontal: assetData.flipHorizontal
         });
 
-        const width = (this.rows * 32) + (this.columns * 32) + (this.structure.wall.thickness * 2);
-        const height = (this.rows * 16) + (this.columns * 16) + (this.depth * 16) + ((this.structure.wall.thickness + this.structure.floor.thickness) * 2);
+        const width = (this.rows * this.fullSize) + (this.columns * this.fullSize) + (this.structure.wall.thickness * 2);
+        const height = (this.rows * this.halfSize) + (this.columns * this.halfSize) + (this.depth * this.halfSize) + ((this.structure.wall.thickness + this.structure.floor.thickness) * 2) + this.halfSize;
 
         const canvas = new OffscreenCanvas(width, height);
 
@@ -141,7 +161,7 @@ export default class FloorRenderer {
 
     private renderLeftEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
-        context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * 32, ((this.depth + 1) * 16) + this.structure.wall.thickness);
+        context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(let index in rectangles) {
@@ -150,8 +170,8 @@ export default class FloorRenderer {
             if(rectangles.find(x => (x.row == rectangle.row + 1 && x.column == rectangle.column && x.depth == rectangle.depth)) != null)
                 continue;
 
-            const left = (rectangle.column * 32) - (rectangle.row * 32) - rectangle.height;
-            const top = (rectangle.row * 32) - (rectangle.depth * 32) + rectangle.height;
+            const left = (rectangle.column * this.fullSize) - (rectangle.row * this.fullSize) - rectangle.height;
+            const top = (rectangle.row * this.fullSize) - (rectangle.depth * this.fullSize) + rectangle.height;
 
             context.rect(left, top, rectangle.width, this.structure.floor.thickness);
         }
@@ -161,7 +181,7 @@ export default class FloorRenderer {
 
     private renderRightEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
-        context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * 32, ((this.depth + 1) * 16) + this.structure.wall.thickness);
+        context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(let index in rectangles) {
@@ -174,8 +194,8 @@ export default class FloorRenderer {
 
             const column = rectangle.column;
 
-            const left = -(row * 32) + (column * 32) + rectangle.width - rectangle.height;
-            const top = (column * 32) - (rectangle.depth * 32) + rectangle.width;
+            const left = -(row * this.fullSize) + (column * this.fullSize) + rectangle.width - rectangle.height;
+            const top = (column * this.fullSize) - (rectangle.depth * this.fullSize) + rectangle.width;
 
             context.rect(left, top, rectangle.height, this.structure.floor.thickness);
         }
@@ -185,7 +205,7 @@ export default class FloorRenderer {
 
     private renderTiles(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
-        context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * 32, ((this.depth + 1) * 16) + this.structure.wall.thickness);
+        context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
                 
         const tiles = new Path2D();
@@ -193,8 +213,8 @@ export default class FloorRenderer {
         for(let index in rectangles) {
             const rectangle = rectangles[index];
 
-            const left = rectangle.column * 32 - (rectangle.depth * 32);
-            const top = rectangle.row * 32 - (rectangle.depth * 32);
+            const left = rectangle.column * this.fullSize - (rectangle.depth * this.fullSize);
+            const top = rectangle.row * this.fullSize - (rectangle.depth * this.fullSize);
 
             const path = new Path2D();
 
@@ -213,32 +233,34 @@ export default class FloorRenderer {
 
         for(let row = 0; row < this.structure.grid.length; row++) {
             for(let column = 0; column < this.structure.grid[row].length; column++) {
-                if(this.structure.grid[row][column] === 'X') {
+                const currentDepth = this.parseDepth(this.structure.grid[row][column]);
+                
+                if(currentDepth === 'X') {
                     continue;
                 }
 
-                if(parseInt(this.getTileDepth(row, column - 1)) === parseInt(this.getTileDepth(row, column)) + 1) {
+                if(this.parseDepth(this.getTileDepth(row, column - 1)) === currentDepth + 1) {
                     for(let step = 0; step < 4; step++) {
                         rectangles.push({
                             row,
                             column: column + (step * .25),
-                            depth: parseInt(this.getTileDepth(row, column)) + 0.75 - (step * .25),
+                            depth: currentDepth + 0.75 - (step * .25),
         
-                            width: 8, height: 32
+                            width: 8, height: this.fullSize
                         });
                     }
 
                     continue;
                 }
 
-                if(parseInt(this.getTileDepth(row - 1, column)) === parseInt(this.getTileDepth(row, column)) + 1) {
+                if(this.parseDepth(this.getTileDepth(row - 1, column)) === currentDepth + 1) {
                     for(let step = 0; step < 4; step++) {
                         rectangles.push({
                             row: row + (step * .25),
                             column,
-                            depth: parseInt(this.getTileDepth(row, column)) + 0.75 - (step * .25),
+                            depth: currentDepth + 0.75 - (step * .25),
         
-                            width: 32, height: 8
+                            width: this.fullSize, height: 8
                         });
                     }
 
@@ -248,10 +270,10 @@ export default class FloorRenderer {
                 rectangles.push({
                     row,
                     column,
-                    depth: parseInt(this.structure.grid[row][column]),
+                    depth: currentDepth,
 
-                    width: 32,
-                    height: 32
+                    width: this.fullSize,
+                    height: this.fullSize
                 });
             }
         }

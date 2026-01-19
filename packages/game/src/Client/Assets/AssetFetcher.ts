@@ -13,7 +13,9 @@ export type AssetSpriteProperties = {
     source?: string;
     color?: string | string[];
 
+    destinationWidth?: number;
     destinationHeight?: number;
+
     ignoreImageData?: boolean;
 };
 
@@ -85,7 +87,7 @@ export default class AssetFetcher {
             this.sprites[url] = [];
         }
 
-        const existingSprite = this.sprites[url].find(({ x, y, width, height, flipHorizontal, color }) => properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal && properties.color === color);
+        const existingSprite = this.sprites[url].find(({ x, y, width, height, flipHorizontal, color, destinationWidth, destinationHeight }) => properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal && properties.color === color && properties.destinationWidth === destinationHeight && properties.destinationHeight);
 
         if(existingSprite) {
             return await existingSprite.sprite;
@@ -106,7 +108,7 @@ export default class AssetFetcher {
     private static async drawSprite(url: string, properties: AssetSpriteProperties) {
         const image = await this.fetchImage(url);
 
-        const canvas = new OffscreenCanvas(properties.width, properties.destinationHeight ?? properties.height);
+        const canvas = new OffscreenCanvas(properties.destinationWidth ?? properties.width, properties.destinationHeight ?? properties.height);
         const context = canvas.getContext("2d");
 
         if(!context) {
@@ -119,17 +121,17 @@ export default class AssetFetcher {
             context.scale(-1, 1);
         }
 
-        context.drawImage(image, properties.x, properties.y, properties.width, properties.destinationHeight ?? properties.height, 0, 0, properties.width, properties.height);
+        context.drawImage(image, properties.x, properties.y, properties.destinationWidth ?? properties.width, properties.destinationHeight ?? properties.height, 0, 0, properties.width, properties.height);
 
         if(properties.color) {
-            const colorCanvas = new OffscreenCanvas(properties.width, properties.destinationHeight ?? properties.height);
+            const colorCanvas = new OffscreenCanvas(properties.destinationWidth ?? properties.width, properties.destinationHeight ?? properties.height);
             const colorContext = colorCanvas.getContext("2d");
 
             if(!colorContext) {
                 throw new ContextNotAvailableError();
             }
 
-            colorContext.drawImage(image, properties.x, properties.y, properties.width, properties.height, 0, 0, properties.width, properties.destinationHeight ?? properties.height);
+            colorContext.drawImage(image, properties.x, properties.y, properties.width, properties.height, 0, 0, properties.destinationWidth ?? properties.width, properties.destinationHeight ?? properties.height);
 
             const colors = (typeof properties.color === "string")?([properties.color]):(properties.color);
 

@@ -4,6 +4,7 @@ export type RoomStructure = {
     door?: {
         row: number;
         column: number;
+        direction: number;
     };
 
     wall: {

@@ -12,6 +12,7 @@ import "./Users/Inventory/Events/RequestUserFurnitureData.js";
 import ShopEvents from "./Shop/ShopEvents.js";
 import { initializeModels } from "./Database/Database.js";
 import { initializeDevelopmentData } from "./Database/Development/DatabaseDevelopmentData.js";
+import RoomMaps from "./Rooms/Maps/RoomMaps.js";
 
 await initializeModels();
 await initializeDevelopmentData();
@@ -27,6 +28,8 @@ eventHandler.addListener("ClientPingEvent", (user: User) => {
 eventHandler.addListener("ShopPagesRequest", ShopEvents.dispatchShopPages);
 eventHandler.addListener("ShopPageFurnitureRequest", ShopEvents.dispatchShopPageFurniture);
 eventHandler.addListener("PurchaseShopFurnitureRequest", ShopEvents.handlePurchaseShopFurniture);
+
+new RoomMaps();
 
 const webSocketServer = new WebSocketServer({
     port: 7632

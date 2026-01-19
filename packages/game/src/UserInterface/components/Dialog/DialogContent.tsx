@@ -11,6 +11,7 @@ export default function DialogContent({ children }: PropsWithChildren) {
             borderTop: "none",
 
             display: "flex",
+            flexDirection: "column",
 
             color: "black",
             fontSize: 13,

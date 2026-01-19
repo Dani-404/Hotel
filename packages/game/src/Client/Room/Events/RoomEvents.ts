@@ -7,7 +7,8 @@ import { webSocketClient } from "../../..";
 export default function registerRoomEvents(clientInstance: ClientInstance) {
     webSocketClient.addEventListener<WebSocketEvent<LoadRoom>>("LoadRoom", (event) => {
         if(clientInstance.roomInstance) {
-            throw new Error("TODO: room is already loaded!!");
+            clientInstance.roomInstance.terminate();
+            //throw new Error("TODO: room is already loaded!!");
         }
 
         clientInstance.roomInstance = new RoomInstance(clientInstance, event.data);

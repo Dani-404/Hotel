@@ -35,6 +35,12 @@ export default function Toolbar() {
             }}>
                 <div/>
 
+                <ToolbarItem onClick={() => addUniqueDialog("navigator")}>
+                    <ToolbarItem>
+                        <div className="sprite_toolbar_navigator"/>
+                    </ToolbarItem>
+                </ToolbarItem>
+
                 <ToolbarItem onClick={() => addUniqueDialog("shop")}>
                     <ToolbarItem>
                         <div className="sprite_toolbar_shop"/>

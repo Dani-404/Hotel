@@ -26,8 +26,11 @@ export function initializeRoomModel(sequelize: Sequelize) {
               get: function () {
                   return JSON.parse(this.getDataValue("structure"));
               },
-              set: function (value) {
-                  this.setDataValue("structure", JSON.stringify(value));
+              set: function (value: RoomStructure) {
+                  this.setDataValue("structure", JSON.stringify({
+                    ...value,
+                    grid: value.grid.map((row) => row.toUpperCase())
+                  }));
               },
               allowNull: false
           }

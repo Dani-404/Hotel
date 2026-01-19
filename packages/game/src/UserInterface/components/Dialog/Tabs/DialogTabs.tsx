@@ -1,4 +1,4 @@
-import { act, Fragment, ReactNode, useContext, useState } from "react";
+import { act, Children, Fragment, PropsWithChildren, ReactNode, useContext, useState } from "react";
 import DialogContent from "../DialogContent";
 import { AppContext } from "../../../contexts/AppContext";
 
@@ -10,7 +10,7 @@ export type DialogTabHeaderProps = {
     description?: string;
 }
 
-export type DialogTabsProps = {
+export type DialogTabsProps = PropsWithChildren & {
     initialActiveIndex?: number;
     withLargeTabs?: boolean;
 
@@ -24,7 +24,7 @@ export type DialogTabsProps = {
     }[];
 };
 
-export default function DialogTabs({ initialActiveIndex = 0, withoutHeader, tabs, header, withLargeTabs = false }: DialogTabsProps) {
+export default function DialogTabs({ initialActiveIndex = 0, withoutHeader, tabs, header, withLargeTabs = false, children }: DialogTabsProps) {
     const { user } = useContext(AppContext);
 
     const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
@@ -188,6 +188,8 @@ export default function DialogTabs({ initialActiveIndex = 0, withoutHeader, tabs
 
             <DialogContent key={activeIndex}>
                 {tabs[activeIndex].element}
+
+                {children}
             </DialogContent>
         </div>
     );

@@ -3,6 +3,8 @@ import { AppContext, Dialog } from "../../contexts/AppContext";
 import WardrobeDialog from "../Wardrobe/WardrobeDialog";
 import ShopDialog from "../Shop/ShopDialog";
 import InventoryDialog from "../Inventory/InventoryDialog";
+import NavigatorDialog from "../Navigator/NavigatorDialog";
+import RoomCreationDialog from "../Navigator/Rooms/Creator/RoomCreationDialog";
 
 export type DialogInstancesProps = {
     dialogs: Dialog[];
@@ -23,6 +25,12 @@ export default function DialogInstances({  }: DialogInstancesProps) {
                         
                     case "inventory":
                         return (<InventoryDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        
+                    case "navigator":
+                        return (<NavigatorDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        
+                    case "room-creation":
+                        return (<RoomCreationDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
                 }
             })}
         </Fragment>

@@ -12,12 +12,15 @@ import { initializeShopPageModel } from "./Models/Shop/ShopPageModel.js";
 import { initializeShopPageFurnitureModel } from "./Models/Shop/ShopPageFurnitureModel.js";
 import { initializeFurnitureModel } from "./Models/Furniture/FurnitureModel.js";
 import { initializeUserFurnitureModel } from "./Models/Users/Furniture/UserFurnitureModel.js";
+import { initializeRoomMapModel } from "./Models/Rooms/Maps/RoomMapModel.js";
 
 export async function initializeModels() {
   initializeFurnitureModel(sequelize);
 
   initializeShopPageModel(sequelize);
   initializeShopPageFurnitureModel(sequelize);
+
+  initializeRoomMapModel(sequelize);
 
   initializeRoomModel(sequelize);
   initializeRoomFurnitureModel(sequelize);
