@@ -8,8 +8,8 @@ import { AStarFinder } from "astar-typescript";
 import { PlaceFurnitureInRoom } from "@shared/WebSocket/Events/Rooms/Furniture/PlaceFurnitureInRoom.js";
 import { UserEnteredRoom } from "@shared/WebSocket/Events/Rooms/Users/UserEnteredRoom.js";
 import { RoomUserData } from "@shared/Interfaces/Room/RoomUserData.js";
-import { LoadRoom } from "@shared/WebSocket/Events/Rooms/LoadRoom.js";
 import { UserWalkTo } from "@shared/WebSocket/Events/Rooms/Users/UserWalkTo.js";
+import { LoadRoomEventData } from "@shared/Communications/Rooms/Responses/LoadRoomEventData.js";
 
 export default class RoomUser {
     public position: RoomPosition;
@@ -33,7 +33,7 @@ export default class RoomUser {
         this.room.sendRoomEvent(userEnteredRoomEvent);
         
         this.user.send([
-            new OutgoingEvent<LoadRoom>("LoadRoom", {
+            new OutgoingEvent<LoadRoomEventData>("LoadRoomEvent", {
                 structure: this.room.model.structure,
                 users: this.room.users.map((user) => user.getRoomUserData()),
                 furnitures: this.room.furnitures.map((furniture) => furniture.getFurnitureData())

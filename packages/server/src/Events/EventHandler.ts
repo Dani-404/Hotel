@@ -1,6 +1,7 @@
 import { EventEmitter } from "node:events";
 import type User from "../Users/User.js";
 import type { RawData } from "ws";
+import IncomingEvent from "../Communication/Interfaces/IncomingEvent.js";
 
 class EventHandler extends EventEmitter {
     constructor() {
@@ -28,8 +29,10 @@ class EventHandler extends EventEmitter {
         }
     }
 
-    addListener<T>(eventName: string | symbol, listener: (client: User, event: T) => void): this {
-        return super.addListener(eventName, listener);
+    addIncomingEvent<T>(eventName: string | symbol, listener: IncomingEvent<T>): this {
+        return super.addListener(eventName, async (user, event) => {
+            await listener.handle(user, event);
+        });
     }
 }
 

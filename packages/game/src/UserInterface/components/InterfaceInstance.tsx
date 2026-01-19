@@ -3,10 +3,10 @@ import { AppContext, Dialog } from "../contexts/AppContext";
 import Toolbar from "./Toolbar/Toolbar";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { UserDataUpdated } from "@Shared/WebSocket/Events/User/UserDataUpdated";
-import { EnterRoom } from "@Shared/WebSocket/Events/Rooms/EnterRoom";
 import RoomInterface from "./Room/RoomInterface";
 import DialogInstances from "./Dialog/DialogInstances";
 import { webSocketClient } from "../..";
+import { EnterRoomEventData } from "@Shared/Communications/Rooms/Requests/EnterRoomEventData";
 
 export type InterfaceInstanceProps = {
 }
@@ -33,7 +33,7 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
         if(!ready.current) {
             webSocketClient.send("RequestUserData", null);
 
-            webSocketClient.send<EnterRoom>("EnterRoom", {
+            webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
                 roomId: "room3"
             });
 

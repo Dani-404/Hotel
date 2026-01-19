@@ -14,6 +14,7 @@ import Game from "./Game.js";
 import GetShopPagesEvent from "./Communication/Shop/GetShopPagesEvent.js";
 import GetShopPageFurnitureEvent from "./Communication/Shop/GetShopPageFurnitureEvent.js";
 import PurchaseShopFurnitureEvent from "./Communication/Shop/PurchaseShopFurnitureEvent.js";
+import EnterRoomEvent from "./Communication/Rooms/EnterRoomEvent.js";
 
 await initializeModels();
 await initializeDevelopmentData();
@@ -27,9 +28,13 @@ eventHandler.addListener("ClientPingEvent", (user: User) => {
 });
 
 // TODO: clean up event handler types
-eventHandler.addListener<any>("GetShopPagesEvent", async (user, event) => await new GetShopPagesEvent().handle(user, event));
-eventHandler.addListener<any>("GetShopPageFurnitureEvent", async (user, event) => await new GetShopPageFurnitureEvent().handle(user, event));
-eventHandler.addListener<any>("PurchaseShopFurnitureEvent", async (user, event) => await new PurchaseShopFurnitureEvent().handle(user, event));
+eventHandler
+    .addIncomingEvent("GetShopPagesEvent", new GetShopPagesEvent())
+    .addIncomingEvent("GetShopPageFurnitureEvent", new GetShopPageFurnitureEvent())
+    .addIncomingEvent("PurchaseShopFurnitureEvent", new PurchaseShopFurnitureEvent());
+    
+eventHandler
+    .addIncomingEvent("EnterRoomEvent", new EnterRoomEvent());
 
 export const game = new Game();
 
