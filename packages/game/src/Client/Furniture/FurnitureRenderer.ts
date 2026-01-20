@@ -283,4 +283,22 @@ export default class FurnitureRenderer {
 
         return this.visualization.animations[currentAnimationIndex + 1].id;
     }
+
+    public getNextDirection() {
+        if(!this.visualization) {
+            return 0;
+        }
+
+        const currentIndex = this.visualization.directions.findIndex((direction) => direction.id === this.direction);
+
+        if(currentIndex === -1) {
+            return this.direction;
+        }
+
+        if(!this.visualization.directions[currentIndex + 1]) {
+            return this.visualization.directions[0].id;
+        }
+
+        return this.visualization.directions[currentIndex + 1].id;
+    }
 }

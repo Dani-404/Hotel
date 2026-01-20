@@ -1,5 +1,9 @@
 import registerRoomEvents from "@Client/Room/Events/RoomEvents";
 import RoomInstance from "./Room/RoomInstance";
+import RoomFurnitureEvent from "@Client/Communications/Room/Furniture/RoomFurnitureUpdatedEvent";
+import { webSocketClient } from "..";
+import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData";
+import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 
 type Listener<T> = (value: T | undefined) => void;
 
@@ -31,6 +35,8 @@ export default class ClientInstance extends EventTarget {
         //element.style.background = "#9ED5EC";
 
         registerRoomEvents(this);
+
+        webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", (event) => new RoomFurnitureEvent().handle(event));
     }
 
     addEventListener<T>(type: string, callback: (event: T) => void | null, options?: AddEventListenerOptions | boolean): void {

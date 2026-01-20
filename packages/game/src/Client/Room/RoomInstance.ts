@@ -32,7 +32,7 @@ export default class RoomInstance {
     public readonly roomRenderer: RoomRenderer;
 
     private readonly users: RoomItem<RoomUserData, RoomFigureItem>[] = [];
-    private readonly furnitures: RoomItem<RoomFurnitureData, RoomFurnitureItem>[] = [];
+    public furnitures: RoomItem<RoomFurnitureData, RoomFurnitureItem>[] = [];
 
     constructor(public readonly clientInstance: ClientInstance, event: LoadRoomEventData) {
         this.roomRenderer = new RoomRenderer(clientInstance.element, clientInstance, this);
@@ -46,9 +46,9 @@ export default class RoomInstance {
         ));
 
         this.users = event.users.map((userData) => this.addUser(userData));
-        this.furnitures = event.furnitures.map(this.addFurniture.bind(this));
+        event.furnitures.map(this.addFurniture.bind(this));
 
-        this.furnitures.push(this.addFurniture({
+        this.addFurniture({
             id: "x",
             furniture: {
                 name: "Dimmer",
@@ -62,7 +62,7 @@ export default class RoomInstance {
             },
             direction: 2,
             animation: 0
-        }));
+        });
 
         this.registerEventListeners();
     }
@@ -79,7 +79,6 @@ export default class RoomInstance {
         webSocketClient.addEventListener<WebSocketEvent<UserEnteredRoomEventData>>("UserEnteredRoomEvent", this.userEnteredRoomListener);
         webSocketClient.addEventListener<WebSocketEvent<UserLeftRoomEventData>>("UserLeftRoomEvent", this.userLeftRoomListener);
         webSocketClient.addEventListener<WebSocketEvent<UserWalkToEventData>>("UserWalkToEvent", this.userWalkToListener);
-        webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", this.roomFurnitureUpdatedListener);
         webSocketClient.addEventListener("LeaveRoomEvent", this.leaveRoomListener);
         this.roomRenderer.cursor?.addEventListener("click", this.click.bind(this));
     }
@@ -88,7 +87,6 @@ export default class RoomInstance {
         webSocketClient.removeEventListener<WebSocketEvent<UserEnteredRoomEventData>>("UserEnteredRoomEvent", this.userEnteredRoomListener);
         webSocketClient.removeEventListener<WebSocketEvent<UserLeftRoomEventData>>("UserLeftRoomEvent", this.userLeftRoomListener);
         webSocketClient.removeEventListener<WebSocketEvent<UserWalkToEventData>>("UserWalkToEvent", this.userWalkToListener);
-        webSocketClient.removeEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", this.roomFurnitureUpdatedListener);
         webSocketClient.removeEventListener("LeaveRoomEvent", this.leaveRoomListener);
         this.roomRenderer.cursor?.removeEventListener("click", this.click.bind(this));
     }
@@ -113,13 +111,6 @@ export default class RoomInstance {
         const user = this.getUserById(event.data.userId);
 
         user.item.setPositionPath(event.data.from, event.data.to);
-    }
-
-    private roomFurnitureUpdatedListener = this.roomFurnitureUpdated.bind(this);
-    private roomFurnitureUpdated(event: WebSocketEvent<RoomFurnitureEventData>) {
-        if(event.data.furnitureAdded?.length) {
-            this.furnitures.push(...event.data.furnitureAdded.map((roomFurnitureData) => this.addFurniture(roomFurnitureData)));
-        }
     }
 
     private click(event: Event) {
@@ -153,8 +144,8 @@ export default class RoomInstance {
     private removeUser(event: UserLeftRoomEventData) {
         const user = this.getUserById(event.userId);
 
-        this.roomRenderer.items.slice(this.roomRenderer.items.indexOf(user.item), 1);
-        this.users.slice(this.users.indexOf(user), 1);
+        this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(user.item), 1);
+        this.users.splice(this.users.indexOf(user), 1);
     }
 
     private getUserById(userId: string) {
@@ -177,16 +168,32 @@ export default class RoomInstance {
         return user;
     }
 
-    private addFurniture(furnitureData: RoomFurnitureData): RoomItem<RoomFurnitureData, RoomFurnitureItem> {
+    public addFurniture(furnitureData: RoomFurnitureData) {
         const furnitureRenderer = new FurnitureRenderer(furnitureData.furniture.type, 64, furnitureData.direction, furnitureData.animation, furnitureData.furniture.color);
         const item = new RoomFurnitureItem(furnitureRenderer, furnitureData.position);
 
         this.roomRenderer.items.push(item);
 
-        return {
+        this.furnitures.push({
             data: furnitureData,
             item
-        };
+        });
+    }
+
+    public updateFurniture(furnitureData: RoomFurnitureData) {
+        const roomFurnitureItem = this.getFurnitureById(furnitureData.id);
+
+        roomFurnitureItem.item.furnitureRenderer.direction = furnitureData.direction;
+    }
+
+    public getFurnitureById(id: string) {
+        const furniture = this.furnitures.find((furniture) => furniture.data.id === id);
+
+        if(!furniture) {
+            throw new Error("Furniture does not exist in room.");
+        }
+
+        return furniture;
     }
 
     public getFurnitureByItem(item: RoomFurnitureItem) {
@@ -197,5 +204,14 @@ export default class RoomInstance {
         }
 
         return furniture;
+    }
+
+    public removeFurniture(roomFurnitureId: string) {
+        console.log("remove furniture");
+        const furniture = this.getFurnitureById(roomFurnitureId);
+        console.log("remove furniture", furniture);
+
+        this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(furniture.item), 1);
+        this.furnitures.splice(this.furnitures.indexOf(furniture), 1);
     }
 }

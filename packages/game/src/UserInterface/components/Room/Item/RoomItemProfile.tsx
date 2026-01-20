@@ -7,13 +7,15 @@ import RoomFigureItem from "@Client/Room/Items/Figure/RoomFigureItem";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
 import RoomFurnitureProfile from "./Furniture/RoomFurnitureProfile";
 import RoomUserProfile from "./User/RoomUserProfile";
+import RoomItem from "@Client/Room/Items/RoomItem";
 
 export type RoomItemProfileItem = {
     type: "user";
     user: RoomUserData;
 } | {
     type: "furniture";
-    furniture: RoomFurnitureData;
+    data: RoomFurnitureData;
+    item: RoomFurnitureItem;
 };
 
 export type RoomItemProfileProps = {
@@ -49,7 +51,7 @@ export default function RoomItemProfile({ room }: RoomItemProfileProps) {
 
                     setFocusedItem({
                         type: "furniture",
-                        furniture: furniture.data
+                        ...furniture
                     });
                 }
                 else {
@@ -76,7 +78,7 @@ export default function RoomItemProfile({ room }: RoomItemProfileProps) {
             bottom: 50,
         }}>
             {(focusedItem.type === "furniture")?(
-                <RoomFurnitureProfile furniture={focusedItem.furniture}/>
+                <RoomFurnitureProfile data={focusedItem.data} item={focusedItem.item}/>
             ):(
                 <RoomUserProfile user={focusedItem.user}/>
             )}

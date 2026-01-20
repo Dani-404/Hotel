@@ -65,6 +65,16 @@ export default class Room {
         });
     }
 
+    public getRoomFurniture(roomFurnitureItemId: string) {
+        const furniture = this.furnitures.find((furniture) => furniture.model.id === roomFurnitureItemId);
+
+        if(!furniture) {
+            throw new Error("Furniture does not exist in room.");
+        }
+
+        return furniture;
+    }
+
     public getRoomUser(client: User) {
         const user = this.users.find((user) => user.user.model.id === client.model.id);
 

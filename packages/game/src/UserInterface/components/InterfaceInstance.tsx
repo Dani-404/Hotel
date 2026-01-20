@@ -16,7 +16,7 @@ export type InterfaceInstanceProps = {
 export default function InterfaceInstance({  }: InterfaceInstanceProps) {
     const room = useRoomInstance();
     
-    const [dialogs, setDialogs] = useState<Dialog[]>([{ id: "navigator", type: "navigator", data: null }]);
+    const [dialogs, setDialogs] = useState<Dialog[]>([]);
 
     const ready = useRef<boolean>(false);
     const [user, setUser] = useState<UserEventData>();
@@ -37,9 +37,9 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
         if(!ready.current) {
             webSocketClient.send("GetUserEvent", null);
 
-            //webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
-            //    roomId: "room1"
-            //});
+            webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
+                roomId: "room1"
+            });
 
             ready.current = true;
         }
