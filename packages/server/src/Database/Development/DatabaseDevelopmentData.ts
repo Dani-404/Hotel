@@ -8,6 +8,59 @@ import { getExistingFurnitureAssets } from "./FurnitureDevelopmentData.js";
 import { UserModel } from "../Models/Users/UserModel.js";
 import { UserFurnitureModel } from "../Models/Users/Furniture/UserFurnitureModel.js";
 import { RoomMapModel } from "../Models/Rooms/Maps/RoomMapModel.js";
+import { Op } from "sequelize";
+
+const defaultShopPages: any = [
+    {
+        title: "By type",
+        description: "Lalallala",
+
+        icon: "icon_72.png",
+        header: "catalog_frontpage_headline_shop_EN.gif",
+
+        pages: [
+            {
+                title: "Jukebox",
+                furnitures: [
+                    { type: "jukebox_big" },
+                    { type: "jukebox", color: 1 }
+                ]
+            },
+            {
+                title: "Accessories",
+                furnitures: [
+                    { type: "post_it" },
+                    { type: "note_tag" },
+                    { type: "drinks" },
+                    { type: "pizza" },
+                    { type: "tv_flat" },
+                    { type: "trading_table" },
+                    { type: "tv_luxus" },
+                    { type: "wood_tv" },
+                    { type: "red_tv" },
+                    { type: "computer_laptop" },
+                    { type: "computer_old" },
+                    { type: "computer_flatscreen" },
+                    { type: "clrack" },
+                    { type: "noticeboard" },
+                    { type: "fireworks_07" },
+                    { type: "fireworks_06" },
+                    { type: "fireworks_05" },
+                    { type: "fireworks_04" },
+                    { type: "fireworks_03" },
+                    { type: "fireworks_02" },
+                    { type: "fireworks_01" },
+                    { type: "stories_oldmusic_mike" },
+                    { type: "stories_oldmusic_neon" },
+                    { type: "stories_oldmusic_guitarcase" },
+                    { type: "party_djtable" },
+                    { type: "studio_guitar" },
+                    { type: "cine_vipsign" }
+                ]
+            }
+        ]
+    }
+];
 
 export async function initializeDevelopmentData() {
     await RoomMapModel.bulkCreate([
@@ -346,69 +399,52 @@ export async function initializeDevelopmentData() {
         };
     }));
 
-    const typeCategory = await ShopPageModel.create<ShopPageModel>({
-        id: randomUUID(),
-        category: "furniture",
-        title: "By type",
-        description: "Lalallala",
+    for(let root of defaultShopPages) {
+        const page = await ShopPageModel.create({
+            id: randomUUID(),
 
-        icon: "icon_72.png",
-        header: "catalog_frontpage_headline_shop_EN.gif"
-    });
+            category: "furniture",
+            title: root.title,
+            description: root.description,
 
-    const shopPages = await ShopPageModel.bulkCreate<ShopPageModel>([
-        {
-            id: randomUUID(),
-            category: "furniture",
-            title: "Something"
-        },
-        {
-            id: randomUUID(),
-            category: "furniture",
-            title: "Accessories",
-            parentId: typeCategory.id,
-        },
-        {
-            id: randomUUID(),
-            category: "furniture",
-            title: "Rugs",
-            parentId: typeCategory.id
-        },
-        {
-            id: randomUUID(),
-            category: "furniture",
-            title: "Dimmers",
-            parentId: typeCategory.id
+            icon: root.icon,
+            header: root.header
+        });
+
+        for(let child of root.pages) {
+            const furnitureData = await FurnitureModel.findAll({
+                where: {
+                    [Op.or]: child.furnitures.map((furniture: any) => {
+                        return {
+                            type: furniture.type,
+                            color: furniture.color ?? null
+                        };
+                    })
+                }
+            });
+
+            const childPage = await ShopPageModel.create({
+                id: randomUUID(),
+
+                category: "furniture",
+                title: child.title,
+                description: child.description,
+
+                icon: child.icon,
+                header: child.header,
+
+                parentId: page.id
+            });
+
+            await ShopPageFurnitureModel.bulkCreate(furnitureData.map((furniture) => {
+                return {
+                    id: randomUUID(),
+                    furnitureId: furniture.id,
+                    shopPageId: childPage.id
+                };
+            }));
         }
-    ]);
-
-    await ShopPageFurnitureModel.bulkCreate<ShopPageFurnitureModel>([
-        {
-            id: randomUUID(),
-            furnitureId: (await FurnitureModel.findOne({ where: { type: "rare_dragonlamp", color: 1 } }))!.id,
-            shopPageId: typeCategory.id,
-        },
-        {
-            id: randomUUID(),
-            furnitureId: (await FurnitureModel.findOne({ where: { type: "rare_dragonlamp", color: 2 } }))!.id,
-            shopPageId: typeCategory.id
-        },
-        {
-            id: randomUUID(),
-            furnitureId: (await FurnitureModel.findOne({ where: { type: "rare_dragonlamp", color: 3 } }))!.id,
-            shopPageId: typeCategory.id
-        },
-        {
-            id: randomUUID(),
-            furnitureId: (await FurnitureModel.findOne({ where: { type: "rare_dragonlamp", color: 4 } }))!.id,
-            shopPageId: typeCategory.id
-        },
-        {
-            id: randomUUID(),
-            furnitureId: (await FurnitureModel.findOne({ where: { type: "rare_dragonlamp", color: 5 } }))!.id,
-            shopPageId: typeCategory.id
-        }
-    ]);
+    }
 
     const allFurnitureShopPage = await ShopPageModel.create({
         id: randomUUID(),
@@ -429,8 +465,8 @@ export async function initializeDevelopmentData() {
         name: "My room",
         structure: {
             door: {
-                row: 2,
-                column: 0
+                row: 0,
+                column: 2
             },
             grid: [
                 "XX0XXXX",

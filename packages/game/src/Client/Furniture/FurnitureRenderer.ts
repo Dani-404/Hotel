@@ -25,6 +25,8 @@ export default class FurnitureRenderer {
     private data?: FurnitureData;
     private visualization?: FurnitureVisualization["visualizations"][0];
 
+    private frame: number = 0;
+
     constructor(public readonly type: string, public readonly size: number, public direction: number | undefined = undefined, public animation: number = 0, public color: number = 0) {
         /*if(this.type.includes('*')) {
             const [type, color] = this.type.split('*');
@@ -35,6 +37,8 @@ export default class FurnitureRenderer {
     }
 
     public async render(frame: number = 0) {
+        this.frame++;
+
         if(!this.data) {
             this.data = await FurnitureAssets.getFurnitureData(this.type);
         }
@@ -65,10 +69,11 @@ export default class FurnitureRenderer {
             let spriteFrame = 0;
 
             if(animationLayer?.frameSequence?.length) {
-                let frameSequenceIndex = frame % animationLayer.frameSequence.length;
+
+                let frameSequenceIndex = this.frame % animationLayer.frameSequence.length;
 
                 if(animationLayer.frameRepeat && animationLayer.frameRepeat > 1) {
-                    frameSequenceIndex = Math.floor((frame % (animationLayer.frameSequence.length * animationLayer.frameRepeat)) / animationLayer.frameRepeat);
+                    frameSequenceIndex = Math.floor((this.frame % (animationLayer.frameSequence.length * animationLayer.frameRepeat)) / animationLayer.frameRepeat);
                     /*console.log({
                         frame,
                         frameSequenceLength: animationLayer.frameSequence.length,
@@ -269,11 +274,11 @@ export default class FurnitureRenderer {
         const currentAnimationIndex = this.visualization.animations.findIndex((animation) => animation.id === this.animation);
 
         if(currentAnimationIndex === -1) {
-            return 0;
+            return this.visualization.animations[0]?.id ?? 0;
         }
 
         if(!this.visualization.animations[currentAnimationIndex + 1]) {
-            return this.visualization.animations[0].id;
+            return 0;
         }
 
         return this.visualization.animations[currentAnimationIndex + 1].id;

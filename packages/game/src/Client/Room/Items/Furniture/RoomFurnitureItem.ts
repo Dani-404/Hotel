@@ -20,9 +20,7 @@ export default class RoomFurnitureItem extends RoomItem {
     process(frame: number): void {
         super.process(frame);
 
-        if(this.furnitureRenderer.isAnimated) {
-            this.render(frame);
-        }
+        this.render(frame);
     }
 
     render(frame: number = 0) {
