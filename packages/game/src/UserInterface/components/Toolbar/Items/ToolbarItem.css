@@ -1,4 +1,10 @@
 .toolbar-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    min-width: 34px;
+
     cursor: pointer;
 }
 
