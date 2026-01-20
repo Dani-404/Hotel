@@ -9,6 +9,7 @@ import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterR
 import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
 import Reception from "./Reception/Reception";
 import { useRoomInstance } from "../hooks/useRoomInstance";
+import Widget from "./Widget/Widget";
 
 export type InterfaceInstanceProps = {
 }
@@ -109,6 +110,7 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
             <DialogInstances dialogs={dialogs}/>
 
             <Toolbar/>
+            <Widget/>
         </AppContext>
     );
 }

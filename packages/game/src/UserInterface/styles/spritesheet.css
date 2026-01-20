@@ -51,9 +51,11 @@
 .sprite_dialog_close:active { background-image: url('./spritesheet.png'); background-position: -359px -136px; width: 19px; height: 20px; }
 .sprite_dialog_close:hover { background-image: url('./spritesheet.png'); background-position: -359px -156px; width: 19px; height: 20px; }
 .sprite_dialog_close { background-image: url('./spritesheet.png'); background-position: -359px -176px; width: 19px; height: 20px; }
-.sprite_currencies_credits { background-image: url('./spritesheet.png'); background-position: -359px -196px; width: 15px; height: 15px; }
-.sprite_currencies_diamonds { background-image: url('./spritesheet.png'); background-position: -374px -196px; width: 15px; height: 15px; }
-.sprite_currencies_duckets { background-image: url('./spritesheet.png'); background-position: -359px -211px; width: 15px; height: 15px; }
+.sprite_currencies_earnings { background-image: url('./spritesheet.png'); background-position: -359px -196px; width: 15px; height: 16px; }
+.sprite_currencies_club { background-image: url('./spritesheet.png'); background-position: -374px -196px; width: 15px; height: 15px; }
+.sprite_currencies_credits { background-image: url('./spritesheet.png'); background-position: -359px -212px; width: 15px; height: 15px; }
+.sprite_currencies_diamonds { background-image: url('./spritesheet.png'); background-position: -374px -212px; width: 15px; height: 15px; }
+.sprite_currencies_duckets { background-image: url('./spritesheet.png'); background-position: -359px -227px; width: 15px; height: 15px; }
 .sprite_currencies_credits-small { background-image: url('./spritesheet.png'); background-position: -378px -136px; width: 11px; height: 11px; }
 .sprite_currencies_diamonds-small { background-image: url('./spritesheet.png'); background-position: -378px -156px; width: 11px; height: 11px; }
 .sprite_currencies_duckets-small { background-image: url('./spritesheet.png'); background-position: -378px -176px; width: 11px; height: 11px; }
