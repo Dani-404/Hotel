@@ -5,7 +5,9 @@ import RoomSprite from "./RoomSprite";
 export default class RoomItem implements RoomItemInterface {
     position?: RoomPosition;
     priority: number = 0;
+
     disabled: boolean = false;
+    alpha: number = 1;
 
     constructor(public type: string, public sprites: RoomSprite[] = []) {
 

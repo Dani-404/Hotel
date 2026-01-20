@@ -154,6 +154,8 @@ export default class RoomRenderer extends EventTarget {
                 context.translate(translatePosition.left, translatePosition.top);
             }
 
+            context.globalAlpha = sprite.item.alpha;
+
             sprite.render(context);
 
             context.restore();

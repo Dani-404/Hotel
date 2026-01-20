@@ -34,6 +34,7 @@ export default class RoomFurniturePlacer {
         });
 
         this.furnitureItem.disabled = true;
+        this.furnitureItem.alpha = 0.5;
 
         if(this.roomRenderer.cursor) {
             this.roomRenderer.cursor.cursorDisabled = true;
