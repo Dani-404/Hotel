@@ -25,6 +25,8 @@ export default class FurnitureRenderer {
     private data?: FurnitureData;
     private visualization?: FurnitureVisualization["visualizations"][0];
 
+    public placement?: "wall" | "floor";
+
     private frame: number = 0;
 
     constructor(public readonly type: string, public readonly size: number, public direction: number | undefined = undefined, public animation: number = 0, public color: number = 0) {
@@ -42,6 +44,8 @@ export default class FurnitureRenderer {
         if(!this.data) {
             this.data = await FurnitureAssets.getFurnitureData(this.type);
         }
+
+        this.placement = this.data.visualization.placement;
 
         const sprites: FurnitureRendererSprite[] = [];
 

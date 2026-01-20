@@ -9,10 +9,12 @@ export default class RoomFurnitureItem extends RoomItem {
 
     public readonly id = Math.random();
     
-    constructor(public readonly furnitureRenderer: FurnitureRenderer, position: RoomPosition) {
+    constructor(public readonly furnitureRenderer: FurnitureRenderer, position?: RoomPosition) {
         super("furniture");
 
-        this.setPosition(position);
+        if(position) {
+            this.setPosition(position);
+        }
 
         this.render();
     }

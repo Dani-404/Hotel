@@ -1,12 +1,10 @@
 import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import FurnitureImage from "../../../Furniture/FurnitureImage";
-import { Fragment } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
-import { FurnitureData } from "@Client/Interfaces/Furniture/FurnitureData";
-import FurnitureAssets from "@Client/Assets/FurnitureAssets";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
-import { webSocketClient } from "../../../../..";
+import { clientInstance, webSocketClient } from "../../../../..";
 import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData";
+
+import "./RoomFurnitureProfile.css"
 
 export type RoomFurnitureProfileProps = {
     data: RoomFurnitureData;
@@ -56,23 +54,31 @@ export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfil
                 flexDirection: "row",
                 gap: 10
             }}>
+                <div className="room-furniture-profile-button" onClick={() => {
+                    clientInstance.roomInstance?.moveFurniture(data.id);
+                }}>
+                    Move
+                </div>
+
                 {(item.furnitureRenderer.getNextDirection() !== item.furnitureRenderer.direction) && (
-                    <div style={{
-                        background: "rgba(61, 61, 61, .95)",
-                        fontSize: 12,
-                        padding: 6,
-                        color: "#FFFFFF",
-                        borderRadius: 4,
-                        border: "1px solid #FFFFFF",
-                        cursor: "pointer",
-                        pointerEvents: "auto"
-                    }} onClick={() => {
+                    <div className="room-furniture-profile-button" onClick={() => {
                         webSocketClient.send<UpdateRoomFurnitureEventData>("UpdateRoomFurnitureEvent", {
                             roomFurnitureId: data.id,
                             direction: item.furnitureRenderer.getNextDirection()
                         });
                     }}>
                         Rotate
+                    </div>
+                )}
+
+                {(item.furnitureRenderer.getNextAnimation() !== item.furnitureRenderer.animation) && (
+                    <div className="room-furniture-profile-button" onClick={() => {
+                        webSocketClient.send<UpdateRoomFurnitureEventData>("UpdateRoomFurnitureEvent", {
+                            roomFurnitureId: data.id,
+                            animation: item.furnitureRenderer.getNextAnimation()
+                        });
+                    }}>
+                        Use
                     </div>
                 )}
             </div>

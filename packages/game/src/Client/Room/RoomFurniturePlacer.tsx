@@ -7,9 +7,6 @@ import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableErro
 import { UserFurnitureData } from "@Shared/Interfaces/User/UserFurnitureData";
 
 export default class RoomFurniturePlacer {
-    private readonly furnitureItem: RoomFurnitureItem;
-    private readonly furnitureRenderer: FurnitureRenderer;
-
     private paused: boolean = true;
 
     private onPlace?: (position: RoomPosition, direction: number) => void;
@@ -20,27 +17,47 @@ export default class RoomFurniturePlacer {
 
     private readonly iconElement: HTMLCanvasElement;
 
-    constructor(private readonly roomRenderer: RoomRenderer, public readonly userFurnitureData: UserFurnitureData) {
+    private readonly originalPosition?: RoomPosition;
+
+    public static fromFurnitureData(roomRenderer: RoomRenderer, furnitureData: FurnitureData) {
+        const roomFurnitureItem = new RoomFurnitureItem(
+            new FurnitureRenderer(furnitureData.type, 64, undefined, 0, furnitureData.color)
+        );
+
+        return new RoomFurniturePlacer(roomRenderer, roomFurnitureItem, true);
+    }
+
+    constructor(private readonly roomRenderer: RoomRenderer, private readonly roomFurnitureItem: RoomFurnitureItem, private readonly temporaryFurniture: boolean = false) {
         if(this.roomRenderer.furniturePlacer) {
             this.roomRenderer.furniturePlacer.destroy();
         }
 
-        this.furnitureRenderer = new FurnitureRenderer(userFurnitureData.furnitureData.type, 64, undefined, 0, userFurnitureData.furnitureData.color);
+        if(roomFurnitureItem.position) {
+            this.originalPosition = {
+                row: roomFurnitureItem.position.row,
+                column: roomFurnitureItem.position.column,
+                depth: roomFurnitureItem.position.depth
+            };
+        }
 
-        this.furnitureItem = new RoomFurnitureItem(this.furnitureRenderer, {
+        //this.furnitureRenderer = new FurnitureRenderer(userFurnitureData.furnitureData.type, 64, undefined, 0, userFurnitureData.furnitureData.color);
+
+        /*this.furnitureItem = new RoomFurnitureItem(this.furnitureRenderer, {
             row: 0,
             column: 0,
             depth: 0
-        });
+        });*/
 
-        this.furnitureItem.disabled = true;
-        this.furnitureItem.alpha = 0.5;
+        this.roomFurnitureItem.disabled = true;
+        this.roomFurnitureItem.alpha = 0.5;
 
         if(this.roomRenderer.cursor) {
             this.roomRenderer.cursor.cursorDisabled = true;
         }
 
-        this.roomRenderer.items.push(this.furnitureItem);
+        if(!this.roomRenderer.items.includes(this.roomFurnitureItem)) {
+            this.roomRenderer.items.push(this.roomFurnitureItem);
+        }
 
         this.roomRenderer.addEventListener("render", this.renderListener);
         this.roomRenderer.element.addEventListener("click", this.clickListener);
@@ -51,7 +68,7 @@ export default class RoomFurniturePlacer {
         this.iconElement.style.pointerEvents = "none";
         this.iconElement.style.transform = "translate(-50%, -50%)";
 
-        new FurnitureRenderer(userFurnitureData.furnitureData.type, 1, 0, 0, userFurnitureData.furnitureData.color).renderToCanvas().then((image) => {
+        new FurnitureRenderer(this.roomFurnitureItem.furnitureRenderer.type, 1, 0, 0, this.roomFurnitureItem.furnitureRenderer.color).renderToCanvas().then((image) => {
             this.iconElement.width = image.width;
             this.iconElement.height = image.height;
 
@@ -72,19 +89,19 @@ export default class RoomFurniturePlacer {
             return;
         }
 
-        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === this.userFurnitureData.furnitureData.placement);
+        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === this.roomFurnitureItem.furnitureRenderer.placement);
 
         if(entity) {
             if(entity.position.direction !== undefined) {
-                this.furnitureRenderer.direction = entity.position.direction;
+                this.roomFurnitureItem.furnitureRenderer.direction = entity.position.direction;
             }
 
-            this.furnitureItem.setPosition(entity.position);
-            this.furnitureItem.disabled = false;
+            this.roomFurnitureItem.setPosition(entity.position);
+            this.roomFurnitureItem.disabled = false;
             this.iconElement.style.display = "none";
         }
         else {
-            this.furnitureItem.disabled = true;
+            this.roomFurnitureItem.disabled = true;
 
             if(this.roomRenderer.camera.mousePosition) {
                 this.iconElement.style.display = "block";
@@ -99,13 +116,17 @@ export default class RoomFurniturePlacer {
             return;
         }
 
-        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === this.userFurnitureData.furnitureData.placement);
+        const entity = this.roomRenderer.getItemAtPosition((item) => item.type === this.roomFurnitureItem.furnitureRenderer.placement);
 
         if(!entity) {
             this.onCancel?.();
+
+            if(this.originalPosition) {
+               this.roomFurnitureItem.position = this.originalPosition;
+            }
         }
         else {
-            this.onPlace?.(entity.position, this.furnitureRenderer.direction!);
+            this.onPlace?.({...entity.position}, this.roomFurnitureItem.furnitureRenderer.direction!);
         }
 
         this.stopPlacing();
@@ -135,10 +156,15 @@ export default class RoomFurniturePlacer {
         this.roomRenderer.removeEventListener("render", this.renderListener);
         this.roomRenderer.element.removeEventListener("click", this.clickListener);
 
-        const index = this.roomRenderer.items.indexOf(this.furnitureItem);
+        if(this.temporaryFurniture) {
+            const index = this.roomRenderer.items.indexOf(this.roomFurnitureItem);
 
-        if(index !== -1) {
-            this.roomRenderer.items.splice(index, 1);
+            if(index !== -1) {
+                this.roomRenderer.items.splice(index, 1);
+            }
+        }
+        else {
+            this.roomFurnitureItem.alpha = 1;
         }
     }
 }

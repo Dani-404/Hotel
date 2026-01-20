@@ -19,6 +19,8 @@ import RoomWallItem from "./Items/Map/RoomWallItem";
 import { LoadRoomEventData } from "@Shared/Communications/Responses/Rooms/LoadRoomEventData";
 import { StartWalkingEventData } from "@Shared/Communications/Requests/Rooms/User/StartWalkingEventData";
 import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData";
+import RoomFurniturePlacer from "@Client/Room/RoomFurniturePlacer";
+import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -184,6 +186,11 @@ export default class RoomInstance {
         const roomFurnitureItem = this.getFurnitureById(furnitureData.id);
 
         roomFurnitureItem.item.furnitureRenderer.direction = furnitureData.direction;
+        roomFurnitureItem.item.furnitureRenderer.animation = furnitureData.animation;
+
+        if(furnitureData.position) {
+            roomFurnitureItem.item.setPosition(furnitureData.position);
+        }
     }
 
     public getFurnitureById(id: string) {
@@ -207,11 +214,27 @@ export default class RoomInstance {
     }
 
     public removeFurniture(roomFurnitureId: string) {
-        console.log("remove furniture");
         const furniture = this.getFurnitureById(roomFurnitureId);
-        console.log("remove furniture", furniture);
 
         this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(furniture.item), 1);
         this.furnitures.splice(this.furnitures.indexOf(furniture), 1);
+    }
+
+    public moveFurniture(roomFurnitureId: string) {
+        const furniture = this.getFurnitureById(roomFurnitureId);
+
+        const roomFurniturePlacer = new RoomFurniturePlacer(this.roomRenderer, furniture.item);
+
+        roomFurniturePlacer.startPlacing((position, direction) => {
+            roomFurniturePlacer.destroy();
+
+            webSocketClient.send<UpdateRoomFurnitureEventData>("UpdateRoomFurnitureEvent", {
+                roomFurnitureId: furniture.data.id,
+                position,
+                direction
+            });
+        }, () => {
+            roomFurniturePlacer.destroy();
+        });
     }
 }

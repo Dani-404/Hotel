@@ -21,6 +21,7 @@ export default function InventoryFurnitureTab() {
     const userFurnitureRequested = useRef<boolean>(false);
 
     const [roomFurniturePlacer, setRoomFurniturePlacer] = useState<RoomFurniturePlacer>();
+    const roomFurniturePlacerId = useRef<string>(undefined);
 
     useEffect(() => {
         if(userFurnitureRequested.current) {
@@ -83,7 +84,7 @@ export default function InventoryFurnitureTab() {
             return;
         }
 
-        if(roomFurniturePlacer.userFurnitureData.id !== activeFurniture?.id) {
+        if(!activeFurniture || roomFurniturePlacerId.current !== activeFurniture?.id) {
             roomFurniturePlacer.destroy();
 
             setRoomFurniturePlacer(undefined);
@@ -92,6 +93,16 @@ export default function InventoryFurnitureTab() {
 
             return;
         }
+
+        /*if(roomFurniturePlacer.userFurnitureData.id !== activeFurniture?.id) {
+            roomFurniturePlacer.destroy();
+
+            setRoomFurniturePlacer(undefined);
+
+            setDialogHidden("inventory", false);
+
+            return;
+        }*/
 
         setDialogHidden("inventory", true);
 
@@ -120,7 +131,8 @@ export default function InventoryFurnitureTab() {
             return;
         }
 
-        setRoomFurniturePlacer(new RoomFurniturePlacer(clientInstance.roomInstance.roomRenderer, activeFurniture));
+        setRoomFurniturePlacer(RoomFurniturePlacer.fromFurnitureData(clientInstance.roomInstance.roomRenderer, activeFurniture.furnitureData));
+        roomFurniturePlacerId.current = activeFurniture.id;
     }, [roomFurniturePlacer, activeFurniture]);
 
     if(!userFurniture.length) {

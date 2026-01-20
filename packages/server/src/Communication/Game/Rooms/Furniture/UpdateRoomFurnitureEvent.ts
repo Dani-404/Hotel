@@ -17,6 +17,14 @@ export default class UpdateRoomFurnitureEvent implements IncomingEvent<UpdateRoo
             roomFurniture.model.direction = event.direction;
         }
 
+        if(event.animation !== undefined) {
+            roomFurniture.model.animation = event.animation;
+        }
+
+        if(event.position !== undefined) {
+            roomFurniture.model.position = event.position;
+        }
+
         await roomFurniture.model.save();
 
         user.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
