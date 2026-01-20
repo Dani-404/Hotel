@@ -3,8 +3,11 @@ import ToolbarFigureItem from "./Items/ToolbarFigureItem";
 import ToolbarItem from "./Items/ToolbarItem";
 import { AppContext } from "../../contexts/AppContext";
 import WardrobeDialog from "../Wardrobe/WardrobeDialog";
+import { useRoomInstance } from "../../hooks/useRoomInstance";
 
 export default function Toolbar() {
+    const room = useRoomInstance();
+
     const { user, addUniqueDialog, closeDialog } = useContext(AppContext);
 
     return (
@@ -47,15 +50,19 @@ export default function Toolbar() {
                     </ToolbarItem>
                 </ToolbarItem>
 
-                <ToolbarItem onClick={() => addUniqueDialog("inventory")}>
-                    <ToolbarItem>
-                        <div className="sprite_toolbar_inventory"/>
+                {(room) && (
+                    <ToolbarItem onClick={() => addUniqueDialog("inventory")}>
+                        <ToolbarItem>
+                            <div className="sprite_toolbar_inventory"/>
+                        </ToolbarItem>
                     </ToolbarItem>
-                </ToolbarItem>
+                )}
 
-                <ToolbarItem onClick={() => addUniqueDialog("wardrobe")}>
-                    <ToolbarFigureItem/>
-                </ToolbarItem>
+                {(room) && (
+                    <ToolbarItem onClick={() => addUniqueDialog("wardrobe")}>
+                        <ToolbarFigureItem/>
+                    </ToolbarItem>
+                )}
             </div>
         </div>
     );

@@ -7,11 +7,15 @@ import DialogInstances from "./Dialog/DialogInstances";
 import { webSocketClient } from "../..";
 import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterRoomEventData";
 import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
+import Reception from "./Reception/Reception";
+import { useRoomInstance } from "../hooks/useRoomInstance";
 
 export type InterfaceInstanceProps = {
 }
 
 export default function InterfaceInstance({  }: InterfaceInstanceProps) {
+    const room = useRoomInstance();
+    
     const [dialogs, setDialogs] = useState<Dialog[]>([{ id: "navigator", type: "navigator", data: null }]);
 
     const ready = useRef<boolean>(false);
@@ -33,9 +37,9 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
         if(!ready.current) {
             webSocketClient.send("GetUserEvent", null);
 
-            webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
-                roomId: "room1"
-            });
+            //webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
+            //    roomId: "room1"
+            //});
 
             ready.current = true;
         }
@@ -96,6 +100,10 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
 
             user
         }}>
+            {(!room) && (
+                <Reception/>
+            )}
+
             <RoomInterface/>
 
             <DialogInstances dialogs={dialogs}/>
