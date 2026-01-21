@@ -10,5 +10,8 @@ export type RoomUserData = {
         column: number;
         depth: number;
     };
+
     direction: number;
+
+    //actions: string[];
 };

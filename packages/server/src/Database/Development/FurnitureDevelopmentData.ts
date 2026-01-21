@@ -54,6 +54,8 @@ function getFurnitureServerData(assetName: string) {
             color: item.color,
             placement: item.placement,
 
+            category: item.category,
+
             flags: item.flags
         };
     });

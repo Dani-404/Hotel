@@ -1,4 +1,3 @@
-import { PlaceFurnitureEventData } from "@shared/Communications/Requests/Rooms/Furniture/PlaceFurnitureEventData";
 import IncomingEvent from "../../../Interfaces/IncomingEvent.js";
 import User from "../../../../Users/User.js";
 import { UpdateRoomFurnitureEventData } from "@shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData.js";
@@ -15,10 +14,6 @@ export default class UpdateRoomFurnitureEvent implements IncomingEvent<UpdateRoo
 
         if(event.direction !== undefined) {
             roomFurniture.model.direction = event.direction;
-        }
-
-        if(event.animation !== undefined) {
-            roomFurniture.model.animation = event.animation;
         }
 
         if(event.position !== undefined) {

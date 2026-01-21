@@ -224,7 +224,7 @@ export default class RoomInstance {
         });
     }
     
-    public getFurnitureAtUpmostPosition(position: Omit<RoomPosition, "depth">, dimensions: RoomPosition = { row: 0, column: 0, depth: 0 }, ignoreRoomFurnitureItemId?: number) {
+    public getFurnitureAtUpmostPosition(position: Omit<RoomPosition, "depth">, dimensions: RoomPosition = { row: 1, column: 1, depth: 0 }, ignoreRoomFurnitureItemId?: number) {
         function isPositionInFurnitureDimensions(furniture: RoomItem<RoomFurnitureData, RoomFurnitureItem>) {
             if(furniture.item.id === ignoreRoomFurnitureItemId) {
                 return false;

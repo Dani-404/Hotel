@@ -19,6 +19,7 @@ import EnterHomeRoomEvent from "./Communication/Game/Rooms/EnterHomeRoomEvent.js
 import LeaveRoomEvent from "./Communication/Game/Rooms/LeaveRoomEvent.js";
 import UpdateRoomFurnitureEvent from "./Communication/Game/Rooms/Furniture/UpdateRoomFurnitureEvent.js";
 import PickupRoomFurnitureEvent from "./Communication/Game/Rooms/Furniture/PickupRoomFurnitureEvent.js";
+import UseRoomFurnitureEvent from "./Communication/Game/Rooms/Furniture/UseRoomFurnitureEvent.js";
 
 await initializeModels();
 
@@ -37,6 +38,7 @@ eventHandler
     .addIncomingEvent("EnterHomeRoomEvent", new EnterHomeRoomEvent())
     .addIncomingEvent("LeaveRoomEvent", new LeaveRoomEvent())
     .addIncomingEvent("PlaceFurnitureEvent", new PlaceFurnitureEvent())
+    .addIncomingEvent("UseRoomFurnitureEvent", new UseRoomFurnitureEvent())
     .addIncomingEvent("UpdateRoomFurnitureEvent", new UpdateRoomFurnitureEvent())
     .addIncomingEvent("PickupRoomFurnitureEvent", new PickupRoomFurnitureEvent())
     .addIncomingEvent("StartWalkingEvent", new StartWalkingEvent());

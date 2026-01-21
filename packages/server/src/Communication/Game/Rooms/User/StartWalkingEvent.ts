@@ -23,9 +23,19 @@ export default class StartWalkingEvent implements IncomingEvent<StartWalkingEven
                 const furniture = user.room!.getUpmostFurnitureAtPosition({ row: rowIndex, column: columnIndex });
 
                 if(furniture) {
-                    if(!furniture.model.furniture.flags.walkable) {
-                        return 1;
+                    if(furniture.model.furniture.flags.walkable) {
+                        return 0;
                     }
+
+                    if(furniture.model.furniture.flags.sitable) {
+                        return 0;
+                    }
+
+                    if(furniture.model.furniture.category === "gate" && furniture.model.animation !== 0) {
+                        return 0;
+                    }
+
+                    return 1;
                 }
 
                 return 0;

@@ -454,7 +454,9 @@ export async function initializeDevelopmentData() {
 
             color: furniture.color,
             placement: furniture.placement,
-            dimensions: furniture.dimensions
+            dimensions: furniture.dimensions,
+
+            category: furniture.category
         };
     }));
 

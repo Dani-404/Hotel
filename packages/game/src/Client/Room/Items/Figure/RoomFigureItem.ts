@@ -3,6 +3,7 @@ import RoomItem from "../RoomItem";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import FigureRenderer from "@Client/Figure/FigureRenderer";
 import RoomFigureSprite from "./RoomFigureSprite";
+import { clientInstance } from "../../../..";
 
 export default class RoomFigureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
@@ -33,6 +34,21 @@ export default class RoomFigureItem extends RoomItem {
             });
     }
 
+    public setPosition(position: RoomPosition, index?: number): void {
+        super.setPosition(position, index);
+
+        if(Number.isInteger(position.row) && Number.isInteger(position.column)) {
+            if(clientInstance.roomInstance?.roomRenderer.items.includes(this)) {
+                const furniture = clientInstance.roomInstance.getFurnitureAtUpmostPosition(position);
+
+                if(furniture?.data.furniture.flags.sitable) {
+                    this.figureRenderer.addAction("Sit");
+                    this.figureRenderer.direction = furniture.data.direction;
+                }
+            }
+        }
+    }
+
     public setPositionPath(fromPosition: RoomPosition, toPosition: RoomPosition): void {
         super.setPositionPath(fromPosition, toPosition);
 
@@ -44,6 +60,7 @@ export default class RoomFigureItem extends RoomItem {
 
         this.figureRenderer.direction = this.getDirectionFromRelativePosition(relativePosition);
         this.figureRenderer.addAction("Move");
+        this.figureRenderer.removeAction("Sit");
     }
 
     public finishPositionPath(): void {

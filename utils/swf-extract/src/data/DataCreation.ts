@@ -329,6 +329,8 @@ export async function createFurnitureData(assetName: string) {
             placement: (isWallFurniture)?("wall"):("floor"),
             defaultDirection: (furniType["defaultdir"])?(parseInt(furniType["defaultdir"])):(undefined),
 
+            category: furniType["category"],
+
             flags: {
                 stackable: result?.allow_stack === 1,
                 sitable: result?.allow_sit === 1,

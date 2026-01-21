@@ -10,6 +10,7 @@ export class FurnitureModel extends Model {
     declare placement: "floor" | "wall";
     declare dimensions: RoomPosition;
     declare color?: number;
+    declare category: string;
     declare flags: FurnitureFlagsData;
 }
 
@@ -32,6 +33,10 @@ export function initializeFurnitureModel(sequelize: Sequelize) {
             type: new DataTypes.STRING(128),
             allowNull: true,
             defaultValue: null
+          },
+          category: {
+            type: new DataTypes.STRING(32),
+            allowNull: false
           },
           placement: {
             type: new DataTypes.STRING(32),
