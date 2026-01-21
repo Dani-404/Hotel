@@ -1,7 +1,7 @@
 import FigureWorkerRenderer from "./Worker/FigureWorkerRenderer";
 import FigureAssets from "@Client/Assets/FigureAssets";
 import FigureWorker from "./Worker/FigureWorker";
-import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
 
 export default class FigureRenderer {
     public static readonly figureWorker: FigureWorker = new FigureWorker(false);

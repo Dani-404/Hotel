@@ -117,10 +117,36 @@ export default class Room {
 
     public getUpmostFurnitureAtPosition(position: Omit<RoomPosition, "depth">) {
         const furniture = this.furnitures
-            .filter((furniture) => 
-                furniture.model.position.row === position.row
-                && furniture.model.position.column === position.column)
-            .toSorted((a, b) => a.model.position.depth - b.model.position.depth);
+            .filter((furniture) => {
+                if(furniture.model.position.row > position.row) {
+                    return false;
+                }
+
+                if(furniture.model.position.column > position.column) {
+                    return false;
+                }
+
+                const dimensions = (furniture.model.direction === 0 || furniture.model.direction === 4)?({
+                    row: furniture.model.furniture.dimensions.column,
+                    column: furniture.model.furniture.dimensions.row,
+                    depth: furniture.model.furniture.dimensions.depth,
+                }):({
+                    row: furniture.model.furniture.dimensions.row,
+                    column: furniture.model.furniture.dimensions.column,
+                    depth: furniture.model.furniture.dimensions.depth,
+                });
+
+                if(furniture.model.position.row + dimensions.row <= position.row) {
+                    return false;
+                }
+
+                if(furniture.model.position.column + dimensions.column <= position.column) {
+                    return false;
+                }
+
+                return true;
+            })
+            .toSorted((a, b) => b.model.position.depth - a.model.position.depth);
 
         if(!furniture.length) {
             return undefined;
