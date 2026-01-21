@@ -148,7 +148,13 @@ export async function createVisualizationData(collection: SwfExtractionCollectio
 
                 directions: getValueAsArray(visualization["directions"]?.["direction"]).map((direction: any) => {
                     return {
-                        id: parseInt(direction["@_id"])
+                        id: parseInt(direction["@_id"]),
+                        layers: getValueAsArray(direction["layer"]).map((layer: any) => {
+                            return {
+                                id: parseInt(layer["@_id"]),
+                                zIndex: (layer["@_z"])?(parseInt(layer["@_z"])):(undefined),
+                            };
+                        })
                     } satisfies FurnitureVisualization["visualizations"][0]["directions"][0]
                 }),
 

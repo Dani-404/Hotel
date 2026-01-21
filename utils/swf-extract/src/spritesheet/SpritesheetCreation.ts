@@ -4,7 +4,7 @@ import { mkdirSync, statfsSync, writeFileSync } from "fs";
 import type { FurnitureSprites } from "../../../../packages/game/src/Client/Interfaces/Furniture/FurnitureSprites.ts"
 
 export function createSpritesheet(assetName: string, images: string[]): Promise<FurnitureSprites> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         const outputPath = path.join("temp", assetName, "spritesheets");
         const outputFile = path.join(outputPath, `${assetName}.png`);
 
@@ -40,16 +40,18 @@ export function createSpritesheet(assetName: string, images: string[]): Promise<
                     if(statfsSync(outputFile).bsize > 0) {
                         clearInterval(interval);
 
-                        resolve(collection);
+                        setTimeout(() => {
+                            resolve(collection);
+                        }, 1000);
                     }
                 }, 100);
-            }
+            },
         }, function (error) {
             if(error) {
-                throw new Error(error.message);
+                reject(error.message);
             }
 
-            resolve(collection);
+            //resolve(collection);
         });
     });
 }

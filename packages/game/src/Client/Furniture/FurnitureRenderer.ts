@@ -67,6 +67,8 @@ export default class FurnitureRenderer {
 
         this.isAnimated = Boolean(animation);
 
+        const directionData = this.visualization.directions.find((direction) => direction.id === this.direction);
+
         for(let layer = 0; layer < this.visualization.layerCount; layer++) {
             const animationLayer = animation?.layers?.find((animationLayer) => animationLayer.id === layer);
 
@@ -143,6 +145,7 @@ export default class FurnitureRenderer {
             });
 
             const layerData = this.visualization.layers.find((layerData) => layerData.id === layer);
+            const directionLayerData = directionData?.layers.find((layerData) => layerData.id === layer);
 
             let x = assetData.x;
 
@@ -159,7 +162,7 @@ export default class FurnitureRenderer {
 
                 ink: this.getGlobalCompositeModeFromInk(layerData?.ink),
 
-                zIndex: layerData?.zIndex ?? 0,
+                zIndex: directionLayerData?.zIndex ?? layerData?.zIndex ?? 0,
                 alpha: layerData?.alpha,
                 ignoreMouse: layerData?.ignoreMouse
             };

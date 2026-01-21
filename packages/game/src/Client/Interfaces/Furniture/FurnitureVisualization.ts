@@ -19,6 +19,10 @@ export type FurnitureVisualization = {
 
         directions: {
             id: number;
+            layers: {
+                id: number;
+                zIndex?: number;
+            }[];
         }[];
 
         colors: {

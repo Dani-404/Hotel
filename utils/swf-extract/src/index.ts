@@ -53,68 +53,38 @@ else if(process.argv[2] === "generate-furniture") {
 
 (async () => {
     for(let assetName of assetNames) {
-        const extractOnly = process.argv[3] === "extract-only";
+        await new Promise<void>(async (resolve, reject) => {
+            const extractOnly = process.argv[3] === "extract-only";
 
-        console.log("Extracting " + assetName);
+            console.log("Extracting " + assetName);
 
-        try {
-            if(!assetName) {
-                throw new Error("Argument is missing for asset name.");
-            }
+            try {
+                if(!assetName) {
+                    reject();
+                    throw new Error("Argument is missing for asset name.");
+                }
 
-            if(existsSync(path.join("temp", assetName))) {
-                rmSync(path.join("temp", assetName), {
-                    force: true,
-                    recursive: true
-                });
-            }
-
-            const swfCollection = await extractSwf(assetName, (existsSync(`assets/furniture/${assetName}.swf`))?(`assets/furniture/${assetName}.swf`):(`assets/${assetName}.swf`));
-
-            if(extractOnly) {
-                continue;
-            }
-
-            if(!swfCollection.images.length) {
-                continue;
-            }
-
-            const spritesheet = await createSpritesheet(assetName, swfCollection.images);
-            
-            if(assetName === "HabboRoomContent") {
-                const outputPath = path.join("..", "..", "assets", "room", assetName);
-
-                if(existsSync(outputPath)) {
-                    rmSync(outputPath, {
+                if(existsSync(path.join("temp", assetName))) {
+                    rmSync(path.join("temp", assetName), {
                         force: true,
                         recursive: true
                     });
                 }
 
-                mkdirSync(outputPath, {
-                    recursive: true
-                });
+                const swfCollection = await extractSwf(assetName, (existsSync(`assets/furniture/${assetName}.swf`))?(`assets/furniture/${assetName}.swf`):(`assets/${assetName}.swf`));
+
+                if(extractOnly) {
+                    reject();
+                }
+
+                if(!swfCollection.images.length) {
+                    reject();
+                }
+
+                const spritesheet = await createSpritesheet(assetName, swfCollection.images);
                 
-                copyFileSync(path.join("temp", assetName, "spritesheets", `${assetName}.png`), path.join(outputPath, `${assetName}.png`));
-            
-                const assets = createAssetsData(swfCollection);
-                const index = createIndexData(swfCollection);
-                const visualization = createRoomVisualizationData(swfCollection);
-
-                const data: RoomData = {
-                    index,
-                    visualization,
-                    assets,
-                    sprites: spritesheet
-                };
-
-                writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
-                    encoding: "utf-8"
-                });
-            }
-            else {
-                if(!swfCollection.data.index && !swfCollection.data.visualization && swfCollection.data.manifest) {
-                    const outputPath = path.join("..", "..", "assets", "figure", assetName);
+                if(assetName === "HabboRoomContent") {
+                    const outputPath = path.join("..", "..", "assets", "room", assetName);
 
                     if(existsSync(outputPath)) {
                         rmSync(outputPath, {
@@ -128,12 +98,14 @@ else if(process.argv[2] === "generate-furniture") {
                     });
                     
                     copyFileSync(path.join("temp", assetName, "spritesheets", `${assetName}.png`), path.join(outputPath, `${assetName}.png`));
+                
+                    const assets = createAssetsData(swfCollection);
+                    const index = createIndexData(swfCollection);
+                    const visualization = createRoomVisualizationData(swfCollection);
 
-                    console.log("No visualization data, assuming it's a figure asset...");
-
-                    const assets = createAssetsDataFromManifest(swfCollection);
-
-                    const data: FigureData = {
+                    const data: RoomData = {
+                        index,
+                        visualization,
                         assets,
                         sprites: spritesheet
                     };
@@ -141,58 +113,95 @@ else if(process.argv[2] === "generate-furniture") {
                     writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
                         encoding: "utf-8"
                     });
-                    
-                    continue;
                 }
+                else {
+                    if(!swfCollection.data.index && !swfCollection.data.visualization && swfCollection.data.manifest) {
+                        const outputPath = path.join("..", "..", "assets", "figure", assetName);
 
-                const outputPath = path.join("..", "..", "assets", "furniture", assetName);
+                        if(existsSync(outputPath)) {
+                            rmSync(outputPath, {
+                                force: true,
+                                recursive: true
+                            });
+                        }
 
-                if(existsSync(outputPath)) {
-                    rmSync(outputPath, {
-                        force: true,
+                        mkdirSync(outputPath, {
+                            recursive: true
+                        });
+                        
+                        copyFileSync(path.join("temp", assetName, "spritesheets", `${assetName}.png`), path.join(outputPath, `${assetName}.png`));
+
+                        console.log("No visualization data, assuming it's a figure asset...");
+
+                        const assets = createAssetsDataFromManifest(swfCollection);
+
+                        const data: FigureData = {
+                            assets,
+                            sprites: spritesheet
+                        };
+
+                        writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
+                            encoding: "utf-8"
+                        });
+                        
+                        return resolve();
+                    }
+
+                    const outputPath = path.join("..", "..", "assets", "furniture", assetName);
+
+                    if(existsSync(outputPath)) {
+                        rmSync(outputPath, {
+                            force: true,
+                            recursive: true
+                        });
+                    }
+
+                    mkdirSync(outputPath, {
                         recursive: true
                     });
-                }
 
-                mkdirSync(outputPath, {
-                    recursive: true
-                });
+                    copyFileSync(path.join("temp", assetName, "spritesheets", `${assetName}.png`), path.join(outputPath, `${assetName}.png`));
 
-                copyFileSync(path.join("temp", assetName, "spritesheets", `${assetName}.png`), path.join(outputPath, `${assetName}.png`));
+                    const assets = createAssetsData(swfCollection);
+                    const logic = createLogicData(swfCollection);
+                    const visualization = await createVisualizationData(swfCollection);
+                    const index = createIndexData(swfCollection);
 
-                const assets = createAssetsData(swfCollection);
-                const logic = createLogicData(swfCollection);
-                const visualization = await createVisualizationData(swfCollection);
-                const index = createIndexData(swfCollection);
+                    const furnitureData = await createFurnitureData(assetName);
 
-                const furnitureData = await createFurnitureData(assetName);
+                    if(furnitureData?.length) {
+                        visualization.defaultDirection = furnitureData[0].defaultDirection;
+                    }
 
-                if(furnitureData?.length) {
-                    visualization.defaultDirection = furnitureData[0].defaultDirection;
-                }
+                    const data: FurnitureData = {
+                        index,
+                        visualization,
+                        logic,
+                        assets,
+                        sprites: spritesheet
+                    };
 
-                const data: FurnitureData = {
-                    index,
-                    visualization,
-                    logic,
-                    assets,
-                    sprites: spritesheet
-                };
-
-                writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
-                    encoding: "utf-8"
-                });
-
-                // TODO: output SQL statements?
-                if(furnitureData) {
-                    writeFileSync(path.join(outputPath, `${assetName}_serverdata.json`), JSON.stringify(furnitureData, undefined, 2), {
+                    writeFileSync(path.join(outputPath, `${assetName}.json`), JSON.stringify(data, undefined, 2), {
                         encoding: "utf-8"
                     });
+
+                    // TODO: output SQL statements?
+                    if(furnitureData) {
+                        writeFileSync(path.join(outputPath, `${assetName}_serverdata.json`), JSON.stringify(furnitureData, undefined, 2), {
+                            encoding: "utf-8"
+                        });
+                    }
                 }
+
+                console.log("Exported " + assetName);
+
+                resolve();
             }
-        }
-        catch(error) {
-            console.error(error);
-        }
+            catch(error) {
+                console.error(error);
+
+                reject();
+            }
+        });
     }
 })();
