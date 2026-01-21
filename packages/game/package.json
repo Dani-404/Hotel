@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "start": "npm run build",
+    "start": "npm run watch",
     "build": "npx parcel build src/index.tsx --dist-dir ../../build/game",
     "watch": "npx parcel watch src/index.tsx --dist-dir ../../build/game",
     "spritesheet": "npx ts-node src/UserInterface/utils/generateSpritesheet.ts",

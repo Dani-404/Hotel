@@ -33,4 +33,20 @@ export default class RoomFurnitureItem {
 
         // TODO: add furniture back to user inventory
     }
+
+    public getWalkable() {
+        if(this.model.furniture.flags.walkable) {
+            return true;
+        }
+
+        if(this.model.furniture.flags.sitable) {
+            return true;
+        }
+
+        if(this.model.furniture.category === "gate" && this.model.animation !== 0) {
+            return true;
+        }
+
+        return false;
+    }
 }

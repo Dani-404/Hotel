@@ -70,18 +70,10 @@ export default class RoomUser {
         const furniture = this.room.getUpmostFurnitureAtPosition(nextPosition);
 
         if(furniture) {
-            if(!furniture.model.furniture.flags.walkable && !furniture.model.furniture.flags.sitable) {
-                let allowBypass = false;
+            if(!furniture.getWalkable()) {
+                this.path = [];
 
-                if(furniture.model.furniture.category === "gate" && furniture.model.animation !== 0) {
-                    allowBypass = true;
-                }
-
-                if(!allowBypass) {
-                    this.path = [];
-
-                    return [];
-                }
+                return [];
             }
         }
 

@@ -2,6 +2,7 @@
   "type": "module",
   "composite": true,
   "scripts": {
+    "start": "npm run watch",
     "build": "npx tsc",
     "watch": "npx tsc -w"
   },
