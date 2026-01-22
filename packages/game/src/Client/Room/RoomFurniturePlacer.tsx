@@ -137,11 +137,11 @@ export default class RoomFurniturePlacer {
         const entity = this.roomInstance.roomRenderer.getItemAtPosition((item) => item.type === this.roomFurnitureItem.furnitureRenderer.placement);
 
         if(!entity || !this.roomFurnitureItem.position) {
-            this.onCancel?.();
-
-            if(this.temporaryFurniture) {
+            if(this.originalPosition) {
                this.roomFurnitureItem.position = this.originalPosition;
             }
+
+            this.onCancel?.();
         }
         else {
             this.onPlace?.(this.roomFurnitureItem.position, this.roomFurnitureItem.furnitureRenderer.direction!);
@@ -182,7 +182,6 @@ export default class RoomFurniturePlacer {
             }
         }
         else {
-            this.roomFurnitureItem.position = this.originalPosition;
             this.roomFurnitureItem.alpha = 1;
             this.roomFurnitureItem.disabled = false;
         }
