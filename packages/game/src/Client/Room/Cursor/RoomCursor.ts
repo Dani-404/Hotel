@@ -11,6 +11,7 @@ import StoppedFollowingFigure from "./Events/StoppedFollowingFigure";
 import { clientInstance, webSocketClient } from "../../..";
 import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData";
 import { PickupRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PickupRoomFurnitureEventData";
+import { UseRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UseRoomFurnitureEventData";
 
 // TODO: rework hovering/following figure to regular hover events? maybe not for performance sake?
 export default class RoomCursor extends EventTarget {
@@ -37,6 +38,7 @@ export default class RoomCursor extends EventTarget {
         this.roomRenderer.addEventListener("render", this.render.bind(this));
         this.roomRenderer.addEventListener("frame", this.frame.bind(this));
         this.roomRenderer.element.addEventListener("mousedown", this.mousedown.bind(this));
+        this.roomRenderer.element.addEventListener("dblclick", this.doubleclick.bind(this));
         this.roomRenderer.element.addEventListener("click", this.click.bind(this));
     }
 
@@ -53,6 +55,27 @@ export default class RoomCursor extends EventTarget {
 
                 if(event.altKey) {
                     this.roomRenderer.roomInstance.moveFurniture(roomFurnitureItem.data.id);
+                }
+            }
+        }
+    }
+
+    private doubleclick(event: MouseEvent) {
+        if(this.cursorDisabled) {
+            return;
+        }
+
+        const otherEntity = this.roomRenderer.getItemAtPosition((item) => item.type !== "floor" && item.type !== "wall");
+        
+        if(this.roomRenderer.roomInstance && otherEntity) {
+            if(otherEntity.item instanceof RoomFurnitureItem) {
+                const roomFurnitureItem = this.roomRenderer.roomInstance?.getFurnitureByItem(otherEntity.item);
+
+                if((otherEntity.item.furnitureRenderer.getNextAnimation() !== otherEntity.item.furnitureRenderer.animation)) {
+                    webSocketClient.send<UseRoomFurnitureEventData>("UseRoomFurnitureEvent", {
+                        roomFurnitureId: roomFurnitureItem.data.id,
+                        animation: otherEntity.item.furnitureRenderer.getNextAnimation()
+                    });
                 }
             }
         }
