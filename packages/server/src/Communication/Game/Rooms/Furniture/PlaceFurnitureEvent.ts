@@ -19,6 +19,6 @@ export default class PlaceFurnitureEvent implements IncomingEvent<PlaceFurniture
 
         inventory.setFurnitureQuantity(userFurniture, userFurniture.quantity - 1);
 
-        RoomFurniture.create(user.room, userFurniture.furniture, event.position, event.direction);
+        RoomFurniture.create(user.room, user, userFurniture.furniture, event.position, event.direction);
     }
 }

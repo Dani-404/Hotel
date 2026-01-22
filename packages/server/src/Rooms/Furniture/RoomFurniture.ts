@@ -6,26 +6,49 @@ import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/F
 import { FurnitureModel } from "../../Database/Models/Furniture/FurnitureModel.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { randomUUID } from "node:crypto";
+import { UserModel } from "../../Database/Models/Users/UserModel.js";
+import { UserFurnitureModel } from "../../Database/Models/Users/Furniture/UserFurnitureModel.js";
+import { game } from "../../index.js";
+import { UserFurnitureEventData } from "@shared/Communications/Responses/Inventory/UserFurnitureEventData.js";
+import User from "../../Users/User.js";
 
 export default class RoomFurniture {
     constructor(private readonly room: Room, public readonly model: RoomFurnitureModel) {
     }
 
-    public static async create(room: Room, furniture: FurnitureModel, position: RoomPosition, direction: number) {
+    public static async create(room: Room, user: User, furniture: FurnitureModel, position: RoomPosition, direction: number) {
         const createdRoomFurniture = await RoomFurnitureModel.create({
             id: randomUUID(),
             roomId: room.model.id,
+            userId: user.model.id,
             furnitureId: furniture.id,
             position: position,
             direction,
             animation: 0
+        }, {
+            include: [
+                {
+                    model: UserModel,
+                    as: "user"
+                },
+                {
+                    model: FurnitureModel,
+                    as: "furniture"
+                }
+            ]
         });
 
         const roomFurnitureModel = await RoomFurnitureModel.findByPk(createdRoomFurniture.id, {
-            include: {
-                model: FurnitureModel,
-                as: "furniture"
-            }
+            include: [
+                {
+                    model: FurnitureModel,
+                    as: "furniture"
+                },
+                {
+                    model: UserModel,
+                    as: "user"
+                }
+            ]
         });
 
         if(!roomFurnitureModel) {
@@ -61,7 +84,7 @@ export default class RoomFurniture {
         };
     }
 
-    public pickup() {
+    public async pickup() {
         this.room.furnitures.splice(this.room.furnitures.indexOf(this), 1);
 
         this.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
@@ -72,9 +95,47 @@ export default class RoomFurniture {
             ]
         }));
 
-        this.model.destroy();
-
         // TODO: add furniture back to user inventory
+        let userFurniture = await UserFurnitureModel.findOne<UserFurnitureModel>({
+            where: {
+                userId: this.model.user.id,
+                furnitureId: this.model.furniture.id
+            }
+        });
+
+        if(userFurniture) {
+            userFurniture = await userFurniture.update({
+                quantity: userFurniture.quantity + 1
+            });
+        }
+        else {
+            userFurniture = await UserFurnitureModel.create({
+                id: randomUUID(),
+                userId: this.model.user.id,
+                furnitureId: this.model.furniture.id
+            }, {
+                include: {
+                    model: FurnitureModel,
+                    as: "furniture"
+                }
+            });
+        }
+
+        const user = game.getUserById(this.model.user.id);
+
+        if(user) {
+            user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
+                updatedUserFurniture: [
+                    {
+                        id: userFurniture.id,
+                        quantity: userFurniture.quantity,
+                        furnitureData: this.model.furniture
+                    }
+                ]
+            }));
+        }
+     
+        await this.model.destroy();
     }
 
     public isWalkable() {

@@ -84,7 +84,15 @@ webSocketServer.on("connection", async (webSocket, request) => {
         return webSocket.close();
     }
 
+    if(game.users.some((user) => user.model.id === model.id)) {
+        console.warn("User is already connected.");
+
+        return webSocket.close();
+    }
+
     const user = new User(webSocket, model);
+
+    game.users.push(user);
 
     webSocket.on("error", console.error);
 
@@ -93,6 +101,12 @@ webSocketServer.on("connection", async (webSocket, request) => {
     });
 
     webSocket.on("close", () => {
+        const index = game.users.indexOf(user);
+
+        if(index !== -1) {
+            game.users.splice(index, 1);
+        }
+
         user.emit("close", user);
     });
 });

@@ -2,6 +2,7 @@ import { FurnitureModel } from "../Database/Models/Furniture/FurnitureModel.js";
 import { RoomModel } from "../Database/Models/Rooms/RoomModel.js";
 import { RoomFurnitureModel } from "../Database/Models/Rooms/RoomFurnitureModel.js";
 import Room from "./Room.js";
+import { UserModel } from "../Database/Models/Users/UserModel.js";
 
 // TODO: do we really need the Room model in the functions or is it sufficient with a roomId?
 export default class RoomManager {
@@ -33,6 +34,10 @@ export default class RoomManager {
                     {
                         model: FurnitureModel,
                         as: "furniture"
+                    },
+                    {
+                        model: UserModel,
+                        as: "user"
                     }
                 ]
             }

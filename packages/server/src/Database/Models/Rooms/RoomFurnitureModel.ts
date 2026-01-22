@@ -3,6 +3,7 @@ import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { NonAttribute } from "@sequelize/core";
 import { FurnitureModel } from "../Furniture/FurnitureModel.js";
 import { RoomModel } from "./RoomModel.js";
+import { UserModel } from "../Users/UserModel.js";
 
 export class RoomFurnitureModel extends Model {
     declare id: string;
@@ -10,6 +11,7 @@ export class RoomFurnitureModel extends Model {
     declare direction: number;
     declare animation: number;
 
+    declare user: NonAttribute<UserModel>;
     declare furniture: NonAttribute<FurnitureModel>;
 }
 
@@ -52,6 +54,11 @@ export function initializeRoomFurnitureModel(sequelize: Sequelize) {
     RoomFurnitureModel.belongsTo(FurnitureModel, {
         as: "furniture",
         foreignKey: "furnitureId"
+    });
+
+    RoomFurnitureModel.belongsTo(UserModel, {
+        as: "user",
+        foreignKey: "userId"
     });
     
     RoomModel.hasMany(RoomFurnitureModel, {

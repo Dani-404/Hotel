@@ -645,6 +645,13 @@ export async function initializeDevelopmentData() {
 
     const furniture = (await FurnitureModel.findOne({ where: { type: "rare_dragonlamp", color: 1 } }));
 
+    const user = await UserModel.create({
+        id: "user1",
+        name: "Muff1n-Pixel",
+        figureConfiguration: [{ "type": "hd", "setId": "180", "colorIndex": 2 }, { "type": "hr", "setId": "828", "colorIndex": 31 }, { "type": "ea", "setId": "3196", "colorIndex": 62 }, { "type": "ch", "setId": "255", "colorIndex": 1415 }, { "type": "lg", "setId": "3216", "colorIndex": 110 }, { "type": "sh", "setId": "305", "colorIndex": 62 }],
+        homeRoomId: "room1"
+    });
+
     for (let color = 0; color < 3; color++)
         for (let direction = 0; direction < 2; direction++)
             for (let index = 0; index < 20; index++) {
@@ -652,6 +659,7 @@ export async function initializeDevelopmentData() {
                     id: randomUUID(),
                     roomId: room.id,
                     furnitureId: furniture!.id,
+                    userId: user.id,
                     position: {
                         row: (11 + (color * 2)) + direction,
                         column: 1 + index,
@@ -661,13 +669,6 @@ export async function initializeDevelopmentData() {
                     animation: 1
                 });
             }
-
-    const user = await UserModel.create({
-        id: "user1",
-        name: "Muff1n-Pixel",
-        figureConfiguration: [{ "type": "hd", "setId": "180", "colorIndex": 2 }, { "type": "hr", "setId": "828", "colorIndex": 31 }, { "type": "ea", "setId": "3196", "colorIndex": 62 }, { "type": "ch", "setId": "255", "colorIndex": 1415 }, { "type": "lg", "setId": "3216", "colorIndex": 110 }, { "type": "sh", "setId": "305", "colorIndex": 62 }],
-        homeRoomId: "room1"
-    });
 
     await UserFurnitureModel.bulkCreate([
         {
