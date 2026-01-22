@@ -147,7 +147,7 @@ export default class FigureWorkerRenderer {
 
                                 flipHorizontal: (this.direction > 3 && this.direction < 7)?(!Boolean(assetData.flipHorizontal)):(assetData.flipHorizontal),
 
-                                color: (setPartData.colorable && configurationPart.colorIndex)?(paletteColor?.color):(undefined),
+                                color: (setPartData.colorable && configurationPart.colorIndex && setPartData.type !== "ey")?(paletteColor?.color):(undefined),
 
                                 ignoreImageData: true
                             });
