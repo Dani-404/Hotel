@@ -65,7 +65,7 @@ export function initializeFurnitureModel(sequelize: Sequelize) {
                   this.setDataValue("flags", JSON.stringify(value));
               },
               allowNull: false
-          },
+          }
         },
         {
           tableName: "furnitures",

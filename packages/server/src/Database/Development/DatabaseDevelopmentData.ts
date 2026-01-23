@@ -4,7 +4,7 @@ import { randomUUID } from "crypto";
 import { ShopPageModel } from "../Models/Shop/ShopPageModel.js";
 import { ShopPageFurnitureModel } from "../Models/Shop/ShopPageFurnitureModel.js";
 import { FurnitureModel } from "../Models/Furniture/FurnitureModel.js";
-import { getExistingFurnitureAssets } from "./FurnitureDevelopmentData.js";
+import { getExistingFurnitureAssets, getFloorIds, getWallIds } from "./FurnitureDevelopmentData.js";
 import { UserModel } from "../Models/Users/UserModel.js";
 import { UserFurnitureModel } from "../Models/Users/Furniture/UserFurnitureModel.js";
 import { RoomMapModel } from "../Models/Rooms/Maps/RoomMapModel.js";
@@ -57,6 +57,28 @@ const defaultShopPages: any = [
                     { type: "studio_guitar", credits: 7 },
                     { type: "cine_vipsign", credits: 3 }
                 ]
+            },
+
+            {
+                title: "Wallpapers",
+                furnitures: getWallIds().map((wallId: number) => {
+                    return {
+                        type: "wallpaper",
+                        color: wallId,
+                        credits: 2
+                    };
+                })
+            },
+
+            {
+                title: "Floors",
+                furnitures: getFloorIds().map((floorId: number) => {
+                    return {
+                        type: "floor",
+                        color: floorId,
+                        credits: 2
+                    };
+                })
             }
         ]
     },
@@ -503,7 +525,8 @@ export async function initializeDevelopmentData() {
             });
 
             await ShopPageFurnitureModel.bulkCreate(furnitureData.map((furniture) => {
-                const furnitureShopData = child.furnitures.find((childFurniture: any) => childFurniture.type === furniture.type && childFurniture.color === (furniture.color ?? undefined));
+                const furnitureShopData = child.furnitures.find((childFurniture: any) => childFurniture.type === furniture.type && (furniture.color)?(childFurniture.color === furniture.color):(true));
+
 
                 return {
                     id: randomUUID(),

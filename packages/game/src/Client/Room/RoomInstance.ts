@@ -22,6 +22,7 @@ import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/F
 import RoomFurniturePlacer from "@Client/Room/RoomFurniturePlacer";
 import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
+import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -37,21 +38,42 @@ export default class RoomInstance {
     private readonly users: RoomItem<RoomUserData, RoomFigureItem>[] = [];
     public furnitures: RoomItem<RoomFurnitureData, RoomFurnitureItem>[] = [];
 
+    private roomFloorItem?: RoomFloorItem;
+    private roomWallItem?: RoomWallItem;
+
     constructor(public readonly clientInstance: ClientInstance, event: LoadRoomEventData) {
         this.roomRenderer = new RoomRenderer(clientInstance.element, clientInstance, this, event.structure);
-        
-        this.roomRenderer.items.push(new RoomFloorItem(
-            new FloorRenderer(event.structure, event.structure.floor.id, 64),
-        ));
 
-        this.roomRenderer.items.push(new RoomWallItem(
-            new WallRenderer(event.structure, event.structure.wall.id, 64)
-        ));
+        this.setStructure(event.structure);
 
         this.users = event.users.map((userData) => this.addUser(userData));
         event.furnitures.map(this.addFurniture.bind(this));
 
         this.registerEventListeners();
+    }
+
+    public setStructure(structure: RoomStructure) {
+        if(this.roomFloorItem) {
+            this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(this.roomFloorItem), 1);
+            this.roomFloorItem = undefined;
+        }
+
+        this.roomFloorItem = new RoomFloorItem(
+            new FloorRenderer(structure, structure.floor.id, 64),
+        );
+
+        this.roomRenderer.items.push(this.roomFloorItem);
+
+        if(this.roomWallItem) {
+            this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(this.roomWallItem), 1);
+            this.roomWallItem = undefined;
+        }
+
+        this.roomWallItem = new RoomWallItem(
+            new WallRenderer(structure, structure.wall.id, 64)
+        );
+
+        this.roomRenderer.items.push(this.roomWallItem);
     }
 
     public terminate() {

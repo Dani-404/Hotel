@@ -29,7 +29,7 @@ export default class FloorRenderer {
     private fullSize: number;
     private halfSize: number;
 
-    constructor(public readonly structure: RoomStructure, private readonly floorId: string, private readonly size: number) {
+    constructor(public readonly structure: RoomStructure, public floorId: string, private readonly size: number) {
         this.rows = this.structure.grid.length;
         this.columns = Math.max(...this.structure.grid.map((row) => row.length));
         this.depth = 0;

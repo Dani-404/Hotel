@@ -11,6 +11,7 @@ import InventoryEmptyTab from "./InventoryEmptyTab";
 import { useRoomInstance } from "../../../hooks/useRoomInstance";
 import { UserFurnitureEventData } from "@Shared/Communications/Responses/Inventory/UserFurnitureEventData";
 import { PlaceFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PlaceFurnitureEventData";
+import { PlaceRoomContentFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PlaceRoomContentFurnitureEventData";
 
 export default function InventoryFurnitureTab() {
     const { setDialogHidden } = useContext(AppContext);
@@ -124,6 +125,14 @@ export default function InventoryFurnitureTab() {
 
     const onPlaceInRoomClick = useCallback(() => {
         if(!activeFurniture) {
+            return;
+        }
+
+        if(activeFurniture.furnitureData.type === "wallpaper" || activeFurniture.furnitureData.type === "floor") {
+            webSocketClient.send<PlaceRoomContentFurnitureEventData>("PlaceRoomContentFurnitureEvent", {
+                userFurnitureId: activeFurniture.id
+            });
+
             return;
         }
 

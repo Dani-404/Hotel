@@ -4,6 +4,8 @@ import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
 import RoomUser from "./Users/RoomUser.js";
 import RoomFurniture from "./Furniture/RoomFurniture.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
+import { RoomStructureEventData } from "@shared/Communications/Responses/Rooms/RoomStructureEventData.js";
+import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
 
 export default class Room {
     public readonly users: RoomUser[] = [];
@@ -103,5 +105,31 @@ export default class Room {
         }
 
         return furniture.model.position.depth + furniture.model.furniture.dimensions.depth;
+    }
+
+    public async setFloorId(id: number) {
+        const structure = this.getStructure();
+        structure.floor.id = id.toString();
+
+        await this.model.update({ structure });
+
+        this.sendRoomEvent(new OutgoingEvent<RoomStructureEventData>("RoomStructureEvent", {
+            structure: this.model.structure
+        }));
+    }
+
+    public async setWallId(id: number) {
+        const structure = this.getStructure();
+        structure.wall.id = id.toString();
+
+        await this.model.update({ structure });
+
+        this.sendRoomEvent(new OutgoingEvent<RoomStructureEventData>("RoomStructureEvent", {
+            structure: this.model.structure
+        }));
+    }
+
+    private getStructure() {
+        return {...this.model.structure};
     }
 }

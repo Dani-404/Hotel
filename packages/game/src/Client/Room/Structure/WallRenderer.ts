@@ -38,7 +38,7 @@ export default class WallRenderer {
     private fullSize: number;
     private halfSize: number;
 
-    constructor(public readonly structure: RoomStructure, private readonly wallId: string, public readonly size: number) {
+    constructor(public readonly structure: RoomStructure, public wallId: string, public readonly size: number) {
         this.rows = this.structure.grid.length;
         this.columns = Math.max(...this.structure.grid.map((row) => row.length));
         this.depth = 0;
@@ -221,6 +221,8 @@ export default class WallRenderer {
     }
 
     private renderLeftWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap) {
+        this.leftWalls = [];
+
         context.beginPath();
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -288,6 +290,8 @@ export default class WallRenderer {
     }
 
     private renderRightWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap) {
+        this.rightWalls = [];
+
         context.beginPath();
         context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);        
         context.fillStyle = context.createPattern(image, "repeat")!;

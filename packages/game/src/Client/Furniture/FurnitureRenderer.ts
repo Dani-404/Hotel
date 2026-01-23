@@ -2,6 +2,7 @@ import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError";
 import FurnitureAssets from "../Assets/FurnitureAssets";
 import { FurnitureData } from "../Interfaces/Furniture/FurnitureData";
 import { FurnitureVisualization } from "@Client/Interfaces/Furniture/FurnitureVisualization";
+import FurnitureRoomContentRenderer from "@Client/Furniture/FurnitureRoomContentRenderer";
 
 export type FurnitureRendererSprite = {
     image: ImageBitmap;
@@ -18,16 +19,12 @@ export type FurnitureRendererSprite = {
 }
 
 export default class FurnitureRenderer {
-    public isReady: boolean = false;
-
-    public isAnimated: boolean = false;
-
     private data?: FurnitureData;
     private visualization?: FurnitureVisualization["visualizations"][0];
 
     public placement?: "wall" | "floor";
 
-    private frame: number = 0;
+    public frame: number = 0;
 
     constructor(public readonly type: string, public readonly size: number, public direction: number | undefined = undefined, public animation: number = 0, public color: number = 0) {
         /*if(this.type.includes('*')) {
@@ -36,6 +33,10 @@ export default class FurnitureRenderer {
             this.type = type;
             this.color = parseInt(color);
         }*/
+
+        if((this.type === "wallpaper" || this.type === "floor") && color !== 0) {
+            return new FurnitureRoomContentRenderer(type, size, direction, animation, color);
+        }
     }
 
     public async getData() {
@@ -72,8 +73,6 @@ export default class FurnitureRenderer {
         }
 
         const animation = this.visualization.animations?.find((animation) => animation.id === this.animation);
-
-        this.isAnimated = Boolean(animation);
 
         const directionData = this.visualization.directions.find((direction) => direction.id === this.direction);
 
@@ -168,7 +167,7 @@ export default class FurnitureRenderer {
                 x,
                 y: assetData.y,
 
-                ink: this.getGlobalCompositeModeFromInk(layerData?.ink),
+                ink: FurnitureRenderer.getGlobalCompositeModeFromInk(layerData?.ink),
 
                 zIndex: directionLayerData?.zIndex ?? layerData?.zIndex ?? 0,
                 alpha: layerData?.alpha,
@@ -233,7 +232,7 @@ export default class FurnitureRenderer {
         return createImageBitmap(canvas);
     }
 
-    private getGlobalCompositeModeFromInk(ink?: string): GlobalCompositeOperation | undefined {
+    public static getGlobalCompositeModeFromInk(ink?: string): GlobalCompositeOperation | undefined {
         switch(ink) {
             case "ADD":
                 return "lighter";

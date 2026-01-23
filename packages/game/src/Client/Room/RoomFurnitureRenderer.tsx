@@ -15,6 +15,12 @@ export type RoomFurnitureRendererOptions = {
 export default class RoomFurnitureRenderer {
     private readonly roomRenderer: RoomRenderer;
     private roomItem?: RoomFurnitureItem;
+
+    private wallRenderer: WallRenderer;
+    private wallItem: RoomWallItem;
+
+    private floorRenderer: FloorRenderer;
+    private floorItem: RoomFloorItem;
     
     constructor(element: HTMLDivElement, options: RoomFurnitureRendererOptions) {
         const roomStructure: RoomStructure = {
@@ -56,24 +62,36 @@ export default class RoomFurnitureRenderer {
             }
         });
 
+        this.wallRenderer = new WallRenderer(roomStructure, roomStructure.wall.id, 64);
+        this.wallItem = new RoomWallItem(this.wallRenderer);
+
         if(!options.withoutWalls) {
-            this.roomRenderer.items.push(
-                new RoomWallItem(
-                    new WallRenderer(roomStructure, roomStructure.wall.id, 64)
-                )
-            );
+            this.roomRenderer.items.push(this.wallItem);
         }
+
+        this.floorRenderer = new FloorRenderer(roomStructure, roomStructure.floor.id, 64);
+        this.floorItem = new RoomFloorItem(this.floorRenderer);
     
-        this.roomRenderer.items.push(
-            new RoomFloorItem(
-                new FloorRenderer(roomStructure, roomStructure.floor.id, 64),
-            )
-        );
+        this.roomRenderer.items.push(this.floorItem);
     }
 
     async setFurniture(type: string, size: number, direction: number | undefined = undefined, animation: number = 0, color: number = 0) {
         if(this.roomItem) {
             this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(this.roomItem), 1);
+        }
+
+        if(type === "wallpaper") {
+            this.wallRenderer.wallId = color.toString();
+            this.wallItem.render();
+
+            return;
+        }
+
+        if(type === "floor") {
+            this.floorRenderer.floorId = color.toString();
+            this.floorItem.render();
+
+            return;
         }
 
         const furnitureData = await FurnitureAssets.getFurnitureData(type);
