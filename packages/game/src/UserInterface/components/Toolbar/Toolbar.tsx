@@ -5,6 +5,7 @@ import { AppContext } from "../../contexts/AppContext";
 import WardrobeDialog from "../Wardrobe/WardrobeDialog";
 import { useRoomInstance } from "../../hooks/useRoomInstance";
 import { webSocketClient } from "../../..";
+import ToolbarChatbar from "./Chatbar/ToolbarChatbar";
 
 export default function Toolbar() {
     const room = useRoomInstance();
@@ -78,6 +79,14 @@ export default function Toolbar() {
                         <ToolbarFigureItem/>
                     </ToolbarItem>
                 )}
+            </div>
+
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            }}>
+                <ToolbarChatbar/>
             </div>
         </div>
     );

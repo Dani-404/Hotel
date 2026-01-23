@@ -64,12 +64,17 @@ const defaultShopPages: any = [
         title: "By design",
         description: "Lalallala",
 
-        icon: "icon_72.png",
+        icon: "icon_273.png",
         header: "catalog_frontpage_headline_shop_EN.gif",
 
         pages: [
             {
                 title: "Country",
+                description: "There's nothing better than to pack your picnic basket and find a nice spot outdoors to hang out, play and walk on grass barefoot.",
+                
+                icon: "icon_21.png",
+                header: "catalog_frontpage_headline_shop_EN.gif",
+
                 furnitures: [
                     { type: "country_corner", duckets: 75 },
                     { type: "country_log", duckets: 150 },

@@ -36,12 +36,16 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                     
                     type: shopPage.type,
                     
-                    children: shopPage.children.map((shopPage) => {
+                    children: shopPage.children.map((childShopPage) => {
                         return {
-                            id: shopPage.id,
-                            title: shopPage.title,
-                            type: shopPage.type,
-                            icon: shopPage.icon ?? undefined,
+                            id: childShopPage.id,
+                            title: childShopPage.title,
+                            description: childShopPage.description,
+                            
+                            type: childShopPage.type,
+                            
+                            icon: childShopPage.icon ?? undefined,
+                            header: childShopPage.header ?? shopPage.header ?? undefined,
                         };
                     })
                 };
