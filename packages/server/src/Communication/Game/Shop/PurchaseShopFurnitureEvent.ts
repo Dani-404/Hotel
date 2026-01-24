@@ -5,6 +5,7 @@ import { PurchaseShopFurnitureEventData } from "@shared/Communications/Requests/
 import { ShopPageFurnitureModel } from "../../../Database/Models/Shop/ShopPageFurnitureModel.js";
 import { FurnitureModel } from "../../../Database/Models/Furniture/FurnitureModel.js";
 import { ShopFurniturePurchasedEventData } from "@shared/Communications/Responses/Shop/ShopFurniturePurchasedEventData.js";
+import { UserEventData } from "@shared/Communications/Responses/User/UserEventData.js";
 
 export default class PurchaseShopFurnitureEvent implements IncomingEvent<PurchaseShopFurnitureEventData> {
     async handle(user: User, event: PurchaseShopFurnitureEventData) {
@@ -26,10 +27,52 @@ export default class PurchaseShopFurnitureEvent implements IncomingEvent<Purchas
             return;
         }
 
+        if((shopFurniture.credits && user.model.credits < shopFurniture.credits)) {
+            user.send(new OutgoingEvent<ShopFurniturePurchasedEventData>("ShopFurniturePurchasedEvent", {
+                success: false
+            }));
+
+            return;
+        }
+
+        if((shopFurniture.duckets && user.model.duckets < shopFurniture.duckets)) {
+            user.send(new OutgoingEvent<ShopFurniturePurchasedEventData>("ShopFurniturePurchasedEvent", {
+                success: false
+            }));
+
+            return;
+        }
+
+        if((shopFurniture.diamonds && user.model.diamonds < shopFurniture.diamonds)) {
+            user.send(new OutgoingEvent<ShopFurniturePurchasedEventData>("ShopFurniturePurchasedEvent", {
+                success: false
+            }));
+
+            return;
+        }
+
+        user.model.credits -= shopFurniture.credits ?? 0;
+        user.model.duckets -= shopFurniture.duckets ?? 0;
+        user.model.diamonds -= shopFurniture.diamonds ?? 0;
+
+        await user.model.save();
+
         await user.getInventory().addFurniture(shopFurniture.furniture);
 
-        user.send(new OutgoingEvent<ShopFurniturePurchasedEventData>("ShopFurniturePurchasedEvent", {
-            success: true
-        }));
+        console.log("two");
+
+        user.send([
+            new OutgoingEvent<ShopFurniturePurchasedEventData>("ShopFurniturePurchasedEvent", {
+                success: true
+            }),
+            new OutgoingEvent<UserEventData>("UserEvent", {
+                id: user.model.id,
+                name: user.model.name,
+                figureConfiguration: user.model.figureConfiguration,
+                credits: user.model.credits,
+                duckets: user.model.duckets,
+                diamonds: user.model.diamonds,
+            })
+        ]);
     }
 }
