@@ -151,6 +151,10 @@ export default class RoomFurniturePlacer {
     }
 
     public startPlacing(onPlace: (position: RoomPosition, direction: number) => void, onCancel: () => void) {
+        if(this.roomFurnitureItem.furnitureRenderer.type === "wallpaper" || this.roomFurnitureItem.furnitureRenderer.type === "floor") {
+            return;
+        }
+        
         this.onPlace = onPlace;
         this.onCancel = onCancel;
 
