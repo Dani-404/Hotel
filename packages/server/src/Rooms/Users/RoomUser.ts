@@ -7,10 +7,12 @@ import { UserEnteredRoomEventData } from "@shared/Communications/Responses/Rooms
 import { RoomUserData } from "@shared/Interfaces/Room/RoomUserData.js";
 import { UserWalkToEventData } from "@shared/Communications/Responses/Rooms/Users/UserWalkToEventData.js";
 import { LoadRoomEventData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
+import { UserActionEventData } from "@shared/Communications/Responses/Rooms/Users/UserActionEventData.js";
 
 export default class RoomUser {
     public position: RoomPosition;
     public direction: number;
+    public actions: string[] = [];
 
     public path?: Omit<RoomPosition, "depth">[];
 
@@ -64,7 +66,7 @@ export default class RoomUser {
         const nextPosition = this.path?.[0];
         
         if(!nextPosition) {
-            return [];
+            return;
         }
 
         const furniture = this.room.getUpmostFurnitureAtPosition(nextPosition);
@@ -73,7 +75,7 @@ export default class RoomUser {
             if(!furniture.isWalkable()) {
                 this.path = [];
 
-                return [];
+                return;
             }
         }
 
@@ -85,9 +87,9 @@ export default class RoomUser {
             depth
         };
 
-        const outgoingEvents: OutgoingEvent[] = [];
+        this.removeAction("Sit");
 
-        outgoingEvents.push(new OutgoingEvent<UserWalkToEventData>("UserWalkToEvent", {
+        this.room.outgoingEvents.push(new OutgoingEvent<UserWalkToEventData>("UserWalkToEvent", {
             userId: this.user.model.id,
             from: this.position,
             to: position
@@ -95,8 +97,6 @@ export default class RoomUser {
 
         this.position = position;
         this.path!.splice(0, 1);
-
-        return outgoingEvents;
     }
 
     private readonly disconnectListener = this.disconnect.bind(this);
@@ -112,5 +112,35 @@ export default class RoomUser {
         delete this.user.room;
 
         this.user.send(new OutgoingEvent("LeaveRoomEvent", null));
+    }
+
+    public addAction(action: string) {
+        if(this.actions.includes(action)) {
+            return;
+        }
+
+        this.actions.push(action);
+
+        this.room.outgoingEvents.push(
+            new OutgoingEvent<UserActionEventData>("UserActionEvent", {
+                userId: this.user.model.id,
+                actionsAdded: [action],
+            })
+        );
+    }
+
+    public removeAction(action: string) {
+        if(!this.actions.includes(action)) {
+            return;
+        }
+
+        this.actions.splice(this.actions.indexOf(action), 1);
+
+        this.room.outgoingEvents.push(
+            new OutgoingEvent<UserActionEventData>("UserActionEvent", {
+                userId: this.user.model.id,
+                actionsRemoved: [action],
+            })
+        );
     }
 }

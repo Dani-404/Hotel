@@ -157,7 +157,7 @@ export default class RoomInstance {
         this.users.splice(this.users.indexOf(user), 1);
     }
 
-    private getUserById(userId: string) {
+    public getUserById(userId: string) {
         const user = this.users.find((user) => user.data.id === userId);
 
         if(!user) {

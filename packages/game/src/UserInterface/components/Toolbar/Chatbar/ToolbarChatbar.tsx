@@ -1,4 +1,22 @@
+import { useCallback, useContext, useState } from "react";
+import { webSocketClient } from "../../../..";
+import { SendUserMessageEventData } from "@Shared/Communications/Requests/Rooms/User/SendUserMessageEventData";
+
 export default function ToolbarChatbar() {
+    const [value, setValue] = useState("");
+
+    const handleSubmit = useCallback(() => {
+        if(!value.length) {
+            return;
+        }
+
+        webSocketClient.send<SendUserMessageEventData>("SendUserMessageEvent", {
+            message: value
+        });
+
+        setValue("");
+    }, [value]);
+
     return (
         <div style={{
             border: "2px solid #000",
@@ -27,14 +45,19 @@ export default function ToolbarChatbar() {
                 </div>
             </div>
 
-            <input type="text" style={{
-                flex: 1,
-                border: "none",
-                borderTopRightRadius: 8,
-                borderBottomRightRadius: 8,
-                fontSize: 16,
-                background: "transparent"
-            }}/>
+            <input
+                type="text"
+                value={value}
+                onChange={(event) => setValue((event.target as HTMLInputElement).value)}
+                onKeyUp={(event) => event.key === "Enter" && handleSubmit()}
+                style={{
+                    flex: 1,
+                    border: "none",
+                    borderTopRightRadius: 8,
+                    borderBottomRightRadius: 8,
+                    fontSize: 16,
+                    background: "transparent"
+                }}/>
         </div>
     );
 }

@@ -21,6 +21,7 @@ import UpdateRoomFurnitureEvent from "./Communication/Game/Rooms/Furniture/Updat
 import PickupRoomFurnitureEvent from "./Communication/Game/Rooms/Furniture/PickupRoomFurnitureEvent.js";
 import UseRoomFurnitureEvent from "./Communication/Game/Rooms/Furniture/UseRoomFurnitureEvent.js";
 import PlaceRoomContentFurnitureEvent from "./Communication/Game/Rooms/Furniture/PlaceRoomContentFurnitureEvent.js";
+import SendUserMessageEvent from "./Communication/Game/Rooms/User/SendUserMessageEvent.js";
 
 await initializeModels();
 
@@ -43,7 +44,8 @@ eventHandler
     .addIncomingEvent("UseRoomFurnitureEvent", new UseRoomFurnitureEvent())
     .addIncomingEvent("UpdateRoomFurnitureEvent", new UpdateRoomFurnitureEvent())
     .addIncomingEvent("PickupRoomFurnitureEvent", new PickupRoomFurnitureEvent())
-    .addIncomingEvent("StartWalkingEvent", new StartWalkingEvent());
+    .addIncomingEvent("StartWalkingEvent", new StartWalkingEvent())
+    .addIncomingEvent("SendUserMessageEvent", new SendUserMessageEvent());
     
 eventHandler
     .addIncomingEvent("GetUserEvent", new GetUserEvent())

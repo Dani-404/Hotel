@@ -18,6 +18,8 @@ export default class Room {
 
     constructor(public readonly model: RoomModel) {
         this.furnitures = model.roomFurnitures.map((roomFurniture) => new RoomFurniture(this, roomFurniture));
+
+        this.requestActionsFrame();
     }
 
     public addUserClient(user: User) {
@@ -59,24 +61,24 @@ export default class Room {
     }
 
     private handleActionsInterval() {
-        const outgoingEvents: OutgoingEvent[] = [];
-
         const usersWithPath = this.users.filter((user) => user.path?.length);
 
         // TODO: change so that the clients get the full path immediately, and only use this interval to cancel due to obstructions in the path?
         for(let user of usersWithPath) {
-            outgoingEvents.push(...user.handleActionsInterval());
+            user.handleActionsInterval();
         }
 
-        if(outgoingEvents.length) {
-            this.sendRoomEvent(outgoingEvents);
+        if(this.outgoingEvents.length) {
+            this.sendRoomEvent(this.outgoingEvents);
         }
 
-        if(!this.users.some((user) => user.path?.length)) {
+        this.outgoingEvents = [];
+
+        /*if(!this.users.some((user) => user.path?.length)) {
             clearInterval(this.actionsInterval);
 
             delete this.actionsInterval;
-        }
+        }*/
     }
 
     public getUpmostFurnitureAtPosition(position: Omit<RoomPosition, "depth">) {
