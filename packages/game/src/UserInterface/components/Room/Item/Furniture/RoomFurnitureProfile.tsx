@@ -72,10 +72,27 @@ export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfil
 
                 {(item.furnitureRenderer.getNextDirection() !== item.furnitureRenderer.direction) && (
                     <div className="room-furniture-profile-button" onClick={() => {
+                        if(item.positionPathData) {
+                            return;
+                        }
+
                         webSocketClient.send<UpdateRoomFurnitureEventData>("UpdateRoomFurnitureEvent", {
                             roomFurnitureId: data.id,
                             direction: item.furnitureRenderer.getNextDirection()
                         });
+                        
+                        if(item.position) {
+                            item.setPositionPath(item.position, [
+                                {
+                                    ...item.position,
+                                    depth: item.position.depth + 0.25
+                                },
+                                {
+                                    ...item.position,
+                                }
+                            ],
+                            100);
+                        }
                     }}>
                         Rotate
                     </div>

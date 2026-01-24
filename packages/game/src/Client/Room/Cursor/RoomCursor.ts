@@ -152,16 +152,29 @@ export default class RoomCursor extends EventTarget {
         const floorEntity = this.roomRenderer.getItemAtPosition((item) => item.type === "floor");
         const otherEntity = this.roomRenderer.getItemAtPosition((item) => item.type !== "floor" && item.type !== "wall");
 
-        if(this.roomRenderer.roomInstance && otherEntity) {
+        if(this.roomRenderer.roomInstance && otherEntity?.item.position) {
             if(otherEntity.item instanceof RoomFurnitureItem) {
                 const roomFurnitureItem = this.roomRenderer.roomInstance?.getFurnitureByItem(otherEntity.item);
 
                 if(event.shiftKey) {
-                    if((otherEntity.item.furnitureRenderer.getNextDirection() !== otherEntity.item.furnitureRenderer.direction)) {
+                    const nextDirection = otherEntity.item.furnitureRenderer.getNextDirection();
+
+                    if((nextDirection !== otherEntity.item.furnitureRenderer.direction) && roomFurnitureItem.item.position && !roomFurnitureItem.item.positionPathData) {
                         webSocketClient.send<UpdateRoomFurnitureEventData>("UpdateRoomFurnitureEvent", {
                             roomFurnitureId: roomFurnitureItem.data.id,
-                            direction: otherEntity.item.furnitureRenderer.getNextDirection()
+                            direction: nextDirection
                         });
+
+                        roomFurnitureItem.item.setPositionPath(roomFurnitureItem.item.position, [
+                            {
+                                ...roomFurnitureItem.item.position,
+                                depth: roomFurnitureItem.item.position.depth + 0.25
+                            },
+                            {
+                                ...roomFurnitureItem.item.position,
+                            }
+                        ],
+                        100);
                     }
                     
                     return;
