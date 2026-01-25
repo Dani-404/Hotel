@@ -24,6 +24,8 @@ export default function ToolbarFigureItem() {
         if(canvasRef.current && figureImage) {
             const context = canvasRef.current.getContext("2d");
 
+            context?.reset();
+
             context?.translate(20, 22);
             context?.drawImage(figureImage, -128, -96 - 12);
         }

@@ -1,12 +1,14 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Dialog from "../Dialog/Dialog";
 import DialogSubTabs from "../Dialog/Tabs/DialogSubTabs";
 import DialogTabs from "../Dialog/Tabs/DialogTabs";
 import WardrobeAvatar from "./WardrobeAvatar";
 import WardrobeSelection from "./Selection/WardrobeSelection";
-import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import { AppContext } from "../../contexts/AppContext";
 import DialogButton from "../Dialog/Button/DialogButton";
+import { webSocketClient } from "../../..";
+import { SetFigureConfigurationEventData } from "@Shared/Communications/Requests/User/SetFigureConfigurationEventData";
+import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
 
 const wardrobeTabs = [
     {
@@ -91,6 +93,12 @@ export default function WardrobeDialog({ hidden, onClose }: WardrobeDialogProps)
 
         setFigureConfiguration(user.figureConfiguration);
     }, [user?.figureConfiguration]);
+
+    const handleSaveFigure = useCallback(() => {
+        webSocketClient.send<SetFigureConfigurationEventData>("SetFigureConfigurationEvent", {
+            figureConfiguration
+        });
+    }, [figureConfiguration]);
     
     return (
         <Dialog title="Wardrobe" hidden={hidden} onClose={onClose} width={500} height={530}>
@@ -146,7 +154,7 @@ export default function WardrobeDialog({ hidden, onClose }: WardrobeDialogProps)
                                     </div>
 
                                     <div style={{ width: "100%" }}>
-                                        <DialogButton>Save my looks</DialogButton>
+                                        <DialogButton onClick={handleSaveFigure}>Save my looks</DialogButton>
                                     </div>
                                 </div>
                             </div>

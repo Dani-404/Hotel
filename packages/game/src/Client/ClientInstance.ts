@@ -10,6 +10,8 @@ import { UserActionEventData } from "@Shared/Communications/Responses/Rooms/User
 import UserActionEvent from "@Client/Communications/Room/User/UserActionEvent";
 import ObservableProperty from "@Client/Utilities/ObservableProperty";
 import { RoomChatStyleData, RoomChatStylesEventData } from "@Shared/Communications/Responses/Rooms/Chat/Styles/RoomChatStylesEventData";
+import { UserFigureConfigurationEventData } from "@Shared/Communications/Responses/Rooms/Users/UserFigureConfigurationEventData";
+import UserFigureConfigurationEvent from "@Client/Communications/Room/User/UserFigureConfigurationEvent";
 
 export default class ClientInstance extends EventTarget {
     public roomInstance = new ObservableProperty<RoomInstance>();
@@ -25,6 +27,7 @@ export default class ClientInstance extends EventTarget {
         webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", (event) => new RoomFurnitureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomStructureEventData>>("RoomStructureEvent", (event) => new RoomStructureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserActionEventData>>("UserActionEvent", (event) => new UserActionEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<UserFigureConfigurationEventData>>("UserFigureConfigurationEvent", (event) => new UserFigureConfigurationEvent().handle(event));
 
         
         webSocketClient.addEventListener<WebSocketEvent<RoomChatStylesEventData>>("RoomChatStylesEvent", (event) => {
