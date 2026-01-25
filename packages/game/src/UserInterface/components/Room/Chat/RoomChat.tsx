@@ -129,6 +129,10 @@ export default function RoomChat() {
         const timer = setInterval(() => {
             for(let message of messages.current) {
                 message.index++;
+
+                if(message.index > 30) {
+                    messages.current.splice(messages.current.indexOf(message), 1);
+                }
             }
 
             setLatestMessage(performance.now());
