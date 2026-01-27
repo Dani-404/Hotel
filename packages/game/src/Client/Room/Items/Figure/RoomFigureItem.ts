@@ -4,6 +4,7 @@ import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import FigureRenderer from "@Client/Figure/FigureRenderer";
 import RoomFigureSprite from "./RoomFigureSprite";
 import { clientInstance } from "../../../..";
+import RoomFigureEffectSprite from "@Client/Room/Items/Figure/RoomFigureEffectSprite";
 
 export default class RoomFigureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
@@ -28,9 +29,12 @@ export default class RoomFigureItem extends RoomItem {
                 //this.sprites = [new RoomFigureSprite(this, sprites[0])];
             });*/
             
-            this.figureRenderer.renderToCanvas(FigureRenderer.figureWorker, frame).then((sprite) => {
+            this.figureRenderer.renderToCanvas(FigureRenderer.figureWorker, frame).then((result) => {
                 //this.sprites = sprites.map((sprite) => new RoomFigureSprite(this, sprite));
-                this.sprites = [new RoomFigureSprite(this, sprite)];
+                this.sprites = [
+                    new RoomFigureSprite(this, result.figure),
+                    ...result.effects.map((effect) => new RoomFigureEffectSprite(this, effect))
+                ];
             });
     }
 

@@ -12,6 +12,12 @@ import { figureGeometryTypes } from "@Client/Figure/FigureGeometry";
 import { figurePartSets } from "@Client/Figure/FigurePartSets";
 import { FurnitureSprite } from "@Client/Interfaces/Furniture/FurnitureSprites";
 import { FurnitureAsset } from "@Client/Interfaces/Furniture/FurnitureAssets";
+import { getGlobalCompositeModeFromInk, getGlobalCompositeModeFromInkNumber } from "@Client/Renderers/GlobalCompositeModes";
+
+export type FigureRendererResult = {
+    figure: FigureRendererSprite;
+    effects: FigureRendererSprite[];
+};
 
 export type FigureRendererSprite = {
     image: ImageBitmap;
@@ -21,6 +27,8 @@ export type FigureRendererSprite = {
     y: number;
 
     index: number;
+
+    ink?: GlobalCompositeOperation;
 }
 
 type SpriteConfiguration = {
@@ -92,6 +100,10 @@ export default class FigureWorkerRenderer {
         }
 
         const frame = currentSpriteFrame % (effect.data.animation.frames.length - 1);
+
+        if(!effect.data.animation.frames[frame]) {
+            return null;
+        }
 
         return effect.data.animation.frames[frame].bodyParts;
     }
@@ -257,16 +269,19 @@ export default class FigureWorkerRenderer {
 
         const sprites = await this.getFigureSprites(spritesFromConfiguration, actionsForBodyParts);
 
-        if(effect) {
-            const effectSprites = await this.getEffectSprites(effect);
+        const effectSprites = await this.getEffectSprites(effect);
 
-            sprites.push(...effectSprites);
-        }
-
-        return sprites;
+        return {
+            sprites,
+            effectSprites
+        };
     }
 
-    private async getEffectSprites(effect: EffectData): Promise<FigureRendererSprite[]> {
+    private async getEffectSprites(effect?: EffectData): Promise<FigureRendererSprite[]> {
+        if(!effect) {
+            return [];
+        }
+
         // TODO: add effects without animations
         if(!effect.data.animation) {
             return [];
@@ -285,7 +300,7 @@ export default class FigureWorkerRenderer {
                 continue;
             }
 
-            const effectFrame = animationFrame.effects.find((effect) => effect.id === sprite.id);
+            const effectFrame = animationFrame?.effects.find((effect) => effect.id === sprite.id);
 
             const direction = sprite.directions?.find((direction) => direction.id === this.direction);
 
@@ -317,7 +332,9 @@ export default class FigureWorkerRenderer {
                 continue;
             }
 
-            const result = await this.getEffectSprite(effect.library, assetData, spriteData, index);
+            const destinationY = effectFrame?.destinationY ?? 0;
+
+            const result = await this.getEffectSprite(effect.library, assetData, spriteData, index, destinationY, sprite.ink);
 
             if(result) {
                 sprites.push(result);
@@ -327,7 +344,7 @@ export default class FigureWorkerRenderer {
         return sprites;
     }
 
-    private async getFigureSprites(spritesFromConfiguration: SpriteConfiguration[], actionsForBodyParts: BodyPartAction[]) {
+    private async getFigureSprites(spritesFromConfiguration: SpriteConfiguration[], actionsForBodyParts: BodyPartAction[]): Promise<FigureRendererSprite[]> {
         const sprites: FigureRendererSprite[] = [];
 
         const direction = (this.direction > 3 && this.direction < 7)?(6 - this.direction):(this.direction);
@@ -388,7 +405,7 @@ export default class FigureWorkerRenderer {
         return sprites;
     }
 
-    private async getEffectSprite(library: string, assetData: FurnitureAsset, spriteData: FurnitureSprite, index: number) {
+    private async getEffectSprite(library: string, assetData: FurnitureAsset, spriteData: FurnitureSprite, index: number, destinationY: number, ink: number | undefined) {
         const sprite = await FigureAssets.getEffectSprite(library, {
             x: spriteData.x,
             y: spriteData.y,
@@ -404,9 +421,11 @@ export default class FigureWorkerRenderer {
             imageData: sprite.imageData,
             
             x: assetData.x - 32,
-            y: assetData.y + 32,
+            y: destinationY + assetData.y + 32,
 
-            index: index * 100,
+            index,
+
+            ink: (ink !== undefined)?(getGlobalCompositeModeFromInkNumber(ink)):(undefined)
         };
     }
 
@@ -453,18 +472,40 @@ export default class FigureWorkerRenderer {
             x: x - 32,
             y: assetData.y + 32,
 
-            index: partPriority + spriteConfiguration.index,
+            index: partPriority + spriteConfiguration.index
         };
     }
 
+    private async getEffectForAvatar() {
+        const effectData = await this.getEffect();
+
+        if(!effectData?.data.animation) {
+            return null;
+        }
+
+        const currentSpriteFrame = FigureWorkerRenderer.getSpriteFrameFromSequence(this.frame);
+
+        const frame = currentSpriteFrame % effectData.data.animation.frames.length;
+
+        if(!effectData.data.animation.frames[frame]) {
+            return null;
+        }
+
+        return effectData.data.animation.frames[frame].effects.find((effect) => effect.id === "avatar");
+    }
+
     public async renderToCanvas(cropped: boolean = false) {
-        return await new Promise<FigureRendererSprite>(async (resolve, reject) => {
+        return await new Promise<FigureRendererResult>(async (resolve, reject) => {
             try {
-                const sprites = await this.render();
+                const { sprites, effectSprites } = await this.render();
 
                 let minimumX = 128, minimumY = 128, maximumWidth = 128, maximumHeight = 128;
             
                 if(cropped) {
+                    if(effectSprites.length) {
+                        console.warn("Figure render is cropped but contains effect sprites. Effect will not be applied.");
+                    }
+
                     minimumX = 0;
                     minimumY = 0;
                     maximumWidth = 0;
@@ -504,33 +545,39 @@ export default class FigureWorkerRenderer {
                 sprites.sort((a, b) => a.index - b.index);
 
                 for(let sprite of sprites) {
+                    context.save();
+
+                    if(sprite.ink) {
+                        context.globalCompositeOperation = sprite.ink;
+                    }
+
                     context.drawImage(sprite.image, minimumX + sprite.x, minimumY + sprite.y);
+
+                    context.restore();
                 }
 
-                const effectData = await this.getEffect();
+                // TODO: rewrite this to not require an asynchronous action to determine
+                const avatarEffect = await this.getEffectForAvatar();
 
-                if(effectData?.data.animation) {
-                    const currentSpriteFrame = FigureWorkerRenderer.getSpriteFrameFromSequence(this.frame);
-
-                    const avatarEffectFrame = effectData.data.animation.frames[currentSpriteFrame % effectData.data.animation.frames.length].effects.find((effect) => effect.id === "avatar");
-
-                    if(avatarEffectFrame?.destinationY) {
-                        minimumY -= avatarEffectFrame.destinationY;
-                    }
+                if(avatarEffect?.destinationY) {
+                    minimumY -= avatarEffect.destinationY;
                 }
 
                 resolve({
-                    image: await createImageBitmap(canvas),
-                    imageData: context.getImageData(0, 0, canvas.width, canvas.height),
+                    figure: {
+                        image: await createImageBitmap(canvas),
+                        imageData: context.getImageData(0, 0, canvas.width, canvas.height),
 
-                    x: -minimumX,
-                    y: -minimumY,
+                        x: -minimumX,
+                        y: -minimumY,
 
-                    index: 0
+                        index: 0
+                    },
+                    effects: effectSprites
                 });
             }
-            catch {
-                reject();
+            catch(error) {
+                reject(error);
             }
         });
     }

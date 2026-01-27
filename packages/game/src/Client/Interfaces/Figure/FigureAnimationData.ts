@@ -2,6 +2,7 @@ export type FigureAnimationData = {
     sprites: {
         id: string;
         member: string;
+        ink?: number;
         directions?: {
             id: number;
             destinationZ: number;

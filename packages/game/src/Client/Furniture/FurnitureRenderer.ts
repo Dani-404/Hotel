@@ -3,6 +3,7 @@ import FurnitureAssets from "../Assets/FurnitureAssets";
 import { FurnitureData } from "../Interfaces/Furniture/FurnitureData";
 import { FurnitureVisualization } from "@Client/Interfaces/Furniture/FurnitureVisualization";
 import FurnitureRoomContentRenderer from "@Client/Furniture/FurnitureRoomContentRenderer";
+import { getGlobalCompositeModeFromInk } from "@Client/Renderers/GlobalCompositeModes";
 
 export type FurnitureRendererSprite = {
     image: ImageBitmap;
@@ -167,7 +168,7 @@ export default class FurnitureRenderer {
                 x,
                 y: assetData.y,
 
-                ink: FurnitureRenderer.getGlobalCompositeModeFromInk(layerData?.ink),
+                ink: getGlobalCompositeModeFromInk(layerData?.ink),
 
                 zIndex: directionLayerData?.zIndex ?? layerData?.zIndex ?? 0,
                 alpha: layerData?.alpha,
@@ -227,33 +228,11 @@ export default class FurnitureRenderer {
             }
 
             context.drawImage(sprite.image, minimumX + sprite.x, minimumY + sprite.y);
+
+            context.restore();
         }
 
         return createImageBitmap(canvas);
-    }
-
-    public static getGlobalCompositeModeFromInk(ink?: string): GlobalCompositeOperation | undefined {
-        switch(ink) {
-            case "ADD":
-                return "lighter";
-
-            case "SUBTRACT":
-                return "luminosity";
-
-            case "COPY":
-                return "source-over";
-
-            case undefined:
-                return undefined;
-
-            case "scrn":
-                return "screen";
-
-            default:
-                console.warn(`Furniture ink mode ${ink} is not recognized.`);
-
-                return undefined;
-        }
     }
 
     getDimensions(raw: boolean = false) {

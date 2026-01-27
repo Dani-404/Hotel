@@ -15,8 +15,8 @@ export default function ToolbarFigureItem() {
 
         const figureRenderer = new FigureRenderer(user.figureConfiguration, 2);
 
-        figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0).then(({ image }) => {
-            setFigureImage(image);
+        figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0).then(({ figure }) => {
+            setFigureImage(figure.image);
         });
     }, [user]);
 

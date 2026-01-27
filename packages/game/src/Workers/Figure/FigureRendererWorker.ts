@@ -9,21 +9,23 @@ onmessage = async (event: MessageEvent<FigureRenderEvent>) => {
         const figureRenderer = new FigureWorkerRenderer(event.data.configuration, event.data.direction, event.data.actions, event.data.frame, event.data.headOnly);
         
         if(event.data.type === "sprites") {
-            const data = await figureRenderer.render();
+            const { sprites, effectSprites } = await figureRenderer.render();
             
             postMessage({
                 id: event.data.id,
                 type: "sprites",
-                sprites: data
+                sprites,
+                effectSprites
             });
         }
         else if(event.data.type === "canvas") {
-            const data = await figureRenderer.renderToCanvas(event.data.cropped);
+            const { figure, effects } = await figureRenderer.renderToCanvas(event.data.cropped);
             
             postMessage({
                 id: event.data.id,
                 type: "canvas",
-                sprites: data
+                figure,
+                effects
             });
         }
     }

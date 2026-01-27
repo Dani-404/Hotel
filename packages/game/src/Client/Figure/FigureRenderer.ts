@@ -20,7 +20,7 @@ export default class FigureRenderer {
         face: "fa"
     };
 
-    constructor(public configuration: FigureConfiguration, public direction: number, public actions: string[] = ["Default", "AvatarEffect.2"], public headOnly: boolean = false) {
+    constructor(public configuration: FigureConfiguration, public direction: number, public actions: string[] = ["Default", "AvatarEffect.102"], public headOnly: boolean = false) {
 
     }
 
@@ -51,13 +51,13 @@ export default class FigureRenderer {
             renderName += "_cropped";
         }
 
-        if(FigureAssets.figureImage.has(renderName)) {
-            return await FigureAssets.figureImage.get(renderName)!;
-        }
+        //if(FigureAssets.figureImage.has(renderName)) {
+        //    return await FigureAssets.figureImage.get(renderName)!;
+        //}
         
         const result = figureWorker.renderInWebWorker(this, frame, cropped);
         
-        FigureAssets.figureImage.set(renderName, result);
+        //FigureAssets.figureImage.set(renderName, result);
 
         return await result;
     }

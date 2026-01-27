@@ -1,6 +1,6 @@
 import FigureRenderer from "../FigureRenderer";
 import { FigureRenderEvent, FigureRenderResultEvent } from "../Interfaces/FigureRenderEvent";
-import { FigureRendererSprite } from "./FigureWorkerRenderer";
+import { FigureRendererResult, FigureRendererSprite } from "./FigureWorkerRenderer";
 
 export default class FigureWorker {
     private worker = (() => {
@@ -18,22 +18,33 @@ export default class FigureWorker {
                     return;
                 }
 
-                request.resolve(event.data.sprites);
+                request.resolve({
+                    figure: event.data.figure,
+                    effects: event.data.effects
+                });
 
                 this.canvasRequests.slice(this.canvasRequests.indexOf(request), 1);
             }
             else if(event.data.type === "sprites") {
+                throw new Error("Method not implemented");
+
                 const request = this.spritesRequests.find((request) => request.id === id);
 
                 if(!request) {
                     return;
                 }
 
-                request.resolve(event.data.sprites);
+                //request.resolve({
+                //    sprites: event.data.sprites,
+                //});
 
-                this.spritesRequests.slice(this.spritesRequests.indexOf(request), 1);
+                //this.spritesRequests.slice(this.spritesRequests.indexOf(request), 1);
             }
         };
+
+        worker.onerror = (event: ErrorEvent) => {
+            console.error(event);
+        }
 
         return worker;
     })();
@@ -45,7 +56,7 @@ export default class FigureWorker {
 
     private canvasRequests: {
         id: number;
-        resolve: (value: FigureRendererSprite) => void;
+        resolve: (value: FigureRendererResult) => void;
     }[] = [];
 
     constructor(private readonly terminateOnComplete: boolean) {
@@ -74,8 +85,8 @@ export default class FigureWorker {
         });
     }
 
-    public renderInWebWorker(figureRenderer: FigureRenderer, frame: number, cropped: boolean): Promise<FigureRendererSprite> {
-        return new Promise<FigureRendererSprite>((resolve, reject) => {
+    public renderInWebWorker(figureRenderer: FigureRenderer, frame: number, cropped: boolean): Promise<FigureRendererResult> {
+        return new Promise<FigureRendererResult>((resolve, reject) => {
             const id = Math.random();
 
             this.canvasRequests.push({

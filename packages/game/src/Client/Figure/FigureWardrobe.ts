@@ -38,7 +38,7 @@ export default class FigureWardrobe {
                 ], 2);
 
                 const image = new Promise<ImageBitmap>((resolve, reject) => {
-                    figureRenderer.renderToCanvas(this.figureWorker, 0, true).then(({ image }) => resolve(image)).catch(reject);
+                    figureRenderer.renderToCanvas(this.figureWorker, 0, true).then(({ figure }) => resolve(figure.image)).catch(reject);
                 });
 
                 return {

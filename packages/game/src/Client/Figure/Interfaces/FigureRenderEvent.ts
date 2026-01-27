@@ -21,6 +21,7 @@ export type FigureRenderResultEvent = {
     } |
     {
         type: "canvas";
-        sprites: FigureRendererSprite;
+        figure: FigureRendererSprite;
+        effects: FigureRendererSprite[];
     }
 );
