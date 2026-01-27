@@ -7,6 +7,11 @@ import { AvatarActionsData } from "@Client/Interfaces/Figure/Avataractions";
 import { FigureData } from "@Client/Interfaces/Figure/FigureData";
 import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
 import FigureWorker from "./FigureWorker";
+import { FigureAnimationData } from "@Client/Interfaces/Figure/FigureAnimationData";
+import { figureGeometryTypes } from "@Client/Figure/FigureGeometry";
+import { figurePartSets } from "@Client/Figure/FigurePartSets";
+import { FurnitureSprite } from "@Client/Interfaces/Furniture/FurnitureSprites";
+import { FurnitureAsset } from "@Client/Interfaces/Furniture/FurnitureAssets";
 
 export type FigureRendererSprite = {
     image: ImageBitmap;
@@ -17,6 +22,32 @@ export type FigureRendererSprite = {
 
     index: number;
 }
+
+type SpriteConfiguration = {
+    id: string;
+    type: string;
+
+    index: number;
+    
+    colorable: boolean;
+    colors: number[];
+    colorIndex: number;
+    colorPaletteId: number;
+
+    assetId: string;
+};
+
+type BodyPartAction = {
+    bodyParts: string[];
+    assetPartDefinition: string;
+    frame: number;
+};
+
+type EffectData = {
+    id: number;
+    library: string,
+    data: FigureData
+};
 
 export default class FigureWorkerRenderer {
     constructor(public readonly configuration: FigureConfiguration, public direction: number, public readonly actions: string[], public readonly frame: number, public readonly headOnly: boolean = false) {
@@ -53,218 +84,377 @@ export default class FigureWorkerRenderer {
         return spriteFrame;
     }
 
-    public async render() {
+    private getEffectBodyParts(effect: EffectData) {
         const currentSpriteFrame = FigureWorkerRenderer.getSpriteFrameFromSequence(this.frame);
 
-        //const renderName = `${this.getConfigurationAsString()}_${this.direction}_${currentSpriteFrame}_${this.actions.join('_')}`;
-
-        return await new Promise<FigureRendererSprite[]>(async (resolve, reject) => {
-            const avatarActionsData = this.getAvatarActionsData(FigureAssets.avataractions, this.actions);
-
-            const renderCache: {
-                configurationPart: FigureConfiguration[0],
-                setPartData: FiguredataData["settypes"][0]["sets"][0]["parts"][0],
-                settypeData: FiguredataData["settypes"][0],
-                setPartAssetData: FiguremapData[0]
-            }[] = [];
-
-            for(let configurationPart of this.configuration) {
-                const settypeData = this.getSettypeForPartAndSet(configurationPart.type);
-
-                if(!settypeData) {
-                    continue;
-                }
-
-                const setData = this.getSetFromSettype(settypeData, configurationPart.setId);
-
-                if(!setData) {
-                    continue;
-                }
-
-                for(let setPartData of setData.parts) {
-                    if(!setPartData) {
-                        continue;
-                    }
-                    
-                    const setPartAssetData = this.getAssetForSetPart(setPartData.id, setPartData.type);
-
-                    if(!setPartAssetData) {
-                        continue;
-                    }
-
-                    if(this.headOnly) {
-                        if(!(["hr", "hd", "he", "ha", "ea", "fa", "ey"].includes(setPartData.type))) {
-                            continue;
-                        }
-                    }
-
-                    renderCache.push({ configurationPart, setPartData, settypeData, setPartAssetData })
-                }
-            }
-
-            const spritePromises: PromiseSettledResult<FigureRendererSprite>[] = await Promise.allSettled(
-                renderCache.map(({ configurationPart, setPartData, settypeData, setPartAssetData }) => {
-                    return new Promise<FigureRendererSprite>(async (resolve, reject) => {
-                        const figureData = await FigureAssets.getFigureData(setPartAssetData.id);
-
-                        const asset = this.getAsset(figureData, avatarActionsData, setPartData, this.direction, currentSpriteFrame);
-
-                        if(!asset) {
-                            return reject();
-                        }
-
-                        const { actualAssetName, assetData, avatarAction } = asset;
-
-                        const assetSpriteName = `${actualAssetName}_${configurationPart.colors.join('_')}`;
-
-                        if(FigureAssets.assetSprites.has(assetSpriteName)) {
-                            const result = FigureAssets.assetSprites.get(assetSpriteName);
-
-                            if(result) {
-                                return resolve(result);
-                            }
-
-                            return reject();
-                        }
-
-                        const spriteData = figureData.sprites.find((sprite) => sprite.name === (assetData.source ?? assetData.name));
-
-                        if(!spriteData) {
-                            FigureAssets.assetSprites.set(assetSpriteName, null);
-
-                            return reject();
-                        }
-
-                        const palette = FigureAssets.figuredata.palettes.find((palette) => palette.id === settypeData.paletteId);
-                        const paletteColor = palette?.colors.find((color) => color.id === configurationPart.colors[setPartData.colorIndex - 1]);
-
-                        try {
-                            const sprite = await FigureAssets.getFigureSprite(setPartAssetData.id, {
-                                x: spriteData.x,
-                                y: spriteData.y,
-
-                                width: spriteData.width,
-                                height: spriteData.height,
-
-                                flipHorizontal: (this.direction > 3 && this.direction < 7)?(!Boolean(assetData.flipHorizontal)):(assetData.flipHorizontal),
-
-                                color: (setPartData.colorable && configurationPart.colors[setPartData.colorIndex - 1] && setPartData.type !== "ey")?(paletteColor?.color):(undefined),
-
-                                ignoreImageData: true
-                            });
-
-                            const priorityDirection = (this.direction > 3 && this.direction < 7)?(6 - this.direction):(this.direction);
-
-                            const priorityTypes: Partial<Record<FigurePartKeyAbbreviation, FigurePartKeyAbbreviation>> = {
-                                "cp": "ch",
-                                "cc": "ch",
-                                "lc": "ls",
-                                "rc": "rs"
-                            };
-
-                            const partPriority = figureRenderPriority[this.getFigureRenderPriority(avatarAction.assetPartDefinition)][priorityDirection.toString()].indexOf(priorityTypes[setPartData.type] ?? setPartData.type);
-
-                            if(partPriority === -1) {
-                                return reject();
-                            }
-
-                            let x = assetData.x;
-
-                            if((this.direction > 3 && this.direction < 7)) {
-                                x = 64 + (assetData.x * -1) - spriteData.width;
-                            }
-
-                            const result: FigureRendererSprite = {
-                                image: await createImageBitmap(sprite.image),
-                                imageData: sprite.imageData,
-                                
-                                x: x - 32,
-                                y: assetData.y + 32,
-
-                                index: partPriority + setPartData.index,
-                            };
-
-                            FigureAssets.assetSprites.set(assetSpriteName, result);
-
-                            resolve(result);
-                        }
-                        catch {
-                            reject();
-                        }
-                    })
-                })
-            );
-
-            const sprites: FigureRendererSprite[] = spritePromises.filter<PromiseFulfilledResult<FigureRendererSprite>>((result) => result.status === "fulfilled").map((result) => result.value);
-
-            resolve(sprites);
-        });
-    }
-
-    private getAsset(figureData: FigureData, avatarActions: AvatarActionsData, setPartData: FiguredataData["settypes"][0]["sets"][0]["parts"][0], direction: number, spriteFrame: number) {
-        for(const avatarAction of avatarActions) {
-            let actualAssetName: string | undefined = undefined;
-            let assetName: string;
-            let assetData: FigureData["assets"][0] | undefined;
-
-            let spriteData;
-
-            if(direction > 3 && direction < 7) {
-                actualAssetName = `h_${avatarAction.assetPartDefinition}_${setPartData.type}_${setPartData.id}_${direction}_${spriteFrame}`;
-                assetName = `h_${avatarAction.assetPartDefinition}_${setPartData.type}_${setPartData.id}_${6 - direction}_${spriteFrame}`;
-                assetData = figureData.assets.find((asset) => asset.name === assetName);
-            
-                spriteData = figureData.sprites.find((sprite) => sprite.name === (assetData?.source ?? assetData?.name ?? assetName));
-
-                if(!spriteData) {
-                    actualAssetName = `h_${avatarAction.assetPartDefinition}_${setPartData.type}_${setPartData.id}_${direction}_0`;
-                    assetName = `h_${avatarAction.assetPartDefinition}_${setPartData.type}_${setPartData.id}_${6 - direction}_0`;
-                    assetData = figureData.assets.find((asset) => asset.name === assetName);
-                    
-                    spriteData = figureData.sprites.find((sprite) => sprite.name === (assetData?.source ?? assetData?.name ?? assetName));
-                }
-            }
-            else {
-                assetName = `h_${avatarAction.assetPartDefinition}_${setPartData.type}_${setPartData.id}_${direction}_${spriteFrame}`;
-                assetData = figureData.assets.find((asset) => asset.name === assetName);
-
-                spriteData = figureData.sprites.find((sprite) => sprite.name === (assetData?.source ?? assetData?.name ?? assetName));
-
-                if(!spriteData) {
-                    assetName = `h_${avatarAction.assetPartDefinition}_${setPartData.type}_${setPartData.id}_${direction}_0`;
-                    assetData = figureData.assets.find((asset) => asset.name === assetName);
-                
-                    spriteData = figureData.sprites.find((sprite) => sprite.name === (assetData?.source ?? assetData?.name ?? assetName));
-                }
-            }
-
-            if(!assetData) {
-                continue;
-            }
-
-            if(!spriteData) {
-                continue;
-            }
-
-            return {
-                actualAssetName: actualAssetName ?? assetData.name,
-                assetData,
-                figureData,
-                avatarAction
-            };
+        if(!effect?.data.animation) {
+            return null;
         }
-        
-        return null;
+
+        const frame = currentSpriteFrame % (effect.data.animation.frames.length - 1);
+
+        return effect.data.animation.frames[frame].bodyParts;
     }
 
-    private getAvatarActionsData(avataractions: AvatarActionsData, avatarActions: string[]) {
-        let avatarActionsData = avataractions.filter((action) => avatarActions.includes(action.id)).sort((a, b) => a.precedence - b.precedence);
+    private getAvatarActions() {
+        let avatarActionsData = FigureAssets.avataractions.filter((action) => this.actions.includes(action.id)).sort((a, b) => a.precedence - b.precedence);
         
         avatarActionsData = avatarActionsData.filter((action) => {
             return !avatarActionsData.some((secondAction) => secondAction.precedence > action.precedence && secondAction.prevents?.includes(action.id))
         });
 
         return avatarActionsData;
+    }
+
+    private async getActionsForBodyParts(effect?: EffectData) {
+        const result: BodyPartAction[] = [];
+
+        if(effect) {
+            const effectBodyParts = this.getEffectBodyParts(effect);
+
+            // effect says bodypart id rightarm (geometry bodypart) is used for action CarryItem
+            // CarryItem says handRight is used for activePartSet
+
+            if(effectBodyParts) {
+                for(let effectBodyPart of effectBodyParts) {
+                    const action = FigureAssets.avataractions.find((avatarAction) => avatarAction.id === effectBodyPart.action);
+
+                    if(!action) {
+                        throw new Error("Action is not found for effect.");
+                    }
+
+                    const geometry = figureGeometryTypes.find((geometry) => geometry.id === action.geometryType);
+
+                    if(!geometry) {
+                        throw new Error("Action does not have a geometry type.");
+                    }
+
+                    const geometryBodyparts = geometry.bodyparts.find((bodypart) => bodypart.id === effectBodyPart.id);
+
+                    if(!geometryBodyparts) {
+                        throw new Error("Action does not have a geometry bodyparts.");
+                    }
+
+                    result.push({
+                        assetPartDefinition: action.assetPartDefinition,
+                        bodyParts: geometryBodyparts.parts,
+                        frame: 0
+                    });
+
+                    console.log("Adding active part set " + action.activePartSet + " from effect for action " + action.id + ".");
+
+                    // now we know handRight is occupied by CarryItem to use `crr`
+                    // handRight consists of figurePartSets->handRight->[ "rh", "rhs", "rs", "rc", "ri" ]
+                }
+            }
+        }
+
+        const currentSpriteFrame = FigureWorkerRenderer.getSpriteFrameFromSequence(this.frame);
+
+        const actions = this.getAvatarActions();
+
+        for(let action of actions) {
+            const geometry = figureGeometryTypes.find((geometry) => geometry.id === action.geometryType);
+            
+            if(!geometry) {
+                throw new Error("Geometry is not found for action.");
+            }
+            
+           
+            const figurePartSet = figurePartSets.find((figurePartSet) => figurePartSet.id === action.activePartSet);
+
+            if(!figurePartSet) {
+                throw new Error("Action does not have a figure part set in geometry.");
+            }
+
+            console.log("Adding active part set " + action.activePartSet + " for action " + action.id + ".", figurePartSet);
+
+            let frame = 0;
+
+            if(action.activePartSet === "walk") {
+                frame = currentSpriteFrame;
+            }
+
+            result.push({
+                assetPartDefinition: action.assetPartDefinition,
+                bodyParts: figurePartSet.parts,
+                frame
+            });
+
+            // now we know walk is occupied by Move to use `wlk`
+            // walk consists of figurePartSets->walk->["bd", ...]
+
+            // now we know figure is occupied by Default to use `std`
+            // figure consists of figurePartSets->figure->[...]
+        }
+
+        console.log(result);
+
+        return result;
+    }
+
+    private getSpritesFromConfiguration() {
+        const result: SpriteConfiguration[] = [];
+
+        for(let configurationPart of this.configuration) {
+            const settypeData = this.getSettypeForPartAndSet(configurationPart.type);
+
+            if(!settypeData) {
+                console.warn("Settype does not exist for part and set.");
+
+                continue;
+            }
+
+            const setData = this.getSetFromSettype(settypeData, configurationPart.setId);
+
+            if(!setData) {
+                console.warn("Set does not exist for set type.");
+
+                continue;
+            }
+
+            for(let setPartData of setData.parts) {
+                if(!setPartData) {
+                    console.error("???");
+
+                    continue;
+                }
+                
+                const setPartAssetData = this.getAssetForSetPart(setPartData.id, setPartData.type);
+
+                if(!setPartAssetData) {
+                    console.log("Set part asset data does not exist.");
+
+                    continue;
+                }
+
+                result.push({
+                    colorable: setPartData.colorable,
+                    colors: configurationPart.colors,
+                    colorIndex: setPartData.colorIndex,
+                    colorPaletteId: settypeData.paletteId,
+                    
+                    index: setPartData.index,
+
+                    id: setPartData.id,
+                    type: setPartData.type,
+
+                    assetId: setPartAssetData.id
+                });
+            }
+        }
+
+        return result;
+    }
+
+    public async render() {
+        const effect = await this.getEffect();
+
+        const actionsForBodyParts = await this.getActionsForBodyParts(effect);
+
+        // TODO: already here filter out parts that will not be rendered to minimize the overhead
+        const spritesFromConfiguration = this.getSpritesFromConfiguration();
+
+        const sprites = await this.getFigureSprites(spritesFromConfiguration, actionsForBodyParts);
+
+        if(effect) {
+            const effectSprites = await this.getEffectSprites(effect);
+
+            sprites.push(...effectSprites);
+        }
+
+        return sprites;
+    }
+
+    private async getEffectSprites(effect: EffectData): Promise<FigureRendererSprite[]> {
+        // TODO: add effects without animations
+        if(!effect.data.animation) {
+            return [];
+        }
+
+        const currentSpriteFrame = FigureWorkerRenderer.getSpriteFrameFromSequence(this.frame);
+
+        const frame = currentSpriteFrame % (effect.data.animation.frames.length - 1);
+
+        const animationFrame = effect.data.animation.frames[frame];
+
+        const sprites: FigureRendererSprite[] = [];
+        
+        for(let sprite of effect.data.animation.sprites) {
+            if(sprite.id === "avatar") {
+                continue;
+            }
+
+            const effectFrame = animationFrame.effects.find((effect) => effect.id === sprite.id);
+
+            const direction = sprite.directions?.find((direction) => direction.id === this.direction);
+
+            if(!direction) {
+                console.warn("Effect has no direction specified for " + this.direction);
+
+                continue;
+            }
+
+            const index = direction.destinationZ;
+
+            const assetName = `h_${sprite.member}_${this.direction}_${effectFrame?.frame ?? 0}`;
+
+            const assetData = effect.data.assets.find((asset) => asset.name === assetName);
+
+            if(!assetData) {
+                console.error("Can't find asset for " + assetName);
+
+                continue;
+            }
+
+            const sourceAssetName = assetData.source ?? assetData.name;
+
+            const spriteData = effect.data.sprites.find((sprite) => sprite.name === sourceAssetName);
+
+            if(!spriteData) {
+                console.error("Can't find sprite for source asset " + sourceAssetName);
+
+                continue;
+            }
+
+            const result = await this.getEffectSprite(effect.library, assetData, spriteData, index);
+
+            if(result) {
+                sprites.push(result);
+            }
+        }
+
+        return sprites;
+    }
+
+    private async getFigureSprites(spritesFromConfiguration: SpriteConfiguration[], actionsForBodyParts: BodyPartAction[]) {
+        const sprites: FigureRendererSprite[] = [];
+
+        const direction = (this.direction > 3 && this.direction < 7)?(6 - this.direction):(this.direction);
+
+        for(let spriteConfiguration of spritesFromConfiguration) {
+            const actionForSprite = actionsForBodyParts.find((action) => action.bodyParts.includes(spriteConfiguration.type));
+
+            if(!actionForSprite) {
+                console.warn("Sprite has no action requesting it.");
+
+                continue;
+            }
+
+            const figureData = await FigureAssets.getFigureData(spriteConfiguration.assetId);
+
+            if(!figureData) {
+                console.error("Figure data does not exist for " + spriteConfiguration.assetId);
+
+                continue;
+            }
+
+            let assetName = `h_${actionForSprite.assetPartDefinition}_${spriteConfiguration.type}_${spriteConfiguration.id}_${direction}_${actionForSprite.frame}`;
+
+            let asset = figureData.assets.find((asset) => asset.name === assetName);
+
+            if(!asset) {
+                assetName = `h_std_${spriteConfiguration.type}_${spriteConfiguration.id}_${direction}_${actionForSprite.frame}`;
+
+                asset = figureData.assets.find((asset) => asset.name === assetName);
+            }
+
+            if(!asset) {
+                console.error("Can't find asset for " + assetName);
+
+                continue;
+            }
+
+            const sourceAssetName = asset.source ?? asset.name;
+
+            const sprite = figureData.sprites.find((sprite) => sprite.name === sourceAssetName);
+
+            if(!sprite) {
+                console.error("Can't find sprite for source asset " + sourceAssetName);
+
+                continue;
+            }
+
+            const palette = FigureAssets.figuredata.palettes.find((palette) => palette.id === spriteConfiguration.colorPaletteId);
+            const paletteColor = palette?.colors.find((color) => color.id === spriteConfiguration.colors[spriteConfiguration.colorIndex - 1]);
+
+            const result = await this.getFigureSprite(spriteConfiguration, sprite, asset, paletteColor?.color);
+
+            if(result) {
+                sprites.push(result);
+            }
+        }
+
+        return sprites;
+    }
+
+    private async getEffectSprite(library: string, assetData: FurnitureAsset, spriteData: FurnitureSprite, index: number) {
+        const sprite = await FigureAssets.getEffectSprite(library, {
+            x: spriteData.x,
+            y: spriteData.y,
+
+            width: spriteData.width,
+            height: spriteData.height,
+
+            ignoreImageData: true
+        });
+
+        return {
+            image: await createImageBitmap(sprite.image),
+            imageData: sprite.imageData,
+            
+            x: assetData.x - 32,
+            y: assetData.y + 32,
+
+            index: index * 100,
+        };
+    }
+
+    private async getFigureSprite(spriteConfiguration: SpriteConfiguration, spriteData: FurnitureSprite, assetData: FurnitureAsset, color: string | undefined) {
+        const sprite = await FigureAssets.getFigureSprite(spriteConfiguration.assetId, {
+            x: spriteData.x,
+            y: spriteData.y,
+
+            width: spriteData.width,
+            height: spriteData.height,
+
+            flipHorizontal: (this.direction > 3 && this.direction < 7)?(!Boolean(assetData.flipHorizontal)):(assetData.flipHorizontal),
+
+            color: (spriteConfiguration.colorable && spriteConfiguration.colors[spriteConfiguration.colorIndex - 1] && spriteConfiguration.type !== "ey")?(color):(undefined),
+
+            ignoreImageData: true
+        });
+
+        const priorityDirection = (this.direction > 3 && this.direction < 7)?(6 - this.direction):(this.direction);
+
+        const priorityTypes: Partial<Record<string, FigurePartKeyAbbreviation>> = {
+            "cp": "ch",
+            "cc": "ch",
+            "lc": "ls",
+            "rc": "rs"
+        };
+
+        const partPriority = figureRenderPriority["std"][priorityDirection.toString()].indexOf(priorityTypes[spriteConfiguration.type] ?? spriteConfiguration.type);
+
+        if(partPriority === -1) {
+            return null;
+        }
+
+        let x = assetData.x;
+
+        if((this.direction > 3 && this.direction < 7)) {
+            x = 64 + (assetData.x * -1) - spriteData.width;
+        }
+
+        return {
+            image: await createImageBitmap(sprite.image),
+            imageData: sprite.imageData,
+            
+            x: x - 32,
+            y: assetData.y + 32,
+
+            index: partPriority + spriteConfiguration.index,
+        };
     }
 
     public async renderToCanvas(cropped: boolean = false) {
@@ -317,6 +507,18 @@ export default class FigureWorkerRenderer {
                     context.drawImage(sprite.image, minimumX + sprite.x, minimumY + sprite.y);
                 }
 
+                const effectData = await this.getEffect();
+
+                if(effectData?.data.animation) {
+                    const currentSpriteFrame = FigureWorkerRenderer.getSpriteFrameFromSequence(this.frame);
+
+                    const avatarEffectFrame = effectData.data.animation.frames[currentSpriteFrame % effectData.data.animation.frames.length].effects.find((effect) => effect.id === "avatar");
+
+                    if(avatarEffectFrame?.destinationY) {
+                        minimumY -= avatarEffectFrame.destinationY;
+                    }
+                }
+
                 resolve({
                     image: await createImageBitmap(canvas),
                     imageData: context.getImageData(0, 0, canvas.width, canvas.height),
@@ -336,11 +538,30 @@ export default class FigureWorkerRenderer {
     public getConfigurationAsString(): string {
         return this.configuration.map((section) => [section.type, section.setId, ...section.colors].filter(Boolean).join('-')).join('.');
     }
+    
+    private async getEffect() {
+        const action = this.actions.find((action) => action.split('.')[0] === "AvatarEffect");
 
-    private getFigureRenderPriority(action: string) {
-        switch(action) {
-            default:
-                return "std";
+        if(!action) {
+            return;
         }
+        
+        const id = parseInt(action.split('.')[1]);
+
+        const library = this.getEffectLibrary(id);
+
+        if(!library) {
+            return;
+        }
+
+        return {
+            id: library.id,
+            library: library.library,
+            data: await FigureAssets.getEffectData(library.library)
+        };
+    }
+
+    private getEffectLibrary(id: number) {
+        return FigureAssets.effectmap.find((effect) => effect.id === id);
     }
 }

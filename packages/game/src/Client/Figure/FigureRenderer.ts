@@ -20,7 +20,7 @@ export default class FigureRenderer {
         face: "fa"
     };
 
-    constructor(public configuration: FigureConfiguration, public direction: number, public actions: string[] =  ["Default"], public headOnly: boolean = false) {
+    constructor(public configuration: FigureConfiguration, public direction: number, public actions: string[] = ["Default", "AvatarEffect.2"], public headOnly: boolean = false) {
 
     }
 
@@ -70,20 +70,6 @@ export default class FigureRenderer {
         if(this.actions.includes(id)) {
             return;
         }
-
-        const avatarActionData = FigureAssets.avataractions.find((avatarActionData) => avatarActionData.id === id);
-
-        /*if(avatarActionData?.main) {
-            this.actions = this.actions.filter((actionId) => {
-                const avatarActionData = FigureAssets.avataractions.find((avatarActionData) => avatarActionData.id === actionId);
-
-                if(avatarActionData?.main) {
-                    return false;
-                }
-
-                return true;
-            });
-        }*/
 
         this.actions.push(id);
     }

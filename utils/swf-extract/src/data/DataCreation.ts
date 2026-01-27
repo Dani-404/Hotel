@@ -9,7 +9,7 @@ import { XMLParser } from "fast-xml-parser";
 import { readFileSync } from "fs";
 import { database } from "../index.ts";
 
-function getValueAsArray(value: any) {
+export function getValueAsArray(value: any) {
     if(!value) {
         return [];
     }

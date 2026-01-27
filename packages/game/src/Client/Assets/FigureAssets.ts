@@ -9,11 +9,17 @@ export default class FigureAssets {
     public static figuremap: FiguremapData;
     public static figuredata: FiguredataData;
     public static avataractions: AvatarActionsData;
+    public static effectmap: { id: number; library: string; }[];
 
     public static async loadAssets() {
         FigureAssets.figuremap = await FigureAssets.getFiguremapData();
         FigureAssets.figuredata = await FigureAssets.getFiguredataData();
         FigureAssets.avataractions = await FigureAssets.getAvataractionsData();
+        FigureAssets.effectmap = await FigureAssets.getEffectMapData();
+    }
+    
+    public static async getEffectMapData() {
+        return await AssetFetcher.fetchJson<{ id: number; library: string; }[]>(`/assets/figure/effectmap.json`);
     }
     
     public static async getFiguremapData() {
@@ -32,12 +38,20 @@ export default class FigureAssets {
         return await AssetFetcher.fetchJson<FigureData>(`/assets/figure/${name}/${name}.json`);
     }
 
+    public static async getEffectData(name: string) {
+        return await AssetFetcher.fetchJson<FigureData>(`/assets/figure/effects/${name}/${name}.json`);
+    }
+
     public static async getFigureSpritesheet(name: string) {
         return await AssetFetcher.fetchImage(`/assets/figure/${name}/${name}.png`);
     }
 
     public static async getFigureSprite(name: string, properties: AssetSpriteProperties): Promise<{ image: ImageBitmap, imageData: ImageData }> {
         return await AssetFetcher.fetchImageSprite(`/assets/figure/${name}/${name}.png`, properties);
+    }
+
+    public static async getEffectSprite(name: string, properties: AssetSpriteProperties): Promise<{ image: ImageBitmap, imageData: ImageData }> {
+        return await AssetFetcher.fetchImageSprite(`/assets/figure/effects/${name}/${name}.png`, properties);
     }
 
     public static readonly assetSprites: Map<string, FigureRendererSprite | null> = new Map();

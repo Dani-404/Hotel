@@ -8,6 +8,7 @@ import type { FigureData } from "../../../packages/game/src/Client/Interfaces/Fi
 import type { RoomData } from "../../../packages/game/src/Client/Interfaces/Room/RoomData.ts"
 import sqlite3 from "sqlite3";
 import extractRoomChatStyles from "./extractions/RoomChatStylesExtractor.ts";
+import extractFigureEffects from "./extractions/FigureEffects.ts";
 
 export const database = new sqlite3.Database(":memory:");
 
@@ -22,6 +23,12 @@ let assetNames = [process.argv[2]];
 (async () => {
     if(process.argv[2] === "roomchatstyles") {
         await extractRoomChatStyles();
+        
+        return;
+    }
+    
+    if(process.argv[2] === "figureeffects") {
+        await extractFigureEffects();
         
         return;
     }
