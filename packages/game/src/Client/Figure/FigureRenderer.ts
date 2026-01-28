@@ -51,13 +51,13 @@ export default class FigureRenderer {
             renderName += "_cropped";
         }
 
-        //if(FigureAssets.figureImage.has(renderName)) {
-        //    return await FigureAssets.figureImage.get(renderName)!;
-        //}
+        if(FigureAssets.figureImage.has(renderName)) {
+            return await FigureAssets.figureImage.get(renderName)!;
+        }
         
         const result = figureWorker.renderInWebWorker(this, frame, cropped);
         
-        //FigureAssets.figureImage.set(renderName, result);
+        FigureAssets.figureImage.set(renderName, result);
 
         return await result;
     }

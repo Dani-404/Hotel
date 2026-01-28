@@ -3,7 +3,7 @@ import AssetFetcher, { AssetSpriteProperties } from "./AssetFetcher";
 import { FigureData } from "@Client/Interfaces/Figure/FigureData";
 import { FiguredataData } from "@Client/Interfaces/Figure/FiguredataData";
 import { AvatarActionsData } from "@Client/Interfaces/Figure/Avataractions";
-import { FigureRendererSprite } from "@Client/Figure/Worker/FigureWorkerRenderer";
+import { FigureRendererResult, FigureRendererSprite } from "@Client/Figure/Worker/FigureWorkerRenderer";
 
 export default class FigureAssets {
     public static figuremap: FiguremapData;
@@ -56,5 +56,5 @@ export default class FigureAssets {
 
     public static readonly assetSprites: Map<string, FigureRendererSprite | null> = new Map();
     public static readonly figureCollection: Map<string, Promise<FigureRendererSprite[]>> = new Map();
-    public static readonly figureImage: Map<string, Promise<FigureRendererSprite>> = new Map();
+    public static readonly figureImage: Map<string, Promise<FigureRendererResult>> = new Map();
 }

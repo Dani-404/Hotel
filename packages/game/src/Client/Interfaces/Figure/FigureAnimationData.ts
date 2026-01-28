@@ -1,9 +1,18 @@
+export type FigureAnimationFrameEffectData = {
+    id: string;
+    action: string;
+    frame: number;
+
+    destinationY?: number;
+};
+
 export type FigureAnimationData = {
     sprites: {
         id: string;
         member: string;
         ink?: number;
         useDirections: boolean;
+        destinationY?: number;
         directions?: {
             id: number;
             destinationZ: number;
@@ -16,6 +25,14 @@ export type FigureAnimationData = {
         base?: string;
     }[];
 
+    direction: undefined | {
+        offset: number;
+    };
+    
+    shadow: undefined | {
+        id: string;
+    };
+
     frames: {
         bodyParts: {
             id: string;
@@ -25,12 +42,6 @@ export type FigureAnimationData = {
             destinationY?: number;
         }[];
 
-        effects: {
-            id: string;
-            action: string;
-            frame: number;
-
-            destinationY?: number;
-        }[];
+        effects: FigureAnimationFrameEffectData[];
     }[];
 };

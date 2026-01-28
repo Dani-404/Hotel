@@ -106,6 +106,18 @@ function getAnimationData(filePath: string) {
             };
         }),
 
+        direction: (document.animation.direction)?(
+            {
+                offset: parseInt(document.animation.direction["@_offset"])
+            }
+        ):(undefined),
+
+        shadow: (document.animation.shadow)?(
+            {
+                id: document.animation.shadow["@_id"]
+            }
+        ):(undefined),
+
         frames: getValueAsArray(document.animation.frame).map((frame: any) => {
             return {
                 bodyParts: getValueAsArray(frame.bodypart).map((bodypart: any) => {
