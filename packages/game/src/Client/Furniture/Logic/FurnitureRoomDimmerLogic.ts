@@ -2,43 +2,43 @@ import Furniture from "@Client/Furniture/Furniture";
 import FurnitureLogic from "@Client/Furniture/Logic/Interfaces/FurnitureLogic";
 import { FurnitureData } from "@Client/Interfaces/Furniture/FurnitureData";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
-import { webSocketClient } from "../../..";
+import { clientInstance, webSocketClient } from "../../..";
 import { UseRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UseRoomFurnitureEventData";
+import { RoomFurnitureDimmerData } from "../../../UserInterface/components/Room/Furniture/Logic/RoomFurnitureDimmerDialog";
 
 export default class FurnitureRoomDimmerLogic implements FurnitureLogic {
     constructor(private readonly furniture: Furniture, private readonly data: FurnitureData) {
     }
 
     isAvailable() {
-        return (this.furniture.animation !== this.getNextState());
+        return true;
     }
 
     use(roomFurniture: RoomInstanceFurniture): void {
-        const nextState = this.getNextState();
+        this.removeExistingDialog();
 
-        if(this.furniture.animation === nextState) {
+        clientInstance.dialogs.value = clientInstance.dialogs.value?.concat([
+            {
+                id: Math.random().toString(),
+                type: "room-furniture-logic",
+                data: {
+                    type: "furniture_roomdimmer"
+                } satisfies RoomFurnitureDimmerData
+            }
+        ]);
+    }
+
+    private removeExistingDialog() {
+        if(!clientInstance.dialogs.value) {
             return;
         }
 
-        webSocketClient.send<UseRoomFurnitureEventData>("UseRoomFurnitureEvent", {
-            roomFurnitureId: roomFurniture.data.id,
-            animation: nextState
-        });
-    }
+        const existingIndex = clientInstance.dialogs.value.findIndex((dialog) => dialog.type === "room-furniture-logic");
 
-    private getNextState() {
-        const visualization = this.furniture.getVisualizationData(this.data);
-
-        const currentAnimationIndex = visualization.animations.findIndex((animation) => animation.id === this.furniture.animation);
-
-        if(currentAnimationIndex === -1) {
-            return visualization.animations[0]?.id ?? 0;
+        if(existingIndex === -1) {
+            return;
         }
 
-        if(!visualization.animations[currentAnimationIndex + 1]) {
-            return 0;
-        }
-
-        return visualization.animations[currentAnimationIndex + 1].id;
+        clientInstance.dialogs.value.splice(existingIndex, 1);
     }
 }
