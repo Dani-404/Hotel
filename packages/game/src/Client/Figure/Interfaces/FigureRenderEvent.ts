@@ -1,9 +1,8 @@
 import { FigureConfiguration } from "@Shared/interfaces/figure/FigureConfiguration";
-import { FigureRendererSprite } from "../Worker/FigureWorkerRenderer";
+import { FigureRendererSprite } from "../Renderer/FigureRenderer";
 
 export type FigureRenderEvent = {
     id: number;
-    type: "canvas" | "sprites";
     configuration: FigureConfiguration;
     direction: number;
     frame: number;
@@ -14,14 +13,6 @@ export type FigureRenderEvent = {
 
 export type FigureRenderResultEvent = {
     id: number;
-} & (
-    {
-        type: "sprites";
-        sprites: FigureRendererSprite[];
-    } |
-    {
-        type: "canvas";
-        figure: FigureRendererSprite;
-        effects: FigureRendererSprite[];
-    }
-);
+    figure: FigureRendererSprite;
+    effects: FigureRendererSprite[];
+};

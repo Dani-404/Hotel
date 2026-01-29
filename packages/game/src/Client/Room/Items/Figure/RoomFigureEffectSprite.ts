@@ -1,7 +1,7 @@
 import { MousePosition } from "@Client/Interfaces/MousePosition";
 import RoomSprite from "../RoomSprite";
 import RoomFigureItem from "./RoomFigureItem";
-import { FigureRendererSprite } from "@Client/Figure/Worker/FigureWorkerRenderer";
+import { FigureRendererSprite } from "@Client/Figure/Renderer/FigureRenderer";
 
 export default class RoomFigureEffectSprite extends RoomSprite {
     private offset: MousePosition;

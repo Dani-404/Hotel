@@ -3,7 +3,7 @@ import RoomRenderer from "./Renderer";
 import FloorRenderer from "./Structure/FloorRenderer";
 import WallRenderer from "./Structure/WallRenderer";
 import { RoomUserData } from "@Shared/Interfaces/Room/RoomUserData";
-import FigureRenderer from "@Client/Figure/FigureRenderer";
+import Figure from "@Client/Figure/Figure";
 import RoomFigureItem from "./Items/Figure/RoomFigureItem";
 import { UserEnteredRoomEventData } from "@Shared/Communications/Responses/Rooms/Users/UserEnteredRoomEventData";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
@@ -139,7 +139,7 @@ export default class RoomInstance {
     }
 
     private addUser(userData: RoomUserData): RoomItem<RoomUserData, RoomFigureItem> {
-        const figureRenderer = new FigureRenderer(userData.figureConfiguration, userData.direction);
+        const figureRenderer = new Figure(userData.figureConfiguration, userData.direction);
         const item = new RoomFigureItem(figureRenderer, userData.position);
 
         this.roomRenderer.items.push(item);

@@ -3,7 +3,7 @@ import OffscreenCanvasRender from "../OffscreenCanvasRender";
 import { FurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import FurnitureRenderer from "@Client/Furniture/FurnitureRenderer";
 import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
-import FigureRenderer from "@Client/Figure/FigureRenderer";
+import Figure from "@Client/Figure/Figure";
 
 export type FigureImageProps = {
     figureConfiguration: FigureConfiguration;
@@ -14,9 +14,9 @@ export default function FigureImage({ figureConfiguration, direction }: FigureIm
     const [image, setImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        const furnitureRenderer = new FigureRenderer(figureConfiguration, direction);
+        const furnitureRenderer = new Figure(figureConfiguration, direction);
 
-        furnitureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0, true).then(({ image }) => {
+        furnitureRenderer.renderToCanvas(Figure.figureWorker, 0, true).then(({ image }) => {
             setImage(image);
         });
     }, [ figureConfiguration ]);

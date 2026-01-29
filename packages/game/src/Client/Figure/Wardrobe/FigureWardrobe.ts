@@ -1,6 +1,6 @@
 import FigureAssets from "@Client/Assets/FigureAssets";
-import FigureWorker from "./Worker/FigureWorker";
-import FigureRenderer from "./FigureRenderer";
+import FigureWorkerClient from "../Worker/FigureWorkerClient";
+import Figure from "../Figure";
 import { FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
 
 export type FigureWardrobeItem = {
@@ -16,7 +16,7 @@ export type FigureWardrobeColor = {
 };
 
 export default class FigureWardrobe {
-    public static figureWorker = new FigureWorker(true);
+    public static figureWorker = new FigureWorkerClient(true);
 
     public static async getWardrobePartTypes(part: FigurePartKeyAbbreviation, colors: number[] | undefined, gender: "male" | "female") {
         const settype = FigureAssets.figuredata.settypes.find((settype) => settype.type === part);
@@ -29,7 +29,7 @@ export default class FigureWardrobe {
 
         const imagePromises = await Promise.allSettled(
             settype.sets.filter((set) => set.selectable && (set.gender === 'U' || (set.gender === 'M' && gender === "male") || (set.gender === 'F' && gender === "female"))).map(async (set) => {
-                const figureRenderer = new FigureRenderer([
+                const figureRenderer = new Figure([
                     {
                         type: settype.type,
                         setId: set.id,

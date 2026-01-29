@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../../../contexts/AppContext";
-import FigureRenderer from "@Client/Figure/FigureRenderer";
+import Figure from "@Client/Figure/Figure";
 
 export default function ToolbarFigureItem() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -13,9 +13,9 @@ export default function ToolbarFigureItem() {
             return;
         }
 
-        const figureRenderer = new FigureRenderer(user.figureConfiguration, 2);
+        const figureRenderer = new Figure(user.figureConfiguration, 2);
 
-        figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0).then(({ figure }) => {
+        figureRenderer.renderToCanvas(Figure.figureWorker, 0).then(({ figure }) => {
             setFigureImage(figure.image);
         });
     }, [user]);

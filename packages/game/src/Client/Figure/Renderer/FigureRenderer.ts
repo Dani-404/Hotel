@@ -2,14 +2,14 @@ import { FiguremapData } from "@Client/Interfaces/Figure/FiguremapData";
 import FigureAssets from "../../Assets/FigureAssets";
 import ContextNotAvailableError from "../../Exceptions/ContextNotAvailableError";
 import { FiguredataData } from "@Client/Interfaces/Figure/FiguredataData";
-import { figureRenderPriority } from "../FigureRenderPriority";
+import { figureRenderPriority } from "./Geometry/FigureRenderPriority";
 import { AvatarActionsData } from "@Client/Interfaces/Figure/Avataractions";
 import { FigureData } from "@Client/Interfaces/Figure/FigureData";
 import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
-import FigureWorker from "./FigureWorker";
+import FigureWorkerClient from "../Worker/FigureWorkerClient";
 import { FigureAnimationData, FigureAnimationFrameEffectData } from "@Client/Interfaces/Figure/FigureAnimationData";
-import { figureGeometryTypes } from "@Client/Figure/FigureGeometry";
-import { figurePartSets } from "@Client/Figure/FigurePartSets";
+import { figureGeometryTypes } from "@Client/Figure/Renderer/Geometry/FigureGeometry";
+import { figurePartSets } from "@Client/Figure/Renderer/Geometry/FigurePartSets";
 import { FurnitureSprite } from "@Client/Interfaces/Furniture/FurnitureSprites";
 import { FurnitureAsset } from "@Client/Interfaces/Furniture/FurnitureAssets";
 import { getGlobalCompositeModeFromInk, getGlobalCompositeModeFromInkNumber } from "@Client/Renderers/GlobalCompositeModes";
@@ -57,7 +57,7 @@ type EffectData = {
     data: FigureData
 };
 
-export default class FigureWorkerRenderer {
+export default class FigureRenderer {
     constructor(public readonly configuration: FigureConfiguration, public direction: number, public readonly actions: string[], public readonly frame: number, public readonly headOnly: boolean = false) {
 
     }
@@ -159,7 +159,7 @@ export default class FigureWorkerRenderer {
             }
         }
 
-        const currentSpriteFrame = FigureWorkerRenderer.getSpriteFrameFromSequence(this.frame);
+        const currentSpriteFrame = FigureRenderer.getSpriteFrameFromSequence(this.frame);
 
         const actions = this.getAvatarActions();
 

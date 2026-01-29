@@ -3,7 +3,7 @@ import AssetFetcher, { AssetSpriteProperties } from "./AssetFetcher";
 import { FigureData } from "@Client/Interfaces/Figure/FigureData";
 import { FiguredataData } from "@Client/Interfaces/Figure/FiguredataData";
 import { AvatarActionsData } from "@Client/Interfaces/Figure/Avataractions";
-import { FigureRendererResult, FigureRendererSprite } from "@Client/Figure/Worker/FigureWorkerRenderer";
+import { FigureRendererResult, FigureRendererSprite } from "@Client/Figure/Renderer/FigureRenderer";
 
 export default class FigureAssets {
     public static figuremap: FiguremapData;

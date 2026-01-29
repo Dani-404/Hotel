@@ -1,6 +1,6 @@
 import AssetFetcher from "@Client/Assets/AssetFetcher";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
-import FigureRenderer from "@Client/Figure/FigureRenderer";
+import Figure from "@Client/Figure/Figure";
 import { FigureConfiguration } from "@Shared/interfaces/figure/FigureConfiguration";
 
 export default class RoomChatRenderer {
@@ -61,9 +61,9 @@ export default class RoomChatRenderer {
         context.fillText(message, roomChatStyle.text.left + 2 + userText.width, roomChatStyle.text.top + 2);
 
         if(roomChatStyle.figure) {
-            const figureRenderer = new FigureRenderer(figureConfiguration, 2, undefined, false);
+            const figureRenderer = new Figure(figureConfiguration, 2, undefined, false);
 
-            const { figure } = await figureRenderer.renderToCanvas(FigureRenderer.figureWorker, 0, false);
+            const { figure } = await figureRenderer.renderToCanvas(Figure.figureWorker, 0, false);
             
             context.drawImage(
                 figure.image,
