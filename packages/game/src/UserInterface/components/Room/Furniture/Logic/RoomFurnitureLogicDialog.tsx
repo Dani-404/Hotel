@@ -1,4 +1,4 @@
-import RoomFurnitureDimmerDialog, { RoomFurnitureDimmerData } from "./RoomFurnitureDimmerDialog";
+import RoomFurnitureDimmerDialog, { RoomFurnitureDimmerData } from "./Dimmer/RoomFurnitureDimmerDialog";
 
 export type RoomFurnitureLogicDialogProps = {
     data: RoomFurnitureLogicDialogData;

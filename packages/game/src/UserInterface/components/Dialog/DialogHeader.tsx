@@ -8,39 +8,11 @@ export type MousePosition = {
 
 export type DialogHeaderProps = {
     title: string;
-    onDialogMove: (event: MouseEvent) => void;
+    onDialogMove: MouseEventHandler<HTMLDivElement>;
     onClose?: () => void;
 };
 
 export default function DialogHeader({ title, onDialogMove, onClose }: DialogHeaderProps) {
-    const [mouseDown, setMouseDown] = useState<boolean>();
-    
-    useEffect(() => {
-        if(mouseDown) {
-            const mouseMoveListener = (event: MouseEvent) => {
-                onDialogMove(event);
-            };
-
-            const mouseUpListener = () => {
-                setMouseDown(false);
-            };
-
-            document.addEventListener("mousemove", mouseMoveListener);
-            document.addEventListener("mouseup", mouseUpListener);
-            document.addEventListener("mouseleave", mouseUpListener);
-
-            return () => {
-                document.removeEventListener("mousemove", mouseMoveListener);
-                document.removeEventListener("mouseup", mouseUpListener);
-                document.removeEventListener("mouseleave", mouseUpListener);
-            };
-        }
-    }, [mouseDown]);
-
-    const onMouseDown = useCallback<MouseEventHandler<HTMLElement>>((event) => {
-        setMouseDown(true);
-    }, []);
-
     return (
         <div style={{
             backgroundColor: "#367897",
@@ -61,7 +33,7 @@ export default function DialogHeader({ title, onDialogMove, onClose }: DialogHea
             alignItems: "center",
 
             position: "relative"
-        }} onMouseDown={onMouseDown}>
+        }} onMouseDown={onDialogMove}>
             <div style={{
                 fontSize: 13,
                 pointerEvents: "none"

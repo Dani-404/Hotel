@@ -1,5 +1,6 @@
 import { MouseEventHandler, PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import DialogHeader, { MousePosition } from "./DialogHeader";
+import useDialogMovement from "./Hooks/useDialogMovement";
 
 export type DialogProps = PropsWithChildren & {
     title: string;
@@ -10,59 +11,7 @@ export type DialogProps = PropsWithChildren & {
 };
 
 export default function Dialog({ title, children, hidden, onClose, width, height }: DialogProps) {
-    const elementRef = useRef<HTMLDivElement>(null);
-    const positionRef = useRef<MousePosition>({
-        left: 200,
-        top: 200
-    });
-
-    useEffect(() => {
-        if(elementRef.current) {
-            elementRef.current.style.transform = `translate(${positionRef.current.left}px, ${positionRef.current.top}px)`;
-            elementRef.current.style.zIndex = Math.round(performance.now()).toString();
-        }
-    }, [elementRef]);
-
-    const onDialogMove = useCallback((event: MouseEvent) => {
-        const position: MousePosition = {
-            left: positionRef.current.left + event.movementX,
-            top: positionRef.current.top + event.movementY,
-        };
-
-        if(position.left < 0) {
-            position.left = 0;
-        }
-
-        if(position.top < 0) {
-            position.top = 0;
-        }
-
-        const maximumLeft = (document.body.clientWidth - elementRef.current!.clientWidth); 
-
-        if(position.left > maximumLeft) {
-            position.left = maximumLeft;
-        }
-        
-        const maximumTop = (document.body.clientHeight - elementRef.current!.clientHeight); 
-        
-        if(position.top > maximumTop) {
-            position.top = maximumTop;
-        }
-
-        positionRef.current = position;
-        
-        elementRef.current!.style.transform = `translate(${positionRef.current.left}px, ${positionRef.current.top}px)`;
-
-        // TODO: pass down the new position to re-align the mouse start position to avoid offsets when hitting the document edges
-    }, []);
-
-    const onMouseDown = useCallback(() => {
-        if(!elementRef.current) {
-            return;
-        }
-
-        elementRef.current.style.zIndex = Math.round(performance.now()).toString();
-    }, [elementRef]);
+    const { elementRef, onDialogFocus, onMouseDown } = useDialogMovement();
 
     return (
         <div ref={elementRef} style={{
@@ -86,8 +35,8 @@ export default function Dialog({ title, children, hidden, onClose, width, height
 
             pointerEvents: (!hidden)?("auto"):("none"),
             opacity: (!hidden)?(undefined):(0)
-        }} onMouseDown={onMouseDown}>
-            <DialogHeader title={title} onDialogMove={onDialogMove} onClose={onClose}/>
+        }} onMouseDown={onDialogFocus}>
+            <DialogHeader title={title} onDialogMove={onMouseDown} onClose={onClose}/>
 
             <div style={{
                 height: 1,

@@ -1,0 +1,55 @@
+.dimmer-dialog-slider {
+  width: calc(100% - 2px);
+
+  padding-right: 2px;
+
+  position: relative;
+}
+
+.dimmer-dialog-slider::before,
+.dimmer-dialog-slider::after {
+    content: '';
+
+    position: absolute;
+
+    left: 0;
+    top: 2px;
+
+    width: 2px;
+
+    background-color: #23752E;
+    height: 15px;
+}
+
+.dimmer-dialog-slider::after {
+    left: auto;
+    right: -2px;
+}
+
+.dimmer-dialog-slider input {
+  -webkit-appearance: none; 
+  appearance: none;
+
+  width: 100%;
+  height: 2px;
+
+  background: linear-gradient(to bottom, #23752E 50%, #1D6E27 50%);
+  
+  outline: none;
+}
+
+.dimmer-dialog-slider input::-webkit-slider-thumb,
+.dimmer-dialog-slider input::-moz-range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  
+  width: 11px;
+  height: 22px;
+
+  background: #00760F;
+
+  border: 2px solid #00ED1F;
+  border-radius: 3px;
+  
+  cursor: pointer;
+}
