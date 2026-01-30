@@ -3,14 +3,15 @@ import RoomItemSpriteInterface from "@Client/Room/Interfaces/RoomItemSpriteInter
 import RoomFurnitureSprite from "./RoomFurnitureSprite";
 import RoomItem from "../RoomItem";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
+import RoomRenderer from "@Client/Room/Renderer";
 
 export default class RoomFurnitureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
     public readonly id = Math.random();
     
-    constructor(public readonly furnitureRenderer: Furniture, position?: RoomPosition) {
-        super("furniture");
+    constructor(public roomRenderer: RoomRenderer, public readonly furnitureRenderer: Furniture, position?: RoomPosition) {
+        super(roomRenderer, "furniture");
 
         if(position) {
             this.setPosition(position);

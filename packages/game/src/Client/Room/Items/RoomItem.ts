@@ -1,6 +1,7 @@
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import RoomItemInterface from "../Interfaces/RoomItemInterface";
 import RoomSprite from "./RoomSprite";
+import RoomRenderer from "@Client/Room/Renderer";
 
 export default class RoomItem implements RoomItemInterface {
     position?: RoomPosition;
@@ -9,7 +10,7 @@ export default class RoomItem implements RoomItemInterface {
     disabled: boolean = false;
     alpha: number = 1;
 
-    constructor(public type: string, public sprites: RoomSprite[] = []) {
+    constructor(public roomRenderer: RoomRenderer, public type: string, public sprites: RoomSprite[] = []) {
 
     }
 

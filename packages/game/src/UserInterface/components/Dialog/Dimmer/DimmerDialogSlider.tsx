@@ -8,7 +8,7 @@ export type DimmerDialogSliderProps = {
 export default function DimmerDialogSlider({ value, onChange }: DimmerDialogSliderProps) {
     return (
         <div className="dimmer-dialog-slider">
-            <input type="range" min="1" max="100" value={value} onChange={(event) => onChange(parseInt((event.target as HTMLInputElement).value))}/>
+            <input type="range" min="0" max="255" value={value} onChange={(event) => onChange(parseInt((event.target as HTMLInputElement).value))}/>
         </div>
     );
 }

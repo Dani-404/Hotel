@@ -7,6 +7,7 @@ import WallRenderer from "./Structure/WallRenderer";
 import FurnitureAssets from "@Client/Assets/FurnitureAssets";
 import Furniture from "@Client/Furniture/Furniture";
 import RoomFloorItem from "./Items/Map/RoomFloorItem";
+import FurnitureMultistateLogic from "@Client/Furniture/Logic/FurnitureMultistateLogic";
 
 export type RoomFurnitureRendererOptions = {
     withoutWalls?: boolean;
@@ -63,14 +64,14 @@ export default class RoomFurnitureRenderer {
         });
 
         this.wallRenderer = new WallRenderer(roomStructure, roomStructure.wall.id, 64);
-        this.wallItem = new RoomWallItem(this.wallRenderer);
+        this.wallItem = new RoomWallItem(this.roomRenderer, this.wallRenderer);
 
         if(!options.withoutWalls) {
             this.roomRenderer.items.push(this.wallItem);
         }
 
         this.floorRenderer = new FloorRenderer(roomStructure, roomStructure.floor.id, 64);
-        this.floorItem = new RoomFloorItem(this.floorRenderer);
+        this.floorItem = new RoomFloorItem(this.roomRenderer, this.floorRenderer);
     
         this.roomRenderer.items.push(this.floorItem);
     }
@@ -100,7 +101,7 @@ export default class RoomFurnitureRenderer {
 
         await furnitureRenderer.getData();
 
-        this.roomItem = new RoomFurnitureItem(furnitureRenderer, (furnitureData.visualization.placement === "wall") ? (
+        this.roomItem = new RoomFurnitureItem(this.roomRenderer, furnitureRenderer, (furnitureData.visualization.placement === "wall") ? (
             {
                 row: 1 + Math.max(1, furnitureRenderer.getDimensions(true).row),
                 column: 0,
@@ -123,7 +124,11 @@ export default class RoomFurnitureRenderer {
             return;
         }
 
-        this.roomItem.furnitureRenderer.animation = this.roomItem.furnitureRenderer.getNextAnimation();
+        const logic = this.roomItem.furnitureRenderer.getLogic();
+
+        if(logic instanceof FurnitureMultistateLogic) {
+            this.roomItem.furnitureRenderer.animation = logic.getNextState();
+        }
     }
 
     terminate() {

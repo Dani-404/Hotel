@@ -23,6 +23,7 @@ import RoomFurniturePlacer from "@Client/Room/RoomFurniturePlacer";
 import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
+import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -60,6 +61,7 @@ export default class RoomInstance {
         }
 
         this.roomFloorItem = new RoomFloorItem(
+            this.roomRenderer,
             new FloorRenderer(structure, structure.floor.id, 64),
         );
 
@@ -71,10 +73,15 @@ export default class RoomInstance {
         }
 
         this.roomWallItem = new RoomWallItem(
+            this.roomRenderer,
             new WallRenderer(structure, structure.wall.id, 64)
         );
 
         this.roomRenderer.items.push(this.roomWallItem);
+    }
+
+    public setMoodlight(moodlight: RoomMoodlightData) {
+        this.roomRenderer.lighting.setMoodlightData(moodlight);
     }
 
     public terminate() {
@@ -141,7 +148,7 @@ export default class RoomInstance {
 
     private addUser(userData: RoomUserData): RoomItem<RoomUserData, RoomFigureItem> {
         const figureRenderer = new Figure(userData.figureConfiguration, userData.direction);
-        const item = new RoomFigureItem(figureRenderer, userData.position);
+        const item = new RoomFigureItem(this.roomRenderer, figureRenderer, userData.position);
 
         this.roomRenderer.items.push(item);
 
@@ -180,7 +187,7 @@ export default class RoomInstance {
 
     public addFurniture(furnitureData: RoomFurnitureData) {
         const furnitureRenderer = new Furniture(furnitureData.furniture.type, 64, furnitureData.direction, furnitureData.animation, furnitureData.furniture.color);
-        const item = new RoomFurnitureItem(furnitureRenderer, furnitureData.position);
+        const item = new RoomFurnitureItem(this.roomRenderer, furnitureRenderer, furnitureData.position);
 
         this.roomRenderer.items.push(item);
 

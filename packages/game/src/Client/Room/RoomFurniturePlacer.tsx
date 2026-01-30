@@ -22,6 +22,7 @@ export default class RoomFurniturePlacer {
 
     public static fromFurnitureData(roomInstance: RoomInstance, furnitureData: FurnitureData) {
         const roomFurnitureItem = new RoomFurnitureItem(
+            roomInstance.roomRenderer,
             new Furniture(furnitureData.type, 64, undefined, 0, furnitureData.color)
         );
 

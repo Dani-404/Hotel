@@ -25,7 +25,7 @@ export default class RoomCursor extends EventTarget {
 
         const furnitureRenderer = new Furniture("tile_cursor", 64, 0);
         
-        this.furnitureItem = new RoomFurnitureItem(furnitureRenderer, {
+        this.furnitureItem = new RoomFurnitureItem(this.roomRenderer, furnitureRenderer, {
             row: 1,
             column: 2,
             depth: 0

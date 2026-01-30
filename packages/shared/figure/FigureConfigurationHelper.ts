@@ -12,7 +12,7 @@ export default class FigureConfigurationHelper {
             configuration.push({
                 type: sections[0] as FigurePartKeyAbbreviation,
                 setId: sections[1] as string,
-                colorIndex: (sections[2])?(parseInt(sections[2])):(undefined)
+                colors: (sections[2])?([parseInt(sections[2])]):([])
             });
         }
 

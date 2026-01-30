@@ -5,14 +5,15 @@ import Figure from "@Client/Figure/Figure";
 import RoomFigureSprite from "./RoomFigureSprite";
 import { clientInstance } from "../../../..";
 import RoomFigureEffectSprite from "@Client/Room/Items/Figure/RoomFigureEffectSprite";
+import RoomRenderer from "@Client/Room/Renderer";
 
 export default class RoomFigureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
     public readonly id = Math.random();
 
-    constructor(public readonly figureRenderer: Figure, position: RoomPosition) {
-        super("figure");
+    constructor(public roomRenderer: RoomRenderer, public readonly figureRenderer: Figure, position: RoomPosition) {
+        super(roomRenderer, "figure");
 
         this.setPosition(position);
 

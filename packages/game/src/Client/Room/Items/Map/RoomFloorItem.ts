@@ -4,12 +4,14 @@ import RoomItem from "../RoomItem";
 import RoomFloorSprite from "../Floor/RoomFloorSprite";
 import RoomWallSprite from "../Floor/RoomWallSprite";
 import RoomDoorMaskSprite from "../Floor/RoomDoorMaskSprite";
+import RoomRenderer from "@Client/Room/Renderer";
+import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
 
 export default class RoomFloorItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
-    constructor(public readonly floorRenderer: FloorRenderer) {
-        super("floor");
+    constructor(public roomRenderer: RoomRenderer, public readonly floorRenderer: FloorRenderer) {
+        super(roomRenderer, "floor");
 
         this.render();
     }
@@ -19,7 +21,32 @@ export default class RoomFloorItem extends RoomItem {
 
     render(frame: number = 0) {
         this.floorRenderer.renderOffScreen().then((image) => {
-            this.sprites.push(new RoomFloorSprite(this, image));
+            this.sprites = [];
+
+            this.sprites.push(new RoomFloorSprite(this, this.renderWithLighting(image)));
         });
+    }
+        
+    private renderWithLighting(image: OffscreenCanvas) {
+        if(this.roomRenderer.lighting.moodlight?.enabled && this.roomRenderer.lighting.moodlight?.backgroundOnly) {
+            const canvas = new OffscreenCanvas(image.width, image.height);
+
+            const context = canvas.getContext("2d");
+
+            if(!context) {
+                throw new ContextNotAvailableError();
+            }
+
+            context.drawImage(image, 0, 0);
+
+            this.roomRenderer.lighting.render(context);
+
+            context.globalCompositeOperation = "destination-in";
+            context.drawImage(image, 0, 0);
+
+            return canvas;
+        }
+
+        return image;
     }
 }

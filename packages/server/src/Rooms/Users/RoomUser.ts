@@ -8,6 +8,7 @@ import { RoomUserData } from "@shared/Interfaces/Room/RoomUserData.js";
 import { UserWalkToEventData } from "@shared/Communications/Responses/Rooms/Users/UserWalkToEventData.js";
 import { LoadRoomEventData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
 import { UserActionEventData } from "@shared/Communications/Responses/Rooms/Users/UserActionEventData.js";
+import { RoomMoodlightEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomMoodlightEventData.js";
 
 export default class RoomUser {
     public position: RoomPosition;
@@ -39,7 +40,10 @@ export default class RoomUser {
                 users: this.room.users.map((user) => user.getRoomUserData()),
                 furnitures: this.room.furnitures.map((furniture) => furniture.getFurnitureData())
             }),
-            userEnteredRoomEvent
+            userEnteredRoomEvent,
+            new OutgoingEvent<RoomMoodlightEventData>("RoomMoodlightEvent", {
+                moodlight: this.room.model.moodlight
+            })
         ]);
     }
     

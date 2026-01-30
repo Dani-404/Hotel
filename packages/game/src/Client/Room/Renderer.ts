@@ -15,11 +15,16 @@ import RoomFurnitureSprite from "./Items/Furniture/RoomFurnitureSprite";
 import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem";
 import RoomFurniturePlacer from "./RoomFurniturePlacer";
 import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
+import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
+import { hexToRgb } from "@Client/Utilities/ColorUtilities";
+import RoomLighting from "@Client/Room/RoomLightning";
 
 export default class RoomRenderer extends EventTarget {
     public readonly element: HTMLCanvasElement;
     public readonly camera: RoomCamera;
     public readonly cursor?: RoomCursor;
+
+    public lighting: RoomLighting;
 
     public furniturePlacer?: RoomFurniturePlacer;
 
@@ -50,6 +55,7 @@ export default class RoomRenderer extends EventTarget {
         this.element.classList.add("renderer");
 
         this.camera = new RoomCamera(this);
+        this.lighting = new RoomLighting(this);
 
         if(roomInstance) {
             this.cursor = new RoomCursor(this);
@@ -127,6 +133,9 @@ export default class RoomRenderer extends EventTarget {
             throw new ContextNotAvailableError();
         }
 
+        context.fillStyle = "black";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
         this.renderedOffset = {
             left: this.center.left + this.camera.cameraPosition.left,
             top: this.center.top + this.camera.cameraPosition.top
@@ -160,6 +169,12 @@ export default class RoomRenderer extends EventTarget {
             sprite.render(context);
 
             context.restore();
+        }
+
+        context.resetTransform();
+
+        if(!this.lighting.moodlight?.backgroundOnly) {
+            this.lighting.render(context);
         }
 
         Performance.endPerformanceCheck("Draw room sprites");

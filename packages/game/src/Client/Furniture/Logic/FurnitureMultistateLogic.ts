@@ -28,7 +28,7 @@ export default class FurnitureMultistateLogic implements FurnitureLogic {
         });
     }
 
-    private getNextState() {
+    public getNextState() {
         const visualization = this.furniture.getVisualizationData(this.data);
 
         const currentAnimationIndex = visualization.animations.findIndex((animation) => animation.id === this.furniture.animation);
