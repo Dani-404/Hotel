@@ -200,4 +200,8 @@ export default class RoomFurniture {
 
         return true;
     }
+
+    public getData<T>() {
+        return {...(this.model.data ?? {})} as T;
+    }
 }

@@ -197,7 +197,7 @@ export default class RoomInstance {
         });
 
         if(furnitureData.furniture.interactionType === "dimmer") {
-            if((furnitureData.data as RoomMoodlightData).enabled) {
+            if((furnitureData.data as RoomMoodlightData)?.enabled) {
                 this.setMoodlight(furnitureData.data as RoomMoodlightData);
             }
         }
@@ -207,7 +207,7 @@ export default class RoomInstance {
         const roomFurnitureItem = this.getFurnitureById(furnitureData.id);
         
         if(furnitureData.furniture.interactionType === "dimmer") {
-            if((furnitureData.data as RoomMoodlightData).enabled || (roomFurnitureItem.data.data as RoomMoodlightData).enabled) {
+            if((furnitureData.data as RoomMoodlightData)?.enabled || (roomFurnitureItem.data.data as RoomMoodlightData)?.enabled) {
                 this.setMoodlight(furnitureData.data as RoomMoodlightData);
             }
         }

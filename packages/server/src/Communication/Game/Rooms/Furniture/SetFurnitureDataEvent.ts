@@ -25,6 +25,11 @@ export default class SetFurnitureDataEvent implements IncomingEvent<SetFurniture
                 activeFurniture.model.animation = 0;
 
                 if(activeFurniture.model.changed()) {
+                    activeFurniture.model.data = {
+                        ...activeFurniture.getData<RoomMoodlightData>(),
+                        enabled: false
+                    };
+                    
                     await activeFurniture.model.save();
         
                     user.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
