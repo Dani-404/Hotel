@@ -18,8 +18,10 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
             },
             include: {
                 model: ShopPageModel,
-                as: "children"
-            }
+                as: "children",
+                order: ["index"]
+            },
+            order: ["index"]
         });
 
         user.send(new OutgoingEvent<ShopPagesEventData>("ShopPagesEventData", {

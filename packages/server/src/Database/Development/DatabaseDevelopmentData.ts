@@ -22,6 +22,7 @@ const defaultShopPages: any = [
         pages: [
             {
                 title: "Jukebox",
+                icon: "icon_16.png",
                 furnitures: [
                     { type: "jukebox_big", credits: 5 },
                     { type: "jukebox", color: 1, credits: 1 }
@@ -29,6 +30,7 @@ const defaultShopPages: any = [
             },
             {
                 title: "Accessories",
+                icon: "icon_11.png",
                 furnitures: [
                     { type: "post_it", credits: 3 },
                     { type: "note_tag", duckets: 50 },
@@ -62,6 +64,7 @@ const defaultShopPages: any = [
 
             {
                 title: "Wallpapers",
+                icon: "icon_225.png",
                 furnitures: getWallIds().map((wallId: number) => {
                     return {
                         type: "wallpaper",
@@ -73,6 +76,7 @@ const defaultShopPages: any = [
 
             {
                 title: "Floors",
+                icon: "icon_225.png",
                 furnitures: getFloorIds().map((floorId: number) => {
                     return {
                         type: "floor",
@@ -496,13 +500,14 @@ export async function initializeDevelopmentData() {
     for(let root of defaultShopPages) {
         const page = await ShopPageModel.create({
             id: randomUUID(),
+            index: defaultShopPages.indexOf(root),
 
             category: "furniture",
             title: root.title,
             description: root.description,
 
             icon: root.icon,
-            header: root.header
+            header: root.header,
         });
 
         for(let child of root.pages) {
@@ -519,6 +524,7 @@ export async function initializeDevelopmentData() {
 
             const childPage = await ShopPageModel.create({
                 id: randomUUID(),
+                index: root.pages.indexOf(child),
 
                 category: "furniture",
                 title: child.title,

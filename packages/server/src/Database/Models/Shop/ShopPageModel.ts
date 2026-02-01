@@ -24,6 +24,9 @@ export function initializeShopPageModel(sequelize: Sequelize) {
             type: DataTypes.UUID,
             primaryKey: true
           },
+          index: {
+            type: DataTypes.NUMBER,
+          },
           category: {
             type: new DataTypes.STRING(32),
             allowNull: false
