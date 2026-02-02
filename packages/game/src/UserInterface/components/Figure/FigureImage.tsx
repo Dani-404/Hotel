@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
-import { FurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
-import Furniture from "@Client/Furniture/Furniture";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import Figure from "@Client/Figure/Figure";
+import { FigureConfiguration } from "@Shared/interfaces/figure/FigureConfiguration";
 
 export type FigureImageProps = {
     figureConfiguration: FigureConfiguration;
@@ -16,8 +14,8 @@ export default function FigureImage({ figureConfiguration, direction }: FigureIm
     useEffect(() => {
         const furnitureRenderer = new Figure(figureConfiguration, direction);
 
-        furnitureRenderer.renderToCanvas(Figure.figureWorker, 0, true).then(({ image }) => {
-            setImage(image);
+        furnitureRenderer.renderToCanvas(Figure.figureWorker, 0, true).then(({ figure }) => {
+            setImage(figure.image);
         });
     }, [ figureConfiguration ]);
 
