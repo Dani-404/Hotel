@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
 import Figure from "@Client/Figure/Figure";
-import { FigureConfiguration } from "@Shared/interfaces/figure/FigureConfiguration";
+import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 
 export type FigureImageProps = {
     figureConfiguration: FigureConfiguration;

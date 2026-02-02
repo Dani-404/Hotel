@@ -3,7 +3,7 @@ import OffscreenCanvasRender from "../../OffscreenCanvasRender";
 import WardrobeSelectionItem from "./WardrobeSelectionItem";
 import WardrobeSelectionColors from "./WardrobeSelectionColors";
 import FigureWardrobe, { FigureWardrobeColor, FigureWardrobeItem } from "@Client/Figure/Wardrobe/FigureWardrobe";
-import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
+import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
 
 export type WardrobeSelectionProps = {
     part: FigurePartKeyAbbreviation;

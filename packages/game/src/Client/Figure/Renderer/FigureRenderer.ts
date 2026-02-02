@@ -5,7 +5,7 @@ import { FiguredataData } from "@Client/Interfaces/Figure/FiguredataData";
 import { figureRenderPriority } from "./Geometry/FigureRenderPriority";
 import { AvatarActionsData } from "@Client/Interfaces/Figure/Avataractions";
 import { FigureData } from "@Client/Interfaces/Figure/FigureData";
-import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
+import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import FigureWorkerClient from "../Worker/FigureWorkerClient";
 import { FigureAnimationData, FigureAnimationFrameEffectData } from "@Client/Interfaces/Figure/FigureAnimationData";
 import { figureGeometryTypes } from "@Client/Figure/Renderer/Geometry/FigureGeometry";

@@ -6,8 +6,8 @@ import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import ShopPage from "./Pages/ShopPage";
 import { DialogTabHeaderProps } from "../Dialog/Tabs/DialogTabs";
 import { webSocketClient } from "../../..";
-import { GetShopPagesEventData } from "@Shared/Communications/Shop/Requests/GetShopPagesEventData";
-import { ShopPageData, ShopPagesEventData } from "@Shared/Communications/Shop/Responses/ShopPagesEventData";
+import { ShopPageData, ShopPagesEventData } from "@Shared/Communications/Responses/Shop/ShopPagesEventData";
+import { GetShopPagesEventData } from "@Shared/Communications/Requests/Shop/GetShopPagesEventData";
 
 export type ShopDialogCategoryProps = {
     category: "frontpage" | "furniture" | "clothing" | "pets";

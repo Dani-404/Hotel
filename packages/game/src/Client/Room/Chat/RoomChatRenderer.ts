@@ -1,7 +1,7 @@
 import AssetFetcher from "@Client/Assets/AssetFetcher";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
 import Figure from "@Client/Figure/Figure";
-import { FigureConfiguration } from "@Shared/interfaces/figure/FigureConfiguration";
+import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 
 export default class RoomChatRenderer {
     public static async render(style: string, user: string, figureConfiguration: FigureConfiguration, message: string) {

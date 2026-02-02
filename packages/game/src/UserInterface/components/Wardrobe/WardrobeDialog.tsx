@@ -8,7 +8,7 @@ import { AppContext } from "../../contexts/AppContext";
 import DialogButton from "../Dialog/Button/DialogButton";
 import { webSocketClient } from "../../..";
 import { SetFigureConfigurationEventData } from "@Shared/Communications/Requests/User/SetFigureConfigurationEventData";
-import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/interfaces/figure/FigureConfiguration";
+import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
 
 const wardrobeTabs = [
     {

@@ -126,7 +126,7 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
     }, [activeFurniture, roomFurniturePlacer]);
 
     const onMouseDown = useCallback(() => {
-        if(!clientInstance.roomInstance) {
+        if(!clientInstance.roomInstance.value) {
             return;
         }
 
@@ -138,7 +138,7 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
             roomFurniturePlacer.destroy();
         }
 
-        setRoomFurniturePlacer(RoomFurniturePlacer.fromFurnitureData(clientInstance.roomInstance, activeFurniture.furniture));
+        setRoomFurniturePlacer(RoomFurniturePlacer.fromFurnitureData(clientInstance.roomInstance.value, activeFurniture.furniture));
     }, [ activeFurniture, roomFurniturePlacer ]);
 
     return (

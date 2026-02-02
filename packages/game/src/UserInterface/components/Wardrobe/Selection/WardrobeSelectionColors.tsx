@@ -1,9 +1,8 @@
-import ClientFigureDataResponse from "@Shared/events/responses/ClientFigureDataResponse";
 import { PropsWithChildren } from "react";
 
 export type WardrobeSelectionColorsProps = PropsWithChildren & {
     disabled: boolean;
-    colors?: ClientFigureDataResponse["colors"];
+    colors?: { id: number; color?: string; }[];
     activeColor: number | undefined;
     onColorChange: (color: number) => void;
 };

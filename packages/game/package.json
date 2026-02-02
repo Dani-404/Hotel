@@ -12,11 +12,12 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@parcel/validator-typescript": "^2.16.4",
     "@types/node-sprite-generator": "^0.10.6",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "node-sprite-generator": "^0.10.2",
-    "parcel": "^2.14.0",
+    "parcel": "^2.16.4",
     "ts-node": "^10.9.2"
   },
   "alias": {
