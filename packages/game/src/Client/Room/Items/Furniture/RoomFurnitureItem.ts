@@ -23,11 +23,11 @@ export default class RoomFurnitureItem extends RoomItem {
     process(frame: number): void {
         super.process(frame);
 
-        this.render(frame);
+        this.render();
     }
 
-    render(frame: number = 0) {
-        this.furnitureRenderer.render(frame).then((sprites) => {
+    render() {
+        this.furnitureRenderer.render().then((sprites) => {
             this.sprites = sprites.map((sprite) => new RoomFurnitureSprite(this, sprite));
         });
     }
