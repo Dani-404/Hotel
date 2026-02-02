@@ -2,7 +2,6 @@ import FurnitureAssets from "../Assets/FurnitureAssets";
 import { FurnitureData } from "../Interfaces/Furniture/FurnitureData";
 import { FurnitureVisualization } from "@Client/Interfaces/Furniture/FurnitureVisualization";
 import FurnitureRoomContentRenderer from "@Client/Furniture/Renderer/FurnitureRoomContentRenderer";
-import { getGlobalCompositeModeFromInk } from "@Client/Renderers/GlobalCompositeModes";
 import FurnitureDefaultRenderer from "@Client/Furniture/Renderer/FurnitureDefaultRenderer";
 import FurnitureRenderer from "@Client/Furniture/Renderer/Interfaces/FurnitureRenderer";
 import FurnitureLogic from "@Client/Furniture/Logic/Interfaces/FurnitureLogic";
@@ -67,7 +66,7 @@ export default class Furniture {
         return new FurnitureDefaultLogic(this);
     }
 
-    public async render(frame: number = 0) {
+    public async render() {
         this.frame++;
 
         if(!this.data) {

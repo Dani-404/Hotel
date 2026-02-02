@@ -1,8 +1,7 @@
 import FurnitureIcon from "../../Furniture/FurnitureIcon";
 import DialogButton from "../../Dialog/Button/DialogButton";
 import RoomRenderer from "../../Room/Renderer/RoomRenderer";
-import { act, Fragment, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../contexts/AppContext";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { UserFurnitureData } from "@Shared/Interfaces/User/UserFurnitureData";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { clientInstance, webSocketClient } from "../../../..";

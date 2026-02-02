@@ -1,10 +1,8 @@
 import Furniture from "@Client/Furniture/Furniture";
-import RoomRenderer from "./Renderer";
 import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem";
 import { FurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
-import { UserFurnitureData } from "@Shared/Interfaces/User/UserFurnitureData";
 import RoomInstance from "@Client/Room/RoomInstance";
 
 export default class RoomFurniturePlacer {

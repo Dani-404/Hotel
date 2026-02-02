@@ -29,7 +29,7 @@ export default class RoomFigureEffectSprite extends RoomSprite {
         context.drawImage(this.sprite.image, this.offset.left, this.offset.top);
     }
 
-    mouseover(position: MousePosition) {
+    mouseover() {
         return null;
     }
 }

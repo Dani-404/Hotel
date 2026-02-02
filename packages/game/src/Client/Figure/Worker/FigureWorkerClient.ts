@@ -1,6 +1,6 @@
 import Figure from "../Figure";
 import { FigureRenderEvent, FigureRenderResultEvent } from "../Interfaces/FigureRenderEvent";
-import { FigureRendererResult, FigureRendererSprite } from "../Renderer/FigureRenderer";
+import { FigureRendererResult } from "../Renderer/FigureRenderer";
 
 export default class FigureWorkerClient {
     private worker = (() => {
@@ -42,7 +42,7 @@ export default class FigureWorkerClient {
     }
 
     public renderInWebWorker(figureRenderer: Figure, frame: number, cropped: boolean): Promise<FigureRendererResult> {
-        return new Promise<FigureRendererResult>((resolve, reject) => {
+        return new Promise<FigureRendererResult>((resolve) => {
             const id = Math.random();
 
             this.canvasRequests.push({

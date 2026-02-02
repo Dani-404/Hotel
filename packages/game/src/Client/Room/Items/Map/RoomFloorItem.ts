@@ -2,8 +2,6 @@ import RoomItemSpriteInterface from "@Client/Room/Interfaces/RoomItemSpriteInter
 import FloorRenderer from "@Client/Room/Structure/FloorRenderer";
 import RoomItem from "../RoomItem";
 import RoomFloorSprite from "../Floor/RoomFloorSprite";
-import RoomWallSprite from "../Floor/RoomWallSprite";
-import RoomDoorMaskSprite from "../Floor/RoomDoorMaskSprite";
 import RoomRenderer from "@Client/Room/Renderer";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
 
@@ -16,10 +14,10 @@ export default class RoomFloorItem extends RoomItem {
         this.render();
     }
     
-    process(frame: number): void {
+    process(): void {
     }
 
-    render(frame: number = 0) {
+    render() {
         this.floorRenderer.renderOffScreen().then((image) => {
             this.sprites = [];
 

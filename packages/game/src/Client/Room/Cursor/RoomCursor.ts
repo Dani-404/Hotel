@@ -11,7 +11,6 @@ import StoppedFollowingFigure from "./Events/StoppedFollowingFigure";
 import { clientInstance, webSocketClient } from "../../..";
 import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData";
 import { PickupRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PickupRoomFurnitureEventData";
-import { UseRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UseRoomFurnitureEventData";
 
 // TODO: rework hovering/following figure to regular hover events? maybe not for performance sake?
 export default class RoomCursor extends EventTarget {
@@ -60,7 +59,7 @@ export default class RoomCursor extends EventTarget {
         }
     }
 
-    private doubleclick(event: MouseEvent) {
+    private doubleclick() {
         if(this.cursorDisabled) {
             return;
         }

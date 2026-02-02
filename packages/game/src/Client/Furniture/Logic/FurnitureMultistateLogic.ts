@@ -1,9 +1,7 @@
 import Furniture from "@Client/Furniture/Furniture";
 import FurnitureLogic from "@Client/Furniture/Logic/Interfaces/FurnitureLogic";
 import { FurnitureData } from "@Client/Interfaces/Furniture/FurnitureData";
-import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
-import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import { webSocketClient } from "../../..";
 import { UseRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UseRoomFurnitureEventData";
 

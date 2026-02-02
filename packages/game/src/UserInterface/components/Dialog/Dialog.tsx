@@ -1,5 +1,5 @@
-import { MouseEventHandler, PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
-import DialogHeader, { MousePosition } from "./DialogHeader";
+import { PropsWithChildren } from "react";
+import DialogHeader from "./DialogHeader";
 import useDialogMovement from "./Hooks/useDialogMovement";
 
 export type DialogProps = PropsWithChildren & {

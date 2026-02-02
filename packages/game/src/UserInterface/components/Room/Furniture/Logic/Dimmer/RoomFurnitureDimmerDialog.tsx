@@ -1,14 +1,11 @@
 import { useCallback, useState } from "react";
-import Dialog from "../../../../Dialog/Dialog";
-import DialogContent from "../../../../Dialog/DialogContent";
-import useDialogMouse from "../../../../Dialog/Hooks/useDialogMouse";
 import useDialogMovement from "../../../../Dialog/Hooks/useDialogMovement";
 import { RoomFurnitureLogicDialogProps } from "../RoomFurnitureLogicDialog";
 import RoomFurnitureDimmerDialogColors from "./RoomFurnitureDimmerDialogColors";
 import DimmerDialogSlider from "../../../../Dialog/Dimmer/DimmerDialogSlider";
 import DimmerDialogCheckbox from "../../../../Dialog/Dimmer/DimmerDialogCheckbox";
 import DimmerDialogButton from "../../../../Dialog/Dimmer/DimmerDialogButton";
-import { clientInstance, webSocketClient } from "../../../../../..";
+import { webSocketClient } from "../../../../../..";
 import { SetFurnitureDataEventData } from "@Shared/Communications/Requests/Rooms/Furniture/SetFurnitureDataEventData";
 import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
@@ -51,6 +48,10 @@ export default function RoomFurnitureDimmerDialog({ data, hidden, onClose }: Roo
             }
         });
     }, [enabled, color, alpha, backgroundOnly]);
+
+    if(hidden) {
+        return null;
+    }
 
     return (
         <div ref={elementRef} onMouseDown={onDialogFocus} className="sprite_dialog_roomdimmer_background" style={{

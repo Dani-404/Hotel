@@ -1,7 +1,6 @@
 import { MousePosition } from "@Client/Interfaces/MousePosition";
 import RoomSprite from "../RoomSprite";
 import RoomMapItem from "../Map/RoomWallItem";
-import RoomRenderer from "@Client/Room/Renderer";
 
 export default class RoomDoorMaskSprite extends RoomSprite {
     priority = -1000;
@@ -27,7 +26,7 @@ export default class RoomDoorMaskSprite extends RoomSprite {
         context.drawImage(this.image, this.offset.left - this.item.wallRenderer!.structure.wall.thickness, this.offset.top);
     }
 
-    mouseover(position: MousePosition) {
+    mouseover() {
         return null;
     }
 }

@@ -11,7 +11,7 @@ export default class WebSocketClient extends EventTarget {
         this.socket.addEventListener("message", (event) => {
             const events: [string, any][] = JSON.parse(event.data);
 
-            for(let [type, data] of events) {
+            for(const [type, data] of events) {
                 console.log("Received " + type + " from server", data);
 
                 this.dispatchEvent(new WebSocketEvent(type, data));

@@ -12,13 +12,13 @@ export default class UserActionEvent implements IncomingEvent<WebSocketEvent<Use
         const roomUser = clientInstance.roomInstance.value.getUserById(event.data.userId);
 
         if(event.data.actionsAdded) {
-            for(let action of event.data.actionsAdded) {
+            for(const action of event.data.actionsAdded) {
                 roomUser.item.figureRenderer.addAction(action);
             }
         }
 
         if(event.data.actionsRemoved) {
-            for(let action of event.data.actionsRemoved) {
+            for(const action of event.data.actionsRemoved) {
                 roomUser.item.figureRenderer.removeAction(action);
             }
         }

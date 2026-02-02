@@ -11,7 +11,7 @@ export default class RoomFurnitureEvent implements IncomingEvent<WebSocketEvent<
         }
 
         if(event.data.furnitureUpdated?.length) {
-            for(let furniture of event.data.furnitureUpdated) {
+            for(const furniture of event.data.furnitureUpdated) {
                 const roomFurnitureItem = clientInstance.roomInstance.value.getFurnitureById(furniture.id);
 
                 roomFurnitureItem.updateData(furniture);

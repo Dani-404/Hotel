@@ -227,7 +227,7 @@ export default class WallRenderer {
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
-        for(let index in rectangles) {
+        for(const index in rectangles) {
             const rectangle = rectangles[index];
 
             let width = this.fullSize;
@@ -296,18 +296,16 @@ export default class WallRenderer {
         context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);        
         context.fillStyle = context.createPattern(image, "repeat")!;
 
-        for(let index in rectangles) {
+        for(const index in rectangles) {
             const rectangle = rectangles[index];
 
             let row = rectangle.row;
-            let column = rectangle.column;  
+            const column = rectangle.column;  
 
             let width = this.fullSize;
             let height = ((3.5 + (this.depth - rectangle.depth)) * this.fullSize);
 
-            if(rectangle.direction == 4) {
-            }
-            else if(rectangle.direction == 2) {
+            if(rectangle.direction == 2) {
                 row++;
                 
                 if(this.getTileDepth(row, column, false) != 'X') {
@@ -317,12 +315,12 @@ export default class WallRenderer {
                 width = this.structure.wall.thickness;
                 height += this.structure.floor.thickness;
             }
-            else
+            else if(rectangle.direction !== 4) {
                 continue;
+            }
 
-            let left = (column * this.fullSize) - (row * this.fullSize);
-            let top = (row * this.fullSize) - (this.depth * this.halfSize);
-            
+            const left = (column * this.fullSize) - (row * this.fullSize);
+            const top = (row * this.fullSize) - (this.depth * this.halfSize);
             
             if(width === this.fullSize) {
                 const depth = this.parseDepth(this.getTileDepth(row + 1, column, false));
@@ -360,11 +358,11 @@ export default class WallRenderer {
         context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);     
         context.fillStyle = context.createPattern(image, "repeat")!;
 
-        for(let index in rectangles) {
+        for(const index in rectangles) {
             const rectangle = rectangles[index];
 
-            let row = rectangle.row;
-            let column = rectangle.column;  
+            const row = rectangle.row;
+            const column = rectangle.column;  
 
             let width = this.fullSize;
             let height = this.fullSize;
@@ -405,7 +403,7 @@ export default class WallRenderer {
             return;
         }
 
-        let extraTile = (overlappingWalls === 1)?(1):(0);
+        const extraTile = (overlappingWalls === 1)?(1):(0);
 
         if(rectangles.some((rectangle) => rectangle.row === this.structure.door!.row && rectangle.column === this.structure.door!.column + 1 && rectangle.direction === 2)) {
             context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);
@@ -417,7 +415,7 @@ export default class WallRenderer {
 
             const left = -(row * this.fullSize) + (column * this.fullSize);
 
-            let height = ((3.5 + (this.depth - doorDepth)) * this.fullSize);
+            const height = ((3.5 + (this.depth - doorDepth)) * this.fullSize);
             let top = (column * this.fullSize) - (this.depth * this.halfSize) + height - image.height + this.fullSize;
 
             if(overlappingWalls === 2) {
@@ -442,7 +440,7 @@ export default class WallRenderer {
 
             const left = (column * this.fullSize) - (row * this.fullSize);
 
-            let height = ((3.5 + (this.depth - doorDepth)) * this.fullSize);
+            const height = ((3.5 + (this.depth - doorDepth)) * this.fullSize);
             let top = (row * this.fullSize) - (this.depth * this.halfSize) + height - image.height + this.fullSize;
 
             if(overlappingWalls === 2) {
@@ -545,7 +543,7 @@ export default class WallRenderer {
         // corners
         const rectanglesLeft = rectangles.filter(x => x.direction === 4);
 
-        for(let index in rectanglesLeft) {
+        for(const index in rectanglesLeft) {
             const rectangle = rectanglesLeft[index];
 
             if(rectangles.find(x => (x.direction == 2 && x.row == rectangle.row && x.column == rectangle.column)) === null) {

@@ -1,18 +1,15 @@
-import { FiguremapData } from "@Client/Interfaces/Figure/FiguremapData";
 import FigureAssets from "../../Assets/FigureAssets";
 import ContextNotAvailableError from "../../Exceptions/ContextNotAvailableError";
 import { FiguredataData } from "@Client/Interfaces/Figure/FiguredataData";
 import { figureRenderPriority } from "./Geometry/FigureRenderPriority";
-import { AvatarActionsData } from "@Client/Interfaces/Figure/Avataractions";
 import { FigureData } from "@Client/Interfaces/Figure/FigureData";
-import { FigureConfiguration, FigurePartKey, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
-import FigureWorkerClient from "../Worker/FigureWorkerClient";
-import { FigureAnimationData, FigureAnimationFrameEffectData } from "@Client/Interfaces/Figure/FigureAnimationData";
+import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import { FigureAnimationFrameEffectData } from "@Client/Interfaces/Figure/FigureAnimationData";
 import { figureGeometryTypes } from "@Client/Figure/Renderer/Geometry/FigureGeometry";
 import { figurePartSets } from "@Client/Figure/Renderer/Geometry/FigurePartSets";
 import { FurnitureSprite } from "@Client/Interfaces/Furniture/FurnitureSprites";
 import { FurnitureAsset } from "@Client/Interfaces/Furniture/FurnitureAssets";
-import { getGlobalCompositeModeFromInk, getGlobalCompositeModeFromInkNumber } from "@Client/Renderers/GlobalCompositeModes";
+import { getGlobalCompositeModeFromInkNumber } from "@Client/Renderers/GlobalCompositeModes";
 
 export type FigureRendererResult = {
     figure: FigureRendererSprite;
@@ -126,7 +123,7 @@ export default class FigureRenderer {
             // CarryItem says handRight is used for activePartSet
 
             if(effectBodyParts) {
-                for(let effectBodyPart of effectBodyParts) {
+                for(const effectBodyPart of effectBodyParts) {
                     const action = FigureAssets.avataractions.find((avatarAction) => avatarAction.id === effectBodyPart.action);
 
                     if(!action) {
@@ -163,7 +160,7 @@ export default class FigureRenderer {
 
         const actions = this.getAvatarActions();
 
-        for(let action of actions) {
+        for(const action of actions) {
             const geometry = figureGeometryTypes.find((geometry) => geometry.id === action.geometryType);
             
             if(!geometry) {
@@ -202,7 +199,7 @@ export default class FigureRenderer {
     private getSpritesFromConfiguration() {
         const result: SpriteConfiguration[] = [];
 
-        for(let configurationPart of this.configuration) {
+        for(const configurationPart of this.configuration) {
             const settypeData = this.getSettypeForPartAndSet(configurationPart.type);
 
             if(!settypeData) {
@@ -219,7 +216,7 @@ export default class FigureRenderer {
                 continue;
             }
 
-            for(let setPartData of setData.parts) {
+            for(const setPartData of setData.parts) {
                 if(!setPartData) {
                     console.error("???");
 
@@ -348,7 +345,7 @@ export default class FigureRenderer {
             });*/
         }
         
-        for(let sprite of animationSprites) {
+        for(const sprite of animationSprites) {
             if(sprite.id === "avatar") {
                 continue;
             }
@@ -413,7 +410,7 @@ export default class FigureRenderer {
         const flipHorizontal = (direction > 3 && direction < 7);
         const flippedDirection = (flipHorizontal)?(6 - direction):(direction);
 
-        for(let spriteConfiguration of spritesFromConfiguration) {
+        for(const spriteConfiguration of spritesFromConfiguration) {
             const actionForSprite = actionsForBodyParts.find((action) => action.bodyParts.includes(spriteConfiguration.type));
 
             if(!actionForSprite) {
@@ -509,7 +506,7 @@ export default class FigureRenderer {
             width: spriteData.width,
             height: spriteData.height,
 
-            flipHorizontal: (flipHorizontal)?(!Boolean(assetData.flipHorizontal)):(assetData.flipHorizontal),
+            flipHorizontal: (flipHorizontal)?(!assetData.flipHorizontal):(assetData.flipHorizontal),
 
             color: (spriteConfiguration.colorable && spriteConfiguration.colors[spriteConfiguration.colorIndex - 1] && spriteConfiguration.type !== "ey")?(color):(undefined),
 
@@ -532,7 +529,7 @@ export default class FigureRenderer {
         }
 
         let x = assetData.x;
-        let y = assetData.y;
+        const y = assetData.y;
 
         if(flipHorizontal) {
             x = 64 + (assetData.x * -1) - spriteData.width;
@@ -584,91 +581,86 @@ export default class FigureRenderer {
     }
 
     public async renderToCanvas(cropped: boolean = false) {
-        return await new Promise<FigureRendererResult>(async (resolve, reject) => {
-            try {
-                const { sprites, effectSprites } = await this.render();
+        return await (async () => {
+            const { sprites, effectSprites } = await this.render();
 
-                let minimumX = 128, minimumY = 128, maximumWidth = 128, maximumHeight = 128;
-            
-                if(cropped) {
-                    if(effectSprites.length) {
-                        console.warn("Figure render is cropped but contains effect sprites. Effect will not be applied.");
+            let minimumX = 128, minimumY = 128, maximumWidth = 128, maximumHeight = 128;
+        
+            if(cropped) {
+                if(effectSprites.length) {
+                    console.warn("Figure render is cropped but contains effect sprites. Effect will not be applied.");
+                }
+
+                minimumX = 0;
+                minimumY = 0;
+                maximumWidth = 0;
+                maximumHeight = 0;
+
+                for(const sprite of sprites) {
+                    if(minimumX < sprite.x * -1) {
+                        minimumX = sprite.x * -1;
+                    }
+                    
+                    if(minimumY < sprite.y * -1) {
+                        minimumY = sprite.y * -1;
                     }
 
-                    minimumX = 0;
-                    minimumY = 0;
-                    maximumWidth = 0;
-                    maximumHeight = 0;
-
-                    for(let sprite of sprites) {
-                        if(minimumX < sprite.x * -1) {
-                            minimumX = sprite.x * -1;
-                        }
-                        
-                        if(minimumY < sprite.y * -1) {
-                            minimumY = sprite.y * -1;
-                        }
-
-                        if(sprite.x + sprite.image.width > maximumWidth) {
-                            maximumWidth = sprite.x + sprite.image.width;
-                        }
-
-                        if(sprite.y + sprite.image.height > maximumHeight) {
-                            maximumHeight = sprite.y + sprite.image.height;
-                        }
-                    }
-                }
-
-                const canvas = new OffscreenCanvas(minimumX + maximumWidth, minimumY + maximumHeight);
-
-                if(!sprites.length) {
-                    return reject();
-                }
-
-                const context = canvas.getContext("2d");
-
-                if(!context) {
-                    throw new ContextNotAvailableError();
-                }
-
-                sprites.sort((a, b) => a.index - b.index);
-
-                for(let sprite of sprites) {
-                    context.save();
-
-                    if(sprite.ink) {
-                        context.globalCompositeOperation = sprite.ink;
+                    if(sprite.x + sprite.image.width > maximumWidth) {
+                        maximumWidth = sprite.x + sprite.image.width;
                     }
 
-                    context.drawImage(sprite.image, minimumX + sprite.x, minimumY + sprite.y);
-
-                    context.restore();
+                    if(sprite.y + sprite.image.height > maximumHeight) {
+                        maximumHeight = sprite.y + sprite.image.height;
+                    }
                 }
-
-                // TODO: rewrite this to not require an asynchronous action to determine
-                const avatarEffect = await this.getEffectForAvatar();
-
-                if(avatarEffect?.destinationY) {
-                    minimumY -= avatarEffect.destinationY;
-                }
-
-                resolve({
-                    figure: {
-                        image: await createImageBitmap(canvas),
-                        imageData: context.getImageData(0, 0, canvas.width, canvas.height),
-
-                        x: -minimumX,
-                        y: -minimumY,
-
-                        index: 0
-                    },
-                    effects: effectSprites
-                });
             }
-            catch(error) {
-                reject(error);
+
+            const canvas = new OffscreenCanvas(minimumX + maximumWidth, minimumY + maximumHeight);
+
+            if(!sprites.length) {
+                throw new Error("No sprites to render.");
             }
-        });
+
+            const context = canvas.getContext("2d");
+
+            if(!context) {
+                throw new ContextNotAvailableError();
+            }
+
+            sprites.sort((a, b) => a.index - b.index);
+
+            for(const sprite of sprites) {
+                context.save();
+
+                if(sprite.ink) {
+                    context.globalCompositeOperation = sprite.ink;
+                }
+
+                context.drawImage(sprite.image, minimumX + sprite.x, minimumY + sprite.y);
+
+                context.restore();
+            }
+
+            // TODO: rewrite this to not require an asynchronous action to determine
+            const avatarEffect = await this.getEffectForAvatar();
+
+            if(avatarEffect?.destinationY) {
+                minimumY -= avatarEffect.destinationY;
+            }
+
+            return {
+                figure: {
+                    image: await createImageBitmap(canvas),
+                    imageData: context.getImageData(0, 0, canvas.width, canvas.height),
+
+                    x: -minimumX,
+                    y: -minimumY,
+
+                    index: 0
+                },
+                effects: effectSprites
+            };
+        })();
     }
 
     public getConfigurationAsString(): string {

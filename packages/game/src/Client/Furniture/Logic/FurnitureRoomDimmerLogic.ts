@@ -2,8 +2,7 @@ import Furniture from "@Client/Furniture/Furniture";
 import FurnitureLogic from "@Client/Furniture/Logic/Interfaces/FurnitureLogic";
 import { FurnitureData } from "@Client/Interfaces/Furniture/FurnitureData";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
-import { clientInstance, webSocketClient } from "../../..";
-import { UseRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UseRoomFurnitureEventData";
+import { clientInstance } from "../../..";
 import { RoomFurnitureDimmerData } from "../../../UserInterface/components/Room/Furniture/Logic/Dimmer/RoomFurnitureDimmerDialog";
 
 export default class FurnitureRoomDimmerLogic implements FurnitureLogic {

@@ -24,7 +24,7 @@ export default class RoomLighting {
         if(shouldRerender) {
             const backgroundItems = this.roomRenderer.items.filter((item) => item.type === "wall" || item.type === "floor");
 
-            for(let item of backgroundItems) {
+            for(const item of backgroundItems) {
                 if(item instanceof RoomWallItem || item instanceof RoomFloorItem) {
                     item.render();
                 }

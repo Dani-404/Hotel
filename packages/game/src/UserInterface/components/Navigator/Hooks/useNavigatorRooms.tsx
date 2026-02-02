@@ -1,4 +1,3 @@
-import { RoomMapData, RoomMapsEventData } from "@Shared/Communications/Responses/Navigator/RoomMapsEventData";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { useEffect, useRef, useState } from "react";
 import { webSocketClient } from "../../../..";

@@ -164,7 +164,7 @@ export default class FloorRenderer {
         context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
-        for(let index in rectangles) {
+        for(const index in rectangles) {
             const rectangle = rectangles[index];
 
             if(rectangles.find(x => (x.row == rectangle.row + 1 && x.column == rectangle.column && x.depth == rectangle.depth)) != null)
@@ -184,7 +184,7 @@ export default class FloorRenderer {
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
-        for(let index in rectangles) {
+        for(const index in rectangles) {
             const rectangle = rectangles[index];
 
             if(rectangles.find(x => (x.row == rectangle.row && x.column == rectangle.column + 1 && x.depth == rectangle.depth)) != null)
@@ -210,7 +210,7 @@ export default class FloorRenderer {
                 
         const tiles = new Path2D();
 
-        for(let index in rectangles) {
+        for(const index in rectangles) {
             const rectangle = rectangles[index];
 
             const left = rectangle.column * this.fullSize - (rectangle.depth * this.fullSize);

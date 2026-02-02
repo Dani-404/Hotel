@@ -1,5 +1,5 @@
 import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
-import { createContext, ReactElement } from "react";
+import { createContext } from "react";
 
 export type Dialog = {
     id: string;

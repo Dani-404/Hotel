@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import { MouseEventHandler } from "react";
 
 export type MousePosition = {

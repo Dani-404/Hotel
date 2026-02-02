@@ -7,10 +7,8 @@ import RoomFigureItem from "@Client/Room/Items/Figure/RoomFigureItem";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
 import RoomFurnitureProfile from "./Furniture/RoomFurnitureProfile";
 import RoomUserProfile from "./User/RoomUserProfile";
-import RoomItem from "@Client/Room/Items/RoomItem";
 import { webSocketClient } from "../../../..";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
-import RoomFurnitureEvent from "@Client/Communications/Room/Furniture/RoomFurnitureEvent";
 import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData";
 import { UserLeftRoomEventData } from "@Shared/Communications/Responses/Rooms/Users/UserLeftRoomEventData";
 

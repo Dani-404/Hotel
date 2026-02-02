@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import RoomItemInterface from "../Interfaces/RoomItemInterface";
 import RoomSprite from "./RoomSprite";
@@ -71,7 +73,7 @@ export default class RoomItem implements RoomItemInterface {
             return;
         }
 
-        let elapsedSincedStart = performance.now() - this.positionPathData.startTimestamp;
+        const elapsedSincedStart = performance.now() - this.positionPathData.startTimestamp;
 
         if(elapsedSincedStart >= this.positionPathData.durationInMilliseconds) {
             if(Array.isArray(this.positionPathData.toPosition)) {

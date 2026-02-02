@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
 export default function DialogList({ children }: PropsWithChildren) {
     const allChildren = (Array.isArray(children))?(children):([children]);

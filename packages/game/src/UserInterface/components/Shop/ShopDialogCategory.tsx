@@ -1,7 +1,7 @@
 import DialogPanel from "../Dialog/Panels/DialogPanel";
 import DialogPanelList from "../Dialog/Panels/DialogPanelList";
 import DialogPanelListItem from "../Dialog/Panels/DialogPanelListItem";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import ShopPage from "./Pages/ShopPage";
 import { DialogTabHeaderProps } from "../Dialog/Tabs/DialogTabs";

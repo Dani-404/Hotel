@@ -128,7 +128,7 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
         
         let minimumX = 0, minimumY = 0, maximumWidth = 0, maximumHeight = 0;
         
-        for(let sprite of sprites) {
+        for(const sprite of sprites) {
             if(minimumX < Math.abs(sprite.x)) {
                 minimumX = Math.abs(sprite.x);
             }
@@ -156,7 +156,7 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
             throw new ContextNotAvailableError();
         }
 
-        for(let sprite of sprites.sort((a, b) => a.zIndex - b.zIndex)) {
+        for(const sprite of sprites.sort((a, b) => a.zIndex - b.zIndex)) {
             context.save();
 
             if(sprite.ink) {

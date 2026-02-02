@@ -1,5 +1,3 @@
-import DimmerDialogButton from "./DimmerDialogButton";
-
 export type DimmerDialogCheckboxProps = {
     label: string;
     value: boolean;

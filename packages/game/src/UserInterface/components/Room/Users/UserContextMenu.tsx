@@ -6,7 +6,6 @@ import { RoomUserData } from "@Shared/Interfaces/Room/RoomUserData";
 import UserContextMenuList from "./UserContextMenuList";
 import UserContextMenuButton from "./UserContextMenuButton";
 import UserContextMenuElement from "./UserContextMenuElement";
-import WardrobeDialog from "../../Wardrobe/WardrobeDialog";
 import StartedHoveringFigure from "@Client/Room/Cursor/Events/StartedHoveringFigure";
 import StartedFollowingFigure from "@Client/Room/Cursor/Events/StartedFollowingFigure";
 import FollowingFigure from "@Client/Room/Cursor/Events/FollowingFigure";

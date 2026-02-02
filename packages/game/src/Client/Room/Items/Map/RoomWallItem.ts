@@ -15,10 +15,10 @@ export default class RoomWallItem extends RoomItem {
         this.render();
     }
     
-    process(frame: number): void {
+    process(): void {
     }
 
-    render(frame: number = 0) {
+    render() {
         this.wallRenderer?.renderOffScreen().then(({ wall, doorMask }) => {
             this.sprites = [];
             

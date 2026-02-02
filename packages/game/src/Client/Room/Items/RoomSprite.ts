@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { MousePosition } from "@Client/Interfaces/MousePosition";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import RoomItemSpriteInterface from "../Interfaces/RoomItemSpriteInterface";
-import RoomItemInterface from "../Interfaces/RoomItemInterface";
 import RoomItem from "./RoomItem";
 
 export default class RoomSprite implements RoomItemSpriteInterface {

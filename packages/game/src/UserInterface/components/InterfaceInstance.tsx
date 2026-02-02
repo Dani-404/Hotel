@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AppContext, Dialog } from "../contexts/AppContext";
+import { useEffect, useRef, useState } from "react";
+import { AppContext } from "../contexts/AppContext";
 import Toolbar from "./Toolbar/Toolbar";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import RoomInterface from "./Room/RoomInterface";
@@ -11,14 +11,9 @@ import Reception from "./Reception/Reception";
 import { useRoomInstance } from "../hooks/useRoomInstance";
 import Widget from "./Widget/Widget";
 
-export type InterfaceInstanceProps = {
-}
-
-export default function InterfaceInstance({  }: InterfaceInstanceProps) {
+export default function InterfaceInstance() {
     const room = useRoomInstance();
     
-    const [dialogs, setDialogs] = useState<Dialog[]>([]);
-
     const ready = useRef<boolean>(false);
     const [user, setUser] = useState<UserEventData>();
 
@@ -60,7 +55,7 @@ export default function InterfaceInstance({  }: InterfaceInstanceProps) {
 
             <RoomInterface/>
 
-            <DialogInstances dialogs={dialogs}/>
+            <DialogInstances/>
 
             <Toolbar/>
             <Widget/>

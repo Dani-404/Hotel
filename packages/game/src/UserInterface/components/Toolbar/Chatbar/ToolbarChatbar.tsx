@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { webSocketClient } from "../../../..";
 import { SendUserMessageEventData } from "@Shared/Communications/Requests/Rooms/User/SendUserMessageEventData";
 import ToolbarChatbarStyles from "./ToolbarChatbarStyles";

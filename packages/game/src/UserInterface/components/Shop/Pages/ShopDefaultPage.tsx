@@ -1,14 +1,12 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DialogPanel from "../../Dialog/Panels/DialogPanel";
 import { ShopPageProps } from "./ShopPage";
-import { AppContext } from "../../../contexts/AppContext";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import FurnitureIcon from "../../Furniture/FurnitureIcon";
 import DialogButton from "../../Dialog/Button/DialogButton";
 import RoomFurnitureRenderer from "@Client/Room/RoomFurnitureRenderer";
 import { clientInstance, webSocketClient } from "../../../..";
-import { ShopPageFurnitureData, ShopPageFurnitureEventData } from "@Shared/Communications/Responses/Shop/ShopPageFurnitureEventData";
-import { GetShopPageFurnitureEventData } from "@Shared/Communications/Requests/Shop/GetShopPageFurnitureEventData";
+import { ShopPageFurnitureData } from "@Shared/Communications/Responses/Shop/ShopPageFurnitureEventData";
 import { PurchaseShopFurnitureEventData } from "@Shared/Communications/Requests/Shop/PurchaseShopFurnitureEventData";
 import { ShopFurniturePurchasedEventData } from "@Shared/Communications/Responses/Shop/ShopFurniturePurchasedEventData";
 import useShopPageFurniture from "./Hooks/useShopPageFurniture";
@@ -110,7 +108,7 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
 
             // TODO: handle error
             if(!event.data.success) {
-
+                return;
             }
         };
 

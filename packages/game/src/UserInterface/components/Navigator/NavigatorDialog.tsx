@@ -1,11 +1,6 @@
-import { Fragment } from "react/jsx-runtime";
 import Dialog from "../Dialog/Dialog";
-import DialogList from "../Dialog/List/DialogList";
 import DialogTabs from "../Dialog/Tabs/DialogTabs";
-import DialogListContainer from "../Dialog/List/DialogListContainer";
 import NavigatorRoomList from "./Rooms/NavigatorRoomList";
-import { useContext } from "react";
-import { AppContext } from "../../contexts/AppContext";
 import useNavigatorRooms from "./Hooks/useNavigatorRooms";
 import { webSocketClient } from "../../..";
 import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterRoomEventData";

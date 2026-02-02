@@ -1,5 +1,4 @@
-import { Fragment, useContext, useEffect } from "react";
-import { AppContext, Dialog } from "../../contexts/AppContext";
+import { Fragment } from "react";
 import WardrobeDialog from "../Wardrobe/WardrobeDialog";
 import ShopDialog from "../Shop/ShopDialog";
 import InventoryDialog from "../Inventory/InventoryDialog";
@@ -8,11 +7,7 @@ import RoomCreationDialog from "../Navigator/Rooms/Creator/RoomCreationDialog";
 import { useDialogs } from "../../hooks/useDialogs";
 import RoomFurnitureLogicDialog, { RoomFurnitureLogicDialogData } from "../Room/Furniture/Logic/RoomFurnitureLogicDialog";
 
-export type DialogInstancesProps = {
-    dialogs: Dialog[];
-}
-
-export default function DialogInstances({  }: DialogInstancesProps) {
+export default function DialogInstances() {
     const { dialogs, closeDialog } = useDialogs();
 
     return (

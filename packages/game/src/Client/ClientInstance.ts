@@ -13,7 +13,6 @@ import { RoomChatStyleData, RoomChatStylesEventData } from "@Shared/Communicatio
 import { UserFigureConfigurationEventData } from "@Shared/Communications/Responses/Rooms/Users/UserFigureConfigurationEventData";
 import UserFigureConfigurationEvent from "@Client/Communications/Room/User/UserFigureConfigurationEvent";
 import { Dialog } from "../UserInterface/contexts/AppContext";
-import { RoomMoodlightEventData } from "@Shared/Communications/Responses/Rooms/Furniture/RoomMoodlightEventData";
 
 export default class ClientInstance extends EventTarget {
     public roomInstance = new ObservableProperty<RoomInstance>();

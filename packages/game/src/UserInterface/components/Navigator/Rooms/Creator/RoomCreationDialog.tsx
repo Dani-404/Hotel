@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Dialog from "../../../Dialog/Dialog";
 import DialogContent from "../../../Dialog/DialogContent";
 import Input from "../../../Form/Input";
@@ -9,7 +9,6 @@ import { RoomMapData } from "@Shared/Communications/Responses/Navigator/RoomMaps
 import { webSocketClient } from "../../../../..";
 import { CreateRoomEventData } from "@Shared/Communications/Requests/Navigator/CreateRoomEventData";
 import { RoomCreatedEventData } from "@Shared/Communications/Responses/Navigator/RoomCreatedEventData";
-import { AppContext } from "../../../../contexts/AppContext";
 import { EnterRoomEventData } from "@Shared/Communications/Requests/Rooms/EnterRoomEventData";
 import useRoomMaps from "./Hooks/useRoomMaps";
 import { useDialogs } from "../../../../hooks/useDialogs";

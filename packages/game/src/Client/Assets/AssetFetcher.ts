@@ -1,5 +1,4 @@
 import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError";
-import { FurnitureData } from "../Interfaces/Furniture/FurnitureData";
 
 export type AssetSpriteProperties = {
     x: number;
@@ -29,23 +28,23 @@ export default class AssetFetcher {
             return await this.json.get(url)! as T;
         }
 
-        const result = new Promise<T>(async (resolve, reject) => {
+        const result = (async () => {
             const response = await fetch(url, {
                 method: "GET"
             });
 
             if(!response.ok) {
-                return reject();
+                throw new Error("Response is not ok.");
             }
 
             if(response.status !== 200) {
-                return reject();
+                throw new Error("Response is not ok.");
             }
 
             const result = await response.json();
 
-            resolve(result);
-        });
+            return result;
+        })();
 
         this.json.set(url, result);
 
@@ -57,25 +56,25 @@ export default class AssetFetcher {
             return await this.images.get(url)!;
         }
 
-        const result = new Promise<ImageBitmap>(async (resolve, reject) => {
+        const result = (async () => {
             const response = await fetch(url, {
                 method: "GET"
             });
 
             if(!response.ok) {
-                return reject();
+                throw new Error("Response is not ok.")
             }
 
             if(response.status !== 200) {
-                return reject();
+                throw new Error("Response is not ok.")
             }
 
             const blob = await response.blob();
 
             const image = await createImageBitmap(blob);
 
-            resolve(image);
-        });
+            return image;
+        })();
 
         this.images.set(url, result);
 
@@ -87,13 +86,13 @@ export default class AssetFetcher {
             this.sprites[url] = [];
         }
 
-        const existingSprite = this.sprites[url].find(({ x, y, width, height, flipHorizontal, color, destinationWidth, destinationHeight }) => properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal && properties.color === color && properties.destinationWidth === destinationHeight && properties.destinationHeight);
+        const existingSprite = this.sprites[url].find(({ x, y, width, height, flipHorizontal, color, destinationWidth, destinationHeight }) => properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal && properties.color === color && properties.destinationWidth === destinationWidth && properties.destinationHeight === destinationHeight);
 
         if(existingSprite) {
             return await existingSprite.sprite;
         }
 
-        return new Promise(async (resolve) => {
+        return (async () => {
             const result: AssetSpriteProperties & { sprite: Promise<{ image: ImageBitmap, imageData: ImageData }> } = {
                 sprite: this.drawSprite(url, properties),
                 ...properties
@@ -101,8 +100,8 @@ export default class AssetFetcher {
 
             this.sprites[url].push(result);
 
-            resolve(await result.sprite);
-        });
+            return await result.sprite;
+        })();
     }
 
     private static async drawSprite(url: string, properties: AssetSpriteProperties) {
@@ -135,7 +134,7 @@ export default class AssetFetcher {
 
             const colors = (Array.isArray(properties.color))?(properties.color):([properties.color]);
 
-            for(let color of colors) {
+            for(const color of colors) {
                 colorContext.globalCompositeOperation = "multiply";
                 colorContext.fillStyle = '#' + color;
                 colorContext.fillRect(0, 0, canvas.width, canvas.height);

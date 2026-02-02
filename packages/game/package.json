@@ -12,13 +12,17 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@parcel/validator-typescript": "^2.16.4",
     "@types/node-sprite-generator": "^0.10.6",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "eslint": "^9.39.2",
     "node-sprite-generator": "^0.10.2",
     "parcel": "^2.16.4",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0"
   },
   "alias": {
     "@Client/*": "./src/Client/$1",

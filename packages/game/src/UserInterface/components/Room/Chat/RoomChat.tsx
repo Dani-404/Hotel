@@ -1,13 +1,10 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../contexts/AppContext";
+import { useEffect, useRef, useState } from "react";
 import RoomChatRenderer from "@Client/Room/Chat/RoomChatRenderer";
 import { useRoomInstance } from "../../../hooks/useRoomInstance";
 import { webSocketClient } from "../../../..";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { UserChatEventData } from "@Shared/Communications/Responses/Rooms/Users/UserChatEventData";
-import { MousePosition } from "@Client/Interfaces/MousePosition";
 import OffscreenCanvasRender from "../../OffscreenCanvasRender";
-import RoomRenderEvent from "@Client/Events/RoomRenderEvent";
 
 type RoomChatMessage = {
     id: number;
@@ -19,7 +16,7 @@ type RoomChatMessage = {
 function moveMessagesUp(messages: RoomChatMessage[], bottomMessage: RoomChatMessage) {
     bottomMessage.index++;
 
-    for(let message of messages) {
+    for(const message of messages) {
         if(message.id === bottomMessage.id) {
             continue;
         }
@@ -112,7 +109,7 @@ export default function RoomChat() {
         const newMessage = messages.current.filter((message) => message.index === -1);
 
         if(newMessage.length) {
-            for(let message of newMessage) {
+            for(const message of newMessage) {
                 message.index++;
             }
 
@@ -126,7 +123,7 @@ export default function RoomChat() {
         }
 
         const timer = setInterval(() => {
-            for(let message of messages.current) {
+            for(const message of messages.current) {
                 message.index++;
 
                 if(message.index > 30) {

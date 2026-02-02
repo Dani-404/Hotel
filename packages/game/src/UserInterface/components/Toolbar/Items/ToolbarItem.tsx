@@ -1,4 +1,4 @@
-import { MouseEventHandler, PropsWithChildren, useCallback, useState } from "react";
+import { MouseEventHandler, PropsWithChildren } from "react";
 import "./ToolbarItem.css";
 
 export type ToolbarItemProps = PropsWithChildren & {

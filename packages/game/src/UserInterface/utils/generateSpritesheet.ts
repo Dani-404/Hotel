@@ -1,6 +1,5 @@
 import NodeSpriteGenerator from "node-sprite-generator";
 import { writeFileSync } from "fs";
-import path from "path";
 
 export function createSpritesheet() {
     // sprite generator is having issues creating the file

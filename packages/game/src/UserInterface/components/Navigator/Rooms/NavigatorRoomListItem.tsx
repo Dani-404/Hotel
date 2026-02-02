@@ -1,5 +1,3 @@
-import { Fragment } from "react/jsx-runtime";
-
 function getUserCountColor(users: number, maxUsers: number) {
     if(users === 0) {
         return "#CAC9C0";
@@ -24,7 +22,7 @@ export type NavigatorRoomListItemProps = {
     onClick: () => void;
 }
 
-export default function NavigatorRoomListItem({ id, name, users, maxUsers, onClick }: NavigatorRoomListItemProps) {
+export default function NavigatorRoomListItem({ name, users, maxUsers, onClick }: NavigatorRoomListItemProps) {
     return (
         <div style={{
             flex: 1,

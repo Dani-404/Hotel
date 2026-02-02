@@ -11,12 +11,9 @@ import RoomFrameEvent from "@Client/Events/RoomFrameEvent";
 import RoomItem from "./Items/RoomItem";
 import ClientInstance from "@Client/ClientInstance";
 import RoomInstance from "./RoomInstance";
-import RoomFurnitureSprite from "./Items/Furniture/RoomFurnitureSprite";
 import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem";
 import RoomFurniturePlacer from "./RoomFurniturePlacer";
 import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
-import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
-import { hexToRgb } from "@Client/Utilities/ColorUtilities";
 import RoomLighting from "@Client/Room/RoomLightning";
 
 export default class RoomRenderer extends EventTarget {
@@ -273,7 +270,7 @@ export default class RoomRenderer extends EventTarget {
         return (Math.round(position.row) * 1000) + (Math.round(position.column) * 1000) + (position.depth * 100);
     }
 
-    public getItemScreenPosition(item: RoomItem, origin: MousePosition = this.renderedOffset): MousePosition {
+    public getItemScreenPosition(item: RoomItem): MousePosition {
         if(!item.position) {
             return {
                 left: this.renderedOffset.left,

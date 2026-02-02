@@ -1,8 +1,5 @@
-import { CSSProperties, useEffect, useRef, useState } from "react";
-import { FurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
-import Furniture from "@Client/Furniture/Furniture";
+import { CSSProperties, useEffect, useRef } from "react";
 import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
-import OffscreenCanvasRender from "../../OffscreenCanvasRender";
 import FloorRenderer from "@Client/Room/Structure/FloorRenderer";
 import WallRenderer from "@Client/Room/Structure/WallRenderer";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
@@ -38,20 +35,20 @@ export default function RoomMapImage({ width, height, style, structure }: RoomMa
             const wallRenderer = new WallRenderer(structure, structure.wall.id, size);
 
             const [ floorImage, [wallImage, doorMaskImage] ] = await Promise.all([
-                new Promise<ImageBitmap>(async (resolve) => {
+                (async () => {
                     const floorImage = await floorRenderer.renderOffScreen();
 
-                    resolve(await createImageBitmap(floorImage));
-                }),
+                    return await createImageBitmap(floorImage);
+                })(),
                 
-                new Promise<ImageBitmap[]>(async (resolve) => {
+                (async () => {
                     const { wall, doorMask } = await wallRenderer.renderOffScreen();
 
-                    resolve([
+                    return [
                         await createImageBitmap(wall),
                         await createImageBitmap(doorMask)
-                    ]);
-                })
+                    ];
+                })()
             ]);
 
             const context = canvasRef.current?.getContext("2d");
