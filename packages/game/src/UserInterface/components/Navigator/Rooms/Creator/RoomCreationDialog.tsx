@@ -55,7 +55,7 @@ export default function RoomCreationDialog({ hidden, onClose }: RoomCreationDial
         });
 
         webSocketClient.send<CreateRoomEventData>("CreateRoomEvent", {
-            name,
+            name: (name.length)?(name):("My room"),
             description,
 
             mapId: activeRoomMap.id
