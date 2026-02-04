@@ -180,6 +180,9 @@ export default class WallRenderer {
             throw new ContextNotAvailableError();
         }
 
+        this.leftWalls = [];
+        this.rightWalls = [];
+
         const rectangles = this.getRectangles();
 
         for(let currentDepth = 0; currentDepth <= this.depth; currentDepth++) {
@@ -221,8 +224,6 @@ export default class WallRenderer {
     }
 
     private renderLeftWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap) {
-        this.leftWalls = [];
-
         context.beginPath();
         context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -260,7 +261,7 @@ export default class WallRenderer {
             const left = -(row * this.fullSize) + (column * this.fullSize);
             const top = (column * this.fullSize) - (this.depth * this.halfSize);
 
-            if(width === this.fullSize) {
+            if(rectangle.direction === 2) {
                 const path = new Path2D();
                 
                 path.rect(left, top, width, height);
@@ -285,13 +286,13 @@ export default class WallRenderer {
             context.rect(left, top, width, height);
         }
 
+        console.log(this.leftWalls);
+
         context.fill();
         context.closePath();
     }
 
     private renderRightWalls(context: OffscreenCanvasRenderingContext2D, rectangles: WallRectangle[], image: ImageBitmap) {
-        this.rightWalls = [];
-
         context.beginPath();
         context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, (this.depth * this.halfSize) + this.structure.wall.thickness);        
         context.fillStyle = context.createPattern(image, "repeat")!;
@@ -322,7 +323,7 @@ export default class WallRenderer {
             const left = (column * this.fullSize) - (row * this.fullSize);
             const top = (row * this.fullSize) - (this.depth * this.halfSize);
             
-            if(width === this.fullSize) {
+            if(rectangle.direction === 4) {
                 const depth = this.parseDepth(this.getTileDepth(row + 1, column, false));
                 
                 const path = new Path2D();
