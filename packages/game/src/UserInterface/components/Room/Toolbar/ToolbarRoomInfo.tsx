@@ -1,7 +1,11 @@
 import { useState } from "react";
 import ToolbarToggle from "../../Toolbar/ToolbarToggle";
+import ToolbarRoomInfoButton from "./Button/ToolbarRoomInfoButton";
+import { useDialogs } from "../../../hooks/useDialogs";
 
 export default function ToolbarRoomInfo() {
+    const { addUniqueDialog } = useDialogs();
+
     const [minimized, setMinimized] = useState(false);
     
     return (
@@ -39,47 +43,34 @@ export default function ToolbarRoomInfo() {
                         {[
                             {
                                 sprite: "sprite_toolbar_room_settings",
-                                label: "Settings"
+                                label: "Settings",
+                                onClick: () => {
+                                    addUniqueDialog("room-settings");
+                                }
                             },
                             {
                                 sprite: "sprite_toolbar_room_zoom",
-                                label: "Zoom"
+                                label: "Zoom",
+                                onClick: () => {
+                                    
+                                }
                             },
                             {
                                 sprite: "sprite_toolbar_room_chat",
-                                label: "Chat history"
+                                label: "Chat history",
+                                onClick: () => {
+                                    
+                                }
                             },
                             {
                                 sprite: "sprite_toolbar_room_link",
-                                label: "Link to room"
+                                label: "Link to room",
+                                onClick: () => {
+                                    
+                                }
                             }
                         ].map((button, index) => (
-                            <div key={index} style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                gap: 12,
-                                alignItems: "center",
-                                height: 24,
-
-                                cursor: "pointer"
-                            }}>
-                                <div style={{
-                                    width: 20,
-
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }}>
-                                    <div className={button.sprite}/>
-                                </div>
-
-                                <div style={{
-                                    marginTop: -4,
-                                    textDecoration: "underline",
-                                }}>
-                                    {button.label}
-                                </div>
-                            </div>
+                            <ToolbarRoomInfoButton key={index} sprite={button.sprite} label={button.label} onClick={button.onClick}/>
                         ))}
                     </div>
                 </div>

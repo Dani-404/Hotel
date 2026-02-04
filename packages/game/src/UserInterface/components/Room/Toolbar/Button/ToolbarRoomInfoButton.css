@@ -1,0 +1,33 @@
+.toolbar-room-info-button {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    height: 24px;
+
+    cursor: pointer;
+}
+
+.toolbar-room-info-button-sprite {
+    width: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toolbar-room-info-button:hover {
+    filter: brightness(175%);
+}
+
+.toolbar-room-info-button:hover .toolbar-room-info-button-sprite {
+    transform: translateY(-1px);
+}
+
+.toolbar-room-info-button:active {
+    filter: brightness(75%);
+}
+
+.toolbar-room-info-button:active .toolbar-room-info-button-sprite {
+    transform: translateY(0px);
+}
