@@ -148,7 +148,7 @@ export default class FloorRenderer {
 
         this.tiles = [];
 
-        for(let currentDepth = 0; currentDepth <= this.depth; currentDepth++) {
+        for(let currentDepth = this.depth; currentDepth !== -1; currentDepth--) {
             const currentRectangles = rectangles.filter((rectangle) => Math.ceil(rectangle.depth) === currentDepth);
 
             this.renderLeftEdges(context, currentRectangles, leftEdgeImage.image);
@@ -174,7 +174,14 @@ export default class FloorRenderer {
             const left = (rectangle.column * this.fullSize) - (rectangle.row * this.fullSize) - rectangle.height;
             const top = (rectangle.row * this.fullSize) - (rectangle.depth * this.fullSize) + rectangle.height;
 
-            context.rect(left, top, rectangle.width, this.structure.floor.thickness);
+            const nextStepEdge = rectangles.find(x => (x.column == rectangle.column) && (x.row == rectangle.row + 0.25 || x.row == rectangle.row + 1) && (x.depth === rectangle.depth - 0.25));
+            let thickness = this.structure.floor.thickness;
+
+            if(nextStepEdge && (thickness > this.halfSize / 2)) {
+                thickness = this.halfSize / 2;
+            }
+
+            context.rect(left, top, rectangle.width, thickness);
         }
 
         context.fill();
@@ -192,6 +199,8 @@ export default class FloorRenderer {
                 continue;
             }
 
+            const nextStepEdge = rectangles.find(x => (x.row == rectangle.row) && (x.column == rectangle.column + 0.25 || x.column == rectangle.column + 1) && (x.depth === rectangle.depth - 0.25));
+
             const row = rectangle.row;
 
             const column = rectangle.column;
@@ -199,7 +208,13 @@ export default class FloorRenderer {
             const left = -(row * this.fullSize) + (column * this.fullSize) + rectangle.width - rectangle.height;
             const top = (column * this.fullSize) - (rectangle.depth * this.fullSize) + rectangle.width;
 
-            context.rect(left, top, rectangle.height, this.structure.floor.thickness);
+            let thickness = this.structure.floor.thickness;
+
+            if(nextStepEdge && (thickness > this.halfSize / 2)) {
+                thickness = this.halfSize / 2;
+            }
+
+            context.rect(left, top, rectangle.height, thickness);
         }
 
         context.fill();
