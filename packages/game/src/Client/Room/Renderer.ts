@@ -308,4 +308,16 @@ export default class RoomRenderer extends EventTarget {
             this.camera.cameraPosition.top = Math.round((Math.max(dimensions.row - 1, 0) * -8) + (Math.max(dimensions.column - 1, 0) * -8) + offset.top);
         }
     }
+
+    public isPositionInsideStructure(position: RoomPosition, dimensions: RoomPosition) {
+        for(let row = position.row; row < position.row + dimensions.row; row++) {
+            for(let column = position.column; column < position.column + dimensions.column; column++) {
+                if(this.structure.grid[row]?.[column] === undefined || this.structure.grid[row]?.[column] === 'X') {
+                    return false;
+                }
+            }   
+        }
+
+        return true;
+    }
 }
