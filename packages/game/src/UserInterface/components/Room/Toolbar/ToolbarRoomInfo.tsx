@@ -8,9 +8,7 @@ export default function ToolbarRoomInfo() {
         <div style={{
             position: "absolute",
             left: 0,
-            bottom: 58,
-
-            pointerEvents: "auto"
+            bottom: 58
         }}>
             <div style={{
                 minWidth: 150,
@@ -29,8 +27,9 @@ export default function ToolbarRoomInfo() {
                     borderBottomRightRadius: 6,
 
                     transform: (minimized)?("translateX(-100%) translateX(16px)"):("translateX(0)"),
-                    transition: "transform 0.5s"
-
+                    transition: "transform 0.5s",
+    
+                    pointerEvents: "auto"
                 }}>
                     <div style={{
                         display: "flex",
@@ -90,7 +89,9 @@ export default function ToolbarRoomInfo() {
                     left: 0,
                     top: 0,
 
-                    height: "100%"
+                    height: "100%",
+    
+                    pointerEvents: "auto"
                 }}>
                     <ToolbarToggle toggled={minimized} onToggle={setMinimized}/>
                 </div>
