@@ -147,7 +147,8 @@ export default function RoomCreationDialog({ hidden, onClose }: RoomCreationDial
                                         },
                                         wall: {
                                             id: "206",
-                                            thickness: 0
+                                            thickness: 0,
+                                            hidden: false
                                         }
                                     }}/>
                                 </div>

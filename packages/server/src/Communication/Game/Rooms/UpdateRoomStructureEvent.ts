@@ -18,6 +18,10 @@ export default class UpdateRoomStructureEvent implements IncomingEvent<UpdateRoo
             structure.wall.thickness = event.wallThickness;
         }
         
+        if(event.wallHidden !== undefined) {
+            structure.wall.hidden = Boolean(event.wallHidden);
+        }
+        
         await user.room.setStructure(structure);
     }
 }

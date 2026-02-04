@@ -1,4 +1,5 @@
 export type UpdateRoomStructureEventData = {
-    wallThickness?: number;
     floorThickness?: number;
+    wallThickness?: number;
+    wallHidden?: boolean;
 }

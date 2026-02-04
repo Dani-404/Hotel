@@ -28,7 +28,8 @@ export default class CreateRoomEvent implements IncomingEvent<CreateRoomEventDat
                 },
                 wall: {
                     id: "201",
-                    thickness: 8
+                    thickness: 8,
+                    hidden: false
                 }
             }
         });

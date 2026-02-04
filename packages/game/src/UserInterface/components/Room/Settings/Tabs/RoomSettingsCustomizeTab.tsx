@@ -3,6 +3,7 @@ import Selection from "../../../Form/Selection";
 import { useRoomInstance } from "../../../../hooks/useRoomInstance";
 import { webSocketClient } from "../../../../..";
 import { UpdateRoomStructureEventData } from "@Shared/Communications/Requests/Rooms/UpdateRoomStructureEventData";
+import Checkbox from "../../../Form/Checkbox";
 
 export default function RoomSettingsCustomizeTab() {
     const room = useRoomInstance();
@@ -13,6 +14,7 @@ export default function RoomSettingsCustomizeTab() {
 
     const [floorThickness, setFloorThickness] = useState(room?.roomRenderer.structure.floor.thickness);
     const [wallThickness, setWallThickness] = useState(room?.roomRenderer.structure.wall.thickness);
+    const [wallHidden, setWallHidden] = useState(room?.roomRenderer.structure.wall.hidden);
 
     useEffect(() => {
         webSocketClient.send<UpdateRoomStructureEventData>("UpdateRoomStructureEvent", {
@@ -25,6 +27,12 @@ export default function RoomSettingsCustomizeTab() {
             wallThickness
         });
     }, [wallThickness]);
+
+    useEffect(() => {
+        webSocketClient.send<UpdateRoomStructureEventData>("UpdateRoomStructureEvent", {
+            wallHidden
+        });
+    }, [wallHidden]);
 
     return (
         <div style={{
@@ -81,6 +89,8 @@ export default function RoomSettingsCustomizeTab() {
                     label: "Thickest walls"
                 }
             ]} onChange={(value) => setWallThickness(value as number)}/>
+
+            <Checkbox label="Hide room walls" value={wallHidden} onChange={setWallHidden}/>
         </div>
     );
 }

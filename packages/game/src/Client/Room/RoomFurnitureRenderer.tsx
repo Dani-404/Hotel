@@ -40,7 +40,8 @@ export default class RoomFurnitureRenderer {
             },
             wall: {
                 id: "2301",
-                thickness: 8
+                thickness: 8,
+                hidden: false
             }
         };
 

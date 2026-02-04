@@ -73,12 +73,14 @@ export default class RoomInstance {
             this.roomWallItem = undefined;
         }
 
-        this.roomWallItem = new RoomWallItem(
-            this.roomRenderer,
-            new WallRenderer(structure, structure.wall.id, 64)
-        );
+        if(!structure.wall.hidden) {
+            this.roomWallItem = new RoomWallItem(
+                this.roomRenderer,
+                new WallRenderer(structure, structure.wall.id, 64)
+            );
 
-        this.roomRenderer.items.push(this.roomWallItem);
+            this.roomRenderer.items.push(this.roomWallItem);
+        }
     }
 
     public setMoodlight(moodlight: RoomMoodlightData) {
