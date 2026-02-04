@@ -7,4 +7,5 @@ export type UserEventData = {
     duckets: number;
     diamonds: number;
     figureConfiguration: FigureConfiguration;
+    homeRoomId: string | null;
 };

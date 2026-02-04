@@ -69,14 +69,7 @@ export default class PurchaseShopFurnitureEvent implements IncomingEvent<Purchas
             new OutgoingEvent<ShopFurniturePurchasedEventData>("ShopFurniturePurchasedEvent", {
                 success: true
             }),
-            new OutgoingEvent<UserEventData>("UserEvent", {
-                id: user.model.id,
-                name: user.model.name,
-                figureConfiguration: user.model.figureConfiguration,
-                credits: user.model.credits,
-                duckets: user.model.duckets,
-                diamonds: user.model.diamonds,
-            })
+            new OutgoingEvent<UserEventData>("UserEvent", user.getUserData())
         ]);
     }
 }

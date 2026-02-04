@@ -9,7 +9,7 @@ export class UserModel extends Model {
     declare credits: number;
     declare diamonds: number;
     declare duckets: number;
-    declare homeRoomId?: string;
+    declare homeRoomId: string | null;
     declare roomChatStyleId: string;
 }
 

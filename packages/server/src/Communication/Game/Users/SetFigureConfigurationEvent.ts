@@ -20,13 +20,6 @@ export default class SetFigureConfigurationEvent implements IncomingEvent<SetFig
             );
         }
 
-        user.send(new OutgoingEvent<UserEventData>("UserEvent", {
-            id: user.model.id,
-            name: user.model.name,
-            figureConfiguration: user.model.figureConfiguration,
-            credits: user.model.credits,
-            duckets: user.model.duckets,
-            diamonds: user.model.diamonds,
-        }));
+        user.send(new OutgoingEvent<UserEventData>("UserEvent", user.getUserData()));
     }
 }

@@ -4,6 +4,7 @@ import { UserModel } from "../Database/Models/Users/UserModel.js";
 import { EventEmitter } from "node:events";
 import UserInventory from "./Inventory/UserInventory.js";
 import Room from "../Rooms/Room.js";
+import { UserEventData } from "@shared/Communications/Responses/User/UserEventData.js";
 
 export default class User extends EventEmitter {
     private inventory?: UserInventory;
@@ -35,5 +36,17 @@ export default class User extends EventEmitter {
         }
 
         return this.inventory;
+    }
+
+    public getUserData(): UserEventData {
+        return {
+            id: this.model.id,
+            name: this.model.name,
+            figureConfiguration: this.model.figureConfiguration,
+            credits: this.model.credits,
+            duckets: this.model.duckets,
+            diamonds: this.model.diamonds,
+            homeRoomId: this.model.homeRoomId
+        };
     }
 }

@@ -5,9 +5,12 @@ import { webSocketClient } from "../../..";
 import ToolbarChatbar from "./Chatbar/ToolbarChatbar";
 import { useDialogs } from "../../hooks/useDialogs";
 import ToolbarToggle from "./ToolbarToggle";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AppContext } from "../../contexts/AppContext";
 
 export default function Toolbar() {
+    const { user } = useContext(AppContext);
+
     const room = useRoomInstance();
 
     const { addUniqueDialog } = useDialogs();
@@ -48,9 +51,11 @@ export default function Toolbar() {
                             <div className="sprite_toolbar_logo"/>
                         </ToolbarItem>
                     ):(
-                        <ToolbarItem onClick={() => webSocketClient.send("EnterHomeRoomEvent", null)}>
-                            <div className="sprite_toolbar_home"/>
-                        </ToolbarItem>
+                        (user?.homeRoomId) && (
+                            <ToolbarItem onClick={() => webSocketClient.send("EnterHomeRoomEvent", null)}>
+                                <div className="sprite_toolbar_home"/>
+                            </ToolbarItem>
+                        )
                     )
                 )}
 
