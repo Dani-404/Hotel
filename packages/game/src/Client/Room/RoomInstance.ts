@@ -54,6 +54,8 @@ export default class RoomInstance {
     }
 
     public setStructure(structure: RoomStructure) {
+        this.roomRenderer.structure = structure;
+
         if(this.roomFloorItem) {
             this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(this.roomFloorItem), 1);
             this.roomFloorItem = undefined;

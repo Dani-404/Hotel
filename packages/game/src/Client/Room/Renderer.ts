@@ -45,7 +45,7 @@ export default class RoomRenderer extends EventTarget {
         top: 0
     };
 
-    constructor(public readonly parent: HTMLElement, public readonly clientInstance?: ClientInstance, public readonly roomInstance?: RoomInstance, private readonly structure?: RoomStructure) {
+    constructor(public readonly parent: HTMLElement, public readonly clientInstance: ClientInstance | undefined, public readonly roomInstance: RoomInstance | undefined, public structure: RoomStructure) {
         super();
 
         this.element = document.createElement("canvas");

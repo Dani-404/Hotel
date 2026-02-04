@@ -131,7 +131,15 @@ export default class Room {
         }));
     }
 
-    private getStructure() {
+    public async setStructure(structure: RoomStructure) {
+        await this.model.update({ structure });
+
+        this.sendRoomEvent(new OutgoingEvent<RoomStructureEventData>("RoomStructureEvent", {
+            structure: this.model.structure
+        }));
+    }
+
+    public getStructure() {
         return {...this.model.structure};
     }
 

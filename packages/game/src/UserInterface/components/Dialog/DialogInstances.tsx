@@ -6,6 +6,7 @@ import NavigatorDialog from "../Navigator/NavigatorDialog";
 import RoomCreationDialog from "../Navigator/Rooms/Creator/RoomCreationDialog";
 import { useDialogs } from "../../hooks/useDialogs";
 import RoomFurnitureLogicDialog, { RoomFurnitureLogicDialogData } from "../Room/Furniture/Logic/RoomFurnitureLogicDialog";
+import RoomSettingsDialog from "../Room/Settings/RoomSettingsDialog";
 
 export default function DialogInstances() {
     const { dialogs, closeDialog } = useDialogs();
@@ -25,6 +26,9 @@ export default function DialogInstances() {
                         
                     case "navigator":
                         return (<NavigatorDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+
+                    case "room-settings":
+                        return (<RoomSettingsDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
                         
                     case "room-creation":
                         return (<RoomCreationDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);

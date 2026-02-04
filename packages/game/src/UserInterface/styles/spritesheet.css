@@ -71,4 +71,5 @@
 .sprite_navigator_user-count { background-image: url('./spritesheet.png'); background-position: -494px -224px; width: 7px; height: 8px; }
 .sprite_context-menu_arrow-down { background-image: url('./spritesheet.png'); background-position: -485px -331px; width: 10px; height: 5px; }
 .sprite_toolbar_chat_pointer { background-image: url('./spritesheet.png'); background-position: -485px -351px; width: 10px; height: 5px; }
-.sprite_dialog_list-fold { background-image: url('./spritesheet.png'); background-position: -485px -312px; width: 10px; height: 2px; }
+.sprite_forms_arrow { background-image: url('./spritesheet.png'); background-position: -485px -312px; width: 8px; height: 4px; }
+.sprite_dialog_list-fold { background-image: url('./spritesheet.png'); background-position: -483px -375px; width: 10px; height: 2px; }

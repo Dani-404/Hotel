@@ -24,6 +24,7 @@ import SetRoomChatStyleEvent from "./Communication/Game/Users/SetRoomChatStyleEv
 import SetFigureConfigurationEvent from "./Communication/Game/Users/SetFigureConfigurationEvent.js";
 import SetRoomMoodlightEvent from "./Communication/Game/Rooms/Furniture/SetFurnitureDataEvent.js";
 import SetFurnitureDataEvent from "./Communication/Game/Rooms/Furniture/SetFurnitureDataEvent.js";
+import UpdateRoomStructureEvent from "./Communication/Game/Rooms/UpdateRoomStructureEvent.js";
 
 await initializeModels();
 
@@ -49,7 +50,8 @@ eventHandler
     .addIncomingEvent("StartWalkingEvent", new StartWalkingEvent())
     .addIncomingEvent("SendUserMessageEvent", new SendUserMessageEvent())
     .addIncomingEvent("GetRoomChatStylesEvent", new GetRoomChatStylesEvent())
-    .addIncomingEvent("SetFurnitureDataEvent", new SetFurnitureDataEvent());
+    .addIncomingEvent("SetFurnitureDataEvent", new SetFurnitureDataEvent())
+    .addIncomingEvent("UpdateRoomStructureEvent", new UpdateRoomStructureEvent());
     
 eventHandler
     .addIncomingEvent("GetUserEvent", new GetUserEvent())
