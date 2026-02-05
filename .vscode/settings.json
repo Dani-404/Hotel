@@ -16,6 +16,7 @@
         "**/.hg": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "**/*.js": true
+        "**/*.js": true,
+        "packages/server/migrations/**/*.js": false
     }
 }

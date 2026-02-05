@@ -1,5 +1,6 @@
 import Dialog from "../../Dialog/Dialog";
 import DialogTabs from "../../Dialog/Tabs/DialogTabs";
+import RoomSettingsBasicTab from "./Tabs/RoomSettingsBasicTab";
 import RoomSettingsCustomizeTab from "./Tabs/RoomSettingsCustomizeTab";
 
 export type RoomSettingsDialogProps = {
@@ -13,7 +14,7 @@ export default function RoomSettingsDialog({ hidden, onClose }: RoomSettingsDial
             <DialogTabs withoutHeader initialActiveIndex={3} tabs={[
                 {
                     icon: "Basic",
-                    element: (<div style={{ flex: 1 }}/>),
+                    element: (<RoomSettingsBasicTab/>),
                 },
                 {
                     icon: "Access",

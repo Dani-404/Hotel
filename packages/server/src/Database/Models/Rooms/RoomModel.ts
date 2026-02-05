@@ -2,11 +2,16 @@ import { DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
 import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
 import { RoomFurnitureModel } from "./RoomFurnitureModel.js";
 import { RoomMoodlightData } from "@shared/Interfaces/Room/RoomMoodlightData.js";
+import { UserModel } from "../Users/UserModel.js";
 
 export class RoomModel extends Model {
     declare id: string;
     declare name: string;
+    declare description: string;
+    declare owner: NonAttribute<UserModel>;
+
     declare structure: RoomStructure;
+    
     declare maxUsers: number;
     
     declare roomFurnitures: NonAttribute<RoomFurnitureModel[]>;
@@ -22,6 +27,11 @@ export function initializeRoomModel(sequelize: Sequelize) {
           name: {
             type: new DataTypes.STRING(32),
             allowNull: false,
+          },
+          description: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            defaultValue: null
           },
           maxUsers: {
             type: new DataTypes.INTEGER,
@@ -47,4 +57,9 @@ export function initializeRoomModel(sequelize: Sequelize) {
           sequelize,
         },
     );
+    
+    RoomModel.belongsTo(UserModel, {
+        as: "owner",
+        foreignKey: "ownerId"
+    });
 }

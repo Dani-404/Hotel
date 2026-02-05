@@ -36,6 +36,15 @@ export default class RoomUser {
         
         this.user.send([
             new OutgoingEvent<LoadRoomEventData>("LoadRoomEvent", {
+                information: {
+                    name: this.room.model.name,
+                    description: this.room.model.description,
+                    owner: {
+                        id: this.room.model.owner.id,
+                        name: this.room.model.owner.name
+                    }
+                },
+                
                 structure: this.room.model.structure,
                 users: this.room.users.map((user) => user.getRoomUserData()),
                 furnitures: this.room.furnitures.map((furniture) => furniture.getFurnitureData())

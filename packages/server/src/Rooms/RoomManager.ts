@@ -27,20 +27,26 @@ export default class RoomManager {
 
     public async loadRoomInstance(roomId: string) {
         const room = await RoomModel.findByPk(roomId, {
-            include: {
-                model: RoomFurnitureModel,
-                as: "roomFurnitures",
-                include: [
-                    {
-                        model: FurnitureModel,
-                        as: "furniture"
-                    },
-                    {
-                        model: UserModel,
-                        as: "user"
-                    }
-                ]
-            }
+            include: [
+                {
+                    model: UserModel,
+                    as: "owner"
+                },
+                {
+                    model: RoomFurnitureModel,
+                    as: "roomFurnitures",
+                    include: [
+                        {
+                            model: FurnitureModel,
+                            as: "furniture"
+                        },
+                        {
+                            model: UserModel,
+                            as: "user"
+                        }
+                    ]
+                }
+            ]
         });
 
         if(!room) {

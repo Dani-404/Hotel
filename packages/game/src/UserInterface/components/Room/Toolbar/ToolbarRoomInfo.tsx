@@ -42,6 +42,13 @@ export default function ToolbarRoomInfo() {
                     }}>
                         {[
                             {
+                                sprite: "sprite_toolbar_room_information",
+                                label: "Information",
+                                onClick: () => {
+                                    addUniqueDialog("room-information");
+                                }
+                            },
+                            {
                                 sprite: "sprite_toolbar_room_settings",
                                 label: "Settings",
                                 onClick: () => {
