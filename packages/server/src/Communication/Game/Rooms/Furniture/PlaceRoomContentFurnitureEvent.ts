@@ -1,7 +1,7 @@
 import { PlaceRoomContentFurnitureEventData } from "@shared/Communications/Requests/Rooms/Furniture/PlaceRoomContentFurnitureEventData";
 import IncomingEvent from "../../../Interfaces/IncomingEvent.js";
 import User from "../../../../Users/User.js";
-import RoomFurniture from "../../../../Rooms/Furniture/RoomFurniture.js";
+import { UserFurnitureModel } from "../../../../Database/Models/Users/Furniture/UserFurnitureModel.js";
 
 export default class PlaceRoomContentFurnitureEvent implements IncomingEvent<PlaceRoomContentFurnitureEventData> {
     async handle(user: User, event: PlaceRoomContentFurnitureEventData) {
@@ -11,7 +11,14 @@ export default class PlaceRoomContentFurnitureEvent implements IncomingEvent<Pla
 
         const inventory = user.getInventory();
 
-        const userFurniture = await inventory.getFurnitureById(event.userFurnitureId);
+        let userFurniture: UserFurnitureModel | null = null;
+        
+        if(event.stackable) {
+            userFurniture = await inventory.getFurnitureByType(event.furnitureId);
+        }
+        else {
+            userFurniture = await inventory.getFurnitureById(event.userFurnitureId);
+        }
 
         if(!userFurniture) {
             throw new Error("User does not have a user furniture by this id.");
@@ -24,7 +31,9 @@ export default class PlaceRoomContentFurnitureEvent implements IncomingEvent<Pla
 
             user.room.setWallId(userFurniture.furniture.color);
 
-            inventory.setFurnitureQuantity(userFurniture, userFurniture.quantity - 1);
+            await userFurniture.destroy();
+
+            inventory.deleteFurniture(userFurniture);
         }
         else if(userFurniture.furniture.type === "floor") {
             if(userFurniture.furniture.color === undefined) {
@@ -33,7 +42,9 @@ export default class PlaceRoomContentFurnitureEvent implements IncomingEvent<Pla
 
             user.room.setFloorId(userFurniture.furniture.color);
 
-            inventory.setFurnitureQuantity(userFurniture, userFurniture.quantity - 1);
+            await userFurniture.destroy();
+
+            inventory.deleteFurniture(userFurniture);
         }
         else {
             throw new Error("User furniture is not of room content type.");

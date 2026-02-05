@@ -1,11 +1,20 @@
-import { DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
+import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
+import { NonAttribute } from "@sequelize/core";
 import { FurnitureModel } from "../../Furniture/FurnitureModel.js";
+import { RoomModel } from "../../Rooms/RoomModel.js";
 import { UserModel } from "../UserModel.js";
+import Room from "../../../../Rooms/Room.js";
 
 export class UserFurnitureModel extends Model {
     declare id: string;
-    declare quantity: number;
-    
+    declare position: RoomPosition;
+    declare direction: number;
+    declare animation: number;
+    declare data: unknown;
+
+    declare room: NonAttribute<Room | null>;
+    declare user: NonAttribute<UserModel>;
     declare furniture: NonAttribute<FurnitureModel>;
 }
 
@@ -14,20 +23,49 @@ export function initializeUserFurnitureModel(sequelize: Sequelize) {
         {
           id: {
             type: DataTypes.UUID,
-            primaryKey: true
+            primaryKey: true,
           },
-          quantity: {
+          position: {
+              type: DataTypes.TEXT,
+              get: function () {
+                  return JSON.parse(this.getDataValue("position"));
+              },
+              set: function (value) {
+                  this.setDataValue("position", JSON.stringify(value));
+              },
+              allowNull: true,
+              defaultValue: null
+          },
+          direction: {
             type: DataTypes.NUMBER,
-            defaultValue: 1,
-            allowNull: false
-          }
+            allowNull: true,
+            defaultValue: null
+          },
+          animation: {
+            type: DataTypes.NUMBER,
+            defaultValue: 0,
+          },
+          color: {
+            type: DataTypes.NUMBER,
+            defaultValue: 0,
+          },
+          data: {
+              type: DataTypes.TEXT,
+              get: function () {
+                  return JSON.parse(this.getDataValue("data"));
+              },
+              set: function (value) {
+                  this.setDataValue("data", JSON.stringify(value));
+              },
+              allowNull: true
+          },
         },
         {
-          tableName: "user_furniture",
+          tableName: 'user_furnitures',
           sequelize
-        }
-    );
-
+        },
+      );
+    
     UserFurnitureModel.belongsTo(FurnitureModel, {
         as: "furniture",
         foreignKey: "furnitureId"
@@ -38,8 +76,9 @@ export function initializeUserFurnitureModel(sequelize: Sequelize) {
         foreignKey: "userId"
     });
     
-    UserModel.hasMany(UserFurnitureModel, {
-        as: "userFurniture",
-        foreignKey: "userFurnitureId"
+    RoomModel.hasMany(UserFurnitureModel, {
+        as: "roomFurnitures",
+        foreignKey: "roomId",
+        constraints: false
     });
 }

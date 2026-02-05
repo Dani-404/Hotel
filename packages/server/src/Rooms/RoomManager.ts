@@ -1,6 +1,6 @@
 import { FurnitureModel } from "../Database/Models/Furniture/FurnitureModel.js";
 import { RoomModel } from "../Database/Models/Rooms/RoomModel.js";
-import { RoomFurnitureModel } from "../Database/Models/Rooms/RoomFurnitureModel.js";
+import { UserFurnitureModel } from "../Database/Models/Users/Furniture/UserFurnitureModel.js";
 import Room from "./Room.js";
 import { UserModel } from "../Database/Models/Users/UserModel.js";
 
@@ -33,7 +33,7 @@ export default class RoomManager {
                     as: "owner"
                 },
                 {
-                    model: RoomFurnitureModel,
+                    model: UserFurnitureModel,
                     as: "roomFurnitures",
                     include: [
                         {

@@ -14,6 +14,6 @@ export default class PickupRoomFurnitureEvent implements IncomingEvent<PickupRoo
 
         const roomFurniture = user.room.getRoomFurniture(event.roomFurnitureId);
 
-        roomFurniture.pickup();
+        await roomFurniture.pickup();
     }
 }

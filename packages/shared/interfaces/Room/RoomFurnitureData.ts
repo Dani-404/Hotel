@@ -2,6 +2,8 @@ import { FurnitureFlagsData } from "../Furniture/FurnitureFlags.js";
 import { RoomPosition } from "./RoomPosition.js";
 
 export type FurnitureData = {
+    id: string;
+    
     type: string;
     color?: number;
     

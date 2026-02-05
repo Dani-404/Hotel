@@ -1,106 +1,112 @@
 import { UserFurnitureEventData } from "@shared/Communications/Responses/Inventory/UserFurnitureEventData.js";
 import User from "../User.js";
 import { FurnitureModel } from "../../Database/Models/Furniture/FurnitureModel.js";
-import { UserFurnitureModel } from "../../Database/Models/Users/Furniture/UserFurnitureModel.js";
 import OutgoingEvent from "../../Events/Interfaces/OutgoingEvent.js";
 import { randomUUID } from "node:crypto";
+import { UserFurnitureModel } from "../../Database/Models/Users/Furniture/UserFurnitureModel.js";
+import { UserModel } from "../../Database/Models/Users/UserModel.js";
 
 export default class UserInventory {
     constructor(private readonly user: User) {
 
     }
 
-    public async setFurnitureQuantity(userFurniture: UserFurnitureModel, quantity: number) {
-        if(quantity <= 0) {
-            this.deleteFurniture(userFurniture);
-        }
-        else {
-            this.updateFurniture(userFurniture, {
-                quantity
-            });
-        }
-    }
-
     public async getFurnitureById(userFurnitureId: string) {
         return await UserFurnitureModel.findOne({
             where: {
                 id: userFurnitureId,
-                userId: this.user.model.id
+                userId: this.user.model.id,
+                roomId: null
             },
-            include: {
-                model: FurnitureModel,
-                as: "furniture"
+            include: [
+                {
+                    model: FurnitureModel,
+                    as: "furniture"
+                },
+                {
+                    model: UserModel,
+                    as: "user"
+                }
+            ]
+        });
+    }
+
+    public async getFurnitureByType(furnitureId: string) {
+        return await UserFurnitureModel.findOne({
+            where: {
+                furnitureId,
+                userId: this.user.model.id,
+                roomId: null
+            },
+            include: [
+                {
+                    model: FurnitureModel,
+                    as: "furniture"
+                },
+                {
+                    model: UserModel,
+                    as: "user"
+                }
+            ]
+        });
+    }
+
+    public async getFurnitureCount(furnitureId: string) {
+        return await UserFurnitureModel.count({
+            where: {
+                furnitureId,
+                userId: this.user.model.id,
+                roomId: null
             }
         });
     }
 
     public async deleteFurniture(userFurniture: UserFurnitureModel) {
-        userFurniture.destroy();
+        if(userFurniture.furniture.flags.inventoryStackable) {
+            const count = await this.getFurnitureCount(userFurniture.furniture.id);
+
+            if(count >= 1) {
+                this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
+                    updatedUserFurniture: [
+                        {
+                            id: userFurniture.id,
+                            quantity: await this.getFurnitureCount(userFurniture.furniture.id),
+                            furniture: userFurniture.furniture
+                        }
+                    ]
+                }));
+
+                return;
+            }
+        }
 
         this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
             deletedUserFurniture: [
                 {
                     id: userFurniture.id,
+                    furniture: userFurniture.furniture
                 }
             ]
         }));
     }
 
-    public async addFurniture(furniture: FurnitureModel) {
-        let userFurniture = await UserFurnitureModel.findOne<UserFurnitureModel>({
-            where: {
-                userId: this.user.model.id,
-                furnitureId: furniture.id
-            }
-        });
-
-        if(userFurniture) {
-            userFurniture = await userFurniture.update({
-                quantity: userFurniture.quantity + 1
-            });
-        }
-        else {
-            userFurniture = await UserFurnitureModel.create({
-                id: randomUUID(),
-                userId: this.user.model.id,
-                furnitureId: furniture.id
-            }, {
-                include: {
-                    model: FurnitureModel,
-                    as: "furniture"
-                }
-            });
-        }
-
+    public async addFurniture(userFurniture: UserFurnitureModel) {
         this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
             updatedUserFurniture: [
                 {
                     id: userFurniture.id,
-                    quantity: userFurniture.quantity,
-                    furnitureData: furniture
-                }
-            ]
-        }));
-    }
-
-    public async updateFurniture(userFurniture: UserFurnitureModel, updatedFurnitureAttributes: Partial<UserFurnitureModel>) {
-        await userFurniture.update(updatedFurnitureAttributes);
-
-        this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
-            updatedUserFurniture: [
-                {
-                    id: userFurniture.id,
-                    quantity: userFurniture.quantity,
-                    furnitureData: userFurniture.furniture
+                    quantity: (userFurniture.furniture.flags.inventoryStackable)?(await this.getFurnitureCount(userFurniture.furniture.id)):(1),
+                    furniture: userFurniture.furniture
                 }
             ]
         }));
     }
 
     public async sendFurniture() {
-        const userFurniture = await UserFurnitureModel.findAll<UserFurnitureModel>({
+        const userFurnitures = await UserFurnitureModel.findAll({
             where: {
-                userId: this.user.model.id
+                userId: this.user.model.id,
+                roomId: null
             },
             include: {
                 model: FurnitureModel,
@@ -108,13 +114,17 @@ export default class UserInventory {
             },
             order: [['updatedAt','DESC']]
         });
+
+        const arrayUniqueByKey = [
+            ...new Map(userFurnitures.map((userFurniture) => [userFurniture.furniture.id + `_${Boolean(userFurniture.furniture.flags.inventoryStackable)}`, userFurniture])).values()
+        ];
     
         this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
-            allUserFurniture: userFurniture.map((userFurniture) => {
+            allUserFurniture: arrayUniqueByKey.map((userFurniture) => {
                 return {
                     id: userFurniture.id,
-                    quantity: userFurniture.quantity,
-                    furnitureData: userFurniture.furniture
+                    quantity: userFurnitures.filter((item) => item.furniture.id === userFurniture.furniture.id).length,
+                    furniture: userFurniture.furniture,
                 };
             })
         }));

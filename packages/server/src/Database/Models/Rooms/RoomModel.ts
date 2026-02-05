@@ -1,6 +1,6 @@
 import { DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
 import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
-import { RoomFurnitureModel } from "./RoomFurnitureModel.js";
+import { UserFurnitureModel } from "../Users/Furniture/UserFurnitureModel.js";
 import { RoomMoodlightData } from "@shared/Interfaces/Room/RoomMoodlightData.js";
 import { UserModel } from "../Users/UserModel.js";
 
@@ -14,7 +14,7 @@ export class RoomModel extends Model {
     
     declare maxUsers: number;
     
-    declare roomFurnitures: NonAttribute<RoomFurnitureModel[]>;
+    declare roomFurnitures: NonAttribute<UserFurnitureModel[]>;
 }
 
 export function initializeRoomModel(sequelize: Sequelize) {

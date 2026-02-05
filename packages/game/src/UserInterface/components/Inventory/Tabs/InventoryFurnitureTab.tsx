@@ -46,13 +46,17 @@ export default function InventoryFurnitureTab() {
                     mutatedUserFurniture = 
                         event.data.updatedUserFurniture.concat(
                             ...mutatedUserFurniture
-                                .filter((userFurniture) => !event.data.updatedUserFurniture?.some((updatedUserFurniture) => updatedUserFurniture.id === userFurniture.id))
+                                .filter((userFurniture) => !event.data.updatedUserFurniture?.some((updatedUserFurniture) => (
+                                    (updatedUserFurniture.furniture.flags.inventoryStackable)?(updatedUserFurniture.furniture.id === userFurniture.furniture.id):(updatedUserFurniture.id === userFurniture.id)
+                                )))
                         );
                 }
 
                 if(event.data.deletedUserFurniture) {
                     mutatedUserFurniture = mutatedUserFurniture
-                        .filter((userFurniture) => !event.data.deletedUserFurniture?.some((updatedUserFurniture) => updatedUserFurniture.id === userFurniture.id))
+                        .filter((userFurniture) => !event.data.deletedUserFurniture?.some((updatedUserFurniture) => 
+                            (updatedUserFurniture.furniture.flags.inventoryStackable)?(updatedUserFurniture.furniture.id === userFurniture.furniture.id):(updatedUserFurniture.id === userFurniture.id)
+                        ))
                 }
 
                 setUserFurniture(mutatedUserFurniture);
@@ -70,11 +74,15 @@ export default function InventoryFurnitureTab() {
         if(!activeFurniture && userFurniture.length) {
             setActiveFurniture(userFurniture[0]);
         }
-        else if(activeFurniture && !userFurniture.some((userFurniture) => userFurniture.id === activeFurniture.id)) {
+        else if(activeFurniture && !userFurniture.some((userFurniture) => (
+            (activeFurniture.furniture.flags.inventoryStackable)?(activeFurniture.furniture.id === userFurniture.furniture.id):(activeFurniture.id === userFurniture.id)
+        ))) {
             setActiveFurniture(userFurniture[0] ?? undefined);
         }
         else if(activeFurniture) {
-            setActiveFurniture(userFurniture.find((userFurniture) => userFurniture.id === activeFurniture.id));
+            setActiveFurniture(userFurniture.find((userFurniture) => 
+                (activeFurniture.furniture.flags.inventoryStackable)?(activeFurniture.furniture.id === userFurniture.furniture.id):(activeFurniture.id === userFurniture.id)
+            ));
         }
     }, [activeFurniture, userFurniture]);
 
@@ -85,7 +93,7 @@ export default function InventoryFurnitureTab() {
             return;
         }
 
-        if(!activeFurniture || roomFurniturePlacerId.current !== activeFurniture?.id) {
+        if(!activeFurniture || roomFurniturePlacerId.current !== ((activeFurniture?.furniture.flags.inventoryStackable)?(activeFurniture?.furniture.id):(activeFurniture?.id))) {
             roomFurniturePlacer.destroy();
 
             setRoomFurniturePlacer(undefined);
@@ -102,6 +110,9 @@ export default function InventoryFurnitureTab() {
             
             webSocketClient.send<PlaceFurnitureEventData>("PlaceFurnitureEvent", {
                 userFurnitureId: activeFurniture.id,
+                furnitureId: activeFurniture.furniture.id,
+                stackable: activeFurniture.furniture.flags.inventoryStackable,
+                
                 position,
                 direction
             });
@@ -120,9 +131,11 @@ export default function InventoryFurnitureTab() {
             return;
         }
 
-        if(activeFurniture.furnitureData.type === "wallpaper" || activeFurniture.furnitureData.type === "floor") {
+        if(activeFurniture.furniture.type === "wallpaper" || activeFurniture.furniture.type === "floor") {
             webSocketClient.send<PlaceRoomContentFurnitureEventData>("PlaceRoomContentFurnitureEvent", {
-                userFurnitureId: activeFurniture.id
+                userFurnitureId: activeFurniture.id,
+                furnitureId: activeFurniture.furniture.id,
+                stackable: activeFurniture.furniture.flags.inventoryStackable
             });
 
             return;
@@ -132,8 +145,8 @@ export default function InventoryFurnitureTab() {
             return;
         }
 
-        setRoomFurniturePlacer(RoomFurniturePlacer.fromFurnitureData(clientInstance.roomInstance.value, activeFurniture.furnitureData));
-        roomFurniturePlacerId.current = activeFurniture.id;
+        setRoomFurniturePlacer(RoomFurniturePlacer.fromFurnitureData(clientInstance.roomInstance.value, activeFurniture.furniture));
+        roomFurniturePlacerId.current = (activeFurniture?.furniture.flags.inventoryStackable)?(activeFurniture?.furniture.id):(activeFurniture?.id);
     }, [roomFurniturePlacer, activeFurniture]);
 
     if(!userFurniture.length) {
@@ -159,7 +172,7 @@ export default function InventoryFurnitureTab() {
                 overflowY: "scroll"
             }}>
                 {userFurniture?.map((userFurniture) => (
-                    <div key={userFurniture.id} style={{
+                    <div key={(userFurniture.furniture.flags.inventoryStackable)?(userFurniture.furniture.id):(userFurniture.id)} style={{
                         display: "flex",
 
                         width: 40,
@@ -186,7 +199,7 @@ export default function InventoryFurnitureTab() {
                             justifyContent: "center",
                             alignItems: "center"
                         }}>
-                            <FurnitureIcon furnitureData={userFurniture.furnitureData}/>
+                            <FurnitureIcon furnitureData={userFurniture.furniture}/>
 
                             {(userFurniture.quantity > 1) && (
                                 <div style={{
@@ -220,14 +233,14 @@ export default function InventoryFurnitureTab() {
             }}>
                 {(activeFurniture) && (
                     <Fragment>
-                        <RoomRenderer key={activeFurniture.id} options={{ withoutWalls: activeFurniture.furnitureData.placement === "floor" }} furnitureData={activeFurniture?.furnitureData} style={{
+                        <RoomRenderer key={activeFurniture.id} options={{ withoutWalls: activeFurniture.furniture.placement === "floor" }} furnitureData={activeFurniture?.furniture} style={{
                             height: 130,
                             width: "100%",
                         }}/>
 
                         <div style={{ flex: 1 }}>
-                            <b>{activeFurniture?.furnitureData.name}</b>
-                            <p>{activeFurniture?.furnitureData.description}</p>
+                            <b>{activeFurniture?.furniture.name}</b>
+                            <p>{activeFurniture?.furniture.description}</p>
                         </div>
 
                         <DialogButton disabled={!room} onClick={onPlaceInRoomClick}>Place in room</DialogButton>

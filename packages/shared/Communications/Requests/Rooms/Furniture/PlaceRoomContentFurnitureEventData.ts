@@ -1,5 +1,5 @@
-import { RoomPosition } from "../../../../Interfaces/Room/RoomPosition.js";
-
 export type PlaceRoomContentFurnitureEventData = {
+    furnitureId: string;
     userFurnitureId: string;
+    stackable: boolean;
 }

@@ -1,74 +1,36 @@
 import Room from "../Room.js";
-import { RoomFurnitureModel } from "../../Database/Models/Rooms/RoomFurnitureModel.js";
+import { UserFurnitureModel } from "../../Database/Models/Users/Furniture/UserFurnitureModel.js";
 import { RoomFurnitureData } from "@shared/Interfaces/Room/RoomFurnitureData.js";
 import OutgoingEvent from "../../Events/Interfaces/OutgoingEvent.js";
 import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
-import { FurnitureModel } from "../../Database/Models/Furniture/FurnitureModel.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
-import { randomUUID } from "node:crypto";
-import { UserModel } from "../../Database/Models/Users/UserModel.js";
-import { UserFurnitureModel } from "../../Database/Models/Users/Furniture/UserFurnitureModel.js";
 import { game } from "../../index.js";
-import { UserFurnitureEventData } from "@shared/Communications/Responses/Inventory/UserFurnitureEventData.js";
-import User from "../../Users/User.js";
 
 export default class RoomFurniture {
-    constructor(private readonly room: Room, public readonly model: RoomFurnitureModel) {
+    constructor(private readonly room: Room, public readonly model: UserFurnitureModel) {
     }
 
-    public static async create(room: Room, user: User, furniture: FurnitureModel, position: RoomPosition, direction: number) {
-        const createdRoomFurniture = await RoomFurnitureModel.create({
-            id: randomUUID(),
-            roomId: room.model.id,
-            userId: user.model.id,
-            furnitureId: furniture.id,
-            position: position,
+    public static async place(room: Room, userFurniture: UserFurnitureModel, position: RoomPosition, direction: number) {
+        await userFurniture.update({
+            position,
             direction,
-            animation: 0
-        }, {
-            include: [
-                {
-                    model: UserModel,
-                    as: "user"
-                },
-                {
-                    model: FurnitureModel,
-                    as: "furniture"
-                }
-            ]
+            roomId: room.model.id
         });
-
-        const roomFurnitureModel = await RoomFurnitureModel.findByPk(createdRoomFurniture.id, {
-            include: [
-                {
-                    model: FurnitureModel,
-                    as: "furniture"
-                },
-                {
-                    model: UserModel,
-                    as: "user"
-                }
-            ]
-        });
-
-        if(!roomFurnitureModel) {
-            throw new Error("Created room furniture does not exist.");
-        }
 
         room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
             furnitureAdded: [
                 {
-                    id: roomFurnitureModel.id,
-                    furniture: roomFurnitureModel.furniture,
-                    position: roomFurnitureModel.position,
-                    direction: roomFurnitureModel.direction,
-                    animation: roomFurnitureModel.animation,
-                    data: roomFurnitureModel.data
+                    id: userFurniture.id,
+                    furniture: userFurniture.furniture,
+                    position: userFurniture.position,
+                    direction: userFurniture.direction,
+                    animation: userFurniture.animation,
+                    data: userFurniture.data
                 }
             ]
         }));
 
-        const roomFurniture = new RoomFurniture(room, roomFurnitureModel);
+        const roomFurniture = new RoomFurniture(room, userFurniture);
 
         room.furnitures.push(roomFurniture);
 
@@ -97,47 +59,15 @@ export default class RoomFurniture {
             ]
         }));
 
-        // TODO: add furniture back to user inventory
-        let userFurniture = await UserFurnitureModel.findOne<UserFurnitureModel>({
-            where: {
-                userId: this.model.user.id,
-                furnitureId: this.model.furniture.id
-            }
+        await this.model.update({
+            roomId: null
         });
-
-        if(userFurniture) {
-            userFurniture = await userFurniture.update({
-                quantity: userFurniture.quantity + 1
-            });
-        }
-        else {
-            userFurniture = await UserFurnitureModel.create({
-                id: randomUUID(),
-                userId: this.model.user.id,
-                furnitureId: this.model.furniture.id
-            }, {
-                include: {
-                    model: FurnitureModel,
-                    as: "furniture"
-                }
-            });
-        }
 
         const user = game.getUserById(this.model.user.id);
 
         if(user) {
-            user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
-                updatedUserFurniture: [
-                    {
-                        id: userFurniture.id,
-                        quantity: userFurniture.quantity,
-                        furnitureData: this.model.furniture
-                    }
-                ]
-            }));
+            user.getInventory().addFurniture(this.model);
         }
-     
-        await this.model.destroy();
     }
 
     public isWalkable() {

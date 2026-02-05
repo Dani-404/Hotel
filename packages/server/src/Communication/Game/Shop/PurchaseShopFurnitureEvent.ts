@@ -7,6 +7,8 @@ import { FurnitureModel } from "../../../Database/Models/Furniture/FurnitureMode
 import { ShopFurniturePurchasedEventData } from "@shared/Communications/Responses/Shop/ShopFurniturePurchasedEventData.js";
 import { UserEventData } from "@shared/Communications/Responses/User/UserEventData.js";
 import RoomFurniture from "../../../Rooms/Furniture/RoomFurniture.js";
+import { UserFurnitureModel } from "../../../Database/Models/Users/Furniture/UserFurnitureModel.js";
+import { randomUUID } from "node:crypto";
 
 export default class PurchaseShopFurnitureEvent implements IncomingEvent<PurchaseShopFurnitureEventData> {
     async handle(user: User, event: PurchaseShopFurnitureEventData) {
@@ -58,11 +60,32 @@ export default class PurchaseShopFurnitureEvent implements IncomingEvent<Purchas
 
         await user.model.save();
 
+        const userFurniture = await UserFurnitureModel.create({
+            id: randomUUID(),
+            position: null,
+            direction: null,
+            animation: 0,
+            data: null,
+            
+            roomId: null,
+            userId: user.model.id,
+            furnitureId: shopFurniture.furniture.id
+        }, {
+            include: [
+                {
+                    model: FurnitureModel,
+                    as: "furniture"
+                }
+            ]
+        });
+
+        userFurniture.furniture = shopFurniture.furniture;
+
         if(user.room && event.position && event.direction !== undefined) {
-            RoomFurniture.create(user.room, user, shopFurniture.furniture, event.position, event.direction);
+            RoomFurniture.place(user.room, userFurniture, event.position, event.direction);
         }
         else {
-            await user.getInventory().addFurniture(shopFurniture.furniture);
+            await user.getInventory().addFurniture(userFurniture);
         }
 
         user.send([

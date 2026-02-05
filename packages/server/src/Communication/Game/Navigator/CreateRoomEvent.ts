@@ -18,6 +18,8 @@ export default class CreateRoomEvent implements IncomingEvent<CreateRoomEventDat
         const room = await RoomModel.create({
             id: randomUUID(),
             name: event.name,
+            
+            ownerId: user.model.id,
 
             structure: {
                 door: map.door,

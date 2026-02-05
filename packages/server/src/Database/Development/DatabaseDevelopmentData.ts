@@ -1,4 +1,4 @@
-import { RoomFurnitureModel } from "../Models/Rooms/RoomFurnitureModel.js";
+import { UserFurnitureModel } from "../Models/Users/Furniture/UserFurnitureModel.js";
 import { RoomModel } from "../Models/Rooms/RoomModel.js";
 import { randomUUID } from "crypto";
 import { ShopPageModel } from "../Models/Shop/ShopPageModel.js";
@@ -6,7 +6,6 @@ import { ShopPageFurnitureModel } from "../Models/Shop/ShopPageFurnitureModel.js
 import { FurnitureModel } from "../Models/Furniture/FurnitureModel.js";
 import { getExistingFurnitureAssets, getFloorIds, getWallIds } from "./FurnitureDevelopmentData.js";
 import { UserModel } from "../Models/Users/UserModel.js";
-import { UserFurnitureModel } from "../Models/Users/Furniture/UserFurnitureModel.js";
 import { RoomMapModel } from "../Models/Rooms/Maps/RoomMapModel.js";
 import { Op } from "sequelize";
 import { RoomChatStyleModel } from "../Models/Rooms/Chat/Styles/RoomChatStyleModel.js";
