@@ -3,6 +3,7 @@ import { ShopPageFurnitureModel } from "./ShopPageFurnitureModel.js";
 
 export class ShopPageModel extends Model {
     declare id: string;
+    declare index: number;
     
     declare title: string;
     declare description: string;

@@ -1,10 +1,11 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-export async function getExistingFurnitureAssets() {
+export async function getExistingFurnitureAssets(filter: ((assetName: string) => boolean) = ((assetName: string) => true)) {
     const assetNames = readdirSync(path.join("..", "..", "assets", "furniture"), { withFileTypes: true })
         .filter((directory) => directory.isDirectory())
-        .map((directory) => directory.name);
+        .map((directory) => directory.name)
+        .filter(filter);
 
     const necessaryData = assetNames.filter((assetName) => existsSync(path.join("..", "..", "assets", "furniture", assetName, `${assetName}_serverdata.json`))).map((assetName) => {
         const furnitureData = getFurnitureData(assetName);

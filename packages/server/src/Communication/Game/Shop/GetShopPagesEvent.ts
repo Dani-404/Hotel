@@ -21,12 +21,12 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                 as: "children",
                 order: ["index"]
             },
-            order: ["index"]
+            order: []
         });
 
         user.send(new OutgoingEvent<ShopPagesEventData>("ShopPagesEventData", {
             category: "furniture",
-            pages: shopPages.map((shopPage) => {
+            pages: shopPages.sort((a, b) => a.index - b.index).map((shopPage) => {
                 return {
                     id: shopPage.id,
 
@@ -38,7 +38,7 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                     
                     type: shopPage.type,
                     
-                    children: shopPage.children.map((childShopPage) => {
+                    children: shopPage.children.sort((a, b) => a.index - b.index).map((childShopPage) => {
                         return {
                             id: childShopPage.id,
                             title: childShopPage.title,

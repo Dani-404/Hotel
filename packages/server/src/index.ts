@@ -1,5 +1,5 @@
 import { eventHandler } from "./Events/EventHandler.js";
-import { initializeModels, resetDatabase, useMemoryDatabase } from "./Database/Database.js";
+import { initializeModels, recreateShop, resetDatabase, useMemoryDatabase } from "./Database/Database.js";
 import { initializeDevelopmentData } from "./Database/Development/DatabaseDevelopmentData.js";
 import Game from "./Game.js";
 import GetShopPagesEvent from "./Communication/Game/Shop/GetShopPagesEvent.js";
@@ -27,11 +27,16 @@ import SetFurnitureDataEvent from "./Communication/Game/Rooms/Furniture/SetFurni
 import UpdateRoomStructureEvent from "./Communication/Game/Rooms/UpdateRoomStructureEvent.js";
 import UpdateRoomInformationEvent from "./Communication/Game/Rooms/UpdateRoomInformationEvent.js";
 import SetHomeRoomEvent from "./Communication/Game/Users/SetHomeRoomEvent.js";
+import { recreateShopPages } from "./Database/Development/ShopDevelopmentData.js";
 
 await initializeModels();
 
 if(useMemoryDatabase || resetDatabase) {
     await initializeDevelopmentData();
+}
+
+if(recreateShop) {
+    await recreateShopPages();
 }
 
 // TODO: clean up event handler types

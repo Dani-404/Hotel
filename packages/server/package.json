@@ -1,7 +1,10 @@
 {
+  "type": "module",
   "scripts": {
     "start": "npx tsc && node build/index.js",
-    "migrate": "npx sequelize-cli db:migrate"
+    "build": "npx tsc",
+    "migrate": "npx sequelize-cli db:migrate",
+    "undo": "npx sequelize-cli db:migrate:undo"
   },
   "devDependencies": {
     "@types/node": "^25.0.6",
