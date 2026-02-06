@@ -98,7 +98,7 @@ export default class RoomFurnitureRenderer {
 
         const furnitureData = await FurnitureAssets.getFurnitureData(type);
 
-        const furnitureRenderer = new Furniture(type, size, direction, animation, color);
+        const furnitureRenderer = new Furniture(type, size, (furnitureData.visualization.placement === "wall")?(2):(direction), animation, color);
 
         await furnitureRenderer.getData();
 

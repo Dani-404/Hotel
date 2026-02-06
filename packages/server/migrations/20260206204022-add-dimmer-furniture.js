@@ -4,7 +4,7 @@ import { Op } from "sequelize";
 import { getExistingFurnitureAssets } from "../build/Database/Development/FurnitureDevelopmentData.js";
 import { randomUUID } from "node:crypto";
 
-const assetNames = ["stone_flowerbed", "garden_c15_toolshed", "garden_c15_shroomchr", "gh_div_wall", "gh_div_cor", "watering_can", "gardening_box", "gardenshed_wall", "stone_wall", "stone_platform", "stone_stairs"];
+const assetNames = ["dimmer_buttn", "dimmer_swtch", "dimmer_fuse2", "dimmer_fuse6"];
 
 /** @type {import('sequelize-cli').Migration} */
 export default {

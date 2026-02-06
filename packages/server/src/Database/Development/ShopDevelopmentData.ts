@@ -57,8 +57,13 @@ const defaultShopPages: any = [
             },
             {
                 title: "Dimmers",
+                icon: "icon_51.png",
                 furnitures: [
-                    { type: "roomdimmer", credits: 12 }
+                    { type: "dimmer_buttn", credits: 3, duckets: 250 },
+                    { type: "dimmer_swtch", credits: 9, diamonds: 10 },
+                    { type: "roomdimmer", credits: 12 },
+                    { type: "dimmer_fuse2", credits: 10 },
+                    { type: "dimmer_fuse6", credits: 10 },
                 ]
             },
             {
