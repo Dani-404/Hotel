@@ -5,6 +5,9 @@ import OutgoingEvent from "../../Events/Interfaces/OutgoingEvent.js";
 import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { game } from "../../index.js";
+import RoomFurnitureTeleportLogic from "./Logic/RoomFurnitureTeleportLogic.js";
+import RoomFurnitureGateLogic from "./Logic/RoomFurnitureGateLogic.js";
+import RoomFurnitureLightingLogic from "./Logic/RoomFurnitureLightingLogic.js";
 
 export default class RoomFurniture {
     constructor(private readonly room: Room, public readonly model: UserFurnitureModel) {
@@ -133,6 +136,21 @@ export default class RoomFurniture {
 
     public getData<T>() {
         return {...(this.model.data ?? {})} as T;
+    }
+
+    public getCategoryLogic() {
+        switch(this.model.furniture.category) {
+            case "teleport":
+                return new RoomFurnitureTeleportLogic(this);
+                
+            case "gate":
+                return new RoomFurnitureGateLogic(this);
+                
+            case "lighting":
+                return new RoomFurnitureLightingLogic(this);
+        }
+
+        return null;
     }
 
     public getOffsetPosition(offset: number) {

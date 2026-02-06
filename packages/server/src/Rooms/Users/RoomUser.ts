@@ -23,7 +23,7 @@ export default class RoomUser {
     public pathOnFinish: (() => void) | undefined;
     public pathOnCancel: (() => void) | undefined;
 
-    constructor(private readonly room: Room, public readonly user: User, initialPosition?: RoomPosition) {
+    constructor(public readonly room: Room, public readonly user: User, initialPosition?: RoomPosition) {
         this.user.room = room;
 
         this.position = initialPosition ?? {
