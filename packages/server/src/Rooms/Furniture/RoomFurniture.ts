@@ -134,4 +134,31 @@ export default class RoomFurniture {
     public getData<T>() {
         return {...(this.model.data ?? {})} as T;
     }
+
+    public getOffsetPosition(offset: number) {
+        const position = {...this.model.position};
+
+        switch(this.model.direction) {
+            case 2:
+                position.column += offset;
+
+                break;
+        }
+
+        return position;
+    }
+
+    public async setAnimation(animation: number) {
+        this.model.animation = animation;
+
+        if(this.model.changed()) {
+            await this.model.save();
+
+            this.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
+                furnitureUpdated: [
+                    this.getFurnitureData()
+                ]
+            }));
+        }
+    }
 }

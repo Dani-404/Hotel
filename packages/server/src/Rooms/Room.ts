@@ -61,7 +61,7 @@ export default class Room {
     }
 
     private handleActionsInterval() {
-        const usersWithPath = this.users.filter((user) => user.path?.length);
+        const usersWithPath = this.users.filter((user) => user.path !== undefined);
 
         // TODO: change so that the clients get the full path immediately, and only use this interval to cancel due to obstructions in the path?
         for(let user of usersWithPath) {

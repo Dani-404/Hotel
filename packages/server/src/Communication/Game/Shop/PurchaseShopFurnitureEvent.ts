@@ -81,6 +81,35 @@ export default class PurchaseShopFurnitureEvent implements IncomingEvent<Purchas
 
         userFurniture.furniture = shopFurniture.furniture;
 
+        if(userFurniture.furniture.category === "teleport") {
+            const secondUserFurniture = await UserFurnitureModel.create({
+                id: randomUUID(),
+                position: null,
+                direction: null,
+                animation: 0,
+                data: userFurniture.id,
+                
+                roomId: null,
+                userId: user.model.id,
+                furnitureId: shopFurniture.furniture.id
+            }, {
+                include: [
+                    {
+                        model: FurnitureModel,
+                        as: "furniture"
+                    }
+                ]
+            });
+
+            secondUserFurniture.furniture = shopFurniture.furniture;
+
+            await userFurniture.update({
+                data: secondUserFurniture.id
+            });
+
+            await user.getInventory().addFurniture(secondUserFurniture);
+        }
+
         if(user.room && event.position && event.direction !== undefined) {
             RoomFurniture.place(user.room, userFurniture, event.position, event.direction);
         }

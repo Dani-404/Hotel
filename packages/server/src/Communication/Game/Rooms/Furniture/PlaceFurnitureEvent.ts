@@ -25,6 +25,12 @@ export default class PlaceFurnitureEvent implements IncomingEvent<PlaceFurniture
             throw new Error("User does not have a user furniture by this id.");
         }
 
+        if(userFurniture.furniture.category === "teleport") {
+            await userFurniture.update({
+                animation: 0
+            });
+        }
+
         inventory.deleteFurniture(userFurniture);
 
         await RoomFurniture.place(user.room, userFurniture, event.position, event.direction);

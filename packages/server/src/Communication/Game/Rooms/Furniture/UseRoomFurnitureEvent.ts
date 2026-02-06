@@ -10,9 +10,62 @@ export default class UseRoomFurnitureEvent implements IncomingEvent<UseRoomFurni
             return;
         }
 
+        const roomUser = user.room.getRoomUser(user);
         const roomFurniture = user.room.getRoomFurniture(event.roomFurnitureId);
 
         switch(roomFurniture.model.furniture.category) {
+            case "teleport":
+                if(roomFurniture.model.animation !== 0) {
+                    return;
+                }
+
+                const offsetPosition = roomFurniture.getOffsetPosition(1);
+
+                if(offsetPosition.row !== roomUser.position.row || offsetPosition.column !== roomUser.position.column) {
+                    await new Promise<void>((resolve, reject) => {
+                        roomUser.walkTo(offsetPosition, undefined, resolve, reject);
+                    });
+
+                    console.log("Finished");
+                }
+
+                await roomFurniture.setAnimation(1);
+
+                await new Promise<void>((resolve, reject) => {
+                    roomUser.walkTo(roomFurniture.model.position, true, resolve, reject);
+                });
+
+                await roomFurniture.setAnimation(2);
+
+                await new Promise<void>((resolve) => {
+                    setTimeout(() => {
+                        resolve();
+                    }, 500);
+                });
+
+                await roomFurniture.setAnimation(0);
+
+                const targetFurniture = user.room.furnitures.find((furniture) => furniture.model.id === roomFurniture.model.data);
+
+                if(targetFurniture) {
+                    roomUser.setPosition({
+                        ...targetFurniture.model.position,
+                        depth: targetFurniture.model.position.depth + 0.01
+                    });
+
+                    await targetFurniture.setAnimation(1);
+
+                    const targetOffsetPosition = targetFurniture.getOffsetPosition(1);
+
+                    await new Promise<void>((resolve, reject) => {
+                        roomUser.walkTo(targetOffsetPosition, undefined, resolve, reject);
+                    });
+
+                    await targetFurniture.setAnimation(0);
+                }
+
+                break;
+
             case "gate":
                 if(user.room.users.some(({ position }) => roomFurniture.isPositionInside(position))) {
                     break;

@@ -31,7 +31,12 @@ class EventHandler extends EventEmitter {
 
     addIncomingEvent<T>(eventName: string | symbol, listener: IncomingEvent<T>): this {
         return super.addListener(eventName, async (user, event) => {
-            await listener.handle(user, event);
+            try {
+                await listener.handle(user, event);
+            }
+            catch(error) {
+                console.error(error);
+            }
         });
     }
 }
