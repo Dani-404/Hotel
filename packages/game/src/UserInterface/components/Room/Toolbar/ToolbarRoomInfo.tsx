@@ -10,7 +10,12 @@ export default function ToolbarRoomInfo() {
     const { addUniqueDialog } = useDialogs();
 
     const [minimized, setMinimized] = useState(false);
-    
+    const [zoomed, setZoomed] = useState(room?.roomRenderer.size === 32);
+   
+    if(!room) {
+        return null;
+    }
+
     return (
         <div style={{
             position: "absolute",
@@ -59,13 +64,17 @@ export default function ToolbarRoomInfo() {
                                 }
                             },
                             {
-                                sprite: "sprite_toolbar_room_zoom",
+                                sprite: (!zoomed)?("sprite_toolbar_room_zoom-out"):("sprite_toolbar_room_zoom-in"),
                                 label: "Zoom",
                                 onClick: () => {
-                                    if(room?.roomRenderer.size === 64) {
+                                    if(!zoomed) {
+                                        setZoomed(true);
+                                        
                                         room.roomRenderer.size = 32;
                                     }
-                                    else if(room?.roomRenderer.size === 32) {
+                                    else {
+                                        setZoomed(false);
+                                        
                                         room.roomRenderer.size = 64;
                                     }
                                 }
