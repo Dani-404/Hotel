@@ -23,10 +23,10 @@ export default class RoomUser {
     public pathOnFinish: (() => void) | undefined;
     public pathOnCancel: (() => void) | undefined;
 
-    constructor(private readonly room: Room, public readonly user: User) {
+    constructor(private readonly room: Room, public readonly user: User, initialPosition?: RoomPosition) {
         this.user.room = room;
 
-        this.position = {
+        this.position = initialPosition ?? {
             row: room.model.structure.door?.row ?? 0,
             column: room.model.structure.door?.column ?? 0,
             depth: parseInt(room.model.structure.grid[room.model.structure.door?.row ?? 0]?.[room.model.structure.door?.column ?? 0]!)
@@ -196,7 +196,7 @@ export default class RoomUser {
                     if(furniture.model.position.row === this.position.row && furniture.model.position.column === this.position.column) {
                         return 0;
                     }
-                    
+
                     return (furniture.isWalkable())?(0):(1);
                 }
 

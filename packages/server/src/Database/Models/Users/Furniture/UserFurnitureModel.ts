@@ -13,7 +13,7 @@ export class UserFurnitureModel extends Model {
     declare animation: number;
     declare data: unknown;
 
-    declare room: NonAttribute<Room | null>;
+    declare room: NonAttribute<RoomModel | null>;
     declare user: NonAttribute<UserModel>;
     declare furniture: NonAttribute<FurnitureModel>;
 }
@@ -74,6 +74,12 @@ export function initializeUserFurnitureModel(sequelize: Sequelize) {
     UserFurnitureModel.belongsTo(UserModel, {
         as: "user",
         foreignKey: "userId"
+    });
+
+    UserFurnitureModel.belongsTo(RoomModel, {
+        as: "room",
+        foreignKey: "roomId",
+        constraints: false
     });
     
     RoomModel.hasMany(UserFurnitureModel, {

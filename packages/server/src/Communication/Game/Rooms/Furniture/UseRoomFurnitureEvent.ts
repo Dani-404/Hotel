@@ -3,6 +3,9 @@ import User from "../../../../Users/User.js";
 import OutgoingEvent from "../../../../Events/Interfaces/OutgoingEvent.js";
 import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
 import { UseRoomFurnitureEventData } from "@shared/Communications/Requests/Rooms/Furniture/UseRoomFurnitureEventData.js";
+import { UserFurnitureModel } from "../../../../Database/Models/Users/Furniture/UserFurnitureModel.js";
+import { RoomModel } from "../../../../Database/Models/Rooms/RoomModel.js";
+import { game } from "../../../../index.js";
 
 export default class UseRoomFurnitureEvent implements IncomingEvent<UseRoomFurnitureEventData> {
     async handle(user: User, event: UseRoomFurnitureEventData) {
@@ -10,7 +13,7 @@ export default class UseRoomFurnitureEvent implements IncomingEvent<UseRoomFurni
             return;
         }
 
-        const roomUser = user.room.getRoomUser(user);
+        let roomUser = user.room.getRoomUser(user);
         const roomFurniture = user.room.getRoomFurniture(event.roomFurnitureId);
 
         switch(roomFurniture.model.furniture.category) {
@@ -45,24 +48,66 @@ export default class UseRoomFurnitureEvent implements IncomingEvent<UseRoomFurni
 
                 await roomFurniture.setAnimation(0);
 
-                const targetFurniture = user.room.furnitures.find((furniture) => furniture.model.id === roomFurniture.model.data);
+                const targetUserFurniture = await UserFurnitureModel.findOne({
+                    where: {
+                        id: roomFurniture.model.data
+                    },
+                    include: [
+                        {
+                            model: RoomModel,
+                            as: "room"
+                        }
+                    ]
+                });
 
-                if(targetFurniture) {
-                    roomUser.setPosition({
-                        ...targetFurniture.model.position,
-                        depth: targetFurniture.model.position.depth + 0.01
-                    });
-
-                    await targetFurniture.setAnimation(1);
-
-                    const targetOffsetPosition = targetFurniture.getOffsetPosition(1);
-
-                    await new Promise<void>((resolve, reject) => {
-                        roomUser.walkTo(targetOffsetPosition, undefined, resolve, reject);
-                    });
-
-                    await targetFurniture.setAnimation(0);
+                if(!targetUserFurniture) {
+                    throw new Error("Target user furniture does not exist.");
                 }
+
+                if(!targetUserFurniture.room) {
+                    throw new Error("Target user furniture is not placed in any room.");
+                }
+
+                const targetRoom = await game.roomManager.getOrLoadRoomInstance(targetUserFurniture.room.id);
+
+                if(!targetRoom) {
+                    throw new Error("Target room does not exist.");
+                }
+
+                const targetFurniture = targetRoom.furnitures.find((furniture) => furniture.model.id === roomFurniture.model.data);
+
+                if(!targetFurniture) {
+                    throw new Error("Target room furniture is not loaded.");
+                }
+
+                if(user.room.model.id !== targetRoom.model.id) {
+                    roomUser.disconnect();
+                    
+                    roomUser = targetRoom.addUserClient(user, targetFurniture.model.position);
+                }
+
+                await targetFurniture.setAnimation(2);
+
+                await new Promise<void>((resolve) => {
+                    setTimeout(() => {
+                        resolve();
+                    }, 500);
+                });
+
+                roomUser.setPosition({
+                    ...targetFurniture.model.position,
+                    depth: targetFurniture.model.position.depth + 0.01
+                });
+
+                await targetFurniture.setAnimation(1);
+
+                const targetOffsetPosition = targetFurniture.getOffsetPosition(1);
+
+                await new Promise<void>((resolve, reject) => {
+                    roomUser.walkTo(targetOffsetPosition, undefined, resolve, reject);
+                });
+
+                await targetFurniture.setAnimation(0);
 
                 break;
 

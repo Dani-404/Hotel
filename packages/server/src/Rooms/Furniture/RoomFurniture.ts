@@ -139,16 +139,27 @@ export default class RoomFurniture {
         const position = {...this.model.position};
 
         switch(this.model.direction) {
+            case 0:
+                position.row -= offset;
+                break;
+
             case 2:
                 position.column += offset;
-
+                break;
+            
+            case 4:
+                position.row += offset;
+                break;
+            
+            case 6:
+                position.column -= offset;
                 break;
         }
 
         return position;
     }
 
-    public async setAnimation(animation: number) {
+    public async setAnimation(animation: number, save: boolean = true) {
         this.model.animation = animation;
 
         if(this.model.changed()) {

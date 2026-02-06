@@ -22,8 +22,12 @@ export default class Room {
         this.requestActionsFrame();
     }
 
-    public addUserClient(user: User) {
-        this.users.push(new RoomUser(this, user));
+    public addUserClient(user: User, position?: RoomPosition) {
+        const roomUser = new RoomUser(this, user, position);
+        
+        this.users.push(roomUser);
+
+        return roomUser;
     }
 
     public sendRoomEvent(outgoingEvents: OutgoingEvent | OutgoingEvent[]) {
