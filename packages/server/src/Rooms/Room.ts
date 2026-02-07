@@ -46,6 +46,10 @@ export default class Room {
         return furniture;
     }
 
+    public getRoomUserAtPosition(position: Omit<RoomPosition, "depth">) {
+        return this.users.find((user) => user.position.row === position.row && user.position.column === position.column);
+    }
+
     public getRoomUser(user: User) {
         return this.getRoomUserById(user.model.id);
     }

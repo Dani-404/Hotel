@@ -87,11 +87,19 @@ export default class RoomUser {
     public handleActionsInterval() {
         const nextPosition = this.path?.[0];
 
-        if(!nextPosition) {
+        if(!nextPosition || this.path === undefined) {
             console.log("User path finished");
 
             this.path = undefined;
             this.pathOnFinish?.();
+
+            return;
+        }
+
+        const user = this.room.getRoomUserAtPosition(nextPosition);
+
+        if(user && user.user.model.id !== this.user.model.id) {
+            this.walkTo(this.path[this.path.length - 1]!, this.walkThroughFurniture, this.pathOnFinish, this.pathOnCancel);
 
             return;
         }
@@ -183,7 +191,7 @@ export default class RoomUser {
         );
     }
 
-    public walkTo(position: RoomPosition, walkThroughFurniture: boolean = false, onFinish: ((() => void) | undefined) = undefined, onCancel: ((() => void) | undefined) = undefined) {
+    public walkTo(position: Omit<RoomPosition, "depth">, walkThroughFurniture: boolean = false, onFinish: ((() => void) | undefined) = undefined, onCancel: ((() => void) | undefined) = undefined) {
         const rows = this.room.model.structure.grid.map((row, rowIndex) => {
             return row.split('').map((column, columnIndex) => {
                 if(column === 'X') {
@@ -192,6 +200,12 @@ export default class RoomUser {
 
                 if(walkThroughFurniture) {
                     return 0;
+                }
+
+                const user = this.room.getRoomUserAtPosition({ row: rowIndex, column: columnIndex });
+
+                if(user && user.user.model.id !== this.user.model.id) {
+                    return 1;
                 }
 
                 const furniture = this.user.room!.getUpmostFurnitureAtPosition({ row: rowIndex, column: columnIndex });
