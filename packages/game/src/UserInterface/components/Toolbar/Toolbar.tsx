@@ -5,12 +5,11 @@ import { webSocketClient } from "../../..";
 import ToolbarChatbar from "./Chatbar/ToolbarChatbar";
 import { useDialogs } from "../../hooks/useDialogs";
 import ToolbarToggle from "./ToolbarToggle";
-import { useContext, useState } from "react";
-import { AppContext } from "../../contexts/AppContext";
+import { useState } from "react";
+import { useUser } from "../../hooks/useUser";
 
 export default function Toolbar() {
-    const { user } = useContext(AppContext);
-
+    const user = useUser();
     const room = useRoomInstance();
 
     const { addUniqueDialog } = useDialogs();

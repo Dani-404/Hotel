@@ -7,6 +7,8 @@ import { PickupRoomFurnitureEventData } from "@Shared/Communications/Requests/Ro
 
 import "./RoomFurnitureProfile.css"
 import { useState } from "react";
+import { useRoomInstance } from "../../../../hooks/useRoomInstance";
+import { useUser } from "../../../../hooks/useUser";
 
 export type RoomFurnitureProfileProps = {
     data: RoomFurnitureData;
@@ -14,6 +16,10 @@ export type RoomFurnitureProfileProps = {
 }
 
 export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfileProps) {
+    const user = useUser();
+
+    const room = useRoomInstance();
+
     const [logic] = useState(item.furnitureRenderer.getLogic());
 
     return (
@@ -58,21 +64,25 @@ export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfil
                 flexDirection: "row",
                 gap: 10
             }}>
-                <div className="room-furniture-profile-button" onClick={() => {
-                    clientInstance.roomInstance.value?.moveFurniture(data.id);
-                }}>
-                    Move
-                </div>
+                {(room?.hasRights) && (
+                    <div className="room-furniture-profile-button" onClick={() => {
+                        clientInstance.roomInstance.value?.moveFurniture(data.id);
+                    }}>
+                        Move
+                    </div>
+                )}
 
-                <div className="room-furniture-profile-button" onClick={() => {
-                    webSocketClient.send<PickupRoomFurnitureEventData>("PickupRoomFurnitureEvent", {
-                        roomFurnitureId: data.id,
-                    });
-                }}>
-                    Pick up
-                </div>
+                {(room?.hasRights || data.userId === user?.id) && (
+                    <div className="room-furniture-profile-button" onClick={() => {
+                        webSocketClient.send<PickupRoomFurnitureEventData>("PickupRoomFurnitureEvent", {
+                            roomFurnitureId: data.id,
+                        });
+                    }}>
+                        Pick up
+                    </div>
+                )}
 
-                {(item.furnitureRenderer.getNextDirection() !== item.furnitureRenderer.direction) && (
+                {(room?.hasRights && item.furnitureRenderer.getNextDirection() !== item.furnitureRenderer.direction) && (
                     <div className="room-furniture-profile-button" onClick={() => {
                         if(item.positionPathData) {
                             return;

@@ -1,11 +1,11 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRoomInstance } from "../../../hooks/useRoomInstance";
 import Dialog from "../../Dialog/Dialog";
 import DialogContent from "../../Dialog/DialogContent";
-import { AppContext } from "../../../contexts/AppContext";
 import { webSocketClient } from "../../../..";
 import { SetHomeRoomEventData } from "@Shared/Communications/Requests/User/SetHomeRoomEventData";
 import RoomThumbnail from "../Thumbnail/RoomThumbnail";
+import { useUser } from "../../../hooks/useUser";
 
 export type RoomInformationDialogProps = {
     hidden?: boolean;
@@ -13,7 +13,7 @@ export type RoomInformationDialogProps = {
 }
 
 export default function RoomInformationDialog({ hidden, onClose }: RoomInformationDialogProps) {
-    const { user } = useContext(AppContext);
+    const user = useUser();
 
     const room = useRoomInstance();
 

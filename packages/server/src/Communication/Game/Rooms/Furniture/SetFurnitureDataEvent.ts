@@ -12,6 +12,12 @@ export default class SetFurnitureDataEvent implements IncomingEvent<SetFurniture
             return;
         }
 
+        const roomUser = user.room.getRoomUser(user);
+
+        if(!roomUser.hasRights()) {
+            throw new Error("User does not have rights.");
+        }
+
         const furniture = user.room.furnitures.find((furniture) => furniture.model.id === event.furnitureId);
 
         if(!furniture) {

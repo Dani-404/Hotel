@@ -55,7 +55,9 @@ export default class RoomUser {
                 
                 structure: this.room.model.structure,
                 users: this.room.users.map((user) => user.getRoomUserData()),
-                furnitures: this.room.furnitures.map((furniture) => furniture.getFurnitureData())
+                furnitures: this.room.furnitures.map((furniture) => furniture.getFurnitureData()),
+
+                hasRights: this.hasRights()
             }),
             userEnteredRoomEvent
         ]);
@@ -68,7 +70,9 @@ export default class RoomUser {
             figureConfiguration: this.user.model.figureConfiguration,
 
             position: this.position,
-            direction: this.direction
+            direction: this.direction,
+            
+            hasRights: this.hasRights()
         };
     }
 
@@ -263,5 +267,17 @@ export default class RoomUser {
                 position
             })
         );
+    }
+
+    public hasRights() {
+        if(this.room.model.owner.id === this.user.model.id) {
+            return true;
+        }
+
+        if(this.room.model.rights.some((rights) => rights.user.id === this.user.model.id)) {
+            return true;
+        }
+
+        return false;
     }
 }

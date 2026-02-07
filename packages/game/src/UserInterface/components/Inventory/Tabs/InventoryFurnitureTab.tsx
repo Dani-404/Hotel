@@ -243,7 +243,7 @@ export default function InventoryFurnitureTab() {
                             <p>{activeFurniture?.furniture.description}</p>
                         </div>
 
-                        <DialogButton disabled={!room} onClick={onPlaceInRoomClick}>Place in room</DialogButton>
+                        <DialogButton disabled={!room || !room.hasRights} onClick={onPlaceInRoomClick}>Place in room</DialogButton>
                     </Fragment>
                 )}
             </div>

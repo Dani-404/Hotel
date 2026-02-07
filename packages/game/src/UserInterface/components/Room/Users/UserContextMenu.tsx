@@ -1,5 +1,4 @@
-import { Fragment, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../contexts/AppContext";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import "./UserContextMenu.css";
 import { RoomUserData } from "@Shared/Interfaces/Room/RoomUserData";
@@ -11,11 +10,16 @@ import StartedFollowingFigure from "@Client/Room/Cursor/Events/StartedFollowingF
 import FollowingFigure from "@Client/Room/Cursor/Events/FollowingFigure";
 import StoppedHoveringFigure from "@Client/Room/Cursor/Events/StoppedHoveringFigure";
 import StoppedFollowingFigure from "@Client/Room/Cursor/Events/StoppedFollowingFigure";
-import { clientInstance } from "../../../..";
+import { clientInstance, webSocketClient } from "../../../..";
 import { useDialogs } from "../../../hooks/useDialogs";
+import { useUser } from "../../../hooks/useUser";
+import { useRoomInstance } from "../../../hooks/useRoomInstance";
+import { UpdateUserRightsEventData } from "@Shared/Communications/Requests/Rooms/User/UpdateUserRightsEventData";
 
 export default function UserContextMenu() {
-    const { user } = useContext(AppContext);
+    const room = useRoomInstance();
+    const user = useUser();
+
     const { addUniqueDialog } = useDialogs();
 
     const elementRef = useRef<HTMLDivElement>(null);
@@ -167,9 +171,20 @@ export default function UserContextMenu() {
                                                 setFolded(true);
                                             }}/>
                                         ):(
-                                            <UserContextMenuButton text="123" onClick={() => {
-                                                
-                                            }}/>
+                                            <Fragment>
+                                                {(room?.information.owner.id === user?.id) && (
+                                                    <UserContextMenuButton text={(focusedFigure.hasRights)?("Revoke rights"):("Give rights")} onClick={() => {
+                                                        webSocketClient.send<UpdateUserRightsEventData>("UpdateUserRightsEvent", {
+                                                            userId: focusedFigure.id,
+                                                            hasRights: !focusedFigure.hasRights
+                                                        });
+                                                    }}/>
+                                                )}
+
+                                                <UserContextMenuButton text="123" onClick={() => {
+                                                    
+                                                }}/>
+                                            </Fragment>
                                         )}
 
                                     </UserContextMenuList>

@@ -154,7 +154,7 @@ export default class RoomCursor extends EventTarget {
             if(otherEntity.item instanceof RoomFurnitureItem) {
                 const roomFurnitureItem = this.roomRenderer.roomInstance?.getFurnitureByItem(otherEntity.item);
 
-                if(event.shiftKey) {
+                if(event.shiftKey && this.roomRenderer.roomInstance.hasRights) {
                     const nextDirection = otherEntity.item.furnitureRenderer.getNextDirection();
 
                     if((nextDirection !== otherEntity.item.furnitureRenderer.direction) && roomFurnitureItem.item.position && !roomFurnitureItem.item.positionPathData) {
@@ -178,9 +178,11 @@ export default class RoomCursor extends EventTarget {
                     return;
                 }
                 else if(event.ctrlKey) {
-                    webSocketClient.send<PickupRoomFurnitureEventData>("PickupRoomFurnitureEvent", {
-                        roomFurnitureId: roomFurnitureItem.data.id,
-                    });
+                    if(this.roomRenderer.roomInstance.hasRights || roomFurnitureItem.data.userId === this.roomRenderer.roomInstance.clientInstance.user.value?.id) {
+                        webSocketClient.send<PickupRoomFurnitureEventData>("PickupRoomFurnitureEvent", {
+                            roomFurnitureId: roomFurnitureItem.data.id,
+                        });
+                    }
                     
                     return;
                 }

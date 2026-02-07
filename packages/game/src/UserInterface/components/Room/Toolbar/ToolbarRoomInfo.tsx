@@ -61,7 +61,8 @@ export default function ToolbarRoomInfo() {
                                 label: "Settings",
                                 onClick: () => {
                                     addUniqueDialog("room-settings");
-                                }
+                                },
+                                disabled: room.hasRights === false
                             },
                             {
                                 sprite: (!zoomed)?("sprite_toolbar_room_zoom-out"):("sprite_toolbar_room_zoom-in"),
@@ -93,7 +94,7 @@ export default function ToolbarRoomInfo() {
                                     
                                 }
                             }
-                        ].map((button, index) => (
+                        ].map((button, index) => (!button.disabled) && (
                             <ToolbarRoomInfoButton key={index} sprite={button.sprite} label={button.label} onClick={button.onClick}/>
                         ))}
                     </div>

@@ -1,14 +1,14 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Dialog from "../Dialog/Dialog";
 import DialogSubTabs from "../Dialog/Tabs/DialogSubTabs";
 import DialogTabs from "../Dialog/Tabs/DialogTabs";
 import WardrobeAvatar from "./WardrobeAvatar";
 import WardrobeSelection from "./Selection/WardrobeSelection";
-import { AppContext } from "../../contexts/AppContext";
 import DialogButton from "../Dialog/Button/DialogButton";
 import { webSocketClient } from "../../..";
 import { SetFigureConfigurationEventData } from "@Shared/Communications/Requests/User/SetFigureConfigurationEventData";
 import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import { useUser } from "../../hooks/useUser";
 
 const wardrobeTabs = [
     {
@@ -82,7 +82,7 @@ export type WardrobeDialogProps = {
 };
 
 export default function WardrobeDialog({ hidden, onClose }: WardrobeDialogProps) {
-    const { user } = useContext(AppContext);
+    const user = useUser();
 
     const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(user?.figureConfiguration ?? []);
 

@@ -28,6 +28,7 @@ export default class RoomFurniture {
             furnitureAdded: [
                 {
                     id: userFurniture.id,
+                    userId: userFurniture.user.id,
                     furniture: userFurniture.furniture,
                     position: userFurniture.position,
                     direction: userFurniture.direction,
@@ -47,6 +48,7 @@ export default class RoomFurniture {
     public getFurnitureData(): RoomFurnitureData {
         return {
             id: this.model.id,
+            userId: this.model.user.id,
             furniture: this.model.furniture,
             position: this.model.position,
             direction: this.model.direction,

@@ -19,6 +19,7 @@ export type FurnitureData = {
 
 export type RoomFurnitureData = {
     id: string;
+    userId: string;
     furniture: FurnitureData;
     position: {
         row: number;

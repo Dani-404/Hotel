@@ -3,6 +3,7 @@ import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
 import { UserFurnitureModel } from "../Users/Furniture/UserFurnitureModel.js";
 import { RoomMoodlightData } from "@shared/Interfaces/Room/RoomMoodlightData.js";
 import { UserModel } from "../Users/UserModel.js";
+import { RoomRightsModel } from "./Rights/RoomRightsModel.js";
 
 export class RoomModel extends Model {
     declare id: string;
@@ -14,6 +15,7 @@ export class RoomModel extends Model {
     
     declare maxUsers: number;
     
+    declare rights: NonAttribute<RoomRightsModel[]>;
     declare roomFurnitures: NonAttribute<UserFurnitureModel[]>;
 }
 

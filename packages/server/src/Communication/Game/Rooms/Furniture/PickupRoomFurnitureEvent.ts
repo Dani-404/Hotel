@@ -12,7 +12,12 @@ export default class PickupRoomFurnitureEvent implements IncomingEvent<PickupRoo
             return;
         }
 
+        const roomUser = user.room.getRoomUser(user);
         const roomFurniture = user.room.getRoomFurniture(event.roomFurnitureId);
+
+        if(roomFurniture.model.user.id !== user.model.id && !roomUser.hasRights()) {
+            throw new Error("User is not owner of the furniture and does not have rights.");
+        }
 
         await roomFurniture.pickup();
     }

@@ -45,11 +45,13 @@ export default class RoomInstance {
     private roomWallItem?: RoomWallItem;
 
     public information: RoomInformationData;
+    public hasRights: boolean;
 
     constructor(public readonly clientInstance: ClientInstance, event: LoadRoomEventData) {
         this.id = event.id;
         
         this.information = event.information;
+        this.hasRights = event.hasRights;
         
         this.roomRenderer = new RoomRenderer(clientInstance.element, clientInstance, this, event.structure);
 
@@ -225,6 +227,10 @@ export default class RoomInstance {
     }
 
     public moveFurniture(roomFurnitureId: string) {
+        if(!this.hasRights) {
+            return;
+        }
+        
         const furniture = this.getFurnitureById(roomFurnitureId);
 
         const roomFurniturePlacer = new RoomFurniturePlacer(this, furniture.item);

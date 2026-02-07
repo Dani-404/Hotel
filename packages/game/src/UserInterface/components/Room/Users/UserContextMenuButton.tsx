@@ -13,10 +13,11 @@ export default function UserContextMenuButton({ text, onClick }: UserContextMenu
             alignItems: "center",
 
             height: 26,
+            maxWidth: 100,
 
             cursor: "pointer",
 
-            padding: "5px 12px",
+            padding: "5px 6px",
             boxSizing: "border-box"
         }} onClick={onClick}>
             {text}

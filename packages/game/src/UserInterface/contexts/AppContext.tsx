@@ -1,4 +1,3 @@
-import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
 import { createContext } from "react";
 
 export type Dialog = {
@@ -8,9 +7,6 @@ export type Dialog = {
     hidden?: boolean;
 }
 
-export type App = {
-    user?: UserEventData;
-};
+export type App = null;
 
-export const AppContext = createContext<App>({
-});
+export const AppContext = createContext<App>(null);

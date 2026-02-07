@@ -46,8 +46,12 @@ export default class Room {
         return furniture;
     }
 
-    public getRoomUser(client: User) {
-        const user = this.users.find((user) => user.user.model.id === client.model.id);
+    public getRoomUser(user: User) {
+        return this.getRoomUserById(user.model.id);
+    }
+
+    public getRoomUserById(userId: string) {
+        const user = this.users.find((user) => user.user.model.id === userId);
 
         if(!user) {
             throw new Error("User does not exist in room.");

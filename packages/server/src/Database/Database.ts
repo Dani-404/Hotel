@@ -24,6 +24,7 @@ import { initializeRoomMapModel } from "./Models/Rooms/Maps/RoomMapModel.js";
 import { rmSync } from "fs";
 import { initializeRoomChatStyleModel } from "./Models/Rooms/Chat/Styles/RoomChatStyleModel.js";
 import { initializeUserModel } from "./Models/Users/UserModel.js";
+import { initializeRoomRightsModel } from "./Models/Rooms/Rights/RoomRightsModel.js";
 
 export async function initializeModels() {
   initializeFurnitureModel(sequelize);
@@ -36,6 +37,8 @@ export async function initializeModels() {
   initializeUserModel(sequelize);
   
   initializeRoomModel(sequelize);
+  initializeRoomRightsModel(sequelize);
+
   initializeUserFurnitureModel(sequelize);
   initializeRoomChatStyleModel(sequelize);
 

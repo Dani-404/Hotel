@@ -9,6 +9,12 @@ export default class PlaceRoomContentFurnitureEvent implements IncomingEvent<Pla
             return;
         }
 
+        const roomUser = user.room.getRoomUser(user);
+
+        if(!roomUser.hasRights()) {
+            throw new Error("User does not have rights.");
+        }
+
         const inventory = user.getInventory();
 
         let userFurniture: UserFurnitureModel | null = null;

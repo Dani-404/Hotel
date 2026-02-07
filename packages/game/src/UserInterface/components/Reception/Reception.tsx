@@ -1,9 +1,8 @@
-import { useContext } from "react";
 import FigureImage from "../Figure/FigureImage";
-import { AppContext } from "../../contexts/AppContext";
+import { useUser } from "../../hooks/useUser";
 
 export default function Reception() {
-    const { user } = useContext(AppContext);
+    const user = useUser();
 
     return (
         <div style={{

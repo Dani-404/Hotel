@@ -16,12 +16,17 @@ import { Dialog } from "../UserInterface/contexts/AppContext";
 import { RoomInformationEventData } from "@Shared/Communications/Responses/Rooms/RoomInformationEventData";
 import RoomInformationEvent from "@Client/Communications/Room/RoomInformationEvent";
 import { UserPositionEventData } from "@Shared/Communications/Responses/Rooms/Users/UserPositionEventData";
+import { RoomUserRightsEventData } from "@Shared/Communications/Responses/Rooms/Users/RoomUserRightsEventData";
 import UserPositionEvent from "@Client/Communications/Room/User/UserPositionEvent";
+import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
+import UserEvent from "@Client/Communications/Room/User/UserEvent";
+import RoomUserRightsEvent from "@Client/Communications/Room/User/RoomUserRightsEvent";
 
 export default class ClientInstance extends EventTarget {
     public roomInstance = new ObservableProperty<RoomInstance>();
     public roomChatStyles = new ObservableProperty<RoomChatStyleData[]>();
     public dialogs = new ObservableProperty<Dialog[]>([]);
+    public user = new ObservableProperty<UserEventData>();
 
     constructor(public readonly element: HTMLElement) {
         super();
@@ -30,11 +35,13 @@ export default class ClientInstance extends EventTarget {
 
         registerRoomEvents(this);
 
+        webSocketClient.addEventListener<WebSocketEvent<UserEventData>>("UserEvent", (event) => new UserEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", (event) => new RoomFurnitureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomStructureEventData>>("RoomStructureEvent", (event) => new RoomStructureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomInformationEventData>>("RoomInformationEvent", (event) => new RoomInformationEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserActionEventData>>("UserActionEvent", (event) => new UserActionEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserPositionEventData>>("UserPositionEvent", (event) => new UserPositionEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<RoomUserRightsEventData>>("RoomUserRightsEvent", (event) => new RoomUserRightsEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserFigureConfigurationEventData>>("UserFigureConfigurationEvent", (event) => new UserFigureConfigurationEvent().handle(event));
 
         

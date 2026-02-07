@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import { AppContext } from "../../contexts/AppContext";
+import { useUser } from "../../hooks/useUser";
 
 function getCurrencyAsString(value?: number) {
     if(!value) {
@@ -18,7 +17,7 @@ function getCurrencyAsString(value?: number) {
 }
 
 export default function Widget() {
-    const { user } = useContext(AppContext);
+    const user = useUser();
 
     return (
         <div style={{

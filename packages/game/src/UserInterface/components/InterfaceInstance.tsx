@@ -1,32 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AppContext } from "../contexts/AppContext";
 import Toolbar from "./Toolbar/Toolbar";
-import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import RoomInterface from "./Room/RoomInterface";
 import DialogInstances from "./Dialog/DialogInstances";
 import { webSocketClient } from "../..";
-import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
 import Reception from "./Reception/Reception";
 import { useRoomInstance } from "../hooks/useRoomInstance";
 import Widget from "./Widget/Widget";
+import { useUser } from "../hooks/useUser";
 
 export default function InterfaceInstance() {
     const room = useRoomInstance();
+    const user = useUser();
     
     const ready = useRef<boolean>(false);
-    const [user, setUser] = useState<UserEventData>();
-
-    useEffect(() => {
-        const listener = (event: WebSocketEvent<UserEventData>) => {
-            setUser(event.data);
-        };
-
-        webSocketClient.addEventListener("UserEvent", listener);
-
-        return () => {
-            webSocketClient.removeEventListener("UserEvent", listener);
-        };
-    }, []);
 
     useEffect(() => {
         if(!ready.current) {
@@ -41,9 +28,7 @@ export default function InterfaceInstance() {
     }
 
     return (
-        <AppContext value={{
-            user
-        }}>
+        <AppContext value={null}>
             {(!room) && (
                 <Reception/>
             )}

@@ -20,4 +20,6 @@ export type LoadRoomEventData = {
     structure: RoomStructure;
     users: RoomUserData[];
     furnitures: RoomFurnitureData[];
+    
+    hasRights: boolean;
 };

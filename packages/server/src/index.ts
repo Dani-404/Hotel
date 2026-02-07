@@ -28,6 +28,7 @@ import UpdateRoomStructureEvent from "./Communication/Game/Rooms/UpdateRoomStruc
 import UpdateRoomInformationEvent from "./Communication/Game/Rooms/UpdateRoomInformationEvent.js";
 import SetHomeRoomEvent from "./Communication/Game/Users/SetHomeRoomEvent.js";
 import { recreateShopPages } from "./Database/Development/ShopDevelopmentData.js";
+import UpdateUserRightsEvent from "./Communication/Game/Rooms/User/UpdateUserRightsEvent.js";
 
 await initializeModels();
 
@@ -59,7 +60,8 @@ eventHandler
     .addIncomingEvent("GetRoomChatStylesEvent", new GetRoomChatStylesEvent())
     .addIncomingEvent("SetFurnitureDataEvent", new SetFurnitureDataEvent())
     .addIncomingEvent("UpdateRoomStructureEvent", new UpdateRoomStructureEvent())
-    .addIncomingEvent("UpdateRoomInformationEvent", new UpdateRoomInformationEvent());
+    .addIncomingEvent("UpdateRoomInformationEvent", new UpdateRoomInformationEvent())
+    .addIncomingEvent("UpdateUserRightsEvent", new UpdateUserRightsEvent());
     
 eventHandler
     .addIncomingEvent("GetUserEvent", new GetUserEvent())

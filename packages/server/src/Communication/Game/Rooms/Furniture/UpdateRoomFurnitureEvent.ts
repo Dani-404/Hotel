@@ -10,6 +10,12 @@ export default class UpdateRoomFurnitureEvent implements IncomingEvent<UpdateRoo
             return;
         }
 
+        const roomUser = user.room.getRoomUser(user);
+
+        if(!roomUser.hasRights()) {
+            throw new Error("User does not have rights.");
+        }
+
         const roomFurniture = user.room.getRoomFurniture(event.roomFurnitureId);
 
         if(event.direction !== undefined) {

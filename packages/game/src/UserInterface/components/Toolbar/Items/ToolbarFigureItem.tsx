@@ -1,10 +1,11 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../contexts/AppContext";
+import { useEffect, useRef, useState } from "react";
 import Figure from "@Client/Figure/Figure";
+import { useUser } from "../../../hooks/useUser";
 
 export default function ToolbarFigureItem() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { user } = useContext(AppContext);
+
+    const user = useUser();
 
     const [figureImage, setFigureImage] = useState<ImageBitmap>();
 
