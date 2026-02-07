@@ -153,7 +153,12 @@ export default class RoomFurniture {
                 return new RoomFurnitureGateLogic(this);
                 
             case "lighting":
+            case "other":
                 return new RoomFurnitureLightingLogic(this);
+
+            default:
+                console.warn("Unhandled category logic type: " + this.model.furniture.category);
+                break;
         }
 
         return null;
