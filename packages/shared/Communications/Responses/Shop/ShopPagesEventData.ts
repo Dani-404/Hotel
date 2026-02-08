@@ -8,6 +8,7 @@ export type ShopPageData = {
     
     icon?: string | undefined;
     header?: string | undefined;
+    teaser?: string | undefined;
 
     children?: Omit<ShopPageData, "children">[];
 };

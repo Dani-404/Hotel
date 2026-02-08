@@ -26,8 +26,10 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
     const shopFurniture = useShopPageFurniture(page.id);
 
     useEffect(() => {
-        setActiveFurniture(shopFurniture[0]);
-    }, [shopFurniture]);
+        if(!page.teaser) {
+            setActiveFurniture(shopFurniture[0]);
+        }
+    }, [page, shopFurniture]);
 
     useEffect(() => {
         if(!roomRef.current) {
@@ -151,7 +153,6 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
             overflow: "hidden"
         }}>
             <div onClick={onRoomRendererClick} onMouseDown={onMouseDown} style={{
-                background: "#000",
 
                 height: 240,
                 width: "100%",
@@ -163,6 +164,8 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
                 <div ref={roomRef} style={{
                     height: "100%",
                     width: "100%",
+
+                    opacity: (activeFurniture)?(1):(0)
                 }}/>
 
                 {(activeFurniture) && (
@@ -180,6 +183,24 @@ export default function ShopDefaultPage({ page }: ShopPageProps) {
                         {(activeFurniture.furniture.description) && (
                             <p style={{ fontSize: 12 }}>{activeFurniture.furniture.description}</p>
                         )}
+                    </div>
+                )}
+
+                {(!activeFurniture && page.teaser) && (
+                    <div style={{
+                        position: "absolute",
+
+                        left: 0,
+                        top: 0,
+
+                        width: "100%",
+                        height: "100%",
+
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}>
+                        <img src={`./assets/shop/teasers/${page.teaser}`}/>
                     </div>
                 )}
             </div>

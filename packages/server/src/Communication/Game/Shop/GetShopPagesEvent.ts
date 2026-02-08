@@ -35,6 +35,7 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                     
                     icon: shopPage.icon ?? undefined,
                     header: shopPage.header ?? undefined,
+                    teaser: shopPage.teaser ?? undefined,
                     
                     type: shopPage.type,
                     
@@ -48,6 +49,7 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                             
                             icon: childShopPage.icon ?? undefined,
                             header: childShopPage.header ?? shopPage.header ?? undefined,
+                            teaser: childShopPage.teaser ?? shopPage.teaser ?? undefined,
                         };
                     })
                 };

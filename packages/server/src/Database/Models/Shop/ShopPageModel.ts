@@ -13,6 +13,7 @@ export class ShopPageModel extends Model {
 
     declare icon: string | null;
     declare header: string | null;
+    declare teaser: string | null;
     
     declare children: NonAttribute<ShopPageModel[]>;
     declare furniture: NonAttribute<ShopPageFurnitureModel[]>;
@@ -52,6 +53,11 @@ export function initializeShopPageModel(sequelize: Sequelize) {
             defaultValue: null
           },
           header: {
+            type: new DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null
+          },
+          teaser: {
             type: new DataTypes.STRING,
             allowNull: true,
             defaultValue: null

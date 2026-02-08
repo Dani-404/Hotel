@@ -17,7 +17,12 @@ const defaultShopPages: any = [
         pages: [
             {
                 title: "Jukebox",
+                description: "Let's get loud! Place a Jukebox in your room, add some disks from the 'Habbo Hotel Hits' list below and you're ready to have a dance party!",
+
                 icon: "icon_16.png",
+                header: "music_header.gif",
+                teaser: "music_teaser.gif",
+
                 furnitures: [
                     { type: "jukebox_big", credits: 5 },
                     { type: "jukebox", color: 1, credits: 1 }
@@ -25,7 +30,12 @@ const defaultShopPages: any = [
             },
             {
                 title: "Accessories",
+                description: "However you place your essential furniture, it's the finishing touch that counts!",
+
                 icon: "icon_11.png",
+                header: "accessories_header.gif",
+                teaser: "accessories_teaser.gif",
+
                 furnitures: [
                     { type: "post_it", credits: 3 },
                     { type: "note_tag", duckets: 50 },
@@ -199,6 +209,7 @@ export async function recreateShopPages() {
 
             icon: root.icon,
             header: root.header,
+            teaser: root.teaser,
         });
 
         for(let child of root.pages) {
@@ -225,6 +236,7 @@ export async function recreateShopPages() {
 
                 icon: child.icon,
                 header: child.header,
+                teaser: child.teaser,
 
                 parentId: page.id
             });
