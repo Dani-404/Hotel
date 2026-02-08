@@ -7,8 +7,9 @@ import { Op } from "@sequelize/core";
 
 const defaultShopPages: any = [
     {
+        type: "none",
+
         title: "By type",
-        description: "Lalallala",
 
         icon: "icon_72.png",
         header: "catalog_frontpage_headline_shop_EN.gif",
@@ -92,8 +93,9 @@ const defaultShopPages: any = [
         ]
     },
     {
+        type: "none",
+
         title: "By design",
-        description: "Lalallala",
 
         icon: "icon_273.png",
         header: "catalog_frontpage_headline_shop_EN.gif",
@@ -189,6 +191,8 @@ export async function recreateShopPages() {
             id: randomUUID(),
             index: defaultShopPages.indexOf(root),
 
+            type: root.type ?? "default",
+
             category: "furniture",
             title: root.title,
             description: root.description,
@@ -212,6 +216,8 @@ export async function recreateShopPages() {
             const childPage = await ShopPageModel.create({
                 id: randomUUID(),
                 index: root.pages.indexOf(child),
+
+                type: child.type ?? "default",
 
                 category: "furniture",
                 title: child.title,

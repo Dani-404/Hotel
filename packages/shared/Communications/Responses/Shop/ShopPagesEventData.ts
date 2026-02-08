@@ -4,7 +4,7 @@ export type ShopPageData = {
     title: string;
     description?: string;
 
-    type: "default";
+    type: "default" | "none";
     
     icon?: string | undefined;
     header?: string | undefined;

@@ -39,6 +39,16 @@ export default function ShopDialogCategory({ category, onHeaderChange }: ShopDia
     }, []);
 
     useEffect(() => {
+        if(activeShopPage?.type === "none") {
+            const childPage = activeShopPage.children?.[0];
+
+            if(childPage) {
+                setActiveShopPage(childPage);
+
+                return;
+            }
+        }
+
         onHeaderChange({
             title: activeShopPage?.title,
             description: activeShopPage?.description,
