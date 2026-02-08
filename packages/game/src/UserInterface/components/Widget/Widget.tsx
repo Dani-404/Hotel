@@ -5,15 +5,9 @@ function getCurrencyAsString(value?: number) {
         return "0";
     }
 
-    if(value >= 1000000) {
-        return `${Math.floor((value / 10000)) / 100} m`;
-    }
+    const numberFormat = new Intl.NumberFormat('en-US');
 
-    if(value >= 1000) {
-        return `${Math.floor((value / 10)) / 100} k`;
-    }
-
-    return value.toString();
+    return numberFormat.format(value);
 }
 
 export default function Widget() {
@@ -44,6 +38,8 @@ export default function Widget() {
 
                     paddingTop: 2,
                     paddingBottom: 4,
+                    paddingLeft: 4,
+                    paddingRight: 4,
                     boxSizing: "border-box",
 
                     width: 220,
@@ -144,8 +140,6 @@ export default function Widget() {
                             <b>Earnings</b>
                         </div>
                     </div>
-                    
-                    <div style={{ flex: 1 }}></div>
                 </div>
             </div>
         </div>
