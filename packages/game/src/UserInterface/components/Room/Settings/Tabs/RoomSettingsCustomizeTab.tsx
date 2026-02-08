@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import Selection from "../../../Form/Selection";
 import { useRoomInstance } from "../../../../hooks/useRoomInstance";
 import { webSocketClient } from "../../../../..";
@@ -12,27 +12,23 @@ export default function RoomSettingsCustomizeTab() {
         return;
     }
 
-    const [floorThickness, setFloorThickness] = useState(room?.roomRenderer.structure.floor.thickness);
-    const [wallThickness, setWallThickness] = useState(room?.roomRenderer.structure.wall.thickness);
-    const [wallHidden, setWallHidden] = useState(room?.roomRenderer.structure.wall.hidden);
-
-    useEffect(() => {
+    const handleFloorThickness = useCallback((floorThickness: number) => {
         webSocketClient.send<UpdateRoomStructureEventData>("UpdateRoomStructureEvent", {
             floorThickness
         });
-    }, [floorThickness]);
+    }, []);
 
-    useEffect(() => {
+    const handleWallThickness = useCallback((wallThickness: number) => {
         webSocketClient.send<UpdateRoomStructureEventData>("UpdateRoomStructureEvent", {
             wallThickness
         });
-    }, [wallThickness]);
+    }, []);
 
-    useEffect(() => {
+    const handleWallHidden = useCallback((wallHidden: boolean) => {
         webSocketClient.send<UpdateRoomStructureEventData>("UpdateRoomStructureEvent", {
             wallHidden
         });
-    }, [wallHidden]);
+    }, []);
 
     return (
         <div style={{
@@ -59,7 +55,7 @@ export default function RoomSettingsCustomizeTab() {
             }}>
                 <b>Floor and walls</b>
 
-                <Selection value={floorThickness} items={[
+                <Selection value={room.roomRenderer.structure.floor.thickness} items={[
                     {
                         value: 0,
                         label: "Thinnest floor"
@@ -80,9 +76,9 @@ export default function RoomSettingsCustomizeTab() {
                         value: 16,
                         label: "Thickest floor"
                     }
-                ]} onChange={(value) => setFloorThickness(value as number)}/>
+                ]} onChange={(value) => handleFloorThickness(value as number)}/>
                 
-                <Selection value={wallThickness} items={[
+                <Selection value={room.roomRenderer.structure.wall.thickness} items={[
                     {
                         value: 0,
                         label: "Thinnest walls"
@@ -103,9 +99,9 @@ export default function RoomSettingsCustomizeTab() {
                         value: 16,
                         label: "Thickest walls"
                     }
-                ]} onChange={(value) => setWallThickness(value as number)}/>
+                ]} onChange={(value) => handleWallThickness(value as number)}/>
 
-                <Checkbox label="Hide room walls" value={wallHidden} onChange={setWallHidden}/>
+                <Checkbox label="Hide room walls" value={room.roomRenderer.structure.wall.hidden} onChange={handleWallHidden}/>
             </div>
         </div>
     );
