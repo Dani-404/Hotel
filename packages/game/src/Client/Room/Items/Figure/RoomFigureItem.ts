@@ -56,8 +56,8 @@ export default class RoomFigureItem extends RoomItem {
         super.setPosition(position, index);
     }
 
-    public setPositionPath(fromPosition: RoomPosition, toPosition: RoomPosition): void {
-        super.setPositionPath(fromPosition, toPosition);
+    public setPositionPath(fromPosition: RoomPosition, toPosition: RoomPosition, delay: number = 0): void {
+        super.setPositionPath(fromPosition, toPosition, 500 - delay);
 
         const relativePosition: RoomPosition = {
             row: toPosition.row - fromPosition.row,

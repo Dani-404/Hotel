@@ -5,6 +5,7 @@ import { EventEmitter } from "node:events";
 import UserInventory from "./Inventory/UserInventory.js";
 import Room from "../Rooms/Room.js";
 import { UserEventData } from "@shared/Communications/Responses/User/UserEventData.js";
+import { debugTimestamps } from "../Database/Database.js";
 
 export default class User extends EventEmitter {
     private inventory?: UserInventory;
@@ -19,7 +20,15 @@ export default class User extends EventEmitter {
             events = [ events ];
         }
 
-        const payload = JSON.stringify(events.map((event) => [ event.name, event.body ]));
+        const payload = JSON.stringify(events.map((event) => {
+            const eventPayload = [ event.name, event.body ];
+
+            if(debugTimestamps) {
+                eventPayload.push(Date.now());
+            }
+
+            return eventPayload;
+        }));
 
         console.debug("Sending: " + events.map((event) => event.name).join(', '));
         

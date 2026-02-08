@@ -140,7 +140,7 @@ export default class RoomInstance {
     private userWalkTo(event: WebSocketEvent<UserWalkToEventData>) {
         const user = this.getUserById(event.data.userId);
 
-        user.item.setPositionPath(event.data.from, event.data.to);
+        user.item.setPositionPath(event.data.from, event.data.to/*, event.delay*/);
     }
 
     private click(event: Event) {

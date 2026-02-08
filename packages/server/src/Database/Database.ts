@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize";
 export const useMemoryDatabase = process.argv.some((value) => value === "memory");
 export const recreateShop = process.argv.some((value) => value === "shop");
 export const resetDatabase = process.argv.some((value) => value === "memory" || value === "reset");
+export const debugTimestamps = process.argv.some((value) => value === "debug");
 
 if(resetDatabase && !useMemoryDatabase) {
   rmSync("database.sqlite");

@@ -9,12 +9,16 @@ export default class WebSocketClient extends EventTarget {
         this.socket = new WebSocket(`ws://localhost:7632?${new URLSearchParams(options).toString()}`);
 
         this.socket.addEventListener("message", (event) => {
-            const events: [string, any][] = JSON.parse(event.data);
+            const events: [string, any, number | undefined][] = JSON.parse(event.data);
 
-            for(const [type, data] of events) {
+            for(const [type, data, timestamp] of events) {
                 console.log("Received " + type + " from server", data);
 
-                this.dispatchEvent(new WebSocketEvent(type, data));
+                if(timestamp !== undefined) {
+                    console.debug("Message received after " + (Date.now() - timestamp) + "ms");
+                }
+
+                this.dispatchEvent(new WebSocketEvent(type, data, (timestamp !== undefined)?(Date.now() - timestamp):(undefined)));
             }
         });
 
