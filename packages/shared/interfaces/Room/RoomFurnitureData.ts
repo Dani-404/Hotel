@@ -12,9 +12,11 @@ export type FurnitureData = {
 
     placement: "floor" | "wall";
 
+    category: string;
     flags: FurnitureFlagsData;
     dimensions: RoomPosition;
     interactionType: string;
+    customParams: unknown[] | null;
 };
 
 export type RoomFurnitureData = {

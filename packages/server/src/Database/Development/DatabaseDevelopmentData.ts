@@ -352,6 +352,7 @@ export async function initializeDevelopmentData() {
 
             category: furniture.category,
             interactionType: furniture.interactionType,
+            customParams: furniture.customParams
         };
     }));
 

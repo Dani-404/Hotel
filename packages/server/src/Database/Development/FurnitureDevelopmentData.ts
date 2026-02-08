@@ -116,7 +116,8 @@ function getFurnitureServerData(assetName: string) {
             category: item.category,
             interactionType: item.interactionType,
 
-            flags: item.flags
+            flags: item.flags,
+            customParams: item.customParams
         };
     });
 }

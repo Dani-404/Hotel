@@ -342,7 +342,9 @@ export async function createFurnitureData(assetName: string) {
                 recyclable: result?.allow_recycle === 1,
                 sellable: result?.allow_marketplace_sell === 1,
                 inventoryStackable: result?.allow_inventory_stack === 1
-            }
+            },
+
+            customParams: (furniType["customparams"])?(furniType["customparams"].toString().split(',').map((value: string) => parseFloat(value))):(null)
         };
     }));
 }

@@ -22,6 +22,14 @@ export default class RoomFurniture {
         }
     }
 
+    public getDimensionDepth() {
+        if(this.data.furniture.category === "other" && this.data.furniture.customParams?.[0]) {
+            return this.data.furniture.dimensions.depth + ((this.data.furniture.customParams[0] as number) * this.data.animation);
+        }
+
+        return this.data.furniture.dimensions.depth;
+    }
+
     public updateData(data: RoomFurnitureData) {        
         if(data.furniture.interactionType === "dimmer") {
             if((data.data as RoomMoodlightData)?.enabled || (this.data.data as RoomMoodlightData)?.enabled) {
