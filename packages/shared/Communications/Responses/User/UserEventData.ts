@@ -3,6 +3,7 @@ import { FigureConfiguration } from "../../../Interfaces/Figure/FigureConfigurat
 export type UserEventData = {
     id: string;
     name: string;
+    developer: boolean;
     credits: number;
     duckets: number;
     diamonds: number;

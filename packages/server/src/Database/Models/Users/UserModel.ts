@@ -5,6 +5,7 @@ import { FigureConfiguration } from "@shared/Interfaces/Figure/FigureConfigurati
 export class UserModel extends Model {
     declare id: string;
     declare name: string;
+    declare developer: boolean;
     declare figureConfiguration: FigureConfiguration;
     declare credits: number;
     declare diamonds: number;
@@ -23,6 +24,11 @@ export function initializeUserModel(sequelize: Sequelize) {
     name: {
       type: new DataTypes.STRING(32),
       allowNull: false,
+    },
+    developer: {
+      type: new DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false
     },
     credits: {
       type: new DataTypes.NUMBER,

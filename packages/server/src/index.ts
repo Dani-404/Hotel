@@ -29,6 +29,8 @@ import UpdateRoomInformationEvent from "./Communication/Game/Rooms/UpdateRoomInf
 import SetHomeRoomEvent from "./Communication/Game/Users/SetHomeRoomEvent.js";
 import { recreateShopPages } from "./Database/Development/ShopDevelopmentData.js";
 import UpdateUserRightsEvent from "./Communication/Game/Rooms/User/UpdateUserRightsEvent.js";
+import GetHotelFeedbackEvent from "./Communication/Game/Hotel/GetHotelFeedbackEvent.js";
+import SendFeedbackEvent from "./Communication/Game/Hotel/SendFeedbackEvent.js";
 
 await initializeModels();
 
@@ -73,6 +75,10 @@ eventHandler
 eventHandler
     .addIncomingEvent("CreateRoomEvent", new CreateRoomEvent())
     .addIncomingEvent("GetNavigatorRoomsEvent", new GetNavigatorRoomsEvent());
+    
+eventHandler
+    .addIncomingEvent("SendFeedbackEvent", new SendFeedbackEvent())
+    .addIncomingEvent("GetHotelFeedbackEvent", new GetHotelFeedbackEvent());
 
 export const game = new Game();
 

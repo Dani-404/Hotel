@@ -10,6 +10,7 @@ import RoomSettingsDialog from "../Room/Settings/RoomSettingsDialog";
 import RoomInformationDialog from "../Room/Information/RoomInformationDialog";
 import ReportIssueDialog from "../Debug/Dialog/ReportIssueDialog";
 import HotelAlertDialog from "../Hotel/Alert/HotelAlertDialog";
+import ViewIssuesDialog from "../Debug/Dialog/ViewIssuesDialog";
 
 export default function DialogInstances() {
     const { dialogs, closeDialog } = useDialogs();
@@ -47,6 +48,9 @@ export default function DialogInstances() {
 
                     case "report-issue":
                         return (<ReportIssueDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+
+                    case "view-issues":
+                        return (<ViewIssuesDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
                 }
             })}
         </Fragment>

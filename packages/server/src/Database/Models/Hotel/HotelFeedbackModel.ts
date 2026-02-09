@@ -1,5 +1,5 @@
 import { DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
-import { UserModel } from "../Users/UserModel";
+import { UserModel } from "../Users/UserModel.js";
 
 export enum HotelFeedbackStatus {
     CREATED = 0,
@@ -9,6 +9,7 @@ export class HotelFeedbackModel extends Model {
     declare id: string;
     declare area: string | null;
     declare description: string;
+    declare status: HotelFeedbackStatus;
     declare user: NonAttribute<UserModel>;
 }
 
