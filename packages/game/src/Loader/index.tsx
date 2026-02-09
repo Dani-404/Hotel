@@ -4,6 +4,7 @@ import { StrictMode } from 'react';
 import "../UserInterface/styles/fonts.css";
 import "./styles/spritesheet.css";
 import "./styles/spritesheet.png";
+import Loader from './components/Loader';
 
 export default class LoaderInstance {
   private readonly root: Root;
@@ -13,9 +14,6 @@ export default class LoaderInstance {
   }
 
   render(text?: string) {
-    const images = Array(30).fill(null).map((_, index) => `./assets/loader/image${index + 1}.png`);
-    const randomImage = images[Math.floor(Math.random() * images.length)];
-
     this.root.render(
       <StrictMode>
         <div style={{
@@ -38,28 +36,7 @@ export default class LoaderInstance {
             justifyContent: "center",
             alignItems: "center"
         }}>
-            <div style={{
-                position: "relative"
-            }}>
-                <div className="sprite_splash-background"/>
-
-                <img src={randomImage} style={{
-                    position: "absolute",
-                    
-                    left: 95,
-                    top: 51
-                }}/>
-
-                <div className="sprite_splash-overlay" style={{
-                    position: "absolute",
-                    
-                    left: 0,
-                    top: 0
-                }}/>
-
-            </div>
-
-            <h1>{(text)?(text):("Loading...")}</h1>
+            <Loader text={text}/>
         </div>
       </StrictMode>
     );
