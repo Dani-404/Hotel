@@ -8,6 +8,7 @@ import Reception from "./Reception/Reception";
 import { useRoomInstance } from "../hooks/useRoomInstance";
 import Widget from "./Widget/Widget";
 import { useUser } from "../hooks/useUser";
+import DebugInformationPanel from "./Debug/DebugInformationPanel";
 
 export default function InterfaceInstance() {
     const room = useRoomInstance();
@@ -29,6 +30,8 @@ export default function InterfaceInstance() {
 
     return (
         <AppContext value={null}>
+            <DebugInformationPanel/>
+
             {(!room) && (
                 <Reception/>
             )}

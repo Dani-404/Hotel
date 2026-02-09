@@ -12,6 +12,20 @@ export function useDialogs() {
     });
   }, []);
 
+  const addDialog = useCallback((type: string, data: unknown) => {
+    if(!dialogs) {
+      return;
+    }
+
+    clientInstance.dialogs.value!.push({
+        id: Math.random().toString(),
+        data,
+        type
+    });
+
+    clientInstance.dialogs.update();
+  }, [dialogs]);
+
   const addUniqueDialog = useCallback((type: string) => {
     if(!dialogs) {
       return;
@@ -69,8 +83,11 @@ export function useDialogs() {
   return {
     dialogs,
 
+    addDialog,
     addUniqueDialog,
+
     setDialogHidden,
+    
     closeDialog
   };
 }

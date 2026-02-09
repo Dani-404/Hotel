@@ -8,6 +8,8 @@ import { useDialogs } from "../../hooks/useDialogs";
 import RoomFurnitureLogicDialog, { RoomFurnitureLogicDialogData } from "../Room/Furniture/Logic/RoomFurnitureLogicDialog";
 import RoomSettingsDialog from "../Room/Settings/RoomSettingsDialog";
 import RoomInformationDialog from "../Room/Information/RoomInformationDialog";
+import ReportIssueDialog from "../Debug/Dialog/ReportIssueDialog";
+import HotelAlertDialog from "../Hotel/Alert/HotelAlertDialog";
 
 export default function DialogInstances() {
     const { dialogs, closeDialog } = useDialogs();
@@ -16,6 +18,9 @@ export default function DialogInstances() {
         <Fragment>
             {dialogs.map((dialog) => {
                 switch(dialog.type) {
+                    case "alert":
+                        return (<HotelAlertDialog key={dialog.id} data={dialog.data} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+
                     case "wardrobe":
                         return (<WardrobeDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
                         
@@ -38,7 +43,10 @@ export default function DialogInstances() {
                         return (<RoomCreationDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
 
                     case "room-furniture-logic":
-                        return (<RoomFurnitureLogicDialog key={dialog.id} data={dialog.data as RoomFurnitureLogicDialogData} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>)
+                        return (<RoomFurnitureLogicDialog key={dialog.id} data={dialog.data as RoomFurnitureLogicDialogData} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+
+                    case "report-issue":
+                        return (<ReportIssueDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
                 }
             })}
         </Fragment>

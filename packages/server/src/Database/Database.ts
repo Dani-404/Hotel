@@ -26,6 +26,7 @@ import { rmSync } from "fs";
 import { initializeRoomChatStyleModel } from "./Models/Rooms/Chat/Styles/RoomChatStyleModel.js";
 import { initializeUserModel } from "./Models/Users/UserModel.js";
 import { initializeRoomRightsModel } from "./Models/Rooms/Rights/RoomRightsModel.js";
+import { initializeHotelFeedbackModel } from "./Models/Hotel/HotelFeedbackModel.js";
 
 export async function initializeModels() {
   initializeFurnitureModel(sequelize);
@@ -42,6 +43,8 @@ export async function initializeModels() {
 
   initializeUserFurnitureModel(sequelize);
   initializeRoomChatStyleModel(sequelize);
+
+  initializeHotelFeedbackModel(sequelize);
 
   await sequelize.sync();
 }

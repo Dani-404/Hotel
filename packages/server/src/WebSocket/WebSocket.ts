@@ -3,6 +3,8 @@ import { UserModel } from "../Database/Models/Users/UserModel.js";
 import { game } from "../index.js";
 import { eventHandler } from "../Events/EventHandler.js";
 import User from "../Users/User.js";
+import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
+import { HotelEventData } from "@shared/Communications/Responses/Hotel/HotelEventData.js";
 
 export default class WebSocket {
     private readonly server: WebSocketServer;
@@ -69,6 +71,12 @@ export default class WebSocket {
                 const room = await game.roomManager.getOrLoadRoomInstance(user.model.homeRoomId);
 
                 room?.addUserClient(user);
+            }
+
+            for(let user of game.users) {
+                user.send(new OutgoingEvent<HotelEventData>("HotelEvent", {
+                    users: game.users.length
+                }));
             }
         });
     }
