@@ -1,13 +1,8 @@
 import { Sequelize } from "sequelize";
-import { MySqlDialect } from "@sequelize/mysql";
 
 export const recreateShop = process.argv.some((value) => value === "shop");
 export const resetDatabase = process.argv.some((value) => value === "memory" || value === "reset");
 export const debugTimestamps = process.argv.some((value) => value === "debug");
-
-export const config = JSON.parse(readFileSync("./config.json", { encoding: "utf-8" }));
-
-export const sequelize = new Sequelize(config.database);
 
 import "./Models/Rooms/RoomModel.js";
 import { initializeUserFurnitureModel } from "./Models/Users/Furniture/UserFurnitureModel.js";
@@ -21,6 +16,10 @@ import { initializeRoomChatStyleModel } from "./Models/Rooms/Chat/Styles/RoomCha
 import { initializeUserModel } from "./Models/Users/UserModel.js";
 import { initializeRoomRightsModel } from "./Models/Rooms/Rights/RoomRightsModel.js";
 import { initializeHotelFeedbackModel } from "./Models/Hotel/HotelFeedbackModel.js";
+import { config } from "../Config/Config.js";
+import { initializeUserTokenModel } from "./Models/Users/UserTokens/UserTokenModel.js";
+
+export const sequelize = new Sequelize(config.database);
 
 export async function initializeModels() {
   initializeFurnitureModel(sequelize);
@@ -31,6 +30,7 @@ export async function initializeModels() {
   initializeRoomMapModel(sequelize);
 
   initializeUserModel(sequelize);
+  initializeUserTokenModel(sequelize);
   
   initializeRoomModel(sequelize);
   initializeRoomRightsModel(sequelize);

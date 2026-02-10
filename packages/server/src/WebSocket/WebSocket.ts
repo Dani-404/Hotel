@@ -5,6 +5,9 @@ import { eventHandler } from "../Events/EventHandler.js";
 import User from "../Users/User.js";
 import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
 import { HotelEventData } from "@shared/Communications/Responses/Hotel/HotelEventData.js";
+import { config } from "../Config/Config.js";
+import jsonWebToken from "jsonwebtoken";
+import { UserTokenModel } from "../Database/Models/Users/UserTokens/UserTokenModel.js";
 
 export default class WebSocket {
     private readonly server: WebSocketServer;
@@ -23,15 +26,49 @@ export default class WebSocket {
 
             const url = new URL(request.url, "http://localhost");
 
-            const userId = url.searchParams.get("userId");
+            let model: UserModel | null;
 
-            if(!userId) {
-                console.warn("No user id provided.");
+            if(config.authentication.useAccessTokens) {
+                const accessToken = url.searchParams.get("accessToken");
 
-                return webSocket.close();
+                if(!accessToken) {
+                    console.warn("No access token provided.");
+
+                    return webSocket.close();
+                }
+
+                const token = await UserTokenModel.findOne();
+
+                if(!token) {
+                    throw new Error("There is no JSON Web Token secret key row.");
+                }
+
+                try {
+                    const payload = jsonWebToken.verify(accessToken, token.secretKey);
+
+                    if(typeof payload === "string") {
+                        throw new Error("Payload is a string.");
+                    }
+
+                    model = await UserModel.findByPk(payload.userId);
+                }
+                catch(error) {
+                    console.warn("Invalid access token provided.", error);
+
+                    return webSocket.close();
+                }
             }
+            else {
+                const userId = url.searchParams.get("userId");
 
-            const model = await UserModel.findByPk(userId);
+                if(!userId) {
+                    console.warn("No user id provided.");
+
+                    return webSocket.close();
+                }
+
+                model = await UserModel.findByPk(userId);
+            }
 
             if(!model) {
                 console.warn("User does not exist.");

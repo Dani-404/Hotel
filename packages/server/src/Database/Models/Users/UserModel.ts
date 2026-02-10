@@ -25,6 +25,11 @@ export function initializeUserModel(sequelize: Sequelize) {
       type: new DataTypes.STRING(32),
       allowNull: false,
     },
+    password: {
+      type: new DataTypes.STRING(256),
+      allowNull: true,
+      defaultValue: null
+    },
     developer: {
       type: new DataTypes.BOOLEAN,
       defaultValue: false,

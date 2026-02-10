@@ -1,17 +1,18 @@
-import { UserFurnitureModel } from "../Models/Users/Furniture/UserFurnitureModel.js";
-import { RoomModel } from "../Models/Rooms/RoomModel.js";
-import { randomUUID } from "crypto";
-import { ShopPageModel } from "../Models/Shop/ShopPageModel.js";
-import { ShopPageFurnitureModel } from "../Models/Shop/ShopPageFurnitureModel.js";
+import { randomBytes, randomUUID } from "crypto";
 import { FurnitureModel } from "../Models/Furniture/FurnitureModel.js";
 import { getExistingFurnitureAssets, getFloorIds, getWallIds } from "./FurnitureDevelopmentData.js";
 import { UserModel } from "../Models/Users/UserModel.js";
 import { RoomMapModel } from "../Models/Rooms/Maps/RoomMapModel.js";
-import { Op } from "sequelize";
 import { RoomChatStyleModel } from "../Models/Rooms/Chat/Styles/RoomChatStyleModel.js";
 import { recreateShopPages } from "./ShopDevelopmentData.js";
+import { UserTokenModel } from "../Models/Users/UserTokens/UserTokenModel.js";
 
 export async function initializeDevelopmentData() {
+    await UserTokenModel.create({
+        id: randomUUID(),
+        secretKey: randomBytes(32).toString("hex")
+    });
+
     await RoomChatStyleModel.bulkCreate(["normal_red", "normal_purple", "console", "parrot", "gothicrose", "normal_dark_yellow", "radio", "notification", "piglet", "zombie_hand", "generic", "normal", "bats", "goat", "fortune_teller", "steampunk_pipe", "storm", "normal_blue", "ambassador", "firingmylazer", "bot_frank_large", "skeleton", "snowstorm_red", "sausagedog", "hearts", "dragon", "bot_guide", "pirate", "skelestock"].map((id) => {
         return { id };
     }));

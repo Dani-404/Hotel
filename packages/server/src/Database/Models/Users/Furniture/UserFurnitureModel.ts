@@ -4,7 +4,6 @@ import { NonAttribute } from "@sequelize/core";
 import { FurnitureModel } from "../../Furniture/FurnitureModel.js";
 import { RoomModel } from "../../Rooms/RoomModel.js";
 import { UserModel } from "../UserModel.js";
-import Room from "../../../../Rooms/Room.js";
 
 export class UserFurnitureModel extends Model {
     declare id: string;
