@@ -1,5 +1,16 @@
-build/
+build/**/*
+
+!build/game/
+build/game/*
+
+!build/web/
+build/web/*
+
+!build/**/index.html
+
 node_modules/
+
+packages/*/build/
 
 packages/*/node_modules/
 utils/*/node_modules/
