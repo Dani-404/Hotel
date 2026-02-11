@@ -46,6 +46,7 @@ app.use(async (request, response, next) => {
 app.use(express.static(path.join(config.static, "web")));
 
 app.use("/game", express.static(path.join(config.static, "game")));
+app.use("/game/assets", express.static(config.assets));
 app.use("/assets", express.static(config.assets));
 
 app.get('/{*any}', (req, res) => res.sendFile("index.html", {
