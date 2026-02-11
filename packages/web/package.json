@@ -1,0 +1,30 @@
+{
+  "scripts": {
+    "start": "npx ts-node src/server/index.ts",
+    "watch:client": "npx nodemon --watch src/Client --ext tsx,css --exec \"npm run build\"",
+    "build": "npx parcel build src/client/index.tsx --dist-dir ../../build/web --no-cache",
+    "watch": "npx parcel watch src/client/index.tsx --dist-dir ../../build/web"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "react": "^19.1.0",
+    "react-cookie": "^8.0.1",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.13.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@parcel/validator-eslint": "^2.16.4",
+    "@parcel/validator-typescript": "^2.16.4",
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/node-sprite-generator": "^0.10.6",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "parcel": "^2.16.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

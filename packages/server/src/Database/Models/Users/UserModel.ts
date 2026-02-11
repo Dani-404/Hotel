@@ -5,6 +5,7 @@ import { FigureConfiguration } from "@shared/Interfaces/Figure/FigureConfigurati
 export class UserModel extends Model {
     declare id: string;
     declare name: string;
+    declare password: string;
     declare developer: boolean;
     declare figureConfiguration: FigureConfiguration;
     declare credits: number;

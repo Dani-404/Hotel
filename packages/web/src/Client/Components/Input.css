@@ -1,0 +1,13 @@
+.input {
+    font-family: "Ubuntu";
+    font-size: 13px;
+
+    border: none;
+    outline: none;
+
+    padding: 3px 4px;
+
+    border-radius: 3px;
+
+    box-sizing: border-box;
+}

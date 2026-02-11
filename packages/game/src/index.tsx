@@ -4,6 +4,7 @@ import UserInterfaceInstance from "./UserInterface";
 import FigureAssets from "@Client/Assets/FigureAssets";
 import LoaderInstance from "./Loader";
 import FurnitureAssets from "@Client/Assets/FurnitureAssets";
+import Cookies from "js-cookie";
 
 const clientElement = document.getElementById("client");
 const interfaceElement = document.getElementById("interface");
@@ -36,6 +37,7 @@ function start(text?: string) {
     loaderInstance.render(text);
 
     webSocketClient = new WebSocketClient({
+        accessToken: Cookies.get("accessToken") ?? "",
         userId: searchParams.get("user") ?? "user1"
     });
 

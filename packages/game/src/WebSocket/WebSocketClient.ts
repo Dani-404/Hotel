@@ -3,7 +3,7 @@ import WebSocketEvent from "../../../shared/WebSocket/Events/WebSocketEvent.js";
 export default class WebSocketClient extends EventTarget {
     private readonly socket: WebSocket;
 
-    constructor(options: Record<"userId", string>) {
+    constructor(options: Record<"userId" | "accessToken", string>) {
         super();
 
         this.socket = new WebSocket(`ws://localhost:7632?${new URLSearchParams(options).toString()}`);
