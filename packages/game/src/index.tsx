@@ -37,6 +37,7 @@ function start(text?: string) {
     loaderInstance.render(text);
 
     webSocketClient = new WebSocketClient(
+        clientElement.getAttribute("data-secure")! === "true",
         clientElement.getAttribute("data-hostname")!,
         parseInt(clientElement.getAttribute("data-port")!),
         {
