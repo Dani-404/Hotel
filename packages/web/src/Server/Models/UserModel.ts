@@ -42,7 +42,7 @@ export function initializeUserModel(sequelize: Sequelize) {
             diamonds: {
                 type: new DataTypes.INTEGER,
                 allowNull: false,
-                defaultValue: 0
+                defaultValue: 1000
             },
             duckets: {
                 type: new DataTypes.INTEGER,
