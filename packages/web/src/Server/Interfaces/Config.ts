@@ -13,6 +13,8 @@ export type Config = {
             secure: boolean;
             hostname: string;
             port: number;
-        }
+        };
+
+        discord: string | null;
     }
 };

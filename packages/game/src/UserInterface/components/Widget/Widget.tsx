@@ -1,14 +1,8 @@
 import { useUser } from "../../hooks/useUser";
+import WidgetButton from "./WidgetButton";
+import WidgetCurrency from "./WidgetCurrency";
+import WidgetItem from "./WidgetItem";
 
-function getCurrencyAsString(value?: number) {
-    if(!value) {
-        return "0";
-    }
-
-    const numberFormat = new Intl.NumberFormat('en-US');
-
-    return numberFormat.format(value);
-}
 
 export default function Widget() {
     const user = useUser();
@@ -58,44 +52,17 @@ export default function Widget() {
                         justifyContent: "space-around",
                         alignItems: "flex-end"
                     }}>
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 5,
-                            fontSize: 12,
-                            color: "#37C8E9",
-                            alignItems: "center"
-                        }}>
-                            <b>{getCurrencyAsString(user?.diamonds)}</b>
-
+                        <WidgetCurrency color="#37C8E9" value={user?.diamonds ?? 0}>
                             <div className="sprite_currencies_diamonds"/>
-                        </div>
+                        </WidgetCurrency>
 
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 5,
-                            fontSize: 12,
-                            color: "#CCA822",
-                            alignItems: "center"
-                        }}>
-                            <b>{getCurrencyAsString(user?.credits)}</b>
-
+                        <WidgetCurrency color="#CCA822" value={user?.credits ?? 0}>
                             <div className="sprite_currencies_credits"/>
-                        </div>
+                        </WidgetCurrency>
 
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 5,
-                            fontSize: 12,
-                            color: "#CE82CC",
-                            alignItems: "center"
-                        }}>
-                            <b>{getCurrencyAsString(user?.duckets)}</b>
-
+                        <WidgetCurrency color="#CE82CC" value={user?.duckets ?? 0}>
                             <div className="sprite_currencies_duckets"/>
-                        </div>
+                        </WidgetCurrency>
                     </div>
                     
                     <div style={{
@@ -105,40 +72,41 @@ export default function Widget() {
                         gap: 6,
                         width: 80
                     }}>
-                        <div style={{
-                            flex: 1,
-                            background: "rgba(64, 64, 64, .2)",
-                            borderRadius: 10,
-                            padding: "0 6px",
-                            color: "#03B9BC",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 6,
-                            fontSize: 12,
-                            alignItems: "center",
-                            lineHeight: 1
-                        }}>
+                        <WidgetItem>
                             <div className="sprite_currencies_club"/>
 
                             <b>Join</b>
-                        </div>
-                        <div style={{
-                            flex: 1,
-                            background: "rgba(64, 64, 64, .2)",
-                            borderRadius: 10,
-                            padding: "0 6px",
-                            color: "#03B9BC",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 6,
-                            fontSize: 12,
-                            alignItems: "center",
-                            lineHeight: 1
-                        }}>
+                        </WidgetItem>
+
+                        <WidgetItem>
                             <div className="sprite_currencies_earnings"/>
 
                             <b>Earnings</b>
-                        </div>
+                        </WidgetItem>
+                    </div>
+
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 4,
+
+                        width: 50,
+                    }}>
+                        <WidgetButton color="#4D5FF2" onClick={() => {
+                            window.open("/discord", "_blank")?.focus();
+                        }}>
+                            Discord
+                        </WidgetButton>
+
+                        <WidgetButton color="#716A85" disabled onClick={() => {}}>
+                            <div className="sprite_widget_settings"/>
+                        </WidgetButton>
+
+                        <WidgetButton color="#DD5246" onClick={() => {
+                            window.location.href = "/logout";
+                        }}>
+                            <div className="sprite_widget_logout"/>
+                        </WidgetButton>
                     </div>
                 </div>
             </div>

@@ -18,6 +18,8 @@
             "secure": false,
             "hostname": "localhost",
             "port": 8080
-        }
+        },
+
+        "discord": null
     }
 }

@@ -1,0 +1,43 @@
+.widget-button {
+    border: 1px solid #000000;
+    border-radius: 4;
+
+    flex: 1;
+
+    background: color;
+    font-size: 11;
+    text-align: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    pointer-events: auto;
+    cursor: pointer;
+
+
+    padding: 1px;
+
+    box-shadow: 1px 1px rgba(0, 0, 0, .4);
+}
+
+.widget-button:hover {
+    border-width: 2px;
+    padding: 0px;
+}
+
+.widget-button:active {
+    border-width: 1px;
+    padding: 1px;
+
+    filter: brightness(60%);
+}
+
+.widget-button.disabled {
+    cursor: default;
+    
+    border-width: 1px;
+    padding: 1px;
+
+    filter: brightness(100%);
+}

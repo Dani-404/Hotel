@@ -54,6 +54,14 @@ app.get('/game/config.json', (request, response) => {
     return response.json(config.public);
 });
 
+app.get('/discord', (request, response) => {
+    if(config.public.discord) {
+        return response.redirect(config.public.discord);
+    }
+
+    return response.redirect("/404");
+});
+
 app.get('/{*any}', (req, res) => res.sendFile("index.html", {
     root: path.join(config.static, "web")
 }));
