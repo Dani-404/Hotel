@@ -86,7 +86,9 @@ export default function Toolbar() {
                 justifyContent: "center",
                 alignItems: "center"
             }}>
-                <ToolbarChatbar/>
+                {(room) && (
+                    <ToolbarChatbar/>
+                )}
             </div>
         </div>
     );
