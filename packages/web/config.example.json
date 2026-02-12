@@ -1,0 +1,23 @@
+{
+    "port": 80,
+    
+    "assets": "../../assets/",
+    "static": "../../build/",
+
+    "database": {
+        "dialect": "mysql",
+        "database": "DATABASE",
+        "username": "USER",
+        "password": "PASSWORD",
+        "host": "localhost",
+        "port": 3306
+    },
+
+    "public": {
+        "server": {
+            "secure": false,
+            "hostname": "localhost",
+            "port": 8080
+        }
+    }
+}
