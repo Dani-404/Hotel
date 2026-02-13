@@ -1,8 +1,15 @@
+import { useDialogs } from "../../../hooks/useDialogs";
+import { useRoomInstance } from "../../../hooks/useRoomInstance";
+
 export type RoomThumbnailProps = {
     roomId: string;
+    thumbnail: string | null;
 };
 
-export default function RoomThumbnail({ roomId }: RoomThumbnailProps) {
+export default function RoomThumbnail({ roomId, thumbnail }: RoomThumbnailProps) {
+    const room = useRoomInstance();
+    const dialogs = useDialogs();
+
     return (
         <div style={{
             width: 112,
@@ -19,16 +26,24 @@ export default function RoomThumbnail({ roomId }: RoomThumbnailProps) {
 
             position: "relative"
         }}>
-            <div className="sprite_room_thumbnail_empty"/>
+            {(!thumbnail)?(
+                <div className="sprite_room_thumbnail_empty"/>
+            ):(
+                <img src={thumbnail}/>
+            )}
 
-            <div className="sprite_room_camera" style={{
-                position: "absolute",
+            {(room && room.id === roomId && room.hasRights) && (
+                <div className="sprite_room_camera" style={{
+                    position: "absolute",
 
-                bottom: 3,
-                right: 3,
+                    bottom: 3,
+                    right: 3,
 
-                cursor: "pointer"
-            }}/>
+                    cursor: "pointer"
+                }} onClick={() =>
+                    dialogs.addUniqueDialog("room-settings-thumbnail")
+                }/>
+            )}
         </div>
     );
 }

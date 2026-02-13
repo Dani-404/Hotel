@@ -342,4 +342,28 @@ export default class RoomRenderer extends EventTarget {
 
         return true;
     }
+
+    public captureCroppedImage(element: HTMLElement, width: number, height: number) {
+        const canvas = new OffscreenCanvas(width, height);
+
+        const context = canvas.getContext("2d");
+
+        if(!context) {
+            throw new ContextNotAvailableError();
+        }
+
+        const clientRectangle = element.getBoundingClientRect();
+
+        if(!clientRectangle) {
+            throw new Error("Bounding client rectangle is not available.");
+        }
+
+        context.drawImage(
+            this.element,
+            Math.round(clientRectangle.left), Math.round(clientRectangle.top), width, height,
+            0, 0, width, height
+        );
+
+        return canvas;
+    }
 }

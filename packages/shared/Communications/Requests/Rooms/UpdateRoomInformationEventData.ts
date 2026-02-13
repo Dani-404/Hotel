@@ -3,4 +3,5 @@ export type UpdateRoomInformationEventData = {
     description?: string;
     category?: string;
     maxUsers?: number;
+    thumbnail?: string;
 }

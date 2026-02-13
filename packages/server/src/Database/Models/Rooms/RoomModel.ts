@@ -17,6 +17,7 @@ export class RoomModel extends Model {
 
     declare structure: RoomStructure;
     
+    declare thumbnail: string | null;
     declare maxUsers: number;
     
     declare rights: NonAttribute<RoomRightsModel[]>;
@@ -36,6 +37,11 @@ export function initializeRoomModel(sequelize: Sequelize) {
           },
           description: {
             type: DataTypes.TEXT,
+            allowNull: true,
+            defaultValue: null
+          },
+          thumbnail: {
+            type: new DataTypes.BLOB("medium"),
             allowNull: true,
             defaultValue: null
           },

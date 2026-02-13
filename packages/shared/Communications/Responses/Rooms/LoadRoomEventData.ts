@@ -6,6 +6,7 @@ export type RoomInformationData = {
     name: string;
     description: string;
     category: string;
+    thumbnail: string | null;
 
     owner: {
         id: string;

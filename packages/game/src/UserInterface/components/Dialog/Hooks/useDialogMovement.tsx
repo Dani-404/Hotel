@@ -15,8 +15,8 @@ export default function useDialogMovement(initialPosition: MousePosition = { lef
 
     const onDialogMove = useCallback((event: MouseEvent) => {
         const position: MousePosition = {
-            left: positionRef.current.left + event.movementX,
-            top: positionRef.current.top + event.movementY,
+            left: positionRef.current.left + Math.round(event.movementX),
+            top: positionRef.current.top + Math.round(event.movementY),
         };
 
         if(position.left < 0) {

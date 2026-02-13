@@ -6,6 +6,7 @@ import RoomFurniture from "./Furniture/RoomFurniture.js";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { RoomStructureEventData } from "@shared/Communications/Responses/Rooms/RoomStructureEventData.js";
 import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
+import { RoomInformationData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
 
 export default class Room {
     public readonly users: RoomUser[] = [];
@@ -164,5 +165,21 @@ export default class Room {
         const activeDimmerFurniture = dimmerFurnitures.find((furniture) => furniture.model.animation === 1);
 
         return activeDimmerFurniture;
+    }
+
+    public getInformationData(): RoomInformationData {
+        return {
+            name: this.model.name,
+            description: this.model.description,
+            category: this.model.category.id,
+            thumbnail: this.model.thumbnail,
+            
+            owner: {
+                id: this.model.owner.id,
+                name: this.model.owner.name
+            },
+
+            maxUsers: this.model.maxUsers
+        };
     }
 }

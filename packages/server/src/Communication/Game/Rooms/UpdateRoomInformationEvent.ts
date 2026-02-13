@@ -4,6 +4,7 @@ import User from "../../../Users/User.js";
 import IncomingEvent from "../../Interfaces/IncomingEvent.js";
 import { UpdateRoomInformationEventData } from "@shared/Communications/Requests/Rooms/UpdateRoomInformationEventData.js";
 import { RoomCategoryModel } from "../../../Database/Models/Rooms/Categories/RoomCategoryModel.js";
+import sharp from "sharp";
 
 export default class UpdateRoomInformationEvent implements IncomingEvent<UpdateRoomInformationEventData> {
     async handle(user: User, event: UpdateRoomInformationEventData) {
@@ -41,23 +42,56 @@ export default class UpdateRoomInformationEvent implements IncomingEvent<UpdateR
             }
         }
 
+        if(event.thumbnail !== undefined) {
+            user.room.model.thumbnail = await this.getValidatedThumbnailImage(event.thumbnail);
+        }
+
         if(user.room.model.changed()) {
             await user.room.model.save();
 
             user.room.sendRoomEvent(new OutgoingEvent<RoomInformationEventData>("RoomInformationEvent", {
-                information: {
-                    name: user.room.model.name,
-                    description: user.room.model.description,
-                    category: user.room.model.category.id,
-
-                    owner: {
-                        id: user.room.model.owner.id,
-                        name: user.room.model.owner.name,
-                    },
-
-                    maxUsers: user.room.model.maxUsers
-                }
+                information: user.room.getInformationData()
             }));
         }
+    }
+
+    private async getValidatedThumbnailImage(dataUrl: string) {
+        const matches = dataUrl.match(/^data:image\/png;base64,(.+)$/);
+
+        if(!matches || !matches[1]) {
+            throw new Error("Thumbnail image is not a valid PNG data URL.");
+        }
+
+        const buffer = Buffer.from(matches[1], "base64");
+
+        const maxSizeBytes = 75 * 1024;
+
+        if(buffer.length > maxSizeBytes) {
+            throw new Error("Thumbnail image exceeds file size limit.");
+        }
+
+        const sharpImage = sharp(buffer);
+
+        const metadata = await sharpImage.metadata();
+
+        if(metadata.format !== "png") {
+            throw new Error("Thumbnail image is not in PNG format.");
+        }
+
+        if(metadata.width !== 110 || metadata.height !== 110) {
+            throw new Error("Thumbnail image is not 110x110 pixels.");
+        }
+
+        const outputBuffer =
+            await sharpImage.png({
+                compressionLevel: 9,
+                adaptiveFiltering: true,
+                force: true
+            })
+            .toBuffer();
+
+        const base64 = outputBuffer.toString("base64");
+
+        return `data:image/png;base64,${base64}`;
     }
 }

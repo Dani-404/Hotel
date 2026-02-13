@@ -73,7 +73,7 @@ export default function RoomInformationDialog({ hidden, onClose }: RoomInformati
                         display: "flex",
                         justifyContent: "center"
                     }}>
-                        <RoomThumbnail roomId={room.id}/>
+                        <RoomThumbnail roomId={room.id} thumbnail={room.information.thumbnail}/>
                     </div>
                 </div>
             </DialogContent>

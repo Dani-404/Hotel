@@ -44,18 +44,7 @@ export default class RoomUser {
             new OutgoingEvent<LoadRoomEventData>("LoadRoomEvent", {
                 id: this.room.model.id,
                 
-                information: {
-                    name: this.room.model.name,
-                    description: this.room.model.description,
-                    category: this.room.model.category.id,
-                    
-                    owner: {
-                        id: this.room.model.owner.id,
-                        name: this.room.model.owner.name
-                    },
-
-                    maxUsers: this.room.model.maxUsers
-                },
+                information: this.room.getInformationData(),
                 
                 structure: this.room.model.structure,
                 users: this.room.users.map((user) => user.getRoomUserData()),
