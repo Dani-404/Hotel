@@ -37,7 +37,7 @@ export default class PlaceFurnitureEvent implements IncomingEvent<PlaceFurniture
             });
         }
 
-        inventory.deleteFurniture(userFurniture);
+        await inventory.deleteFurniture(userFurniture);
 
         await RoomFurniture.place(user.room, userFurniture, event.position, event.direction);
     }

@@ -65,12 +65,12 @@ export default class UserInventory {
         if(userFurniture.furniture.flags.inventoryStackable) {
             const count = await this.getFurnitureCount(userFurniture.furniture.id);
 
-            if(count >= 1) {
+            if(count > 1) {
                 this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
                     updatedUserFurniture: [
                         {
                             id: userFurniture.id,
-                            quantity: await this.getFurnitureCount(userFurniture.furniture.id),
+                            quantity: count,
                             furniture: userFurniture.furniture
                         }
                     ]

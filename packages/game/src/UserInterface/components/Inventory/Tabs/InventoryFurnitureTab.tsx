@@ -80,9 +80,11 @@ export default function InventoryFurnitureTab() {
             setActiveFurniture(userFurniture[0] ?? undefined);
         }
         else if(activeFurniture) {
-            setActiveFurniture(userFurniture.find((userFurniture) => 
+            const active = userFurniture.find((userFurniture) => 
                 (activeFurniture.furniture.flags.inventoryStackable)?(activeFurniture.furniture.id === userFurniture.furniture.id):(activeFurniture.id === userFurniture.id)
-            ));
+            );
+
+            setActiveFurniture(active);
         }
     }, [activeFurniture, userFurniture]);
 
