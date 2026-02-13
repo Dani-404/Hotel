@@ -343,6 +343,18 @@ export default class RoomRenderer extends EventTarget {
         return true;
     }
 
+    public isPositionInsideUser(position: RoomPosition, dimensions: RoomPosition) {
+        for(let row = position.row; row < position.row + dimensions.row; row++) {
+            for(let column = position.column; column < position.column + dimensions.column; column++) {
+                if(this.items.some((item) => item.type === "figure" && item.position?.row === row && item.position.column === column)) {
+                    return true;
+                }
+            }   
+        }
+
+        return false;
+    }
+
     public captureCroppedImage(element: HTMLElement, width: number, height: number) {
         const canvas = new OffscreenCanvas(width, height);
 
