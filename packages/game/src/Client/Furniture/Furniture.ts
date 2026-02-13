@@ -24,7 +24,7 @@ export type FurnitureRendererSprite = {
 }
 
 export default class Furniture {
-    private data?: FurnitureData;
+    public data?: FurnitureData;
     private visualization?: FurnitureVisualization["visualizations"][0];
 
     public placement?: "wall" | "floor";

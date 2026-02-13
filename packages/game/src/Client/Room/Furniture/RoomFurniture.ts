@@ -1,5 +1,10 @@
 import Furniture from "@Client/Furniture/Furniture";
+import FurnitureDefaultLogic from "@Client/Furniture/Logic/FurnitureDefaultLogic";
+import FurnitureMultistateLogic from "@Client/Furniture/Logic/FurnitureMultistateLogic";
+import FurnitureRoomDimmerLogic from "@Client/Furniture/Logic/FurnitureRoomDimmerLogic";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
+import RoomFurnitureLogic from "@Client/Room/Furniture/Logic/RoomFurnitureLogic";
+import RoomFurnitureTeleportLogic from "@Client/Room/Furniture/Logic/RoomFurnitureTeleportLogic";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
 import RoomInstance from "@Client/Room/RoomInstance";
 import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
@@ -20,6 +25,27 @@ export default class RoomFurniture {
                 this.instance.setMoodlight(this.data.data as RoomMoodlightData);
             }
         }
+    }
+    
+    public getLogic(): RoomFurnitureLogic {
+        if(!this.furniture.data) {
+            throw new Error("Furniture data is not available.");
+        }
+
+        switch(this.data.furniture.category) {
+            case "teleport":
+                return new RoomFurnitureTeleportLogic(this.furniture, this.furniture.data);
+        }
+
+        switch(this.furniture.data.index.logic) {
+            case "furniture_multistate":
+                return new FurnitureMultistateLogic(this.furniture, this.furniture.data);
+                
+            case "furniture_roomdimmer":
+                return new FurnitureRoomDimmerLogic(this.furniture, this.furniture.data);
+        }
+
+        return new FurnitureDefaultLogic(this.furniture);
     }
 
     public getDimensionDepth() {

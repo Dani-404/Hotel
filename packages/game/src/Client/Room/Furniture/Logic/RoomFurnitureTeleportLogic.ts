@@ -2,19 +2,15 @@ import Furniture from "@Client/Furniture/Furniture";
 import FurnitureLogic from "@Client/Furniture/Logic/Interfaces/FurnitureLogic";
 import { FurnitureData } from "@Client/Interfaces/Furniture/FurnitureData";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
-import { webSocketClient } from "../../..";
 import { UseRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UseRoomFurnitureEventData";
+import { webSocketClient } from "../../../..";
 
-export default class FurnitureMultistateLogic implements FurnitureLogic {
+export default class RoomFurnitureTeleportLogic implements FurnitureLogic {
     constructor(private readonly furniture: Furniture, private readonly data: FurnitureData) {
     }
 
     isAvailable() {
-        if(this.data.logic.type === "teleport") {
-            return true;
-        }
-
-        return (this.furniture.animation !== this.getNextState());
+        return true;
     }
 
     use(roomFurniture: RoomInstanceFurniture): void {

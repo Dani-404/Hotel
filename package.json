@@ -1,7 +1,7 @@
 {
 	"private": true,
     "scripts": {
-        "start": "npm run start --workspaces --if-present"
+        "start": "npx concurrently --kill-others \"npm run start -w packages/server\" \"npm run start -w packages/web\" \"npm run watch -w packages/game\""
     },
-	"workspaces": ["packages/server", "packages/game"]
+	"workspaces": ["packages/server", "packages/game", "packages/web"]
 }

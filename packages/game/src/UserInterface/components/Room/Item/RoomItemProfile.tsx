@@ -1,7 +1,6 @@
 import RoomInstance from "@Client/Room/RoomInstance";
 import { useEffect, useRef, useState } from "react";
 import { RoomUserData } from "@Shared/Interfaces/Room/RoomUserData";
-import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import RoomClickEvent from "@Client/Events/RoomClickEvent";
 import RoomFigureItem from "@Client/Room/Items/Figure/RoomFigureItem";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
@@ -11,14 +10,14 @@ import { webSocketClient } from "../../../..";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData";
 import { UserLeftRoomEventData } from "@Shared/Communications/Responses/Rooms/Users/UserLeftRoomEventData";
+import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
 
 export type RoomItemProfileItem = {
     type: "user";
     user: RoomUserData;
 } | {
     type: "furniture";
-    data: RoomFurnitureData;
-    item: RoomFurnitureItem;
+    furniture: RoomFurniture;
 };
 
 export type RoomItemProfileProps = {
@@ -54,7 +53,7 @@ export default function RoomItemProfile({ room }: RoomItemProfileProps) {
 
                     setFocusedItem({
                         type: "furniture",
-                        ...furniture
+                        furniture
                     });
                 }
                 else {
@@ -74,7 +73,7 @@ export default function RoomItemProfile({ room }: RoomItemProfileProps) {
 
         if(focusedItem.type === "furniture") {
             const listener = (event: WebSocketEvent<RoomFurnitureEventData>) => {
-                if(event.data.furnitureRemoved?.some((removedFurniture) => removedFurniture.id === focusedItem.data.id)) {
+                if(event.data.furnitureRemoved?.some((removedFurniture) => removedFurniture.id === focusedItem.furniture.data.id)) {
                     setFocusedItem(undefined);
                 }
             };
@@ -114,7 +113,7 @@ export default function RoomItemProfile({ room }: RoomItemProfileProps) {
             bottom: 50,
         }}>
             {(focusedItem.type === "furniture")?(
-                <RoomFurnitureProfile data={focusedItem.data} item={focusedItem.item}/>
+                <RoomFurnitureProfile furniture={focusedItem.furniture}/>
             ):(
                 <RoomUserProfile user={focusedItem.user}/>
             )}

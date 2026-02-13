@@ -70,7 +70,7 @@ export default class RoomCursor extends EventTarget {
             if(otherEntity.item instanceof RoomFurnitureItem) {
                 const roomFurnitureItem = this.roomRenderer.roomInstance?.getFurnitureByItem(otherEntity.item);
                 
-                const logic = roomFurnitureItem.item.furnitureRenderer.getLogic();
+                const logic = roomFurnitureItem.getLogic();
 
                 if(logic.isAvailable()) {
                     logic.use(roomFurnitureItem);

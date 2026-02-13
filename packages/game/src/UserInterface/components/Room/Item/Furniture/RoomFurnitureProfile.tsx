@@ -1,6 +1,4 @@
-import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import FurnitureImage from "../../../Furniture/FurnitureImage";
-import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
 import { clientInstance, webSocketClient } from "../../../../..";
 import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/UpdateRoomFurnitureEventData";
 import { PickupRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PickupRoomFurnitureEventData";
@@ -9,18 +7,18 @@ import "./RoomFurnitureProfile.css"
 import { useState } from "react";
 import { useRoomInstance } from "../../../../hooks/useRoomInstance";
 import { useUser } from "../../../../hooks/useUser";
+import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
 
 export type RoomFurnitureProfileProps = {
-    data: RoomFurnitureData;
-    item: RoomFurnitureItem;
-}
+    furniture: RoomFurniture;
+};
 
-export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfileProps) {
+export default function RoomFurnitureProfile({ furniture }: RoomFurnitureProfileProps) {
     const user = useUser();
 
     const room = useRoomInstance();
 
-    const [logic] = useState(item.furnitureRenderer.getLogic());
+    const [logic] = useState(furniture.getLogic());
 
     return (
         <div style={{
@@ -42,7 +40,7 @@ export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfil
                 gap: 10
             }}>
 
-                <b>{data.furniture.name}</b>
+                <b>{furniture.data.furniture.name}</b>
 
                 <div style={{
                     width: "100%",
@@ -55,7 +53,7 @@ export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfil
                     justifyContent: "center",
                     alignItems: "center"
                 }}>
-                    <FurnitureImage furnitureData={data.furniture}/>
+                    <FurnitureImage furnitureData={furniture.data.furniture}/>
                 </div>
             </div>
 
@@ -66,41 +64,41 @@ export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfil
             }}>
                 {(room?.hasRights) && (
                     <div className="room-furniture-profile-button" onClick={() => {
-                        clientInstance.roomInstance.value?.moveFurniture(data.id);
+                        clientInstance.roomInstance.value?.moveFurniture(furniture.data.furniture.id);
                     }}>
                         Move
                     </div>
                 )}
 
-                {(room?.hasRights || data.userId === user?.id) && (
+                {(room?.hasRights || furniture.data.userId === user?.id) && (
                     <div className="room-furniture-profile-button" onClick={() => {
                         webSocketClient.send<PickupRoomFurnitureEventData>("PickupRoomFurnitureEvent", {
-                            roomFurnitureId: data.id,
+                            roomFurnitureId: furniture.data.id,
                         });
                     }}>
                         Pick up
                     </div>
                 )}
 
-                {(room?.hasRights && item.furnitureRenderer.getNextDirection() !== item.furnitureRenderer.direction) && (
+                {(room?.hasRights && furniture.furniture.getNextDirection() !== furniture.data.direction) && (
                     <div className="room-furniture-profile-button" onClick={() => {
-                        if(item.positionPathData) {
+                        if(furniture.item.positionPathData) {
                             return;
                         }
 
                         webSocketClient.send<UpdateRoomFurnitureEventData>("UpdateRoomFurnitureEvent", {
-                            roomFurnitureId: data.id,
-                            direction: item.furnitureRenderer.getNextDirection()
+                            roomFurnitureId: furniture.data.id,
+                            direction: furniture.item.furnitureRenderer.getNextDirection()
                         });
                         
-                        if(item.position) {
-                            item.setPositionPath(item.position, [
+                        if(furniture.item.position) {
+                            furniture.item.setPositionPath(furniture.item.position, [
                                 {
-                                    ...item.position,
-                                    depth: item.position.depth + 0.25
+                                    ...furniture.item.position,
+                                    depth: furniture.item.position.depth + 0.25
                                 },
                                 {
-                                    ...item.position,
+                                    ...furniture.item.position,
                                 }
                             ],
                             100);
@@ -112,7 +110,7 @@ export default function RoomFurnitureProfile({ data, item }: RoomFurnitureProfil
 
                 {(logic.isAvailable()) && (
                     <div className="room-furniture-profile-button" onClick={() => {
-                        logic.use({ data, item });
+                        logic.use(furniture);
                     }}>
                         Use
                     </div>
