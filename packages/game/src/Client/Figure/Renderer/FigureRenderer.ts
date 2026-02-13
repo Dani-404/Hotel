@@ -46,6 +46,7 @@ type BodyPartAction = {
     bodyParts: string[];
     assetPartDefinition: string;
     frame: number;
+    y?: number;
 };
 
 type EffectData = {
@@ -147,7 +148,7 @@ export default class FigureRenderer {
                     result.push({
                         assetPartDefinition: action.assetPartDefinition,
                         bodyParts: geometryBodyparts.parts,
-                        frame: 0
+                        frame: 0,
                     });
 
                     // now we know handRight is occupied by CarryItem to use `crr`
@@ -183,7 +184,8 @@ export default class FigureRenderer {
             result.push({
                 assetPartDefinition: action.assetPartDefinition,
                 bodyParts: figurePartSet.parts,
-                frame
+                frame,
+                y: (action.assetPartDefinition === "sit")?(16):(0)
             });
 
             // now we know walk is occupied by Move to use `wlk`
@@ -459,6 +461,12 @@ export default class FigureRenderer {
             const result = await this.getFigureSprite(spriteConfiguration, sprite, asset, paletteColor?.color, flippedDirection, flipHorizontal);
 
             if(result) {
+                const actionForSit = actionsForBodyParts.find((action) => action.assetPartDefinition === "sit");
+
+                if(actionForSit?.y) {
+                    result.y += actionForSit.y;
+                }
+
                 sprites.push(result);
             }
         }
