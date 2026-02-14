@@ -1,6 +1,7 @@
 import { FurnitureRendererSprite } from "@Client/Furniture/Furniture";
 import FurnitureDefaultRenderer from "@Client/Furniture/Renderer/FurnitureDefaultRenderer";
 import { FurnitureData } from "@Client/Interfaces/Furniture/FurnitureData";
+import { FurnitureVisualization } from "@Client/Interfaces/Furniture/FurnitureVisualization";
 
 export default class FurnitureXRayRenderer extends FurnitureDefaultRenderer {
     public placement?: "wall" | "floor" | undefined;
@@ -34,20 +35,7 @@ export default class FurnitureXRayRenderer extends FurnitureDefaultRenderer {
                 zIndex: 4
             });
 
-            for(const { id: direction } of visualization.directions) {
-                const sourceAsset = data.assets.find((asset) => asset.name === `${this.type}_${visualization.size}_b_${direction}_0`);
-
-                if(sourceAsset) {
-                    data.assets.push({
-                        name: `${this.type}_${visualization.size}_i_${direction}_0`,
-                        
-                        x: sourceAsset.x,
-                        y: sourceAsset.y,
-
-                        source: sourceAsset.name,
-                    })
-                }
-            }
+            this.addAsset(data, visualization, 'i', 'b');
 
             visualization.layers.push({
                 id: 9,
@@ -55,20 +43,7 @@ export default class FurnitureXRayRenderer extends FurnitureDefaultRenderer {
                 zIndex: 1004
             });
 
-            for(const { id: direction } of visualization.directions) {
-                const sourceAsset = data.assets.find((asset) => asset.name === `${this.type}_${visualization.size}_e_${direction}_0`);
-
-                if(sourceAsset) {
-                    data.assets.push({
-                        name: `${this.type}_${visualization.size}_j_${direction}_0`,
-                        
-                        x: sourceAsset.x,
-                        y: sourceAsset.y,
-
-                        source: sourceAsset.name,
-                    })
-                }
-            }
+            this.addAsset(data, visualization, 'j', 'e');
             
             visualization.layers.push({
                 id: 10,
@@ -76,20 +51,7 @@ export default class FurnitureXRayRenderer extends FurnitureDefaultRenderer {
                 zIndex: -1
             });
 
-            for(const { id: direction } of visualization.directions) {
-                const sourceAsset = data.assets.find((asset) => asset.name === `${this.type}_${visualization.size}_b_${direction}_0`);
-
-                if(sourceAsset) {
-                    data.assets.push({
-                        name: `${this.type}_${visualization.size}_k_${direction}_0`,
-                        
-                        x: sourceAsset.x,
-                        y: sourceAsset.y,
-
-                        source: sourceAsset.name,
-                    })
-                }
-            }
+            this.addAsset(data, visualization, 'k', 'b');
             
             visualization.layers.push({
                 id: 11,
@@ -97,22 +59,32 @@ export default class FurnitureXRayRenderer extends FurnitureDefaultRenderer {
                 zIndex: 999
             });
 
-            for(const { id: direction } of visualization.directions) {
-                const sourceAsset = data.assets.find((asset) => asset.name === `${this.type}_${visualization.size}_e_${direction}_0`);
+            this.addAsset(data, visualization, 'l', 'e');
+        }
 
-                if(sourceAsset) {
+        return super.render(data, direction, size, animation, color, frame);
+    }
+
+    private addAsset(data: FurnitureData, visualization: FurnitureVisualization["visualizations"][0], newLayerId: string, sourceLayerId: string) {
+        for(const { id: direction } of visualization.directions) {
+            const sourceAsset = data.assets.find((asset) => asset.name === `${this.type}_${visualization.size}_${sourceLayerId}_${direction}_0`);
+
+            if(sourceAsset) {
+                const rootSourceAsset = (sourceAsset.source)?(data.assets.find((asset) => asset.name === sourceAsset.source)):(sourceAsset);
+
+                if(rootSourceAsset) {
                     data.assets.push({
-                        name: `${this.type}_${visualization.size}_l_${direction}_0`,
+                        name: `${this.type}_${visualization.size}_${newLayerId}_${direction}_0`,
                         
                         x: sourceAsset.x,
                         y: sourceAsset.y,
 
-                        source: sourceAsset.name,
-                    })
+                        flipHorizontal: sourceAsset.flipHorizontal,
+
+                        source: rootSourceAsset.name,
+                    });
                 }
             }
         }
-
-        return super.render(data, direction, size, animation, color, frame);
     }
 }
