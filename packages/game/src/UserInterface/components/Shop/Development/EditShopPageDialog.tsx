@@ -9,7 +9,7 @@ import { UpdateShopPageEventData } from "@Shared/Communications/Requests/Shop/De
 import { useDialogs } from "../../../hooks/useDialogs";
 
 export type EditShopPageDialogProps = {
-    data: ShopPageData;
+    data: ShopPageData | null;
     hidden?: boolean;
     onClose?: () => void;
 }
@@ -17,29 +17,34 @@ export type EditShopPageDialogProps = {
 export default function EditShopPageDialog({ hidden, data, onClose }: EditShopPageDialogProps) {
     const dialogs = useDialogs();
 
-    const [icon, setIcon] = useState(data.icon ?? "");
-    const [title, setTitle] = useState(data.title);
-    const [description, setDescription] = useState(data.description ?? "");
-    const [header, setHeader] = useState(data.header ?? "");
-    const [teaser, setTeaser] = useState(data.teaser ?? "");
+    const [icon, setIcon] = useState(data?.icon ?? "");
+    const [title, setTitle] = useState(data?.title ?? "");
+    const [description, setDescription] = useState(data?.description ?? "");
+    const [header, setHeader] = useState(data?.header ?? "");
+    const [teaser, setTeaser] = useState(data?.teaser ?? "");
+    const [index, setIndex] = useState(data?.index ?? 0);
 
     const handleUpdate = useCallback(() => {
         webSocketClient.send<UpdateShopPageEventData>("UpdateShopPageEvent", {
-            id: data.id,
+            id: data?.id ?? null,
+
+            category: "furniture",
 
             title,
             description,
 
             icon,
             header,
-            teaser
+            teaser,
+
+            index
         });
 
         dialogs.closeDialog("edit-shop-page");
-    }, [dialogs, icon, title, description, header, teaser]);
+    }, [dialogs, data, icon, title, description, header, teaser, index]);
 
     return (
-        <Dialog title="Edit shop page" hidden={hidden} onClose={onClose} width={320} height={590} initialPosition="center">
+        <Dialog title={(data)?("Edit shop page"):("Create shop page")} hidden={hidden} onClose={onClose} width={320} height={660} initialPosition="center">
             <DialogContent>
                 <div style={{
                     flex: 1,
@@ -102,6 +107,10 @@ export default function EditShopPageDialog({ hidden, data, onClose }: EditShopPa
     
                     <Input placeholder="x_teaser.gif" value={teaser} onChange={setTeaser}/>
 
+                    <b>Page index</b>
+    
+                    <Input type={"number"} placeholder="0" value={index.toString()} onChange={(value) => setIndex(parseInt(value))}/>
+
                     <div style={{
                         flex: 1
                     }}>
@@ -113,7 +122,7 @@ export default function EditShopPageDialog({ hidden, data, onClose }: EditShopPa
                         justifyContent: "flex-end"
                     }}>
                         <DialogButton onClick={handleUpdate}>
-                            Update page
+                            {(data)?("Update page"):("Create page")}
                         </DialogButton>
                     </div>
                 </div>

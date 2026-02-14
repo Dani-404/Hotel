@@ -38,6 +38,8 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                     teaser: shopPage.teaser ?? undefined,
                     
                     type: shopPage.type,
+
+                    index: shopPage.index,
                     
                     children: shopPage.children.sort((a, b) => a.index - b.index).map((childShopPage) => {
                         return {
@@ -50,6 +52,8 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                             icon: childShopPage.icon ?? undefined,
                             header: childShopPage.header ?? shopPage.header ?? undefined,
                             teaser: childShopPage.teaser ?? shopPage.teaser ?? undefined,
+
+                            index: childShopPage.index,
                         };
                     })
                 };

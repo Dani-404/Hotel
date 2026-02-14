@@ -65,7 +65,8 @@
 .sprite_toolbar_room_room { background-image: url('./spritesheet.png'); background-position: -144px -321px; width: 16px; height: 16px; }
 .sprite_room_camera { background-image: url('./spritesheet.png'); background-position: -160px -321px; width: 17px; height: 15px; }
 .sprite_toolbar_room_link { background-image: url('./spritesheet.png'); background-position: -177px -321px; width: 17px; height: 15px; }
-.sprite_currencies_earnings { background-image: url('./spritesheet.png'); background-position: -403px -376px; width: 15px; height: 16px; }
+.sprite_add { background-image: url('./spritesheet.png'); background-position: -403px -376px; width: 15px; height: 16px; }
+.sprite_currencies_earnings { background-image: url('./spritesheet.png'); background-position: -418px -376px; width: 15px; height: 16px; }
 .sprite_currencies_club { background-image: url('./spritesheet.png'); background-position: -194px -321px; width: 15px; height: 15px; }
 .sprite_currencies_credits { background-image: url('./spritesheet.png'); background-position: -209px -321px; width: 15px; height: 15px; }
 .sprite_currencies_diamonds { background-image: url('./spritesheet.png'); background-position: -224px -321px; width: 15px; height: 15px; }

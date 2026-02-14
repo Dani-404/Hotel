@@ -1,5 +1,7 @@
 export type UpdateShopPageEventData = {
-    id: string;
+    id: string | null;
+
+    category: string;
 
     title: string;
     description: string;
@@ -7,4 +9,6 @@ export type UpdateShopPageEventData = {
     icon: string;
     header: string;
     teaser: string;
+
+    index: number;
 };

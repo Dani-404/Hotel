@@ -63,13 +63,17 @@ export default function ShopDialogCategory({ category, onHeaderChange }: ShopDia
         });
     }, [ activeShopPage ]);
 
-    const handleEdit = useCallback((shopPage: ShopPageData) => {
+    const handleEditPage = useCallback((shopPage: ShopPageData) => {
         if(!user?.developer) {
             return;
         }
 
         dialogs.addUniqueDialog("edit-shop-page", shopPage);
     }, [user, dialogs]);
+
+    const handleCreatePage = useCallback(() => {
+        dialogs.addUniqueDialog("edit-shop-page", null);
+    }, [dialogs]);
 
     return (
         <div style={{
@@ -89,7 +93,7 @@ export default function ShopDialogCategory({ category, onHeaderChange }: ShopDia
                                 icon={(shopPage.icon)?(<img src={`./assets/shop/icons/${shopPage.icon}`}/>):(undefined)}
                                 onClick={() => setActiveShopPage(shopPage)}
                                 editable={user?.developer}
-                                onEditClick={() => handleEdit(shopPage)}>
+                                onEditClick={() => handleEditPage(shopPage)}>
                                 {(activeShopPage && (activeShopPage.id === shopPage.id || shopPage.children?.includes(activeShopPage))) && shopPage.children?.map((shopSubPage) => (
                                     <DialogPanelListItem
                                         key={shopSubPage.id}
@@ -99,11 +103,24 @@ export default function ShopDialogCategory({ category, onHeaderChange }: ShopDia
                                         icon={(shopSubPage.icon)?(<img src={`./assets/shop/icons/${shopSubPage.icon}`}/>):(undefined)}
                                         onClick={() => setActiveShopPage(shopSubPage)}
                                         editable={user?.developer}
-                                        onEditClick={() => handleEdit(shopSubPage)}
+                                        onEditClick={() => handleEditPage(shopSubPage)}
                                         />
                                 ))}
                             </DialogPanelListItem>
                         ))}
+
+                        {(user?.developer) && (
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+
+                                padding: 4
+                            }}>
+                                <div className="sprite_add" style={{
+                                    cursor: "pointer"
+                                }} onClick={handleCreatePage}/>
+                            </div>
+                        )}
                     </DialogPanelList>
                 </DialogPanel>
             </div>

@@ -10,6 +10,8 @@ export type ShopPageData = {
     header?: string | undefined;
     teaser?: string | undefined;
 
+    index: number;
+
     children?: Omit<ShopPageData, "children">[];
 };
 

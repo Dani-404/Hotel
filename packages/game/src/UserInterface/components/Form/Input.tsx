@@ -1,11 +1,12 @@
 export type InputProps = {
+    type?: "text" | "number";
     placeholder?: string;
     
     value: string;
     onChange: (value: string) => void;
 }
 
-export default function Input({ placeholder, value, onChange }: InputProps) {
+export default function Input({ type = "text", placeholder, value, onChange }: InputProps) {
     return (
         <div style={{
             borderBottom: "1px solid #FFFFFF",
@@ -22,7 +23,7 @@ export default function Input({ placeholder, value, onChange }: InputProps) {
                 flexDirection: "row"
             }}>
                 <input
-                    type="text"
+                    type={type}
                     placeholder={placeholder}
                     value={value}
                     onChange={(event) => onChange((event.currentTarget as HTMLInputElement).value)}
