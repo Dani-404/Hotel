@@ -148,7 +148,7 @@ export default class RoomUser {
         this.user.send(new OutgoingEvent("LeaveRoomEvent", null));
     }
 
-    public addAction(action: string) {
+    public addAction(action: string, removeAfterMs?: number) {
         if(this.actions.includes(action)) {
             return;
         }
@@ -163,7 +163,12 @@ export default class RoomUser {
         );
 
         // TODO: move this to the client?
-        if(["Wave", "GestureSmile", "GestureSad", "GestureAngry", "GestureSurprised", "Laugh"].includes(action)) {
+        if(removeAfterMs !== undefined) {
+            setTimeout(() => {
+                this.removeAction(action);
+            }, removeAfterMs);
+        }
+        else if(["Wave", "GestureSmile", "GestureSad", "GestureAngry", "GestureSurprised", "Laugh"].includes(action)) {
             setTimeout(() => {
                 this.removeAction(action);
             }, 2000);

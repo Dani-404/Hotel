@@ -1,4 +1,3 @@
-import FigureRenderer from "./Renderer/FigureRenderer";
 import FigureAssets from "@Client/Assets/FigureAssets";
 import FigureWorkerClient from "./Worker/FigureWorkerClient";
 import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
@@ -11,7 +10,7 @@ export default class Figure {
     }
 
     public async renderToCanvas(worker: FigureWorkerClient, frame: number, cropped: boolean = false) {
-        let renderName = `${this.getConfigurationAsString()}_${this.direction}_${FigureRenderer.getSpriteFrameFromSequence(frame)}_${this.actions.join('_')}`;
+        let renderName = `${this.getConfigurationAsString()}_${this.direction}_${frame}_${this.actions.join('_')}`;
 
         if(this.headOnly) {
             renderName += "_headonly";

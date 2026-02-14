@@ -43,9 +43,15 @@ type SpriteConfiguration = {
 };
 
 type BodyPartAction = {
+    actionId: string;
+    geometry: {
+        bodyparts: {
+            id: string;
+            parts: string[];
+        }[];
+    };
     bodyParts: string[];
     assetPartDefinition: string;
-    frame: number;
     y?: number;
 };
 
@@ -146,9 +152,10 @@ export default class FigureRenderer {
                     }
 
                     result.push({
+                        actionId: action.id,
+                        geometry,
                         assetPartDefinition: action.assetPartDefinition,
                         bodyParts: geometryBodyparts.parts,
-                        frame: 0,
                     });
 
                     // now we know handRight is occupied by CarryItem to use `crr`
@@ -156,8 +163,6 @@ export default class FigureRenderer {
                 }
             }
         }
-
-        const currentSpriteFrame = FigureRenderer.getSpriteFrameFromSequence(this.frame);
 
         const actions = this.getAvatarActions();
 
@@ -168,27 +173,17 @@ export default class FigureRenderer {
                 throw new Error("Geometry is not found for action.");
             }
             
-           
             const figurePartSet = figurePartSets.find((figurePartSet) => figurePartSet.id === action.activePartSet);
 
             if(!figurePartSet) {
                 throw new Error("Action does not have a figure part set in geometry.");
             }
 
-            let frame = 0;
-
-            // TODO: use avatar action animation configuration
-            if(action.activePartSet === "walk") {
-                frame = currentSpriteFrame;
-            }
-            else if(action.assetPartDefinition === "wav") {
-                frame = Math.floor((this.frame % (2 * 4)) / 4);
-            }
-
             result.push({
+                actionId: action.id,
+                geometry,
                 assetPartDefinition: action.assetPartDefinition,
                 bodyParts: figurePartSet.parts,
-                frame,
                 y: (action.assetPartDefinition === "sit")?(16):(0)
             });
 
@@ -200,6 +195,58 @@ export default class FigureRenderer {
         }
 
         return result;
+    }
+
+    private getAvatarAnimation(actionId: string, geometryBodyPart: string | undefined, setType: string, direction: number, frame: number) {
+        const actionAnimation = FigureAssets.avatarAnimations.actions.find((actionAnimation) => actionAnimation.id === actionId);
+
+        if(!actionAnimation) {
+            return null;
+        }
+
+        const actionAnimationSettype = actionAnimation.parts.find((part) => part.setType === setType);
+
+        if(!actionAnimationSettype) {
+            return null;
+        }
+
+        const totalFrames = actionAnimationSettype.frames.reduce((previousValue, currentValue) => {
+            return previousValue + (currentValue.repeats ?? 1);
+        }, 0);
+
+
+        const actualFrame = Math.floor((frame / 2) % totalFrames);
+
+        let temporaryFrame = 0;
+        let spriteFrame = 0;
+        let assetPartDefinition: string | null = null;
+
+        for(let index = 0; index < actionAnimationSettype.frames.length; index++) {
+            //console.log({ actualFrame, temporaryFrame, maxFrame: (temporaryFrame + (actionAnimationSettype.frames[index].repeats ?? 0)) });
+
+            if(actualFrame >= temporaryFrame && actualFrame <= (temporaryFrame + (actionAnimationSettype.frames[index].repeats ?? 0))) {
+                spriteFrame = actionAnimationSettype.frames[index].number;
+                assetPartDefinition = actionAnimationSettype.frames[index].assetPartDefinition;
+                
+                //console.log("break", spriteFrame);
+
+                break;
+            }
+
+            temporaryFrame += 1;
+            temporaryFrame += actionAnimationSettype.frames[index].repeats ?? 0;
+        }
+
+        const offset = actionAnimation.offsets.find((offset) => offset.frame === spriteFrame);
+        const offsetDirection = offset?.directions.find((offsetDirection) => offsetDirection.id === direction);
+        const useOffsetDirectionBodypart = offsetDirection?.bodypart.id === geometryBodyPart;
+
+        return {
+            spriteFrame,
+            assetPartDefinition,
+            destinationX: (useOffsetDirectionBodypart)?(offsetDirection?.bodypart.destinationX):(undefined),
+            destinationY: (useOffsetDirectionBodypart)?(offsetDirection?.bodypart.destinationY):(undefined)
+        };
     }
 
     private getSpritesFromConfiguration() {
@@ -434,14 +481,18 @@ export default class FigureRenderer {
                 continue;
             }
 
-            let assetName = `h_${actionForSprite.assetPartDefinition}_${spriteConfiguration.type}_${spriteConfiguration.id}_${flippedDirection}_${actionForSprite.frame}`;
+            const geometryPart = actionForSprite.geometry.bodyparts.find((bodypart) => bodypart.parts.includes(spriteConfiguration.type));
+
+            const avatarAnimation = this.getAvatarAnimation(actionForSprite.actionId, geometryPart?.id, spriteConfiguration.type, flippedDirection, this.frame);
+
+            let assetName = `h_${avatarAnimation?.assetPartDefinition ?? "std"}_${spriteConfiguration.type}_${spriteConfiguration.id}_${flippedDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
 
             let asset = figureData.assets.find((asset) => asset.name === assetName);
 
             if(!asset) {
                 console.warn("Can't find asset for " + assetName);
-
-                assetName = `h_std_${spriteConfiguration.type}_${spriteConfiguration.id}_${flippedDirection}_${actionForSprite.frame}`;
+                
+                assetName = `h_std_${spriteConfiguration.type}_${spriteConfiguration.id}_${flippedDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
 
                 asset = figureData.assets.find((asset) => asset.name === assetName);
             }
@@ -468,10 +519,18 @@ export default class FigureRenderer {
             const result = await this.getFigureSprite(spriteConfiguration, sprite, asset, paletteColor?.color, flippedDirection, flipHorizontal);
 
             if(result) {
-                const actionForSit = actionsForBodyParts.find((action) => action.assetPartDefinition === "sit");
+                //const actionForSit = actionsForBodyParts.find((action) => action.assetPartDefinition === "sit");
 
-                if(actionForSit?.y) {
-                    result.y += actionForSit.y;
+                //if(actionForSit?.y) {
+                //    result.y += actionForSit.y;
+                //}
+
+                if(avatarAnimation?.destinationX) {
+                    result.x += avatarAnimation.destinationX;
+                }
+                
+                if(avatarAnimation?.destinationY) {
+                    result.y += avatarAnimation.destinationY;
                 }
 
                 sprites.push(result);

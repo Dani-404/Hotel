@@ -9,6 +9,7 @@ import type { RoomData } from "../../../packages/game/src/Client/Interfaces/Room
 import sqlite3 from "sqlite3";
 import extractRoomChatStyles from "./extractions/RoomChatStylesExtractor.ts";
 import extractFigureEffects from "./extractions/FigureEffects.ts";
+import extractAvatarAnimations from "./extractions/AvatarAnimations.ts";
 
 export const database = new sqlite3.Database(":memory:");
 
@@ -29,6 +30,12 @@ let assetNames = [process.argv[2]];
     
     if(process.argv[2] === "figureeffects") {
         await extractFigureEffects();
+        
+        return;
+    }
+    
+    if(process.argv[2] === "avataranimations") {
+        await extractAvatarAnimations();
         
         return;
     }

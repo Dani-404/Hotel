@@ -15,6 +15,9 @@ export default class SendUserMessageEvent implements IncomingEvent<SendUserMessa
         if(event.message.includes(":)")) {
             roomUser.addAction("GestureSmile");
         }
+        else if(event.message.includes(":D")) {
+            roomUser.addAction("Laugh");
+        }
         else if(event.message.includes(":(")) {
             roomUser.addAction("GestureSad");
         }
@@ -51,6 +54,8 @@ export default class SendUserMessageEvent implements IncomingEvent<SendUserMessa
                 message: event.message,
                 roomChatStyleId: user.model.roomChatStyleId
             }));
+
+            roomUser.addAction("Talk", Math.max(800, event.message.length * 60));
         }
     }
 }

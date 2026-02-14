@@ -4,11 +4,13 @@ import { FigureData } from "@Client/Interfaces/Figure/FigureData";
 import { FiguredataData } from "@Client/Interfaces/Figure/FiguredataData";
 import { AvatarActionsData } from "@Client/Interfaces/Figure/Avataractions";
 import { FigureRendererResult, FigureRendererSprite } from "@Client/Figure/Renderer/FigureRenderer";
+import { FigureAvatarAnimationData } from "@Client/Interfaces/Figure/FigureAvatarAnimationData";
 
 export default class FigureAssets {
     public static figuremap: FiguremapData;
     public static figuredata: FiguredataData;
     public static avataractions: AvatarActionsData;
+    public static avatarAnimations: FigureAvatarAnimationData;
     public static effectmap: { id: number; library: string; }[];
 
     public static async loadAssets() {
@@ -16,6 +18,7 @@ export default class FigureAssets {
         FigureAssets.figuredata = await FigureAssets.getFiguredataData();
         FigureAssets.avataractions = await FigureAssets.getAvataractionsData();
         FigureAssets.effectmap = await FigureAssets.getEffectMapData();
+        FigureAssets.avatarAnimations = await AssetFetcher.fetchJson<FigureAvatarAnimationData>(`/assets/figure/AvatarAnimations.json`);
     }
     
     public static async getEffectMapData() {
