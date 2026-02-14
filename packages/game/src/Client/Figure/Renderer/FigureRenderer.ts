@@ -420,8 +420,6 @@ export default class FigureRenderer {
         for(const spriteConfiguration of spritesFromConfiguration) {
             const actionForSprite = actionsForBodyParts.find((action) => action.bodyParts.includes(spriteConfiguration.type));
         
-            console.log(actionForSprite);
-
             if(!actionForSprite) {
                 console.warn("Sprite has no action requesting it.");
 

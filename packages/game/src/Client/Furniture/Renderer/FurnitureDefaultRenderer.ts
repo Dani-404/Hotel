@@ -72,7 +72,7 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
             const spriteData = data.sprites.find((sprite) => sprite.name === (assetData?.source ?? assetName));
             
             if(!spriteData) {
-                //console.warn("Failed to find sprite data for " + assetName + " (source " + assetData.source + ")");
+                console.warn("Failed to find sprite data for " + assetName + " (source " + assetData.source + ")");
                 FurnitureAssets.assetSprites.set(`${assetName}_${color}`, null);
 
                 continue;

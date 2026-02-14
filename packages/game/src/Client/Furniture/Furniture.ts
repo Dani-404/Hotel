@@ -8,6 +8,7 @@ import FurnitureLogic from "@Client/Furniture/Logic/Interfaces/FurnitureLogic";
 import FurnitureMultistateLogic from "@Client/Furniture/Logic/FurnitureMultistateLogic";
 import FurnitureDefaultLogic from "@Client/Furniture/Logic/FurnitureDefaultLogic";
 import FurnitureRoomDimmerLogic from "@Client/Furniture/Logic/FurnitureRoomDimmerLogic";
+import FurnitureXRayRenderer from "@Client/Furniture/Renderer/FurnitureXRayRenderer";
 
 export type FurnitureRendererSprite = {
     image: ImageBitmap;
@@ -36,6 +37,9 @@ export default class Furniture {
     constructor(public readonly type: string, public size: number, public direction: number | undefined = undefined, public animation: number = 0, public color: number = 0) {
         if((this.type === "wallpaper" || this.type === "floor") && color !== 0) {
             this.renderer = new FurnitureRoomContentRenderer(this.type);
+        }
+        else if(this.type === "hc_rntgn") {
+            this.renderer = new FurnitureXRayRenderer(this.type);
         }
         else {
             this.renderer = new FurnitureDefaultRenderer(this.type);

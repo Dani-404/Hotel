@@ -10,16 +10,26 @@ export function getGlobalCompositeModeFromInkNumber(ink: number): GlobalComposit
     }
 }
 
-export function getGlobalCompositeModeFromInk(ink?: string): GlobalCompositeOperation | undefined {
+export function getGlobalCompositeModeFromInk(initialInk?: string): GlobalCompositeOperation | undefined {
+    const ink = initialInk?.toLowerCase();
+
     switch(ink) {
-        case "ADD":
+        case "add":
             return "lighter";
 
-        case "SUBTRACT":
+        case "subtract":
             return "luminosity";
 
-        case "COPY":
+        case "copy":
             return "source-over";
+
+        case "difference":
+        case "overlay":
+        case "saturation":
+        case "lighter":
+        case "lighten":
+        case "screen":
+            return ink;
 
         case undefined:
             return undefined;
