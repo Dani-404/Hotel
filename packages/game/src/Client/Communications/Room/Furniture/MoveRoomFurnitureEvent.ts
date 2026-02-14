@@ -12,5 +12,6 @@ export default class MoveRoomFurnitureEvent implements IncomingEvent<WebSocketEv
         const roomFurnitureItem = clientInstance.roomInstance.value.getFurnitureById(event.data.id);
 
         roomFurnitureItem.item.setPositionPath(roomFurnitureItem.item.position!, event.data.position);
+        roomFurnitureItem.data.position = event.data.position;
     }
 }
