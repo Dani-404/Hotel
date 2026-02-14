@@ -74,12 +74,20 @@ export default class Room {
     }
 
     private async handleActionsInterval() {
+        for(let furniture of this.furnitures) {
+            furniture.preoccupiedByActionHandler = false;
+        }
+
+        for(let user of this.users) {
+            user.preoccupiedByActionHandler = false;
+        }
 
         const furnitureWithActions = this.furnitures.filter((furniture) => furniture.model.furniture.category === "roller");
 
         for(let furniture of furnitureWithActions) {
             await furniture.handleActionsInterval();
         }
+
         const usersWithPath = this.users.filter((user) => user.path !== undefined);
 
         // TODO: change so that the clients get the full path immediately, and only use this interval to cancel due to obstructions in the path?

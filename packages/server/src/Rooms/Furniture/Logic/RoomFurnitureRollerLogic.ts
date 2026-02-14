@@ -14,9 +14,6 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
 
     private lastExecution: number = 0;
 
-    private preoccupiedUsers: RoomUser[] = [];
-    private preoccupiedFurniture: RoomFurniture[] = [];
-
     async use(roomUser: RoomUser, event: UseRoomFurnitureEventData): Promise<void> {
         // do nothing, since the roller is used automatically
         // but do display a use button in the client to show it's an interactable
@@ -49,23 +46,16 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
 
         const blockingUser = room.getRoomUserAtPosition(offsetPosition);
 
-        for(let user of this.preoccupiedUsers) {
-            user.preoccupiedByActionHandler = false;
-        }
-        
-        for(let furniture of this.preoccupiedFurniture) {
-            furniture.preoccupiedByActionHandler = false;
-        }
-
-        this.preoccupiedUsers = [];
-        this.preoccupiedFurniture = [];
-
         if(!blockingUser) {
             const usersInteractingWithRoller = room.users.filter((user) => user.position.row === this.roomFurniture.model.position.row && user.position.column === this.roomFurniture.model.position.column);
             const furnitureInteractingWithRoller = room.getAllFurnitureAtPosition(this.roomFurniture.model.position);
 
             for(const user of usersInteractingWithRoller) {
                 if(user.preoccupiedByActionHandler) {
+                    continue;
+                }
+
+                if(user.path) {
                     continue;
                 }
 
@@ -76,7 +66,6 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
                 }
 
                 user.preoccupiedByActionHandler = true;
-                this.preoccupiedUsers.push(user);
 
                 const nextRoller = room.getAllFurnitureAtPosition(offsetPosition).find((furniture) => furniture.model.furniture.category === "roller");
 
@@ -88,9 +77,6 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
                 }
 
                 user.position = offsetPosition;
-
-                user.path = undefined;
-                user.pathOnCancel?.();
 
                 outgoingEvents.push(new OutgoingEvent<UserPositionEventData>("UserPositionEvent", {
                     userId: user.user.model.id,
@@ -105,7 +91,6 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
                 }
 
                 furniture.preoccupiedByActionHandler = true;
-                this.preoccupiedFurniture.push(furniture);
 
                 // do not move the roller itself
                 if(furniture.model.id === this.roomFurniture.model.id) {
