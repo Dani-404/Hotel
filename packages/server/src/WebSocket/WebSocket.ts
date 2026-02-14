@@ -118,8 +118,21 @@ export default class WebSocket {
                 }
             });
 
+            const defaultBadges = ["CCF01", "CCF04", "CCF13", "CCF16", "CCF17", "CCF18", "CCF19", "CCF20", "CCF21", "CCF22", "CCF23", "CCF25"];
+
             if(!userBadgesCount) {
-                await UserBadgeModel.bulkCreate(["CCF01", "CCF04", "CCF13", "CCF16", "CCF17", "CCF18", "CCF19", "CCF20", "CCF21", "CCF22", "CCF23", "CCF25"].map((badgeId) => {
+                await UserBadgeModel.bulkCreate(defaultBadges.map((badgeId) => {
+                    return {
+                        id: randomUUID(),
+                        userId: user.model.id,
+                        badgeId,
+                        equipped: false
+                    };
+                }));
+            }
+            
+            if(userBadgesCount === 0 || userBadgesCount === defaultBadges.length) {
+                await UserBadgeModel.bulkCreate(["PX63B", "PX631", "PX632", "PX633", "PX634"].map((badgeId) => {
                     return {
                         id: randomUUID(),
                         userId: user.model.id,
