@@ -23,6 +23,18 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
     }
 
     async handleActionsInterval(): Promise<void> {
+        const room = this.roomFurniture.room;
+
+        if(this.roomFurniture.model.animation !== 0) {
+            this.roomFurniture.model.animation = 0;
+            
+            room.outgoingEvents.push(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
+                furnitureUpdated: [
+                    this.roomFurniture.getFurnitureData()
+                ]
+            }));
+        }
+
         const elapsedSinceLastExecution = performance.now() - this.lastExecution;
 
         if(elapsedSinceLastExecution < 1000) {
@@ -30,8 +42,6 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
         }
 
         this.lastExecution = performance.now();
-
-        const room = this.roomFurniture.room;
 
         const outgoingEvents: OutgoingEvent[] = [];
 
@@ -134,15 +144,6 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
                     ]
                 }));
             }
-        }
-        else if(this.roomFurniture.model.animation !== 0) {
-            this.roomFurniture.model.animation = 0;
-            
-            room.outgoingEvents.push(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
-                furnitureUpdated: [
-                    this.roomFurniture.getFurnitureData()
-                ]
-            }));
         }
     }
 }
