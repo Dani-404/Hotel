@@ -17,7 +17,9 @@ utils/*/node_modules/
 
 assets/*/
 !assets/reception/
-!assets/shop/
+!assets/shop/*/
+assets/shop/headers/
+assets/shop/teasers/
 !assets/loader/
 
 tsconfig.tsbuildinfo

@@ -10,6 +10,7 @@ import sqlite3 from "sqlite3";
 import extractRoomChatStyles from "./extractions/RoomChatStylesExtractor.ts";
 import extractFigureEffects from "./extractions/FigureEffects.ts";
 import extractAvatarAnimations from "./extractions/AvatarAnimations.ts";
+import { PromisePool } from "@supercharge/promise-pool";
 
 export const database = new sqlite3.Database(":memory:");
 
@@ -73,15 +74,24 @@ let assetNames = [process.argv[2]];
         .map((directory) => directory.name.split('.')[0]);
     }
 
-    for(let assetName of assetNames) {
-        await new Promise<void>(async (resolve, reject) => {
+    console.log(assetNames);
+
+    await PromisePool
+        .withConcurrency(20)
+        .for(assetNames)
+        .process(async (assetName) => {
             const extractOnly = process.argv[3] === "extract-only";
+            const newOnly = process.argv[3] === "new-only";
 
             console.log("Extracting " + assetName);
 
             //try {
                 if(!assetName) {
                     throw new Error("Argument is missing for asset name.");
+                }
+
+                if(newOnly && existsSync(path.join("temp", assetName))) {
+                    return;
                 }
 
                 if(existsSync(path.join("temp", assetName))) {
@@ -94,11 +104,13 @@ let assetNames = [process.argv[2]];
                 const swfCollection = await extractSwf(assetName, (existsSync(`assets/furniture/${assetName}.swf`))?(`assets/furniture/${assetName}.swf`):(`assets/${assetName}.swf`));
 
                 if(extractOnly) {
-                    reject();
+                    return;
                 }
 
                 if(!swfCollection.images.length) {
-                    reject();
+                    console.log("There's no images in the SWF collection.");
+
+                    return;
                 }
 
                 const spritesheet = await createSpritesheet(assetName, swfCollection.images);
@@ -198,7 +210,7 @@ let assetNames = [process.argv[2]];
                             encoding: "utf-8"
                         });
                         
-                        return resolve();
+                        return;
                     }
 
                     const outputPath = path.join("..", "..", "assets", "furniture", assetName);
@@ -248,8 +260,6 @@ let assetNames = [process.argv[2]];
                 }
 
                 console.log("Exported " + assetName);
-
-                resolve();
             /*}
             catch(error) {
                 console.error(error);
@@ -257,5 +267,4 @@ let assetNames = [process.argv[2]];
                 reject();
             }*/
         });
-    }
 })();
