@@ -40,6 +40,7 @@ import GetUserProfileEvent from "./Communication/Game/Rooms/User/GetUserProfileE
 import SetMottoEvent from "./Communication/Game/Users/SetMottoEvent.js";
 import UpdateShopPageEvent from "./Communication/Game/Shop/Development/UpdateShopPageEvent.js";
 import UpdateShopFurnitureEvent from "./Communication/Game/Shop/Development/UpdateShopFurnitureEvent.js";
+import ImportRoomFurnitureEvent from "./Communication/Game/Rooms/Furniture/Development/ImportRoomFurnitureEvent.js";
 
 await initializeModels();
 
@@ -99,6 +100,9 @@ eventHandler
 
 eventHandler
     .addIncomingEvent("SetMottoEvent", new SetMottoEvent());
+
+eventHandler
+    .addIncomingEvent("ImportRoomFurnitureEvent", new ImportRoomFurnitureEvent());
 
 eventHandler.addIncomingEvent("Ping", new PingEvent());
 

@@ -79,6 +79,7 @@ export default class PurchaseShopFurnitureEvent implements IncomingEvent<Purchas
             ]
         });
 
+        userFurniture.user = user.model;
         userFurniture.furniture = shopFurniture.furniture;
 
         if(userFurniture.furniture.category === "teleport") {
@@ -101,6 +102,7 @@ export default class PurchaseShopFurnitureEvent implements IncomingEvent<Purchas
                 ]
             });
 
+            secondUserFurniture.user = user.model;
             secondUserFurniture.furniture = shopFurniture.furniture;
 
             await userFurniture.update({
