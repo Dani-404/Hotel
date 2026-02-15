@@ -35,6 +35,7 @@ export type FiguredataData = {
                 index: number;
                 colorIndex: number;
             }[];
+            hiddenPartTypes?: FigurePartKeyAbbreviation[];
         }[];
     }[];
 };

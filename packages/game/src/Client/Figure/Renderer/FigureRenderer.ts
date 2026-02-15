@@ -30,7 +30,7 @@ export type FigureRendererSprite = {
 
 type SpriteConfiguration = {
     id: string;
-    type: string;
+    type: FigurePartKeyAbbreviation;
 
     index: number;
     
@@ -251,6 +251,7 @@ export default class FigureRenderer {
 
     private getSpritesFromConfiguration() {
         const result: SpriteConfiguration[] = [];
+        const hiddenPartTypes: FigurePartKeyAbbreviation[] = [];
 
         for(const configurationPart of this.configuration.parts) {
             const settypeData = this.getSettypeForPartAndSet(configurationPart.type);
@@ -267,6 +268,10 @@ export default class FigureRenderer {
                 console.warn("Set does not exist for set type.");
 
                 continue;
+            }
+
+            if(setData.hiddenPartTypes) {
+                hiddenPartTypes.push(...setData.hiddenPartTypes);
             }
 
             for(const setPartData of setData.parts) {
@@ -300,7 +305,9 @@ export default class FigureRenderer {
             }
         }
 
-        return result;
+        const filteredResult = result.filter((result) => !hiddenPartTypes.includes(result.type));
+
+        return filteredResult;
     }
 
     private getDirectionFromEffect(effect?: EffectData) {
@@ -463,7 +470,6 @@ export default class FigureRenderer {
         const flipHorizontal = (direction > 3 && direction < 7);
         const flippedDirection = (flipHorizontal)?(6 - direction):(direction);
 
-
         for(const spriteConfiguration of spritesFromConfiguration) {
             const actionForSprite = actionsForBodyParts.find((action) => action.bodyParts.includes(spriteConfiguration.type));
         
@@ -620,7 +626,7 @@ export default class FigureRenderer {
             x: x - 32,
             y: y + 32,
 
-            index: partPriority + spriteConfiguration.index
+            index: (partPriority * 10) 
         };
     }
 
