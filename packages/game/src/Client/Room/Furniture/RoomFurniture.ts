@@ -3,6 +3,7 @@ import FurnitureDefaultLogic from "@Client/Furniture/Logic/FurnitureDefaultLogic
 import FurnitureMultistateLogic from "@Client/Furniture/Logic/FurnitureMultistateLogic";
 import FurnitureRoomDimmerLogic from "@Client/Furniture/Logic/FurnitureRoomDimmerLogic";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
+import RoomFurnitureBackgroundLogic from "@Client/Room/Furniture/Logic/RoomFurnitureBackgroundLogic";
 import RoomFurnitureLogic from "@Client/Room/Furniture/Logic/RoomFurnitureLogic";
 import RoomFurnitureTeleportLogic from "@Client/Room/Furniture/Logic/RoomFurnitureTeleportLogic";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
@@ -16,7 +17,7 @@ export default class RoomFurniture {
 
     constructor(private readonly instance: RoomInstance, public data: RoomFurnitureData) {
         this.furniture = new Furniture(this.data.furniture.type, 64, this.data.direction, this.data.animation, this.data.furniture.color);
-        this.item = new RoomFurnitureItem(this.instance.roomRenderer, this.furniture, this.data.position);
+        this.item = new RoomFurnitureItem(this.instance.roomRenderer, this.furniture, this.data.position, this.data.data as any);
 
         this.instance.roomRenderer.items.push(this.item);
 
@@ -43,6 +44,9 @@ export default class RoomFurniture {
                 
             case "furniture_roomdimmer":
                 return new FurnitureRoomDimmerLogic(this.instance, this);
+                
+            case "furniture_bg":
+                return new RoomFurnitureBackgroundLogic(this.instance, this);
         }
 
         return new FurnitureDefaultLogic(this.instance, this);
@@ -70,6 +74,10 @@ export default class RoomFurniture {
 
         if(data.position) {
             this.item.setPosition(data.position);
+        }
+
+        if(data.data) {
+            this.item.setData(data.data);
         }
     }
 

@@ -19,7 +19,7 @@ export default class RoomItem implements RoomItemInterface {
     process(frame: number): void {
     }
 
-    public setPosition(position: RoomPosition, index: number = 0) {
+    public setPosition(position: RoomPosition | undefined, index: number = 0) {
         //this.data.position = { row, column, depth };
 
         this.position = position;

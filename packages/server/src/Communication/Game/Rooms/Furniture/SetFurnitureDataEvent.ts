@@ -5,6 +5,7 @@ import OutgoingEvent from "../../../../Events/Interfaces/OutgoingEvent.js";
 import { RoomMoodlightData } from "@shared/Interfaces/Room/RoomMoodlightData.js";
 import { SetFurnitureDataEventData } from "@shared/Communications/Requests/Rooms/Furniture/SetFurnitureDataEventData.js";
 import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
+import { RoomFurnitureBackgroundData } from "@shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundData.js";
 
 export default class SetFurnitureDataEvent implements IncomingEvent<SetFurnitureDataEventData<unknown>> {
     async handle(user: User, event: SetFurnitureDataEventData<unknown>) {
@@ -63,9 +64,31 @@ export default class SetFurnitureDataEvent implements IncomingEvent<SetFurniture
                 ]
             }));
         }
+        else if(this.isFurnitureBackgroundType(furniture, event.data)) {
+            furniture.model.data = {
+                imageUrl: event.data.imageUrl,
+                position: {
+                    x: event.data.position.x,
+                    y: event.data.position.y,
+                    z: event.data.position.z,
+                }
+            } satisfies RoomFurnitureBackgroundData;
+
+            await furniture.model.save();
+
+            user.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
+                furnitureUpdated: [
+                    furniture.getFurnitureData()
+                ]
+            }));
+        }
     }
 
     private furnitureIsDimmer(furniture: RoomFurniture, data: unknown): data is RoomMoodlightData {
         return furniture.model.furniture.interactionType === "dimmer";
+    }
+
+    private isFurnitureBackgroundType(furniture: RoomFurniture, data: unknown): data is RoomFurnitureBackgroundData {
+        return furniture.model.furniture.interactionType === "ads_bg";
     }
 }

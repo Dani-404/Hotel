@@ -330,18 +330,18 @@ export async function createFurnitureData(assetName: string) {
             defaultDirection: (furniType["defaultdir"])?(parseInt(furniType["defaultdir"])):(undefined),
 
             category: furniType["category"],
-            interactionType: result.interaction_type ?? "default",
+            interactionType: result?.interaction_type ?? "default",
 
             flags: {
-                stackable: result?.allow_stack === 1,
-                sitable: result?.allow_sit === 1,
-                layable: result?.allow_lay === 1,
-                walkable: result?.allow_walk === 1,
-                giftable: result?.allow_gift === 1,
-                tradable: result?.allow_trade === 1,
-                recyclable: result?.allow_recycle === 1,
-                sellable: result?.allow_marketplace_sell === 1,
-                inventoryStackable: result?.allow_inventory_stack === 1
+                stackable: (result?.allow_stack ?? 1) === 1,
+                sitable: (result?.allow_sit ?? 1) === 1,
+                layable: (result?.allow_lay ?? 1) === 1,
+                walkable: (result?.allow_walk ?? 1) === 1,
+                giftable: (result?.allow_gift ?? 1) === 1,
+                tradable: (result?.allow_trade ?? 1) === 1,
+                recyclable: (result?.allow_recycle ?? 1) === 1,
+                sellable: (result?.allow_marketplace_sell ?? 1) === 1,
+                inventoryStackable: (result?.allow_inventory_stack ?? 1) === 1
             },
 
             customParams: (furniType["customparams"])?(furniType["customparams"].toString().split(',').map((value: string) => parseFloat(value))):(null)

@@ -76,7 +76,7 @@ export default function RoomFurnitureProfile({ furniture }: RoomFurnitureProfile
             }}>
                 {(room?.hasRights) && (
                     <div className="room-furniture-profile-button" onClick={() => {
-                        clientInstance.roomInstance.value?.moveFurniture(furniture.data.furniture.id);
+                        clientInstance.roomInstance.value?.moveFurniture(furniture.data.id);
                     }}>
                         Move
                     </div>
@@ -122,7 +122,7 @@ export default function RoomFurnitureProfile({ furniture }: RoomFurnitureProfile
 
                 {(logic.isAvailable()) && (
                     <div className="room-furniture-profile-button" onClick={() => {
-                        logic.use(furniture);
+                        logic.use();
                     }}>
                         Use
                     </div>

@@ -1,12 +1,14 @@
+import { CSSProperties } from "react";
+
 export type InputProps = {
     type?: "text" | "number";
     placeholder?: string;
-    
+    style?: CSSProperties;
     value: string;
     onChange: (value: string) => void;
 }
 
-export default function Input({ type = "text", placeholder, value, onChange }: InputProps) {
+export default function Input({ style, type = "text", placeholder, value, onChange }: InputProps) {
     return (
         <div style={{
             borderBottom: "1px solid #FFFFFF",
@@ -30,7 +32,8 @@ export default function Input({ type = "text", placeholder, value, onChange }: I
                     style={{
                         flex: 1,
                         background: "none",
-                        border: "none"
+                        border: "none",
+                        ...style
                     }}/>
             </div>
         </div>
