@@ -29,13 +29,16 @@ export default class FigureWardrobe {
 
         const imagePromises = await Promise.allSettled(
             settype.sets.filter((set) => set.selectable && (set.gender === 'U' || (set.gender === 'M' && gender === "male") || (set.gender === 'F' && gender === "female"))).map(async (set) => {
-                const figureRenderer = new Figure([
-                    {
-                        type: settype.type,
-                        setId: set.id,
-                        colors: (set.colorable)?(colors ?? palette?.colors.map((color) => color.id) ?? []):([])
-                    }
-                ], 2);
+                const figureRenderer = new Figure({
+                    gender,
+                    parts: [
+                        {
+                            type: settype.type,
+                            setId: set.id,
+                            colors: (set.colorable)?(colors ?? palette?.colors.map((color) => color.id) ?? []):([])
+                        }
+                    ]
+                }, 2, undefined, (part === "hd"));
 
                 const image = new Promise<ImageBitmap>((resolve, reject) => {
                     figureRenderer.renderToCanvas(this.figureWorker, 0, true).then(({ figure }) => resolve(figure.image)).catch(reject);

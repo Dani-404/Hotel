@@ -1,6 +1,9 @@
 import { ReactNode, useState } from "react";
 
 export type DialogSubTabsProps = {
+    activeIndex?: number;
+    onTabChange?: (activeIndex: number) => void;
+
     tabs: {
         icon: ReactNode;
         activeIcon?: ReactNode;
@@ -9,7 +12,7 @@ export type DialogSubTabsProps = {
     }[];
 };
 
-export default function DialogSubTabs({ tabs }: DialogSubTabsProps) {
+export default function DialogSubTabs({ activeIndex: forcedActiveIndex, onTabChange, tabs }: DialogSubTabsProps) {
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
@@ -36,14 +39,14 @@ export default function DialogSubTabs({ tabs }: DialogSubTabsProps) {
                         alignItems: "center",
 
                         cursor: "pointer"
-                    }} onClick={() => setActiveIndex(index)}>
-                        {(activeIndex === index)?(activeIcon ?? icon):(icon)}
+                    }} onClick={() => onTabChange?.(index) ?? setActiveIndex(index)}>
+                        {((forcedActiveIndex ?? activeIndex) === index)?(activeIcon ?? icon):(icon)}
                     </div>
                 ))}
             </div>
 
-            <div key={activeIndex}>
-                {tabs[activeIndex].element}
+            <div key={(forcedActiveIndex ?? activeIndex)}>
+                {tabs[forcedActiveIndex ?? activeIndex].element}
             </div>
         </div>
     );

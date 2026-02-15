@@ -252,7 +252,7 @@ export default class FigureRenderer {
     private getSpritesFromConfiguration() {
         const result: SpriteConfiguration[] = [];
 
-        for(const configurationPart of this.configuration) {
+        for(const configurationPart of this.configuration.parts) {
             const settypeData = this.getSettypeForPartAndSet(configurationPart.type);
 
             if(!settypeData) {
@@ -482,6 +482,10 @@ export default class FigureRenderer {
             }
 
             const geometryPart = actionForSprite.geometry.bodyparts.find((bodypart) => bodypart.parts.includes(spriteConfiguration.type));
+
+            if(this.headOnly && geometryPart?.id !== "head") {
+                continue;
+            }
 
             const avatarAnimation = this.getAvatarAnimation(actionForSprite.actionId, geometryPart?.id, spriteConfiguration.type, flippedDirection, this.frame);
 
@@ -738,7 +742,7 @@ export default class FigureRenderer {
     }
 
     public getConfigurationAsString(): string {
-        return this.configuration.map((section) => [section.type, section.setId, ...section.colors].filter(Boolean).join('-')).join('.');
+        return this.configuration.parts.map((section) => [section.type, section.setId, ...section.colors].filter(Boolean).join('-')).join('.');
     }
     
     private async getEffect() {

@@ -4,6 +4,7 @@ import { FurnitureData } from "@Client/Interfaces/Furniture/FurnitureData";
 
 export default class FurnitureAssets {
     public static placeholder: { image: ImageBitmap, imageData: ImageData };
+    public static placeholder32: { image: ImageBitmap, imageData: ImageData };
     
     public static async preloadAssets() {
         FurnitureAssets.placeholder = await AssetFetcher.fetchImageSprite(`/assets/furniture/placeholder/placeholder64.png`, {
@@ -11,6 +12,13 @@ export default class FurnitureAssets {
             y: 0,
             width: 68,
             height: 67
+        });
+        
+        FurnitureAssets.placeholder32 = await AssetFetcher.fetchImageSprite(`/assets/furniture/placeholder/placeholder32.png`, {
+            x: 0,
+            y: 0,
+            width: 35,
+            height: 34
         });
     }
 

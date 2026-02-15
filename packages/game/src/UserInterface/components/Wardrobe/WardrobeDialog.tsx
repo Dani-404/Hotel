@@ -84,7 +84,7 @@ export type WardrobeDialogProps = {
 export default function WardrobeDialog({ hidden, onClose }: WardrobeDialogProps) {
     const user = useUser();
 
-    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(user?.figureConfiguration ?? []);
+    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(user.figureConfiguration);
 
     useEffect(() => {
         if(!user) {
@@ -102,22 +102,58 @@ export default function WardrobeDialog({ hidden, onClose }: WardrobeDialogProps)
     
     return (
         <Dialog title="Wardrobe" hidden={hidden} onClose={onClose} width={500} height={530}>
-            <DialogTabs initialActiveIndex={1} header={{ title: user?.name }} tabs={[
+            <DialogTabs initialActiveIndex={0} header={{ title: user?.name }} tabs={[
                 {
                     icon: (<div className="sprite_wardrobe_generic_tab"/>),
                     element: (
-                        <DialogSubTabs tabs={[
-                            {
-                                icon: (<div className="sprite_wardrobe_male"/>),
-                                activeIcon: (<div className="sprite_wardrobe_male_on"/>),
-                                element: (<div>male</div>)
-                            },
-                            {
-                                icon: (<div className="sprite_wardrobe_female"/>),
-                                activeIcon: (<div className="sprite_wardrobe_female_on"/>),
-                                element: (<div>female</div>)
-                            }
-                        ]}/>
+                        <div style={{
+                            flex: 1,
+
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 10
+                        }}>
+                            <DialogSubTabs activeIndex={(figureConfiguration.gender === "male")?(0):(1)} onTabChange={(index) => {
+                                setFigureConfiguration({
+                                    ...figureConfiguration,
+                                    gender: (index === 0)?("male"):("female")
+                                });
+                            }} tabs={[
+                                {
+                                    icon: (<div className="sprite_wardrobe_male"/>),
+                                    activeIcon: (<div className="sprite_wardrobe_male_on"/>),
+                                    element: (
+                                        <WardrobeSelection part={"hd" as FigurePartKeyAbbreviation} figureConfiguration={figureConfiguration} onFigureConfigurationChange={setFigureConfiguration}/>
+                                    )
+                                },
+                                {
+                                    icon: (<div className="sprite_wardrobe_female"/>),
+                                    activeIcon: (<div className="sprite_wardrobe_female_on"/>),
+                                    element: (
+                                        <WardrobeSelection part={"hd" as FigurePartKeyAbbreviation} figureConfiguration={figureConfiguration} onFigureConfigurationChange={setFigureConfiguration}/>
+                                    )
+                                }
+                            ]}/>
+
+                            <div style={{
+                                flex: 1,
+
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center"
+                            }}>
+                                <div style={{
+                                    width: 130,
+                                    height: "100%"
+                                }}>
+                                    <WardrobeAvatar configuration={figureConfiguration}/>
+                                </div>
+
+                                <div style={{ width: "100%" }}>
+                                    <DialogButton onClick={handleSaveFigure}>Save my looks</DialogButton>
+                                </div>
+                            </div>
+                        </div>
                     )
                 },
                 ...wardrobeTabs.map((wardrobeTab) => {

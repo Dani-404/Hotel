@@ -4,12 +4,16 @@ export default class FigureConfigurationHelper {
     public static getConfigurationFromString(figureString: string): FigureConfiguration {
         const parts = figureString.split('.');
 
-        const configuration: FigureConfiguration = [];
+        // TODO: guess gender from head part
+        const configuration: FigureConfiguration = {
+            gender: "male",
+            parts: []
+        };
 
         for(let part of parts) {
             const sections = part.split('-');
 
-            configuration.push({
+            configuration.parts.push({
                 type: sections[0] as FigurePartKeyAbbreviation,
                 setId: sections[1] as string,
                 colors: (sections[2])?([parseInt(sections[2])]):([])

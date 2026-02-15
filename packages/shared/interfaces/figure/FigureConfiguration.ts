@@ -2,7 +2,11 @@ export type FigurePartKeyAbbreviation = "hr" | "lg" | "ch" | "hd" | "sh" | "he" 
 export type FigurePartKey = "hair" | "leg" | "shirt" | "body" | "shoe" | "head" | "waist" | "hat" | "chest" | "eye" | "face";
 
 export type FigureConfiguration = {
-    type: FigurePartKeyAbbreviation;
-    setId: string;
-    colors: number[];
-}[];
+    gender: "male" | "female";
+
+    parts: {
+        type: FigurePartKeyAbbreviation;
+        setId: string;
+        colors: number[];
+    }[];
+};

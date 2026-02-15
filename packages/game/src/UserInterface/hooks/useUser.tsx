@@ -12,5 +12,5 @@ export function useUser() {
     });
   }, []);
 
-  return user;
+  return user!;
 }

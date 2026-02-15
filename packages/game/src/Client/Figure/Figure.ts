@@ -32,7 +32,7 @@ export default class Figure {
     }
 
     public getConfigurationAsString(): string {
-        return this.configuration.map((section) => [section.type, section.setId, ...section.colors].filter(Boolean).join('-')).join('.');
+        return this.configuration.parts.map((section) => [section.type, section.setId, ...section.colors].filter(Boolean).join('-')).join('.');
     }
 
     public addAction(id: string) {

@@ -4,6 +4,7 @@ import WardrobeSelectionItem from "./WardrobeSelectionItem";
 import WardrobeSelectionColors from "./WardrobeSelectionColors";
 import FigureWardrobe, { FigureWardrobeColor, FigureWardrobeItem } from "@Client/Figure/Wardrobe/FigureWardrobe";
 import { FigureConfiguration, FigurePartKeyAbbreviation } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import FurnitureAssets from "@Client/Assets/FurnitureAssets";
 
 export type WardrobeSelectionProps = {
     part: FigurePartKeyAbbreviation;
@@ -28,10 +29,10 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
 
         requestedData.current = true;
 
-        FigureWardrobe.getWardrobePartTypes(part, undefined, "male").then(async (data) => setFigureDataResponse(data));
+        FigureWardrobe.getWardrobePartTypes(part, undefined, figureConfiguration.gender).then(async (data) => setFigureDataResponse(data));
     }, []);
 
-    const activeConfiguration = figureConfiguration.find((configuration) => configuration.type === part);
+    const activeConfiguration = figureConfiguration.parts.find((configuration) => configuration.type === part);
     const activeFigureData = activeConfiguration && figureDataResponse?.items.find((item) => item.setId === activeConfiguration.setId);
 
     return (
@@ -54,7 +55,10 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
                 }}>
                     {(!figureDataResponse?.mandatory) && (
                         <WardrobeSelectionItem active={!activeConfiguration} onClick={() => {
-                            onFigureConfigurationChange(figureConfiguration.filter((configuration) => configuration.type !== part));
+                            onFigureConfigurationChange({
+                                ...figureConfiguration,
+                                parts: figureConfiguration.parts.filter((configuration) => configuration.type !== part)
+                            });
                         }}>
                             <div className="sprite_dialog_remove_selection"/>
                         </WardrobeSelectionItem>
@@ -62,9 +66,10 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
 
                     {figureDataResponse?.items?.map(({ image, setId, colorable }) => (
                         <WardrobeSelectionItem key={setId} active={Boolean(activeConfiguration) && (activeConfiguration?.setId === setId)} onClick={() => {
-                            onFigureConfigurationChange(
-                                figureConfiguration
-                                    .filter((configuration) => configuration.type !== part)
+                            onFigureConfigurationChange({
+                                ...figureConfiguration,
+                                parts:
+                                    figureConfiguration.parts.filter((configuration) => configuration.type !== part)
                                     .concat([
                                         {
                                             type: part,
@@ -72,9 +77,9 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
                                             colors: (colorable) ? (activeConfiguration?.colors ?? figureDataResponse.colors.map((color) => color.id) ?? []) : ([])
                                         }
                                     ])
-                            );
+                            });
                         }}>
-                            <OffscreenCanvasRender offscreenCanvas={image}/>
+                            <OffscreenCanvasRender offscreenCanvas={image} placeholderImage={FurnitureAssets.placeholder32.image}/>
                         </WardrobeSelectionItem>
                     ))}
                 </div>
@@ -98,11 +103,13 @@ export default function WardrobeSelection({ part, figureConfiguration, onFigureC
 
                             activeConfiguration.colors[index] = color;
 
-                            onFigureConfigurationChange(
-                                figureConfiguration
+                            onFigureConfigurationChange({
+                                ...figureConfiguration,
+                                parts:
+                                    figureConfiguration.parts
                                     .filter((configuration) => configuration.type !== part)
                                     .concat([ activeConfiguration ])
-                            );
+                            });
                         }}/>
                 ))}
             </div>
