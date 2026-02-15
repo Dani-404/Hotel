@@ -6,6 +6,8 @@ import { webSocketClient } from "../../../..";
 import { SetHomeRoomEventData } from "@Shared/Communications/Requests/User/SetHomeRoomEventData";
 import RoomThumbnail from "../Thumbnail/RoomThumbnail";
 import { useUser } from "../../../hooks/useUser";
+import DialogButton from "../../Dialog/Button/DialogButton";
+import { useDialogs } from "../../../hooks/useDialogs";
 
 export type RoomInformationDialogProps = {
     hidden?: boolean;
@@ -14,8 +16,8 @@ export type RoomInformationDialogProps = {
 
 export default function RoomInformationDialog({ hidden, onClose }: RoomInformationDialogProps) {
     const user = useUser();
-
     const room = useRoomInstance();
+    const dialogs = useDialogs();
 
     const [homeRoomActive, setHomeRoomActive] = useState(room?.id === user?.homeRoomId);
 
@@ -36,9 +38,10 @@ export default function RoomInformationDialog({ hidden, onClose }: RoomInformati
     }
 
     return (
-        <Dialog title="Room information" hidden={hidden} onClose={onClose} width={230} height={450}>
+        <Dialog title="Room information" hidden={hidden} onClose={onClose} width={230} height={280}>
             <DialogContent>
                 <div style={{
+                    flex: 1,
                     display: "flex",
                     flexDirection: "column",
                     gap: 8,
@@ -63,18 +66,23 @@ export default function RoomInformationDialog({ hidden, onClose }: RoomInformati
 
                     {(room.information.description) && (
                         <div>
-                            <p>
-                                {room.information.description}
-                            </p>
+                            <p>{room.information.description}</p>
                         </div>
                     )}
 
                     <div style={{
+                        flex: 1,
+
                         display: "flex",
-                        justifyContent: "center"
+                        justifyContent: "center",
+                        alignItems: "center"
                     }}>
                         <RoomThumbnail roomId={room.id} thumbnail={room.information.thumbnail}/>
                     </div>
+
+                    {(room.hasRights) && (
+                        <DialogButton onClick={() => dialogs.addUniqueDialog("room-settings")}>Room settings</DialogButton>
+                    )}
                 </div>
             </DialogContent>
         </Dialog>
