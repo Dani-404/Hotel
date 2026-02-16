@@ -4,6 +4,7 @@ export type NavigatorRoomsEventData = {
         id: string;
         name: string;
         users: number;
+        thumbnail: string | null;
         maxUsers: number;
     }[];
 }[];

@@ -1,8 +1,11 @@
 import { RoomFurnitureData } from "../../../Interfaces/Room/RoomFurnitureData.js";
 import { RoomStructure } from "../../../Interfaces/Room/RoomStructure.js";
+import { RoomType } from "../../../Interfaces/Room/RoomType.js";
 import { RoomUserData } from "../../../Interfaces/Room/RoomUserData.js";
 
 export type RoomInformationData = {
+    type: RoomType;
+    
     name: string;
     description: string;
     category: string;

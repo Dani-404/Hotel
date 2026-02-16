@@ -7,7 +7,7 @@ import { game } from "../../../index.js";
 export default class GetRoomCategoriesEvent implements IncomingEvent {
     async handle(user: User): Promise<void> {
         user.send(new OutgoingEvent<RoomCategoriesEventData>("RoomCategoriesEvent", 
-            game.roomNavigatorManager.categories.map((category) => {
+            game.roomNavigatorManager.categories.filter((category) => !category.developer || (category.developer && user.model.developer)).map((category) => {
                 return {
                     id: category.id,
                     title: category.title

@@ -3,6 +3,7 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 export class RoomCategoryModel extends Model {
     declare id: string;
     declare title: string;
+    declare developer: boolean;
 }
 
 export function initializeRoomCategoryModel(sequelize: Sequelize) {
@@ -13,6 +14,11 @@ export function initializeRoomCategoryModel(sequelize: Sequelize) {
           },
           title: {
             type: new DataTypes.TEXT,
+            allowNull: false
+          },
+          developer: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
             allowNull: false
           }
         },

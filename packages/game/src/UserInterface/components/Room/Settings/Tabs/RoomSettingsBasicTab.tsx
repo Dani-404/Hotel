@@ -1,18 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { useRoomInstance } from "../../../../hooks/useRoomInstance";
 import { webSocketClient } from "../../../../..";
 import { UpdateRoomInformationEventData } from "@Shared/Communications/Requests/Rooms/UpdateRoomInformationEventData";
 import Input from "../../../Form/Input";
 import Selection from "../../../Form/Selection";
 import { useRoomCategories } from "../../../../hooks/useRoomCategories";
+import { useUser } from "../../../../hooks/useUser";
+import { RoomType } from "@Shared/Interfaces/Room/RoomType";
 
 export default function RoomSettingsBasicTab() {
     const room = useRoomInstance();
     const roomCategories = useRoomCategories();
-
-    if(!room) {
-        return;
-    }
+    const user = useUser();
 
     const [name, setName] = useState(room?.information.name ?? "");
     const [description, setDescription] = useState(room?.information.description ?? "");
@@ -47,11 +46,21 @@ export default function RoomSettingsBasicTab() {
         });
     }, []);
 
+    const handleTypeChange = useCallback((type: string) => {
+        webSocketClient.send<UpdateRoomInformationEventData>("UpdateRoomInformationEvent", {
+            type: type as RoomType
+        });
+    }, []);
+
     const handleMaxUsersChange = useCallback((maxUsers: number) => {
         webSocketClient.send<UpdateRoomInformationEventData>("UpdateRoomInformationEvent", {
             maxUsers
         });
     }, []);
+
+    if(!room) {
+        return null;
+    }
 
     return (
         <div style={{
@@ -82,6 +91,23 @@ export default function RoomSettingsBasicTab() {
                         label: category.title
                     };
                 }) ?? []} onChange={(value) => handleCategoryChange(value as string)}/>
+
+                {(user.developer) && (
+                    <Fragment>
+                        <b>Room type</b>
+
+                        <Selection value={room.information.type} items={[
+                            {
+                                value: "private",
+                                label: "Private"
+                            },
+                            {
+                                value: "public",
+                                label: "Public"
+                            }
+                        ]} onChange={(value) => handleTypeChange(value as string)}/>
+                    </Fragment>
+                )}
 
                 <b>Maximum amount of visitors</b>
 

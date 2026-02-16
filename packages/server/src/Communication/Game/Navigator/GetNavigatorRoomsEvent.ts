@@ -5,10 +5,53 @@ import OutgoingEvent from "../../../Events/Interfaces/OutgoingEvent.js";
 import { NavigatorRoomsEventData } from "@shared/Communications/Responses/Navigator/NavigatorRoomsEventData.js";
 import { RoomModel } from "../../../Database/Models/Rooms/RoomModel.js";
 import { game } from "../../../index.js";
+import { RoomCategoryModel } from "../../../Database/Models/Rooms/Categories/RoomCategoryModel.js";
 
 export default class GetNavigatorRoomsEvent implements IncomingEvent<GetNavigatorRoomsEventData> {
     async handle(user: User, event: GetNavigatorRoomsEventData): Promise<void> {
         switch(event.category) {
+            case "public": {
+                const roomModels = await RoomModel.findAll({
+                    where: {
+                        type: "public"
+                    },
+                    order: [
+                        [ "createdAt", "DESC" ]
+                    ],
+                    include: [
+                        {
+                            model: RoomCategoryModel,
+                            as: "category"
+                        }
+                    ]
+                });
+
+                const uniqueCategories = [...new Set(roomModels.map((room) => room.category.id))];
+
+                user.send(new OutgoingEvent<NavigatorRoomsEventData>("NavigatorRoomsEvent", uniqueCategories.map((categoryId) => {
+                    const rooms = roomModels.filter((room) => room.category.id === categoryId);
+
+                    return {
+                        title: rooms[0]?.category.title ?? "",
+                        rooms: rooms.map((roomModel) => {
+                            const room = game.roomManager.getRoomInstance(roomModel.id);
+
+                            return {
+                                id: roomModel.id,
+                                name: roomModel.name,
+
+                                users: room?.users.length ?? 0,
+                                maxUsers: roomModel.maxUsers,
+
+                                thumbnail: (roomModel.thumbnail)?(Buffer.from(roomModel.thumbnail).toString('utf8')):(null)
+                            };
+                        }).toSorted((a, b) => b.users - a.users)
+                    }
+                })));
+
+                break;
+            }
+
             case "all": {
                 const roomModels = await RoomModel.findAll({
                     order: [
@@ -26,7 +69,9 @@ export default class GetNavigatorRoomsEvent implements IncomingEvent<GetNavigato
                                 name: room.model.name,
 
                                 users: room.users.length ?? 0,
-                                maxUsers: room.model.maxUsers
+                                maxUsers: room.model.maxUsers,
+
+                                thumbnail: room.model.thumbnail
                             };
                         })
                     },
@@ -40,7 +85,9 @@ export default class GetNavigatorRoomsEvent implements IncomingEvent<GetNavigato
                                 name: roomModel.name,
 
                                 users: room?.users.length ?? 0,
-                                maxUsers: roomModel.maxUsers
+                                maxUsers: roomModel.maxUsers,
+
+                                thumbnail: (roomModel.thumbnail)?(Buffer.from(roomModel.thumbnail).toString('utf8')):(null)
                             };
                         }).toSorted((a, b) => b.users - a.users)
                     }
@@ -70,7 +117,9 @@ export default class GetNavigatorRoomsEvent implements IncomingEvent<GetNavigato
                                 name: roomModel.name,
 
                                 users: room?.users.length ?? 0,
-                                maxUsers: roomModel.maxUsers
+                                maxUsers: roomModel.maxUsers,
+
+                                thumbnail: (roomModel.thumbnail)?(Buffer.from(roomModel.thumbnail).toString('utf8')):(null)
                             };
                         }).toSorted((a, b) => b.users - a.users)
                     }

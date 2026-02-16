@@ -189,11 +189,15 @@ export default class Room {
     }
 
     public getInformationData(): RoomInformationData {
+        console.log(this.model.type);
+        
         return {
+            type: this.model.type,
+
             name: this.model.name,
             description: this.model.description,
             category: this.model.category.id,
-            thumbnail: this.model.thumbnail,
+            thumbnail: (this.model.thumbnail)?(Buffer.from(this.model.thumbnail).toString('utf8')):(null),
             
             owner: {
                 id: this.model.owner.id,

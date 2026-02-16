@@ -46,6 +46,10 @@ export default class UpdateRoomInformationEvent implements IncomingEvent<UpdateR
             user.room.model.thumbnail = await this.getValidatedThumbnailImage(event.thumbnail);
         }
 
+        if(event.type && user.model.developer) {
+            user.room.model.type = event.type;
+        }
+
         if(user.room.model.changed()) {
             await user.room.model.save();
 

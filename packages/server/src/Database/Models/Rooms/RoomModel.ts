@@ -5,9 +5,11 @@ import { RoomMoodlightData } from "@shared/Interfaces/Room/RoomMoodlightData.js"
 import { UserModel } from "../Users/UserModel.js";
 import { RoomRightsModel } from "./Rights/RoomRightsModel.js";
 import { RoomCategoryModel } from "./Categories/RoomCategoryModel.js";
+import { RoomType } from "@shared/Interfaces/Room/RoomType.js";
 
 export class RoomModel extends Model {
     declare id: string;
+    declare type: RoomType;
     
     declare name: string;
     declare description: string;
@@ -31,6 +33,11 @@ export function initializeRoomModel(sequelize: Sequelize) {
           id: {
             type: DataTypes.UUID,
             primaryKey: true,
+          },
+          type: {
+            type: DataTypes.STRING,
+            defaultValue: "private",
+            allowNull: false
           },
           name: {
             type: new DataTypes.STRING(32),

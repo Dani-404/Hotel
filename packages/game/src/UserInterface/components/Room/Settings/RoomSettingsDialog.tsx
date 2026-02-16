@@ -11,7 +11,7 @@ export type RoomSettingsDialogProps = {
 export default function RoomSettingsDialog({ hidden, onClose }: RoomSettingsDialogProps) {
     return (
         <Dialog title="Room Settings" hidden={hidden} onClose={onClose} width={340} height={470} style={{ overflow: "visible" }}>
-            <DialogTabs withoutHeader initialActiveIndex={3} tabs={[
+            <DialogTabs withoutHeader initialActiveIndex={0} tabs={[
                 {
                     icon: "Basic",
                     element: (<RoomSettingsBasicTab/>),

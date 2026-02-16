@@ -14,7 +14,6 @@ export function useNavigator(category: string) {
   }, []);
 
   useEffect(() => {
-    console.log(category);
     webSocketClient.send<GetNavigatorRoomsEventData>("GetNavigatorRoomsEvent", {
       category
     });

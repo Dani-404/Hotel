@@ -27,7 +27,7 @@ export default function DialogList({ children }: PropsWithChildren) {
 
                     fontSize: 13,
 
-                    cursor: "pointer"
+                    cursor: "pointer",
                 }}>
                     {child}
                 </div>

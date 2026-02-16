@@ -26,13 +26,32 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
             }} tabs={[
                 {
                     icon: "Public",
-                    element: (<div style={{ flex: 1 }}/>),
+                    element: (
+                        <div style={{
+                            flex: "1 1 0",
+
+                            overflowY: "overlay",
+
+                            display: "flex",
+                            flexDirection: "column"
+                        }}>
+                            {navigator!.map((navigator) => (
+                                <NavigatorRoomList thumbnail={true} key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
+                                    webSocketClient.send<EnterRoomEventData>("EnterRoomEvent", {
+                                        roomId: room.id
+                                    });
+
+                                    closeDialog("navigator");
+                                }}/>
+                            ))}
+                        </div>
+                    ),
                 },
                 {
                     icon: "All Rooms",
                     element: (
                         <div style={{
-                            flex: 1,
+                            flex: "1 1 0",
 
                             overflowY: "overlay",
 
@@ -59,7 +78,7 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                     icon: "My Rooms",
                     element: (
                         <div style={{
-                            flex: 1,
+                            flex: "1 1 0",
 
                             overflowY: "overlay",
 
