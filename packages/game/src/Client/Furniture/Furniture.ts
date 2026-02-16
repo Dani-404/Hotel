@@ -30,7 +30,7 @@ export default class Furniture {
 
     public readonly renderer: FurnitureRenderer;
 
-    constructor(public readonly type: string, public size: number, public direction: number | undefined = undefined, public animation: number = 0, public color: number = 0) {
+    constructor(public readonly type: string, public size: number, public direction: number | undefined = undefined, public animation: number = 0, public color: number | null = null) {
         if((this.type === "wallpaper" || this.type === "floor") && color !== 0) {
             this.renderer = new FurnitureRoomContentRenderer(this.type);
         }
@@ -66,7 +66,7 @@ export default class Furniture {
 
         this.placement = this.data.visualization.placement;
 
-        return await this.renderer.render(this.data, this.direction, this.size, this.animation, this.color, this.frame);
+        return await this.renderer.render(this.data, this.direction, this.size, this.animation, this.color ?? 0, this.frame);
     }
 
     public async renderToCanvas() {
@@ -83,7 +83,7 @@ export default class Furniture {
 
         this.placement = this.data.visualization.placement;
 
-        return await this.renderer.renderToCanvas(this.data, this.direction, this.size, this.animation, this.color, this.frame);
+        return await this.renderer.renderToCanvas(this.data, this.direction, this.size, this.animation, this.color ?? 0, this.frame);
     }
 
     public getVisualizationData(data: FurnitureData) {
