@@ -176,7 +176,7 @@ export default function EditShopFurnitureDialog({ hidden, data, onClose }: EditS
                         justifyContent: "flex-end"
                     }}>
                         <DialogButton onClick={handleUpdate}>
-                            {(data?.id)?("Update page"):("Create page")}
+                            {(data?.id)?("Update furniture"):("Create furniture")}
                         </DialogButton>
                     </div>
                 </div>

@@ -122,7 +122,9 @@ export default function DialogTabs({ initialActiveIndex = 0, withoutHeader, tabs
                                 )}
 
                                 {(currentHeader.description) && (
-                                    <p>{currentHeader.description}</p>
+                                    <p style={{
+                                        fontSize: (currentHeader.description.length > 200)?(11):(13)
+                                    }}>{currentHeader.description}</p>
                                 )}
                             </div>
                         </div>
