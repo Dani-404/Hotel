@@ -48,7 +48,7 @@ export default class RoomFigureItem extends RoomItem {
                     this.figureRenderer.addAction("Sit");
                     this.figureRenderer.direction = furniture.data.direction;
 
-                    position.depth = furniture.data.position.depth + furniture.data.furniture.dimensions.depth;
+                    position.depth = furniture.data.position.depth + furniture.data.furniture.dimensions.depth - 0.5;
                 }
             }
         }
