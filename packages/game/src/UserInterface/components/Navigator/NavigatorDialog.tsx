@@ -34,6 +34,8 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                         <div style={{
                             flex: 1,
 
+                            overflowY: "overlay",
+
                             display: "flex",
                             flexDirection: "column"
                         }}>
@@ -58,6 +60,8 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                     element: (
                         <div style={{
                             flex: 1,
+
+                            overflowY: "overlay",
 
                             display: "flex",
                             flexDirection: "column"

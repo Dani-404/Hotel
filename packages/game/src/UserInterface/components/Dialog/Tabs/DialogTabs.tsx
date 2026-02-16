@@ -190,7 +190,9 @@ export default function DialogTabs({ initialActiveIndex = 0, withoutHeader, tabs
                 </div>
             </div>
 
-            <DialogContent key={activeIndex}>
+            <DialogContent key={activeIndex} style={{
+                gap: 10
+            }}>
                 {tabs[activeIndex].element}
 
                 {children}
