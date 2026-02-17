@@ -64,6 +64,8 @@ export default class EventHandler extends EventEmitter {
             console.log("Processing event: " + eventName);
 
             this.emit(eventName, user, eventBody);
+
+            // TODO: remove the user event handler?
             user.emit(eventName, user, eventBody);
         }
     }

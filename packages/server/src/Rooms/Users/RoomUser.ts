@@ -12,6 +12,7 @@ import { RoomMoodlightEventData } from "@shared/Communications/Responses/Rooms/F
 import { AStarFinder } from "astar-typescript";
 import RoomFurniture from "../Furniture/RoomFurniture.js";
 import { UserPositionEventData } from "@shared/Communications/Responses/Rooms/Users/UserPositionEventData.js";
+import { UserChatEventData } from "@shared/Communications/Responses/Rooms/Users/UserChatEventData.js";
 
 export default class RoomUser {
     public preoccupiedByActionHandler: boolean = false;
@@ -310,5 +311,15 @@ export default class RoomUser {
         }
 
         return false;
+    }
+
+    public sendRoomMessage(message: string) {
+        this.room.sendRoomEvent(new OutgoingEvent<UserChatEventData>("UserChatEvent", {
+            userId: this.user.model.id,
+            message,
+            roomChatStyleId: this.user.model.roomChatStyleId
+        }));
+
+        this.addAction("Talk", Math.max(800, message.length * 60));
     }
 }

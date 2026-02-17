@@ -3,6 +3,7 @@ import User from "../../../../Users/User.js";
 import { SendUserMessageEventData } from "@shared/Communications/Requests/Rooms/User/SendUserMessageEventData.js";
 import OutgoingEvent from "../../../../Events/Interfaces/OutgoingEvent.js";
 import { UserChatEventData } from "@shared/Communications/Responses/Rooms/Users/UserChatEventData.js";
+import { game } from "../../../../index.js";
 
 export default class SendUserMessageEvent implements IncomingEvent<SendUserMessageEventData> {
     public readonly name = "SendUserMessageEvent";
@@ -10,6 +11,10 @@ export default class SendUserMessageEvent implements IncomingEvent<SendUserMessa
     async handle(user: User, event: SendUserMessageEventData) {
         if(!user.room) {
             return;
+        }
+
+        if(!event.message.length) {
+            throw new Error("Message is empty.");
         }
 
         const roomUser = user.room.getRoomUser(user);
@@ -30,69 +35,14 @@ export default class SendUserMessageEvent implements IncomingEvent<SendUserMessa
             roomUser.addAction("GestureSurprised");
         }
 
-        // TODO: implement proper command handling
-        if(event.message === ":sit") {
-            roomUser.addAction("Sit");
-        }
-        else if(event.message === ":wave") {
-            roomUser.addAction("Wave");
-        }
-        else if(event.message.startsWith(":enable")) {
-            const id = event.message.split(' ')[1];
+        if(event.message[0] === ':') {
+            const parts = event.message.split(' ');
 
-            if(!id) {
-                throw new Error("Missing enable id parameter.");
-            }
+            game.commandHandler.dispatchCommand(roomUser, parts[0]!.substring(1), parts.slice(1));
 
-            const roomUser = user.room.getRoomUser(user);
-
-            roomUser.removeAction("AvatarEffect");
-            
-            roomUser.addAction("AvatarEffect." + parseInt(id));
-        }
-        else if(event.message.startsWith(":speed")) {
-            const roomUser = user.room.getRoomUser(user);
-
-            if(!roomUser.hasRights()) {
-                this.sendRoomMessage(user, event);
-                
-                return;
-            }
-
-            const scaleInput = event.message.split(' ')[1];
-
-            if(!scaleInput) {
-                this.sendRoomMessage(user, event);
-
-                return;
-            }
-
-            const scale = Math.max(0, Math.min(2, parseFloat(scaleInput)));
-
-            user.room.model.speed = scale;
-
-            if(user.room.model.changed()) {
-                await user.room.model.save();
-            }
-        }
-        else {
-            this.sendRoomMessage(user, event);
-        }
-    }
-
-    private sendRoomMessage(user: User, event: SendUserMessageEventData) {
-        if(!user.room) {
             return;
         }
 
-        const roomUser = user.room.getRoomUser(user);
-
-        user.room.sendRoomEvent(new OutgoingEvent<UserChatEventData>("UserChatEvent", {
-            userId: user.model.id,
-            message: event.message,
-            roomChatStyleId: user.model.roomChatStyleId
-        }));
-
-        roomUser.addAction("Talk", Math.max(800, event.message.length * 60));
+        roomUser.sendRoomMessage(event.message);
     }
 }

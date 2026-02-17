@@ -1,3 +1,4 @@
+import CommandHandler from "./Commands/CommandHandler.js";
 import EventHandler from "./Events/EventHandler.js";
 import RoomNavigatorManager from "./Rooms/Navigator/RoomNavigatorManager.js";
 import RoomManager from "./Rooms/RoomManager.js";
@@ -8,6 +9,7 @@ export default class Game {
     public readonly roomManager;
     public readonly roomNavigatorManager;
 
+    public readonly commandHandler;
     public readonly eventHandler;
     public readonly webSocket;
 
@@ -17,6 +19,7 @@ export default class Game {
         this.roomNavigatorManager = new RoomNavigatorManager();
         this.roomManager = new RoomManager();
         
+        this.commandHandler = new CommandHandler();
         this.eventHandler = new EventHandler();
         this.webSocket = new WebSocket();
 
