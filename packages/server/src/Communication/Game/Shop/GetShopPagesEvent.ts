@@ -6,6 +6,8 @@ import { GetShopPagesEventData } from "@shared/Communications/Requests/Shop/GetS
 import { ShopPagesEventData } from "@shared/Communications/Responses/Shop/ShopPagesEventData.js";
 
 export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEventData> {
+    public readonly name = "GetShopPagesEvent";
+    
     async handle(user: User, event: GetShopPagesEventData) {
         if(event.category !== "furniture") {
             return;

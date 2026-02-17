@@ -9,6 +9,8 @@ import { UserFurnitureModel } from "../../../../../Database/Models/Users/Furnitu
 import { randomUUID } from "node:crypto";
 
 export default class ImportRoomFurnitureEvent implements IncomingEvent<ImportRoomFurnitureEventData> {
+    public readonly name = "ImportRoomFurnitureEvent";
+
     async handle(user: User, event: ImportRoomFurnitureEventData) {
         if(!user.room) {
             return;

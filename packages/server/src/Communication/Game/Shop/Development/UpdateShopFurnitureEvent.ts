@@ -7,6 +7,8 @@ import GetShopPageFurnitureEvent from "../GetShopPageFurnitureEvent.js";
 import { randomUUID } from "node:crypto";
 
 export default class UpdateShopFurnitureEvent implements IncomingEvent<UpdateShopFurnitureEventData> {
+    public readonly name = "UpdateShopFurnitureEvent";
+
     async handle(user: User, event: UpdateShopFurnitureEventData) {
         if(!user.model.developer) {
             throw new Error("User is not a developer.");

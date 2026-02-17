@@ -6,6 +6,8 @@ import { HotelFeedbackEventData } from "@shared/Communications/Responses/Hotel/I
 import { UserModel } from "../../../Database/Models/Users/UserModel.js";
 
 export default class GetHotelFeedbackEvent implements IncomingEvent {
+    public readonly name = "GetHotelFeedbackEvent";
+
     async handle(user: User) {
         if(!user.model.developer) {
             throw new Error("User is not a developer.");

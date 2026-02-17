@@ -4,6 +4,8 @@ import IncomingEvent from "../../Interfaces/IncomingEvent.js";
 import { UserBadgeModel } from "../../../Database/Models/Users/Badges/UserBadgeModel.js";
 
 export default class UpdateUserBadgeEvent implements IncomingEvent<UpdateUserBadgeEventData> {
+    public readonly name = "UpdateUserBadgeEvent";
+
     async handle(user: User, event: UpdateUserBadgeEventData): Promise<void> {
         const userBadge = await UserBadgeModel.findOne({
             where: {

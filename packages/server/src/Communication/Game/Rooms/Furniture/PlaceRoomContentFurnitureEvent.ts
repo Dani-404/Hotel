@@ -4,6 +4,8 @@ import User from "../../../../Users/User.js";
 import { UserFurnitureModel } from "../../../../Database/Models/Users/Furniture/UserFurnitureModel.js";
 
 export default class PlaceRoomContentFurnitureEvent implements IncomingEvent<PlaceRoomContentFurnitureEventData> {
+    public readonly name = "PlaceRoomContentFurnitureEvent";
+
     async handle(user: User, event: PlaceRoomContentFurnitureEventData) {
         if(!user.room) {
             return;

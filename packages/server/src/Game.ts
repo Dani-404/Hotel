@@ -1,3 +1,4 @@
+import EventHandler from "./Events/EventHandler.js";
 import RoomNavigatorManager from "./Rooms/Navigator/RoomNavigatorManager.js";
 import RoomManager from "./Rooms/RoomManager.js";
 import User from "./Users/User.js";
@@ -7,6 +8,7 @@ export default class Game {
     public readonly roomManager;
     public readonly roomNavigatorManager;
 
+    public readonly eventHandler;
     public readonly webSocket;
 
     public readonly users: User[];
@@ -14,6 +16,8 @@ export default class Game {
     constructor() {
         this.roomNavigatorManager = new RoomNavigatorManager();
         this.roomManager = new RoomManager();
+        
+        this.eventHandler = new EventHandler();
         this.webSocket = new WebSocket();
 
         this.users = [];

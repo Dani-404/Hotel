@@ -4,6 +4,8 @@ import User from "../../../Users/User.js";
 import IncomingEvent from "../../Interfaces/IncomingEvent.js";
 
 export default class PingEvent implements IncomingEvent {
+    public readonly name = "PingEvent";
+
     async handle(user: User) {
         user.send(new OutgoingEvent("Ping", null));
     }

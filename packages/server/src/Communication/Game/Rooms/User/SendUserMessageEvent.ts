@@ -5,6 +5,8 @@ import OutgoingEvent from "../../../../Events/Interfaces/OutgoingEvent.js";
 import { UserChatEventData } from "@shared/Communications/Responses/Rooms/Users/UserChatEventData.js";
 
 export default class SendUserMessageEvent implements IncomingEvent<SendUserMessageEventData> {
+    public readonly name = "SendUserMessageEvent";
+
     async handle(user: User, event: SendUserMessageEventData) {
         if(!user.room) {
             return;

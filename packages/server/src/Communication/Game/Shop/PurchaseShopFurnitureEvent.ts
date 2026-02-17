@@ -11,6 +11,8 @@ import { UserFurnitureModel } from "../../../Database/Models/Users/Furniture/Use
 import { randomUUID } from "node:crypto";
 
 export default class PurchaseShopFurnitureEvent implements IncomingEvent<PurchaseShopFurnitureEventData> {
+    public readonly name = "PurchaseShopFurnitureEvent";
+
     async handle(user: User, event: PurchaseShopFurnitureEventData) {
         const shopFurniture = await ShopPageFurnitureModel.findOne({
             where: {

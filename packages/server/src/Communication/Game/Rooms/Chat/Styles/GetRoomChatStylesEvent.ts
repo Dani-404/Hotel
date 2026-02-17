@@ -5,6 +5,8 @@ import IncomingEvent from "../../../../Interfaces/IncomingEvent.js";
 import { RoomChatStylesEventData } from "@shared/Communications/Responses/Rooms/Chat/Styles/RoomChatStylesEventData.js";
 
 export default class GetRoomChatStylesEvent implements IncomingEvent {
+    public readonly name = "GetRoomChatStylesEvent";
+
     async handle(user: User, event: null) {
         const roomChatStyles = await RoomChatStyleModel.findAll();
 

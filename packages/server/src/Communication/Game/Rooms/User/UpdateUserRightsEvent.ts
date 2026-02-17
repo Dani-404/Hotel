@@ -7,6 +7,8 @@ import OutgoingEvent from "../../../../Events/Interfaces/OutgoingEvent.js";
 import { RoomUserRightsEventData } from "@shared/Communications/Responses/Rooms/Users/RoomUserRightsEventData.js";
 
 export default class UpdateUserRightsEvent implements IncomingEvent<UpdateUserRightsEventData> {
+    public readonly name = "UpdateUserRightsEvent";
+
     async handle(user: User, event: UpdateUserRightsEventData) {
         if(!user.room) {
             return;

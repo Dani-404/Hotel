@@ -7,6 +7,8 @@ import { RoomCategoryModel } from "../../../Database/Models/Rooms/Categories/Roo
 import sharp from "sharp";
 
 export default class UpdateRoomInformationEvent implements IncomingEvent<UpdateRoomInformationEventData> {
+    public readonly name = "UpdateRoomInformationEvent";
+
     async handle(user: User, event: UpdateRoomInformationEventData) {
         if(!user.room) {
             throw new Error("User is not in a room.");

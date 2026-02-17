@@ -8,6 +8,8 @@ import { UserProfileEventData } from "@shared/Communications/Responses/Rooms/Use
 import { UserModel } from "../../../../Database/Models/Users/UserModel.js";
 
 export default class GetUserProfileEvent implements IncomingEvent<GetUserProfileEventData> {
+    public readonly name = "GetUserProfileEvent";
+
     async handle(user: User, event: GetUserProfileEventData) {
         const targetUser = await UserModel.findOne({
             where: {

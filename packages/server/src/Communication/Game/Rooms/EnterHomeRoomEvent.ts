@@ -3,6 +3,8 @@ import IncomingEvent from "../../Interfaces/IncomingEvent.js";
 import { game } from "../../../index.js";
 
 export default class EnterHomeRoomEvent implements IncomingEvent {
+    public readonly name = "EnterHomeRoomEvent";
+
     async handle(user: User, event: null) {
         if(user.room) {
             const roomUser = user.room.getRoomUser(user);

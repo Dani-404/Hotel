@@ -8,6 +8,8 @@ import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/F
 import { RoomFurnitureBackgroundData } from "@shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundData.js";
 
 export default class SetFurnitureDataEvent implements IncomingEvent<SetFurnitureDataEventData<unknown>> {
+    public readonly name = "SetFurnitureDataEvent";
+
     async handle(user: User, event: SetFurnitureDataEventData<unknown>) {
         if(!user.room) {
             return;

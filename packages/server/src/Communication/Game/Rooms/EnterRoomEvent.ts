@@ -4,6 +4,8 @@ import { EnterRoomEventData } from "@shared/Communications/Requests/Rooms/EnterR
 import { game } from "../../../index.js";
 
 export default class EnterRoomEvent implements IncomingEvent<EnterRoomEventData> {
+    public readonly name = "EnterRoomEvent";
+
     async handle(user: User, event: EnterRoomEventData) {
         if(user.room) {
             const roomUser = user.room.getRoomUser(user);

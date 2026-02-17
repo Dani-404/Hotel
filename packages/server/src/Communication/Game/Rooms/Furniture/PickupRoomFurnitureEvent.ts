@@ -7,6 +7,8 @@ import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/F
 import { PickupRoomFurnitureEventData } from "@shared/Communications/Requests/Rooms/Furniture/PickupRoomFurnitureEventData.js";
 
 export default class PickupRoomFurnitureEvent implements IncomingEvent<PickupRoomFurnitureEventData> {
+    public readonly name = "PickupRoomFurnitureEvent";
+
     async handle(user: User, event: PickupRoomFurnitureEventData) {
         if(!user.room) {
             return;

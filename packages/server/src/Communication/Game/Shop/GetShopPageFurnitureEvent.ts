@@ -8,6 +8,8 @@ import { FurnitureModel } from "../../../Database/Models/Furniture/FurnitureMode
 import { ShopPageFurnitureEventData } from "@shared/Communications/Responses/Shop/ShopPageFurnitureEventData.js";
 
 export default class GetShopPageFurnitureEvent implements IncomingEvent<GetShopPageFurnitureEventData> {
+    public readonly name = "GetShopPageFurnitureEvent";
+
     async handle(user: User, event: GetShopPageFurnitureEventData) {
         const shopPage = await ShopPageModel.findByPk(event.pageId, {
             include: {

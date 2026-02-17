@@ -1,0 +1,15 @@
+import User from "../../../Users/User.js";
+import IncomingEvent from "../../Interfaces/IncomingEvent.js";
+import OutgoingEvent from "../../../Events/Interfaces/OutgoingEvent.js";
+import { game } from "../../../index.js";
+import { RoomMapsEventData } from "@shared/Communications/Responses/Navigator/RoomMapsEventData.js";
+
+export default class GetRoomMapsEvent implements IncomingEvent {
+    public readonly name = "GetRoomMapsEvent";
+
+    async handle(user: User): Promise<void> {
+        user.send(
+            new OutgoingEvent<RoomMapsEventData>("RoomMapsEvent", game.roomNavigatorManager.maps.map((map) => map.toJSON()))
+        );
+    }
+}

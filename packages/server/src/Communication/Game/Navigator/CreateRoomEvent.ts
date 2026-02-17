@@ -9,6 +9,8 @@ import { RoomCreatedEventData } from "@shared/Communications/Responses/Navigator
 import { RoomCategoryModel } from "../../../Database/Models/Rooms/Categories/RoomCategoryModel.js";
 
 export default class CreateRoomEvent implements IncomingEvent<CreateRoomEventData> {
+    public readonly name = "CreateRoomEvent";
+
     async handle(user: User, event: CreateRoomEventData): Promise<void> {
         const map = game.roomNavigatorManager.maps.find((map) => map.id === event.mapId);
 

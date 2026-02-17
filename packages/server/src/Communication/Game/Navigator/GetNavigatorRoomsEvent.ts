@@ -8,6 +8,8 @@ import { game } from "../../../index.js";
 import { RoomCategoryModel } from "../../../Database/Models/Rooms/Categories/RoomCategoryModel.js";
 
 export default class GetNavigatorRoomsEvent implements IncomingEvent<GetNavigatorRoomsEventData> {
+    public readonly name = "GetNavigatorRoomsEvent";
+
     async handle(user: User, event: GetNavigatorRoomsEventData): Promise<void> {
         switch(event.category) {
             case "public": {

@@ -6,6 +6,8 @@ import { SetFigureConfigurationEventData } from "@shared/Communications/Requests
 import { UserFigureConfigurationEventData } from "@shared/Communications/Responses/Rooms/Users/UserFigureConfigurationEventData.js";
 
 export default class SetFigureConfigurationEvent implements IncomingEvent<SetFigureConfigurationEventData> {
+    public readonly name = "SetFigureConfigurationEvent";
+
     async handle(user: User, event: SetFigureConfigurationEventData) {
         user.model.figureConfiguration = event.figureConfiguration;
 

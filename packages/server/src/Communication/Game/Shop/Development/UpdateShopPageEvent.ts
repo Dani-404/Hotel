@@ -6,6 +6,8 @@ import GetShopPagesEvent from "../GetShopPagesEvent.js";
 import { randomUUID } from "node:crypto";
 
 export default class UpdateShopPageEvent implements IncomingEvent<UpdateShopPageEventData> {
+    public readonly name = "UpdateShopPageEvent";
+
     async handle(user: User, event: UpdateShopPageEventData) {
         if(!user.model.developer) {
             throw new Error("User is not a developer.");

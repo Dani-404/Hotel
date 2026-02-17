@@ -23,7 +23,7 @@ export default function useRoomMaps() {
             once: true
         });
 
-        webSocketClient.send("RoomMapsRequest", null);
+        webSocketClient.send("GetRoomMapsEvent", null);
     }, []);
 
     return roomMaps;

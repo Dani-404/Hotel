@@ -1,7 +1,6 @@
 import { WebSocketServer } from "ws";
 import { UserModel } from "../Database/Models/Users/UserModel.js";
 import { game } from "../index.js";
-import { eventHandler } from "../Events/EventHandler.js";
 import User from "../Users/User.js";
 import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
 import { HotelEventData } from "@shared/Communications/Responses/Hotel/HotelEventData.js";
@@ -93,7 +92,7 @@ export default class WebSocket {
             webSocket.on("error", console.error);
 
             webSocket.on("message", (rawData) => {
-                eventHandler.decodeAndDispatchMessages(user, rawData);
+                game.eventHandler.decodeAndDispatchMessages(user, rawData);
             });
 
             webSocket.on("close", () => {

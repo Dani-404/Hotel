@@ -5,6 +5,8 @@ import OutgoingEvent from "../../../../Events/Interfaces/OutgoingEvent.js";
 import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
 
 export default class UpdateRoomFurnitureEvent implements IncomingEvent<UpdateRoomFurnitureEventData> {
+    public readonly name = "UpdateRoomFurnitureEvent";
+
     async handle(user: User, event: UpdateRoomFurnitureEventData) {
         if(!user.room) {
             return;

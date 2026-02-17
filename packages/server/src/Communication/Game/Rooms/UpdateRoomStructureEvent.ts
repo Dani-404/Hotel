@@ -3,6 +3,8 @@ import IncomingEvent from "../../Interfaces/IncomingEvent.js";
 import { UpdateRoomStructureEventData } from "@shared/Communications/Requests/Rooms/UpdateRoomStructureEventData.js";
 
 export default class UpdateRoomStructureEvent implements IncomingEvent<UpdateRoomStructureEventData> {
+    public readonly name = "UpdateRoomStructureEvent";
+
     async handle(user: User, event: UpdateRoomStructureEventData) {
         if(!user.room) {
             throw new Error("User is not in a room.");

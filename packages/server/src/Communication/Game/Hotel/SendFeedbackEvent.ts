@@ -5,6 +5,8 @@ import IncomingEvent from "../../Interfaces/IncomingEvent.js";
 import { SendFeedbackEventData } from "@shared/Communications/Requests/Hotel/SendFeedbackEventData.js";
 
 export default class SendFeedbackEvent implements IncomingEvent<SendFeedbackEventData> {
+    public readonly name = "SendFeedbackEvent";
+
     async handle(user: User, event: SendFeedbackEventData) {
         await HotelFeedbackModel.create({
             id: randomUUID(),

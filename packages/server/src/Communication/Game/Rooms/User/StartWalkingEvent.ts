@@ -4,6 +4,8 @@ import { StartWalkingEventData } from "@shared/Communications/Requests/Rooms/Use
 import { AStarFinder } from "astar-typescript";
 
 export default class StartWalkingEvent implements IncomingEvent<StartWalkingEventData> {
+    public readonly name = "StartWalkingEvent";
+
     async handle(user: User, event: StartWalkingEventData) {
         if(!user.room) {
             return;

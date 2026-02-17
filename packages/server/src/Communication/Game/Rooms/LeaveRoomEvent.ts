@@ -2,6 +2,8 @@ import User from "../../../Users/User.js";
 import IncomingEvent from "../../Interfaces/IncomingEvent.js";
 
 export default class LeaveRoomEvent implements IncomingEvent {
+    public readonly name = "LeaveRoomEvent";
+
     async handle(user: User, event: null) {
         if(!user.room) {
             throw new Error("User is not in a room.");
