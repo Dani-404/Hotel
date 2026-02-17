@@ -4,7 +4,6 @@ export class UserModel extends Model {
     declare id: string;
     declare name: string;
     declare password: string;
-    declare developer: boolean;
     declare figureConfiguration: any;
     declare credits: number;
     declare diamonds: number;
@@ -28,11 +27,6 @@ export function initializeUserModel(sequelize: Sequelize) {
                 type: new DataTypes.STRING(256),
                 allowNull: true,
                 defaultValue: null
-            },
-            developer: {
-                type: new DataTypes.BOOLEAN,
-                defaultValue: false,
-                allowNull: false
             },
             credits: {
                 type: new DataTypes.INTEGER,

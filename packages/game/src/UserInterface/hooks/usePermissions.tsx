@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { clientInstance } from "../..";
+import { PermissionAction } from "@Shared/Interfaces/Permissions/PermissionMap";
 
-export function usePermissions() {
-    const [value, setValue] = useState(clientInstance.permissions.value);
+export function usePermissions(actions: PermissionAction[]) {
+    const [values, setValues] = useState(actions.map(() => false));
 
     useEffect(() => {
         return clientInstance.permissions.subscribe((value) => {
-            setValue(value);
+            setValues(actions.map((action) => value?.includes(action) ?? false));
         });
     }, []);
 
-    return value!;
+    return values;
 }

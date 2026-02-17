@@ -15,9 +15,11 @@ export default class ImportRoomFurnitureEvent implements IncomingEvent<ImportRoo
         if(!user.room) {
             return;
         }
+        
+        const permissions = await user.getPermissions();
 
-        if(!user.model.developer) {
-            throw new Error("User is not a developer.");
+        if(!permissions.hasPermission("room:import_furniture")) {
+            throw new Error("User is not allowed to import furniture.");
         }
 
         const room = user.room;

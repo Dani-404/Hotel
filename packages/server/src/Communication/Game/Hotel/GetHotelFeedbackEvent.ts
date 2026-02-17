@@ -9,8 +9,10 @@ export default class GetHotelFeedbackEvent implements IncomingEvent {
     public readonly name = "GetHotelFeedbackEvent";
 
     async handle(user: User) {
-        if(!user.model.developer) {
-            throw new Error("User is not a developer.");
+        const permissions = await user.getPermissions();
+
+        if(!permissions.hasPermission("feedback:read")) {
+            throw new Error("User is not privileged to read feedback reports.");
         }
 
         const feedback = await HotelFeedbackModel.findAll({

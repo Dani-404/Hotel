@@ -161,7 +161,6 @@ app.post('/api/register', async (request, response) => {
         id: randomUUID(),
         name,
         password,
-        developer: false,
         homeRoomId: config.users.defaultHomeRoomId,
         figureConfiguration: {
             gender: "male",

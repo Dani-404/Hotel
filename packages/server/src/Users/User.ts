@@ -68,7 +68,6 @@ export default class User extends EventEmitter {
         return {
             id: this.model.id,
             name: this.model.name,
-            developer: this.model.developer,
             figureConfiguration: this.model.figureConfiguration,
             credits: this.model.credits,
             duckets: this.model.duckets,

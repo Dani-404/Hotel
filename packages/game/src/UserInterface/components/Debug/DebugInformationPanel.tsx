@@ -1,17 +1,27 @@
-import { Fragment, useCallback } from "react";
+import { useCallback } from "react";
 import { useDialogs } from "../../hooks/useDialogs";
 import { useHotel } from "../../hooks/useHotel";
 import { useRoomInstance } from "../../hooks/useRoomInstance";
-import { useUser } from "../../hooks/useUser";
 import { RoomFurnitureExportData } from "@Shared/Interfaces/Room/Furniture/RoomFurnitureExportData";
 import { webSocketClient } from "../../..";
 import { ImportRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/Developer/ImportRoomFurnitureEventData";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function DebugInformationPanel() {
     const room = useRoomInstance();
-    const user = useUser();
     const hotel = useHotel();
     const dialogs = useDialogs();
+
+    const [
+        hasReadFeedbackPermissions,
+
+        hasImportRoomFurniturePermissions,
+        hasExportRoomFurniturePermissions
+    ] = usePermissions([
+        "feedback:read",
+        "room:import_furniture",
+        "room:export_furniture"
+    ]);
 
     const handleExportRoomFurniture = useCallback(() => {
         if(!room) {
@@ -105,7 +115,7 @@ export default function DebugInformationPanel() {
                 flexDirection: "column",
                 gap: 5
             }}>
-                {(user?.developer) && (
+                {(hasReadFeedbackPermissions) && (
                     <div style={{
                         cursor: "pointer",
                         pointerEvents: "auto",
@@ -127,24 +137,24 @@ export default function DebugInformationPanel() {
                     height: 20
                 }}/>
 
-                {(room && user.developer) && (
-                    <Fragment>
-                        <div style={{
-                            cursor: "pointer",
-                            pointerEvents: "auto",
-                            textDecoration: "underline"
-                        }} onClick={handleImportRoomFurniture}>
-                            Import room furniture
-                        </div>
+                {(room && hasImportRoomFurniturePermissions) && (
+                    <div style={{
+                        cursor: "pointer",
+                        pointerEvents: "auto",
+                        textDecoration: "underline"
+                    }} onClick={handleImportRoomFurniture}>
+                        Import room furniture
+                    </div>
+                )}
                         
-                        <div style={{
-                            cursor: "pointer",
-                            pointerEvents: "auto",
-                            textDecoration: "underline"
-                        }} onClick={handleExportRoomFurniture}>
-                            Export room furniture
-                        </div>
-                    </Fragment>
+                {(room && hasExportRoomFurniturePermissions) && (
+                    <div style={{
+                        cursor: "pointer",
+                        pointerEvents: "auto",
+                        textDecoration: "underline"
+                    }} onClick={handleExportRoomFurniture}>
+                        Export room furniture
+                    </div>
                 )}
             </div>
         </div>

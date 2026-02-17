@@ -5,13 +5,14 @@ import { UpdateRoomInformationEventData } from "@Shared/Communications/Requests/
 import Input from "../../../Form/Input";
 import Selection from "../../../Form/Selection";
 import { useRoomCategories } from "../../../../hooks/useRoomCategories";
-import { useUser } from "../../../../hooks/useUser";
 import { RoomType } from "@Shared/Interfaces/Room/RoomType";
+import { usePermissionAction } from "../../../../hooks/usePermissionAction";
 
 export default function RoomSettingsBasicTab() {
     const room = useRoomInstance();
     const roomCategories = useRoomCategories();
-    const user = useUser();
+    
+    const hasRoomTypePermissions = usePermissionAction("room:type");
 
     const [name, setName] = useState(room?.information.name ?? "");
     const [description, setDescription] = useState(room?.information.description ?? "");
@@ -92,7 +93,7 @@ export default function RoomSettingsBasicTab() {
                     };
                 }) ?? []} onChange={(value) => handleCategoryChange(value as string)}/>
 
-                {(user.developer) && (
+                {(hasRoomTypePermissions) && (
                     <Fragment>
                         <b>Room type</b>
 

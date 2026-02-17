@@ -8,8 +8,10 @@ export default class GetRoomCategoriesEvent implements IncomingEvent {
     public readonly name = "GetRoomCategoriesEvent";
 
     async handle(user: User): Promise<void> {
+        const permissions = await user.getPermissions();
+
         user.send(new OutgoingEvent<RoomCategoriesEventData>("RoomCategoriesEvent", 
-            game.roomNavigatorManager.categories.filter((category) => !category.developer || (category.developer && user.model.developer)).map((category) => {
+            game.roomNavigatorManager.categories.filter((category) => !category.developer || (category.developer && permissions.hasPermission("room:type"))).map((category) => {
                 return {
                     id: category.id,
                     title: category.title

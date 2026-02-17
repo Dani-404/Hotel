@@ -48,7 +48,9 @@ export default class UpdateRoomInformationEvent implements IncomingEvent<UpdateR
             user.room.model.thumbnail = await this.getValidatedThumbnailImage(event.thumbnail);
         }
 
-        if(event.type && user.model.developer) {
+        const permissions = await user.getPermissions();
+
+        if(event.type && permissions.hasPermission("room:type")) {
             user.room.model.type = event.type;
         }
 

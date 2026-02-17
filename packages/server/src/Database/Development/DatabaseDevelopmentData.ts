@@ -412,7 +412,6 @@ export async function initializeDevelopmentData() {
     await UserModel.create({
         id: "user1",
         name: "Muff1n-Pixel",
-        developer: true,
         figureConfiguration: [{ "type": "hd", "setId": "180", "colors": [2] }, { "type": "hr", "setId": "828", "colors": [31] }, { "type": "ea", "setId": "3196", "colors": [62] }, { "type": "ch", "setId": "255", "colors": [1415] }, { "type": "lg", "setId": "3216", "colors": [110] }, { "type": "sh", "setId": "305", "colors": [62] }],
     });
 
