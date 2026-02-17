@@ -161,6 +161,8 @@ export default class RoomFurniture {
                     this.category = new RoomFurnitureGateLogic(this);
                    break;
                     
+                case "chair":
+                case "vending_machine":
                 case "lighting":
                 case "other":
                     this.category = new RoomFurnitureLightingLogic(this);
