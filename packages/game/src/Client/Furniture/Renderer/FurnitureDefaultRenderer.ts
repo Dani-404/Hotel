@@ -136,22 +136,31 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
         const sprites = await this.render(data, direction, size, animation, color, frame);
         
         let minimumX = 0, minimumY = 0, maximumWidth = 0, maximumHeight = 0;
-        
-        for(const sprite of sprites) {
-            if(minimumX < Math.abs(sprite.x)) {
-                minimumX = Math.abs(sprite.x);
-            }
-            
-            if(minimumY < (sprite.y * -1)) {
-                minimumY = sprite.y * -1;
-            }
 
-            if(sprite.x + sprite.image.width > maximumWidth) {
-                maximumWidth = sprite.x + sprite.image.width;
-            }
+        if(sprites.length === 1) {
+            minimumX = Math.abs(sprites[0].x);
+            minimumY = sprites[0].y * -1;
 
-            if(sprite.y + sprite.image.height > maximumHeight) {
-                maximumHeight = sprite.y + sprite.image.height;
+            maximumWidth = sprites[0].image.width - minimumX;
+            maximumHeight = sprites[0].image.height - minimumY;
+        }
+        else {
+            for(const sprite of sprites) {
+                if(minimumX < Math.abs(sprite.x)) {
+                    minimumX = Math.abs(sprite.x);
+                }
+                
+                if(minimumY < (sprite.y * -1)) {
+                    minimumY = sprite.y * -1;
+                }
+
+                if(sprite.x + sprite.image.width > maximumWidth) {
+                    maximumWidth = sprite.x + sprite.image.width;
+                }
+
+                if(sprite.y + sprite.image.height > maximumHeight) {
+                    maximumHeight = sprite.y + sprite.image.height;
+                }
             }
         }
 
