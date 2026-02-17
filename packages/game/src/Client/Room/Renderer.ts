@@ -254,8 +254,8 @@ export default class RoomRenderer extends EventTarget {
 
     public getCoordinatePosition(coordinate: RoomPosition): MousePosition {
         const result = {
-            left: Math.floor(-(coordinate.row * 32) + (coordinate.column * 32) - 64),
-            top: Math.floor((coordinate.column * 16) + (coordinate.row * 16) - ((Math.round(coordinate.depth * 1000) / 1000) * 32))
+            left: Math.round(-(coordinate.row * 32) + (coordinate.column * 32) - 64),
+            top: Math.round((coordinate.column * 16) + (coordinate.row * 16) - ((Math.round(coordinate.depth * 1000) / 1000) * 32))
         };
 
         const scale = this.getSizeScale();

@@ -3,7 +3,6 @@ import RoomItem from "../RoomItem";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import Figure from "@Client/Figure/Figure";
 import RoomFigureSprite from "./RoomFigureSprite";
-import { clientInstance } from "../../../..";
 import RoomFigureEffectSprite from "@Client/Room/Items/Figure/RoomFigureEffectSprite";
 import RoomRenderer from "@Client/Room/Renderer";
 
@@ -25,36 +24,13 @@ export default class RoomFigureItem extends RoomItem {
     }
 
     render(frame: number = 0) {
-            /*this.figureRenderer.render(frame).then((sprites) => {
-                this.sprites = sprites.map((sprite) => new RoomFigureSprite(this, sprite));
-                //this.sprites = [new RoomFigureSprite(this, sprites[0])];
-            });*/
-            
-            this.figureRenderer.renderToCanvas(Figure.figureWorker, frame).then((result) => {
-                //this.sprites = sprites.map((sprite) => new RoomFigureSprite(this, sprite));
-                this.sprites = [
-                    new RoomFigureSprite(this, result.figure),
-                    ...result.effects.map((effect) => new RoomFigureEffectSprite(this, effect))
-                ];
-            });
+        this.figureRenderer.renderToCanvas(Figure.figureWorker, frame).then((result) => {
+            this.sprites = [
+                new RoomFigureSprite(this, result.figure),
+                ...result.effects.map((effect) => new RoomFigureEffectSprite(this, effect))
+            ];
+        });
     }
-
-    /*public setPosition(position: RoomPosition, index?: number): void {
-        if(Number.isInteger(position.row) && Number.isInteger(position.column)) {
-            if(clientInstance.roomInstance.value?.roomRenderer.items.includes(this)) {
-                const furniture = clientInstance.roomInstance.value.getFurnitureAtUpmostPosition(position);
-
-                if(furniture?.data.furniture.flags.sitable) {
-                    this.figureRenderer.addAction("Sit");
-                    this.figureRenderer.direction = furniture.data.direction;
-
-                    position.depth = furniture.data.position.depth + furniture.data.furniture.dimensions.depth - 0.5;
-                }
-            }
-        }
-
-        super.setPosition(position, index);
-    }*/
 
     public setPositionPath(fromPosition: RoomPosition, toPosition: RoomPosition, delay: number = 0, useAction: boolean = true): void {
         super.setPositionPath(fromPosition, toPosition, 500 - delay);
