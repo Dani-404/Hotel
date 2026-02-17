@@ -103,6 +103,12 @@ export default class WebSocket {
                 }
 
                 user.emit("close", user);
+                
+                for(let user of game.users) {
+                    user.send(new OutgoingEvent<HotelEventData>("HotelEvent", {
+                        users: game.users.length
+                    }));
+                }
             });
 
             if(user.model.homeRoomId) {

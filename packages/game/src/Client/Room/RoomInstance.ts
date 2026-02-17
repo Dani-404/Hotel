@@ -1,7 +1,5 @@
 import ClientInstance from "@Client/ClientInstance";
 import RoomRenderer from "./Renderer";
-import FloorRenderer from "./Structure/FloorRenderer";
-import WallRenderer from "./Structure/WallRenderer";
 import { RoomUserData } from "@Shared/Interfaces/Room/RoomUserData";
 import Figure from "@Client/Figure/Figure";
 import RoomFigureItem from "./Items/Figure/RoomFigureItem";
@@ -13,8 +11,6 @@ import RoomClickEvent from "@Client/Events/RoomClickEvent";
 import { UserWalkToEventData } from "@Shared/Communications/Responses/Rooms/Users/UserWalkToEventData";
 import { UserLeftRoomEventData } from "@Shared/Communications/Responses/Rooms/Users/UserLeftRoomEventData";
 import { webSocketClient } from "../..";
-import RoomFloorItem from "./Items/Map/RoomFloorItem";
-import RoomWallItem from "./Items/Map/RoomWallItem";
 import { LoadRoomEventData, RoomInformationData } from "@Shared/Communications/Responses/Rooms/LoadRoomEventData";
 import { StartWalkingEventData } from "@Shared/Communications/Requests/Rooms/User/StartWalkingEventData";
 import RoomFurniturePlacer from "@Client/Room/RoomFurniturePlacer";
