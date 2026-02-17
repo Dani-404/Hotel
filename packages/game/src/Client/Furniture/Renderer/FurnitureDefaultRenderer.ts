@@ -96,6 +96,15 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
             const directionLayerData = directionData?.layers.find((layerData) => layerData.id === layer);
 
             let x = assetData.x;
+            let y = assetData.y;
+
+            if(directionLayerData?.x !== undefined) {
+                x += directionLayerData.x;
+            }
+            
+            if(directionLayerData?.y !== undefined) {
+                y += directionLayerData.y;
+            }
 
             if(assetData.flipHorizontal) {
                 x = (assetData.x * -1) - spriteData.width;
@@ -106,7 +115,7 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
                 imageData,
                 
                 x,
-                y: assetData.y,
+                y,
 
                 ink: getGlobalCompositeModeFromInk(layerData?.ink),
 

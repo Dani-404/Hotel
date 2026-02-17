@@ -21,6 +21,8 @@ export type FurnitureVisualization = {
             id: number;
             layers: {
                 id: number;
+                x?: number;
+                y?: number;
                 zIndex?: number;
             }[];
         }[];

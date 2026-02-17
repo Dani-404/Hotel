@@ -152,6 +152,8 @@ export async function createVisualizationData(collection: SwfExtractionCollectio
                         layers: getValueAsArray(direction["layer"]).map((layer: any) => {
                             return {
                                 id: parseInt(layer["@_id"]),
+                                x: (layer["@_x"])?(parseInt(layer["@_x"])):(undefined),
+                                y: (layer["@_y"])?(parseInt(layer["@_y"])):(undefined),
                                 zIndex: (layer["@_z"])?(parseInt(layer["@_z"])):(undefined),
                             };
                         })
