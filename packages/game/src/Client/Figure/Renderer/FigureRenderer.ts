@@ -529,7 +529,7 @@ export default class FigureRenderer {
             const result = await this.getFigureSprite(spriteConfiguration, sprite, asset, paletteColor?.color, flippedDirection, flipHorizontal);
 
             if(result) {
-                const actionForSit = actionsForBodyParts.find((action) => action.assetPartDefinition === "sit");
+                const actionForSit = this.actions.some((action) => action === "Sit");
 
                 if(actionForSit) {
                     result.y += 16;
