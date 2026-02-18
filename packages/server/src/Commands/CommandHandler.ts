@@ -5,6 +5,7 @@ import SitCommand from "./Handlers/SitCommand.js";
 import WaveCommand from "./Handlers/WaveCommand.js";
 import EnableCommand from "./Handlers/EnableCommand.js";
 import SpeedCommand from "./Handlers/SpeedCommand.js";
+import CarryCommand from "./Handlers/CarryCommand.js";
 
 export default class CommandHandler extends EventEmitter {
     constructor() {
@@ -33,6 +34,7 @@ export default class CommandHandler extends EventEmitter {
             .addCommand(new SitCommand())
             .addCommand(new WaveCommand())
             .addCommand(new EnableCommand())
+            .addCommand(new CarryCommand())
             .addCommand(new SpeedCommand());
     }
 }

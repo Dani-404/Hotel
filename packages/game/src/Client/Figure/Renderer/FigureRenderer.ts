@@ -111,7 +111,7 @@ export default class FigureRenderer {
     }
 
     private getAvatarActions() {
-        let avatarActionsData = FigureAssets.avataractions.filter((action) => this.actions.includes(action.id)).sort((a, b) => a.precedence - b.precedence);
+        let avatarActionsData = FigureAssets.avataractions.filter((action) => this.actions.some((id) => id.split('.')[0] === action.id)).sort((a, b) => a.precedence - b.precedence);
         
         avatarActionsData = avatarActionsData.filter((action) => {
             return !avatarActionsData.some((secondAction) => secondAction.precedence > action.precedence && secondAction.prevents?.includes(action.id))
@@ -284,7 +284,7 @@ export default class FigureRenderer {
                 const setPartAssetData = this.getAssetForSetPart(setPartData.id, setPartData.type);
 
                 if(!setPartAssetData) {
-                    console.log("Set part asset data does not exist.");
+                    console.log("Set part asset data does not exist for set part id " + setPartData.id + ", type " + setPartData.type + ".");
 
                     continue;
                 }
@@ -331,6 +331,21 @@ export default class FigureRenderer {
 
         // TODO: already here filter out parts that will not be rendered to minimize the overhead
         const spritesFromConfiguration = this.getSpritesFromConfiguration();
+
+        const carryItemAction = actionsForBodyParts.find((action) => action.actionId === "CarryItem");
+
+        if(carryItemAction) {
+            spritesFromConfiguration.push({
+                id: this.getActionParamId(carryItemAction.actionId)?.toString() ?? "0",
+                assetId: "hh_human_item",
+                colorable: false,
+                colorIndex: 0,
+                colorPaletteId: 0,
+                type: "ri",
+                index: 0,
+                colors: []
+            });
+        }
 
         const avatarEffect = await this.getEffectForAvatar();
 
@@ -520,6 +535,7 @@ export default class FigureRenderer {
                     }
                     else if(assetType[0] == 'r') {
                         assetType = 'l' + assetType.substring(1);
+
                     }
                 }
 
@@ -803,6 +819,28 @@ export default class FigureRenderer {
             library: library.library,
             data: await FigureAssets.getEffectData(library.library)
         };
+    }
+
+    private getActionParamId(actionId: string) {
+        const actionName = this.actions.find((action) => action.split('.')[0] === actionId);
+
+        if(!actionName) {
+            return null;
+        }
+
+        const action = FigureAssets.avataractions.find((action) => action.id === actionId);
+
+        if(!action?.params.length) {
+            return null;
+        }
+
+        const param = action.params.find((param) => param.id === actionName.split('.')[1]);
+
+        if(!param) {
+            return null;
+        }
+
+        return param.value;
     }
 
     private getEffectLibrary(id: number) {
