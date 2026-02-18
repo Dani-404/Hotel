@@ -38,6 +38,7 @@ export default class RoomRenderer extends EventTarget {
     public frame: number = 0;
 
     public size: number = 64;
+    private currentSize: number = 64;
 
     private readonly framesPerSecond: number = 24;
     private readonly millisecondsPerFrame: number = 1000 / this.framesPerSecond;
@@ -78,7 +79,7 @@ export default class RoomRenderer extends EventTarget {
     }
 
     public getSizeScale() {
-        return this.size / 64;
+        return this.currentSize / 64;
     }
 
     private render() {
@@ -91,6 +92,8 @@ export default class RoomRenderer extends EventTarget {
         if(millisecondsElapsedSinceLastFrame >= this.millisecondsPerFrame) {
             this.frame = (this.frame + 1) % this.framesPerSecond;
             this.lastFrameTimestamp = performance.now();
+
+            this.currentSize = this.size;
 
             Performance.startPerformanceCheck("Process room items", 5);
 

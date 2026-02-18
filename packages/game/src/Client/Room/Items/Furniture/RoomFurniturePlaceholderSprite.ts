@@ -20,19 +20,24 @@ export default class RoomFurniturePlaceholderSprite extends RoomSprite {
     }
 
     render(context: OffscreenCanvasRenderingContext2D) {
-        if(!FurnitureAssets.placeholder) {
+        const placeholder = (this.item.roomRenderer.size === 64)?(FurnitureAssets.placeholder):(FurnitureAssets.placeholder32);
+
+        if(!placeholder) {
             console.warn("Furniture placeholder is not loaded.");
 
             return;
         }
-        
-        const scale = this.item.roomRenderer.getSizeScale();
 
-        context.scale(scale, scale);
-        context.drawImage(FurnitureAssets.placeholder.image, this.offset.left, this.offset.top);
+        context.drawImage(placeholder.image, this.offset.left, this.offset.top);
     }
 
     mouseover(position: MousePosition) {
+        const placeholder = (this.item.roomRenderer.size === 64)?(FurnitureAssets.placeholder):(FurnitureAssets.placeholder32);
+
+        if(!placeholder) {
+            return null;
+        }
+
         if(!this.item.position) {
             return null;
         }
@@ -46,13 +51,13 @@ export default class RoomFurniturePlaceholderSprite extends RoomSprite {
             return null;
         }
 
-        if(relativePosition.left > FurnitureAssets.placeholder.image.width || relativePosition.top > FurnitureAssets.placeholder.image.height) {
+        if(relativePosition.left > placeholder.image.width || relativePosition.top > placeholder.image.height) {
             return null;
         }
 
-        const pixel = ((relativePosition.left + relativePosition.top * FurnitureAssets.placeholder.imageData.width) * 4) + 3;
+        const pixel = ((relativePosition.left + relativePosition.top * placeholder.imageData.width) * 4) + 3;
 
-        if(FurnitureAssets.placeholder.imageData.data[pixel] < 50) {
+        if(placeholder.imageData.data[pixel] < 50) {
             return null;
         }
 

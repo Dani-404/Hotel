@@ -28,11 +28,6 @@ export default class RoomFurnitureBackgroundSprite extends RoomSprite {
             this.offset.top -= 16;
         }
 
-        if(this.item.furnitureRenderer.type !== "tile_cursor") {
-            this.offset.left *= this.item.roomRenderer.getSizeScale();
-            this.offset.top *= this.item.roomRenderer.getSizeScale();
-        }
-
         if(this.position) {
             this.offset.left += this.position.x;
             this.offset.top += this.position.y;
@@ -40,6 +35,10 @@ export default class RoomFurnitureBackgroundSprite extends RoomSprite {
     }
 
     render(context: OffscreenCanvasRenderingContext2D) {
+        const scale = this.item.roomRenderer.getSizeScale();
+
+        context.scale(scale, scale);
+
         context.drawImage(this.image, this.offset.left, this.offset.top);
     }
 

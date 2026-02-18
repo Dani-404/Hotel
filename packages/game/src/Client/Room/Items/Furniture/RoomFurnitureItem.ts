@@ -61,7 +61,11 @@ export default class RoomFurnitureItem extends RoomItem {
         }
 
         if(this.furnitureRenderer.type !== "tile_cursor") {
-            this.furnitureRenderer.size = this.roomRenderer.size;
+            if(this.furnitureRenderer.size !== this.roomRenderer.size) {
+                this.furnitureRenderer.size = this.roomRenderer.size;
+
+                this.sprites = [];
+            }
         }
 
         if(!this.sprites.length) {
@@ -71,7 +75,9 @@ export default class RoomFurnitureItem extends RoomItem {
         }
 
         this.furnitureRenderer.render().then((sprites) => {
-            this.sprites = sprites.map((sprite) => new RoomFurnitureSprite(this, sprite));
+            if(sprites.length) {
+                this.sprites = sprites.map((sprite) => new RoomFurnitureSprite(this, sprite));
+            }
         });
     }
 
