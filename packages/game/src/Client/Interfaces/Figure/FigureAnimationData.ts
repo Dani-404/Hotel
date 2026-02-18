@@ -15,6 +15,8 @@ export type FigureAnimationData = {
         destinationY?: number;
         directions?: {
             id: number;
+            destinationX: number | undefined;
+            destinationY: number | undefined;
             destinationZ: number;
         }[];
     }[];

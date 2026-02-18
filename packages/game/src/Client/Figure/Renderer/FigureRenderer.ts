@@ -387,6 +387,8 @@ export default class FigureRenderer {
                         directions: Array(8).fill(null).map((_, index) => {
                             return {
                                 id: index,
+                                destinationX: undefined,
+                                destinationY: undefined,
                                 destinationZ: getIndexForAlignment(add.align)
                             };
                         }),
@@ -412,7 +414,7 @@ export default class FigureRenderer {
 
             const effectFrame = animationFrame?.effects.find((effect) => effect.id === sprite.id);
 
-            const direction = sprite.useDirections && sprite.directions?.find((direction) => direction.id === this.direction);
+            const direction = sprite.directions?.find((direction) => direction.id === this.direction);
 
             if(sprite.useDirections && !direction) {
                 console.warn("Effect has no direction specified for " + this.direction);
@@ -422,19 +424,19 @@ export default class FigureRenderer {
 
             const index = (direction)?(direction.destinationZ):(0);
 
-            let flipHorizontal = false;
+            const flipHorizontal = false;
 
-            let assetName = `h_${sprite.member}_${(sprite.useDirections)?(this.direction):(0)}_${effectFrame?.frame ?? 0}`;
+            const assetName = `h_${sprite.member}_${(sprite.useDirections)?(this.direction):(0)}_${effectFrame?.frame ?? 0}`;
 
-            let assetData = effect.data.assets.find((asset) => asset.name === assetName);
+            const assetData = effect.data.assets.find((asset) => asset.name === assetName);
 
-            if(!assetData && (this.direction > 3 && this.direction < 7)) {
+            /*if(!assetData && (this.direction > 3 && this.direction < 7)) {
                 assetName = `h_${sprite.member}_${(sprite.useDirections)?(6 - this.direction):(0)}_${effectFrame?.frame ?? 0}`;
 
                 assetData = effect.data.assets.find((asset) => asset.name === assetName);
 
                 flipHorizontal = true;
-            }
+            }*/
 
             if(!assetData) {
                 console.error("Can't find asset for " + assetName);
@@ -455,6 +457,14 @@ export default class FigureRenderer {
             const destinationY = (sprite.destinationY ?? 0) + (effectFrame?.destinationY ?? 0);
 
             const result = await this.getEffectSprite(effect.library, assetData, spriteData, index, destinationY, sprite.ink, flipHorizontal);
+
+            if(direction?.destinationX) {
+                result.x += direction.destinationX;
+            }
+
+            if(direction?.destinationY) {
+                result.y += direction.destinationY;
+            }
 
             if(result) {
                 sprites.push(result);
@@ -493,16 +503,40 @@ export default class FigureRenderer {
                 continue;
             }
 
-            const avatarAnimation = this.getAvatarAnimation(actionForSprite.actionId, geometryPart?.id, spriteConfiguration.type, flippedDirection, this.frame);
+            const avatarAnimation = this.getAvatarAnimation(actionForSprite.actionId, geometryPart?.id, spriteConfiguration.type, direction, this.frame);
 
-            let assetName = `h_${avatarAnimation?.assetPartDefinition ?? actionForSprite.assetPartDefinition ?? "std"}_${spriteConfiguration.type}_${spriteConfiguration.id}_${flippedDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
+            let assetFlipped = false;
+            let assetDirection = direction;
+            let assetType = spriteConfiguration.type;
+
+            let assetName = `h_${avatarAnimation?.assetPartDefinition ?? actionForSprite.assetPartDefinition ?? "std"}_${assetType}_${spriteConfiguration.id}_${assetDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
 
             let asset = figureData.assets.find((asset) => asset.name === assetName);
 
+            if(!asset && flipHorizontal) {
+                console.warn("Can't find asset for " + assetName + ", trying with flipped direction");
+
+                if(assetType[1] !== 'g') {
+                    if(assetType[0] == 'l') {
+                        assetType = 'r' + assetType.substring(1);
+                    }
+                    else if(assetType[0] == 'r') {
+                        assetType = 'l' + assetType.substring(1);
+                    }
+                }
+
+                assetFlipped = flipHorizontal;
+                assetDirection = flippedDirection;
+
+                assetName = `h_${avatarAnimation?.assetPartDefinition ?? actionForSprite.assetPartDefinition ?? "std"}_${assetType}_${spriteConfiguration.id}_${assetDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
+
+                asset = figureData.assets.find((asset) => asset.name === assetName);
+            }
+
             if(!asset) {
-                console.warn("Can't find asset for " + assetName);
+                console.warn("Can't find asset for " + assetName + ", trying with standing part definition.");
                 
-                assetName = `h_std_${spriteConfiguration.type}_${spriteConfiguration.id}_${flippedDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
+                assetName = `h_std_${assetType}_${spriteConfiguration.id}_${assetDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
 
                 asset = figureData.assets.find((asset) => asset.name === assetName);
             }
@@ -526,7 +560,7 @@ export default class FigureRenderer {
             const palette = FigureAssets.figuredata.palettes.find((palette) => palette.id === spriteConfiguration.colorPaletteId);
             const paletteColor = palette?.colors.find((color) => color.id === spriteConfiguration.colors[spriteConfiguration.colorIndex - 1]);
 
-            const result = await this.getFigureSprite(spriteConfiguration, sprite, asset, paletteColor?.color, flippedDirection, flipHorizontal);
+            const result = await this.getFigureSprite(assetType, spriteConfiguration, sprite, asset, paletteColor?.color, assetDirection, assetFlipped);
 
             if(result) {
                 const actionForSit = this.actions.some((action) => action === "Sit");
@@ -582,7 +616,7 @@ export default class FigureRenderer {
         };
     }
 
-    private async getFigureSprite(spriteConfiguration: SpriteConfiguration, spriteData: FurnitureSprite, assetData: FurnitureAsset, color: string | undefined, direction: number, flipHorizontal: boolean) {
+    private async getFigureSprite(type: string, spriteConfiguration: SpriteConfiguration, spriteData: FurnitureSprite, assetData: FurnitureAsset, color: string | undefined, direction: number, flipHorizontal: boolean) {
         const sprite = await FigureAssets.getFigureSprite(spriteConfiguration.assetId, {
             x: spriteData.x,
             y: spriteData.y,
@@ -592,12 +626,10 @@ export default class FigureRenderer {
 
             flipHorizontal: (flipHorizontal)?(!assetData.flipHorizontal):(assetData.flipHorizontal),
 
-            color: (spriteConfiguration.colorable && spriteConfiguration.colors[spriteConfiguration.colorIndex - 1] && spriteConfiguration.type !== "ey")?(color):(undefined),
+            color: (spriteConfiguration.colorable && spriteConfiguration.colors[spriteConfiguration.colorIndex - 1] && type !== "ey")?(color):(undefined),
 
             ignoreImageData: true
         });
-
-        const priorityDirection = (direction > 3 && direction < 7)?(6 - direction):(direction);
 
         const priorityTypes: Partial<Record<string, FigurePartKeyAbbreviation>> = {
             "cp": "ch",
@@ -606,7 +638,7 @@ export default class FigureRenderer {
             "rc": "rs"
         };
 
-        const partPriority = figureRenderPriority["std"][priorityDirection.toString()].indexOf(priorityTypes[spriteConfiguration.type] ?? spriteConfiguration.type);
+        const partPriority = figureRenderPriority["std"][direction.toString()].indexOf(priorityTypes[type] ?? type);
 
         if(partPriority === -1) {
             return null;

@@ -91,6 +91,8 @@ function getAnimationData(filePath: string) {
                 directions: sprite["direction"]?.map((direction: any) => {
                     return {
                         id: parseInt(direction["@_id"]),
+                        destinationX: (direction["@_dx"])?(parseInt(direction["@_dx"])):(undefined),
+                        destinationY: (direction["@_dy"])?(parseInt(direction["@_dy"])):(undefined),
                         destinationZ: parseInt(direction["@_dz"])
                     }
                 }),
