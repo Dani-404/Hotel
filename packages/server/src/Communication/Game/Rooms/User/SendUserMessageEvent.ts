@@ -35,7 +35,7 @@ export default class SendUserMessageEvent implements IncomingEvent<SendUserMessa
             roomUser.addAction("GestureSurprised");
         }
 
-        if(event.message[0] === ':') {
+        if(event.message[0] === ':' || event.message[0] === '/') {
             const parts = event.message.split(' ');
 
             game.commandHandler.dispatchCommand(roomUser, parts[0]!.substring(1), parts.slice(1));

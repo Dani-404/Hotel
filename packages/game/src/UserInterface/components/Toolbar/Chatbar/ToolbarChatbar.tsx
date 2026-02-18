@@ -17,10 +17,14 @@ export default function ToolbarChatbar() {
 
         setValue("");
 
-        if(value === ":furni") {
-            dialogs.addUniqueDialog("room-furni");
+        if(value[0] === ':' || value[0] === '/') {
+            const command = value.split(' ')[0].substring(1);
 
-            return;
+            if(command === "furni") {
+                dialogs.addUniqueDialog("room-furni");
+
+                return;
+            }
         }
 
         webSocketClient.send<SendUserMessageEventData>("SendUserMessageEvent", {
