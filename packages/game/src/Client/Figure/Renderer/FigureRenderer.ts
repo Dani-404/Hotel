@@ -475,18 +475,16 @@ export default class FigureRenderer {
     }
 
     private async getFigureSprites(spritesFromConfiguration: SpriteConfiguration[], actionsForBodyParts: BodyPartAction[], direction: number): Promise<FigureRendererSprite[]> {
-        const sprites: FigureRendererSprite[] = [];
-
         const flipHorizontal = (direction > 3 && direction < 7);
         const flippedDirection = (flipHorizontal)?(6 - direction):(direction);
 
-        for(const spriteConfiguration of spritesFromConfiguration) {
+        const sprites = await Promise.all(spritesFromConfiguration.map(async (spriteConfiguration) => {
             const actionForSprite = actionsForBodyParts.find((action) => action.bodyParts.includes(spriteConfiguration.type));
         
             if(!actionForSprite) {
                 console.warn("Sprite has no action requesting it.");
 
-                continue;
+                return null
             }
 
             const figureData = await FigureAssets.getFigureData(spriteConfiguration.assetId);
@@ -494,13 +492,13 @@ export default class FigureRenderer {
             if(!figureData) {
                 console.error("Figure data does not exist for " + spriteConfiguration.assetId);
 
-                continue;
+                return null
             }
 
             const geometryPart = actionForSprite.geometry.bodyparts.find((bodypart) => bodypart.parts.includes(spriteConfiguration.type));
 
             if(this.headOnly && geometryPart?.id !== "head") {
-                continue;
+                return null
             }
 
             const avatarAnimation = this.getAvatarAnimation(actionForSprite.actionId, geometryPart?.id, spriteConfiguration.type, direction, this.frame);
@@ -544,7 +542,7 @@ export default class FigureRenderer {
             if(!asset) {
                 console.error("Can't find asset for " + assetName);
 
-                continue;
+                return null
             }
 
             const sourceAssetName = asset.source ?? asset.name;
@@ -554,7 +552,7 @@ export default class FigureRenderer {
             if(!sprite) {
                 console.error("Can't find sprite for source asset " + sourceAssetName);
 
-                continue;
+                return null
             }
 
             const palette = FigureAssets.figuredata.palettes.find((palette) => palette.id === spriteConfiguration.colorPaletteId);
@@ -577,11 +575,13 @@ export default class FigureRenderer {
                     result.y += avatarAnimation.destinationY;
                 }
 
-                sprites.push(result);
+                return result;
             }
-        }
 
-        return sprites;
+            return null;
+        }));
+
+        return sprites.filter((sprite) => sprite !== null);
     }
 
     private async getEffectSprite(library: string, assetData: FurnitureAsset, spriteData: FurnitureSprite, index: number, destinationY: number, ink: number | undefined, flipHorizontal: boolean) {
