@@ -19,6 +19,8 @@ import RoomFloorItem from "@Client/Room/Items/Map/RoomFloorItem";
 import FloorRenderer from "@Client/Room/Structure/FloorRenderer";
 import RoomWallItem from "@Client/Room/Items/Map/RoomWallItem";
 import WallRenderer from "@Client/Room/Structure/WallRenderer";
+import RoomFigureItem from "@Client/Room/Items/Figure/RoomFigureItem";
+import RoomFigureSprite from "@Client/Room/Items/Figure/RoomFigureSprite";
 
 export default class RoomRenderer extends EventTarget {
     public readonly element: HTMLCanvasElement;
@@ -309,6 +311,14 @@ export default class RoomRenderer extends EventTarget {
         }
 
         const translatePosition = this.getCoordinatePosition(item.position);
+
+        if(item instanceof RoomFigureItem) {
+            const figureSprite = item.sprites.find<RoomFigureSprite>((sprite) => sprite instanceof RoomFigureSprite);
+
+            if(figureSprite) {
+                translatePosition.top += figureSprite.offset.top + 128;
+            }
+        }
 
         return {
             left: this.renderedOffset.left + translatePosition.left,

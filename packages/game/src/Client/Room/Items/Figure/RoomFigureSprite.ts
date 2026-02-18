@@ -4,9 +4,9 @@ import RoomFigureItem from "./RoomFigureItem";
 import { FigureRendererSprite } from "@Client/Figure/Renderer/FigureRenderer";
 
 export default class RoomFigureSprite extends RoomSprite {
-    private offset: MousePosition;
+    public offset: MousePosition;
 
-    constructor(public readonly item: RoomFigureItem, private readonly sprite: FigureRendererSprite) {
+    constructor(public readonly item: RoomFigureItem, public readonly sprite: FigureRendererSprite) {
         super(item);
 
         this.priority = this.sprite.index;
