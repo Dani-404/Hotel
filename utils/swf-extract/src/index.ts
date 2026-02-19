@@ -20,7 +20,7 @@ await new Promise<void>((resolve) => {
     })
 });
 
-let assetNames = [process.argv[2]];
+let assetNames = process.argv.slice(2);
 
 (async () => {
     if(process.argv[2] === "roomchatstyles") {
@@ -71,7 +71,7 @@ let assetNames = [process.argv[2]];
     else if(process.argv[2] === "generate-furniture") {
         assetNames = readdirSync(path.join("assets", "furniture"), { withFileTypes: true })
         .filter((directory) => directory.isFile())
-        .map((directory) => directory.name.split('.')[0]);
+        .map((directory) => directory.name.split('.')[0]!);
     }
 
     console.log(assetNames);

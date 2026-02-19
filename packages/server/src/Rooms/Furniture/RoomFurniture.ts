@@ -11,6 +11,7 @@ import RoomFurnitureLightingLogic from "./Logic/RoomFurnitureLightingLogic.js";
 import { NonAttributeBrand } from "@sequelize/core";
 import RoomFurnitureRollerLogic from "./Logic/RoomFurnitureRollerLogic.js";
 import RoomFurnitureLogic from "./Logic/Interfaces/RoomFurnitureLogic.js";
+import RoomFurnitureVendingMachineLogic from "./Logic/RoomFurnitureVendingMachineLogic.js";
 
 export default class RoomFurniture {
     public preoccupiedByActionHandler: boolean = false;
@@ -162,10 +163,13 @@ export default class RoomFurniture {
                    break;
                     
                 case "chair":
-                case "vending_machine":
                 case "lighting":
                 case "other":
                     this.category = new RoomFurnitureLightingLogic(this);
+                    break;
+
+                case "vending_machine":
+                    this.category = new RoomFurnitureVendingMachineLogic(this);
                     break;
 
                 case "roller":

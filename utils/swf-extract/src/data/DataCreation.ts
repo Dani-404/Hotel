@@ -322,6 +322,12 @@ export async function createFurnitureData(assetName: string) {
             });
         });
 
+        let customParams: unknown[] | null = (furniType["customparams"])?(furniType["customparams"].toString().split(',').map((value: string) => parseFloat(value))):(null);
+
+        if(result?.interaction_type === "vendingmachine" && result?.vending_ids) {
+            customParams = result.vending_ids.split(',').map((id: string) => parseInt(id));
+        }
+
         return {
             name: furniType["name"],
             description: hasDescription && furniType["description"],
@@ -346,7 +352,7 @@ export async function createFurnitureData(assetName: string) {
                 inventoryStackable: (result?.allow_inventory_stack ?? 1) === 1
             },
 
-            customParams: (furniType["customparams"])?(furniType["customparams"].toString().split(',').map((value: string) => parseFloat(value))):(null)
+            customParams
         };
     }));
 }
