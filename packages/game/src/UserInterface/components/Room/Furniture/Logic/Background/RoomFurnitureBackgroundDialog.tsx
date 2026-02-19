@@ -40,7 +40,7 @@ export default function RoomFurnitureBackgroundDialog({ data, hidden, onClose }:
     }
 
     return (
-        <Dialog title="Room Furniture Background" hidden={hidden} onClose={onClose} width={300} height={420} initialPosition="center">
+        <Dialog title="Room Furniture Background" hidden={hidden} onClose={onClose} width={300} height={380} initialPosition="center">
             <DialogContent>
                 <div style={{
                     flex: 1,
@@ -71,48 +71,9 @@ export default function RoomFurnitureBackgroundDialog({ data, hidden, onClose }:
                             flexDirection: "column",
                             gap: 8
                         }}>
-                            <b>Left tiles</b>
-
-                            <Input type="number" placeholder="0" value={Math.floor(offsetX / 64).toString()} onChange={(value) => setOffsetX(parseInt(value))} style={{ width: 0 }}/>
-                        </div>
-                        
-                        <div style={{
-                            flex: 1,
-                            
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 8
-                        }}>
-                            <b>Top tiles</b>
-
-                            <Input type="number" placeholder="0" value={Math.floor(offsetY / 32).toString()} onChange={(value) => setOffsetY(parseInt(value))} style={{ width: 0 }}/>
-                        </div>
-                        
-                        <div style={{
-                            flex: 1,
-                            
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 8
-                        }}>
-                        </div>
-                    </div>
-
-                    <div style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: 8
-                    }}>
-                        <div style={{
-                            flex: 1,
-                            
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 8
-                        }}>
                             <b>Offset X</b>
 
-                            <Input type="number" placeholder="0" value={(offsetX - (Math.floor(offsetX / 64) * 64)).toString()} onChange={(value) => setOffsetX((Math.floor(offsetX / 64) * 64) + parseInt(value))} style={{ width: 0 }}/>
+                            <Input type="number" placeholder="0" value={offsetX.toString()} onChange={(value) => setOffsetX(parseInt(value))} style={{ width: 0 }}/>
                         </div>
                         
                         <div style={{
@@ -124,7 +85,7 @@ export default function RoomFurnitureBackgroundDialog({ data, hidden, onClose }:
                         }}>
                             <b>Offset Y</b>
 
-                            <Input type="number" placeholder="0" value={(offsetY - (Math.floor(offsetY / 32) * 32)).toString()} onChange={(value) => setOffsetY((Math.floor(offsetY / 32) * 32) + parseInt(value))} style={{ width: 0 }}/>
+                            <Input type="number" placeholder="0" value={offsetY.toString()} onChange={(value) => setOffsetY(parseInt(value))} style={{ width: 0 }}/>
                         </div>
                         
                         <div style={{
