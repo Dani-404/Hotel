@@ -1,5 +1,5 @@
 export default interface RoomFurnitureLogic {
     isAvailable(): boolean;
     
-    use(): void;
+    use(tag?: string): void;
 }

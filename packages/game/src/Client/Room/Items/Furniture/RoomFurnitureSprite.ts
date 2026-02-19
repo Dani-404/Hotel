@@ -13,6 +13,7 @@ export default class RoomFurnitureSprite extends RoomSprite {
         super(item);
 
         this.priority = this.sprite.zIndex;
+        this.tag = sprite.tag;
 
         if(item.furnitureRenderer.placement === "floor") {
             this.offset.left += 64;

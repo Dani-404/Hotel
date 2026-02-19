@@ -18,6 +18,8 @@ export type FurnitureRendererSprite = {
     zIndex: number;
     alpha?: number;
     ignoreMouse?: boolean;
+
+    tag?: string;
 }
 
 export default class Furniture {

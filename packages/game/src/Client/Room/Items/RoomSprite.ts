@@ -7,6 +7,7 @@ import RoomItem from "./RoomItem";
 
 export default class RoomSprite implements RoomItemSpriteInterface {
     priority: number = 0;
+    tag?: string;
     
     constructor(public item: RoomItem) {
 

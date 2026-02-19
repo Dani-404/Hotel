@@ -1,5 +1,6 @@
 export type UseRoomFurnitureEventData = {
     roomFurnitureId: string;
 
-    animation: number;
+    animation?: number;
+    tag?: string;
 };

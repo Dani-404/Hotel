@@ -5,6 +5,7 @@ import FurnitureRoomDimmerLogic from "@Client/Furniture/Logic/FurnitureRoomDimme
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import RoomFurnitureBackgroundLogic from "@Client/Room/Furniture/Logic/RoomFurnitureBackgroundLogic";
 import RoomFurnitureBackgroundTonerLogic from "@Client/Room/Furniture/Logic/RoomFurnitureBackgroundTonerLogic";
+import RoomFurnitureDiceLogic from "@Client/Room/Furniture/Logic/RoomFurnitureDiceLogic";
 import RoomFurnitureLogic from "@Client/Room/Furniture/Logic/RoomFurnitureLogic";
 import RoomFurnitureTeleportLogic from "@Client/Room/Furniture/Logic/RoomFurnitureTeleportLogic";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
@@ -41,6 +42,9 @@ export default class RoomFurniture {
         }
 
         switch(this.data.furniture.interactionType) {
+            case "dice":
+                return new RoomFurnitureDiceLogic(this.instance, this);
+
             case "vendingmachine":
                 return new RoomFurnitureTeleportLogic(this.instance, this);
 

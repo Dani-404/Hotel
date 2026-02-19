@@ -13,6 +13,7 @@ export type FurnitureVisualization = {
             id: number;
             zIndex: number;
             ink?: string;
+            tag?: string;
             ignoreMouse?: boolean;
             alpha?: number;
         }[];

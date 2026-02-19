@@ -142,6 +142,7 @@ export async function createVisualizationData(collection: SwfExtractionCollectio
                         zIndex: parseInt(layer["@_z"]),
                         ink: layer["@_ink"],
                         ignoreMouse: layer["@_ignoreMouse"] === '1',
+                        tag: layer["@_tag"],
                         alpha: layer["@_alpha"] ? parseInt(layer["@_alpha"]) : undefined,
                     }
                 }),

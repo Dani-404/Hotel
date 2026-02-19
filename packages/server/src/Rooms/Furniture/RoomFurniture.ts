@@ -12,6 +12,7 @@ import { NonAttributeBrand } from "@sequelize/core";
 import RoomFurnitureRollerLogic from "./Logic/RoomFurnitureRollerLogic.js";
 import RoomFurnitureLogic from "./Logic/Interfaces/RoomFurnitureLogic.js";
 import RoomFurnitureVendingMachineLogic from "./Logic/RoomFurnitureVendingMachineLogic.js";
+import RoomFurnitureDiceLogic from "./Logic/RoomFurnitureDiceLogic.js";
 
 export default class RoomFurniture {
     public preoccupiedByActionHandler: boolean = false;
@@ -153,6 +154,12 @@ export default class RoomFurniture {
 
     public getCategoryLogic() {
         if(!this.category) {
+            switch(this.model.furniture.interactionType) {
+                case "dice":
+                    this.category = new RoomFurnitureDiceLogic(this);
+                   break;
+            }
+
             switch(this.model.furniture.category) {
                 case "teleport":
                     this.category = new RoomFurnitureTeleportLogic(this);
@@ -175,10 +182,10 @@ export default class RoomFurniture {
                 case "roller":
                     this.category = new RoomFurnitureRollerLogic(this);
                     break;
+            }
 
-                default:
-                    console.warn("Unhandled category logic type: " + this.model.furniture.category);
-                    break;
+            if(!this.category) {
+                console.warn("Unhandled category logic type: " + this.model.furniture.category);
             }
         }
 

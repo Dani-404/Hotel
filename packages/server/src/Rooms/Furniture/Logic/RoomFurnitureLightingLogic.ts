@@ -12,6 +12,10 @@ export default class RoomFurnitureLightingLogic implements RoomFurnitureLogic {
         if(!roomUser.hasRights()) {
             throw new Error("User does not have rights.");
         }
+
+        if(event.animation === undefined) {
+            return;
+        }
         
         this.roomFurniture.setAnimation(event.animation);
     }

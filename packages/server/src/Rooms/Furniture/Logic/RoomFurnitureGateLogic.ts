@@ -17,6 +17,10 @@ export default class RoomFurnitureGateLogic implements RoomFurnitureLogic {
             return;
         }
 
+        if(event.animation === undefined) {
+            return;
+        }
+
         this.roomFurniture.setAnimation(event.animation);
     }
 

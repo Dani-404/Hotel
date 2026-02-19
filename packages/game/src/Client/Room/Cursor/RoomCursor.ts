@@ -66,7 +66,7 @@ export default class RoomCursor extends EventTarget {
                 const logic = roomFurnitureItem.getLogic();
 
                 if(logic.isAvailable()) {
-                    logic.use();
+                    logic.use(otherEntity.sprite?.tag);
                 }
             }
         }
