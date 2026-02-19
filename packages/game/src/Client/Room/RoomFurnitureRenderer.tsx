@@ -56,8 +56,8 @@ export default class RoomFurnitureRenderer {
                 }
                 else {
                     this.roomRenderer.panToItem(this.roomItem, {
-                        left: (Math.max(1, this.roomItem.position!.row) * 16),
-                        top: this.roomItem.position!.depth * 32
+                        left: (Math.max(1, this.roomItem.position?.row ?? 0) * 16),
+                        top: (this.roomItem.position?.depth ?? 0) * 32
                     });
                 }
             }

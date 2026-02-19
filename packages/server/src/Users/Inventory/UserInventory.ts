@@ -118,18 +118,34 @@ export default class UserInventory {
             order: [['updatedAt','DESC']]
         });
 
-        const arrayUniqueByKey = [
-            ...new Map(userFurnitures.map((userFurniture) => [userFurniture.furniture.id + `_${Boolean(userFurniture.furniture.flags.inventoryStackable)}`, userFurniture])).values()
-        ];
+        const allUserFurniture: UserFurnitureEventData["allUserFurniture"] = [];
+
+        for(const userFurniture of userFurnitures) {
+            if(userFurniture.furniture.flags.inventoryStackable) {
+                const existingUserfurniture = allUserFurniture.find((furniture) => furniture.furniture.id === userFurniture.furniture.id);
+
+                if(existingUserfurniture) {
+                    existingUserfurniture.quantity++;
+                }
+                else {
+                    allUserFurniture.push({
+                        id: userFurniture.id,
+                        quantity: 1,
+                        furniture: userFurniture.furniture
+                    });
+                }
+            }
+            else {
+                allUserFurniture.push({
+                    id: userFurniture.id,
+                    quantity: 1,
+                    furniture: userFurniture.furniture
+                });
+            }
+        }
     
         this.user.send(new OutgoingEvent<UserFurnitureEventData>("UserFurnitureEvent", {
-            allUserFurniture: arrayUniqueByKey.map((userFurniture) => {
-                return {
-                    id: userFurniture.id,
-                    quantity: userFurnitures.filter((item) => item.furniture.id === userFurniture.furniture.id).length,
-                    furniture: userFurniture.furniture,
-                };
-            })
+            allUserFurniture
         }));
     }
 
