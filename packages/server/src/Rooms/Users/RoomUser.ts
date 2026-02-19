@@ -8,9 +8,7 @@ import { RoomUserData } from "@shared/Interfaces/Room/RoomUserData.js";
 import { UserWalkToEventData } from "@shared/Communications/Responses/Rooms/Users/UserWalkToEventData.js";
 import { LoadRoomEventData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
 import { UserActionEventData } from "@shared/Communications/Responses/Rooms/Users/UserActionEventData.js";
-import { RoomMoodlightEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomMoodlightEventData.js";
 import { AStarFinder } from "astar-typescript";
-import RoomFurniture from "../Furniture/RoomFurniture.js";
 import { UserPositionEventData } from "@shared/Communications/Responses/Rooms/Users/UserPositionEventData.js";
 import { UserChatEventData } from "@shared/Communications/Responses/Rooms/Users/UserChatEventData.js";
 

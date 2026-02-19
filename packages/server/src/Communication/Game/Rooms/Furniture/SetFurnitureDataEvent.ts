@@ -6,6 +6,7 @@ import { RoomMoodlightData } from "@shared/Interfaces/Room/RoomMoodlightData.js"
 import { SetFurnitureDataEventData } from "@shared/Communications/Requests/Rooms/Furniture/SetFurnitureDataEventData.js";
 import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
 import { RoomFurnitureBackgroundData } from "@shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundData.js";
+import { RoomFurnitureBackgroundTonerData } from "@shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundTonerData.js";
 
 export default class SetFurnitureDataEvent implements IncomingEvent<SetFurnitureDataEventData<unknown>> {
     public readonly name = "SetFurnitureDataEvent";
@@ -28,26 +29,7 @@ export default class SetFurnitureDataEvent implements IncomingEvent<SetFurniture
         }
 
         if(this.furnitureIsDimmer(furniture, event.data)) {
-            const activeFurniture = user.room.getActiveMoodlightFurniture();
-
-            if(activeFurniture && activeFurniture.model.id !== furniture.model.id) {
-                activeFurniture.model.animation = 0;
-
-                if(activeFurniture.model.changed()) {
-                    activeFurniture.model.data = {
-                        ...activeFurniture.getData<RoomMoodlightData>(),
-                        enabled: false
-                    };
-                    
-                    await activeFurniture.model.save();
-        
-                    user.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
-                        furnitureUpdated: [
-                            activeFurniture.getFurnitureData()
-                        ]
-                    }));
-                }
-            }
+            await this.handleSingleActiveFurniture(user, furniture);
 
             furniture.model.data = {
                 enabled: event.data.enabled,
@@ -84,6 +66,24 @@ export default class SetFurnitureDataEvent implements IncomingEvent<SetFurniture
                 ]
             }));
         }
+        else if(this.isFurnitureBackgroundTonerType(furniture, event.data)) {
+            await this.handleSingleActiveFurniture(user, furniture);
+
+            furniture.model.data = {
+                enabled: event.data.enabled,
+                color: event.data.color
+            } satisfies RoomFurnitureBackgroundTonerData;
+
+            furniture.model.animation = (event.data.enabled)?(1):(0);
+
+            await furniture.model.save();
+
+            user.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
+                furnitureUpdated: [
+                    furniture.getFurnitureData()
+                ]
+            }));
+        }
     }
 
     private furnitureIsDimmer(furniture: RoomFurniture, data: unknown): data is RoomMoodlightData {
@@ -92,5 +92,36 @@ export default class SetFurnitureDataEvent implements IncomingEvent<SetFurniture
 
     private isFurnitureBackgroundType(furniture: RoomFurniture, data: unknown): data is RoomFurnitureBackgroundData {
         return furniture.model.furniture.interactionType === "ads_bg";
+    }
+
+    private isFurnitureBackgroundTonerType(furniture: RoomFurniture, data: unknown): data is RoomFurnitureBackgroundTonerData {
+        return furniture.model.furniture.interactionType === "background_toner";
+    }
+
+    private async handleSingleActiveFurniture(user: User, furniture: RoomFurniture) {
+        if(!user.room) {
+            throw new Error("User is not in a room.");
+        }
+
+        const activeFurniture = user.room.getActiveFurniture(furniture.model.furniture.interactionType);
+
+        if(activeFurniture && activeFurniture.model.id !== furniture.model.id) {
+            activeFurniture.model.animation = 0;
+
+            if(activeFurniture.model.changed()) {
+                activeFurniture.model.data = {
+                    ...activeFurniture.getData<RoomMoodlightData>(),
+                    enabled: false
+                };
+                
+                await activeFurniture.model.save();
+    
+                user.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
+                    furnitureUpdated: [
+                        activeFurniture.getFurnitureData()
+                    ]
+                }));
+            }
+        }
     }
 }

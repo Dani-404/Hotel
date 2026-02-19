@@ -145,7 +145,7 @@ export default class RoomRenderer extends EventTarget {
             throw new ContextNotAvailableError();
         }
 
-        context.fillStyle = "black";
+        context.fillStyle = this.lighting.backgroundToner?.color ?? "#000000";
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         this.renderedOffset = {

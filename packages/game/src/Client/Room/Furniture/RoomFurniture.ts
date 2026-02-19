@@ -4,10 +4,12 @@ import FurnitureMultistateLogic from "@Client/Furniture/Logic/FurnitureMultistat
 import FurnitureRoomDimmerLogic from "@Client/Furniture/Logic/FurnitureRoomDimmerLogic";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import RoomFurnitureBackgroundLogic from "@Client/Room/Furniture/Logic/RoomFurnitureBackgroundLogic";
+import RoomFurnitureBackgroundTonerLogic from "@Client/Room/Furniture/Logic/RoomFurnitureBackgroundTonerLogic";
 import RoomFurnitureLogic from "@Client/Room/Furniture/Logic/RoomFurnitureLogic";
 import RoomFurnitureTeleportLogic from "@Client/Room/Furniture/Logic/RoomFurnitureTeleportLogic";
 import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
 import RoomInstance from "@Client/Room/RoomInstance";
+import { RoomFurnitureBackgroundTonerData } from "@Shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundTonerData";
 import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 
@@ -26,6 +28,11 @@ export default class RoomFurniture {
                 this.instance.setMoodlight(this.data.data as RoomMoodlightData);
             }
         }
+        else if(this.data.furniture.interactionType === "background_toner") {
+            if((this.data.data as RoomFurnitureBackgroundTonerData)?.enabled) {
+                this.instance.setBackgroundToner(this.data.data as RoomFurnitureBackgroundTonerData);
+            }
+        }
     }
     
     public getLogic(): RoomFurnitureLogic {
@@ -36,6 +43,9 @@ export default class RoomFurniture {
         switch(this.data.furniture.interactionType) {
             case "vendingmachine":
                 return new RoomFurnitureTeleportLogic(this.instance, this);
+
+            case "background_toner":
+                return new RoomFurnitureBackgroundTonerLogic(this.instance, this);
         }
 
         switch(this.data.furniture.category) {
@@ -70,6 +80,11 @@ export default class RoomFurniture {
         if(data.furniture.interactionType === "dimmer") {
             if((data.data as RoomMoodlightData)?.enabled || (this.data.data as RoomMoodlightData)?.enabled) {
                 this.instance.setMoodlight(data.data as RoomMoodlightData);
+            }
+        }
+        else if(this.data.furniture.interactionType === "background_toner") {
+            if((data.data as RoomFurnitureBackgroundTonerData)?.enabled || (this.data.data as RoomFurnitureBackgroundTonerData)?.enabled) {
+                this.instance.setBackgroundToner(data.data as RoomFurnitureBackgroundTonerData);
             }
         }
 

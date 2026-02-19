@@ -20,6 +20,7 @@ import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
 import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
 import ObservableProperty from "@Client/Utilities/ObservableProperty";
+import { RoomFurnitureBackgroundTonerData } from "@Shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundTonerData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -71,6 +72,10 @@ export default class RoomInstance {
 
     public setMoodlight(moodlight: RoomMoodlightData) {
         this.roomRenderer.lighting.setMoodlightData(moodlight);
+    }
+
+    public setBackgroundToner(backgroundToner: RoomFurnitureBackgroundTonerData) {
+        this.roomRenderer.lighting.setBackgroundTonerData(backgroundToner);
     }
 
     public terminate() {

@@ -1,0 +1,24 @@
+.dialog-color-picker .rcp-saturation {
+    border: none;
+    border-radius: 4px;
+}
+
+.dialog-color-picker .rcp-saturation-cursor {
+    border-width: 1px;
+    
+    width: 16px;
+    height: 16px;
+}
+
+.dialog-color-picker .rcp-hue {
+    border-radius: 3px;
+}
+
+.dialog-color-picker .rcp-hue-cursor {
+    border-width: 1px;
+
+    width: 16px;
+    height: 16px;
+
+    transform: translate(-10px, -2px);
+}

@@ -181,8 +181,8 @@ export default class Room {
         return {...this.model.structure};
     }
 
-    public getActiveMoodlightFurniture() {
-        const dimmerFurnitures = this.furnitures.filter((furniture) => furniture.model.furniture.interactionType === "dimmer");
+    public getActiveFurniture(interactionType: string) {
+        const dimmerFurnitures = this.furnitures.filter((furniture) => furniture.model.furniture.interactionType === interactionType);
         const activeDimmerFurniture = dimmerFurnitures.find((furniture) => furniture.model.animation === 1);
 
         return activeDimmerFurniture;

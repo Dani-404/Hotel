@@ -19,6 +19,7 @@ export default function DialogHeader({ title, onEditClick, onDialogMove, onClose
             
             width: "100%",
             height: 31,
+            minHeight: 31,
 
             border: "2px solid rgba(255, 255, 255, .14)",
             borderTopLeftRadius: 6,
