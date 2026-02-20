@@ -41,7 +41,34 @@ export default class RoomFloorPlanEditor {
         canvas.addEventListener("mouseup", this.mouseup.bind(this));
         canvas.addEventListener("wheel", this.wheel.bind(this));
 
+        this.process();
+    }
+
+    private process() {
+        if(this.moving && !this.middleButton) {
+            if(this.tool === "add_tile") {
+                const coordinate = this.getMousePosition();
+
+                if(!coordinate) {
+                    return;
+                }
+
+                this.updateStructure(coordinate.row, coordinate.column, RoomFloorplanHelper.getDepthCharacter(this.activeDepth));
+            }
+            else if(this.tool === "remove_tile") {
+                const coordinate = this.getMousePosition();
+
+                if(!coordinate) {
+                    return;
+                }
+
+                this.updateStructure(coordinate.row, coordinate.column, 'X');
+            }
+        }
+
         this.render();
+
+        window.requestAnimationFrame(this.process.bind(this));
     }
 
     public setStructure(structure: RoomStructure) {
@@ -87,24 +114,6 @@ export default class RoomFloorPlanEditor {
         if(this.tool === null || this.middleButton) {
             this.offset.left += event.movementX;
             this.offset.top += event.movementY;
-        }
-        else if(this.tool === "add_tile") {
-            const coordinate = this.getMousePosition();
-
-            if(!coordinate) {
-                return;
-            }
-
-            this.updateStructure(coordinate.row, coordinate.column, RoomFloorplanHelper.getDepthCharacter(this.activeDepth));
-        }
-        else if(this.tool === "remove_tile") {
-            const coordinate = this.getMousePosition();
-
-            if(!coordinate) {
-                return;
-            }
-
-            this.updateStructure(coordinate.row, coordinate.column, 'X');
         }
     }
 
@@ -289,8 +298,6 @@ export default class RoomFloorPlanEditor {
             context.strokeStyle = "#FFFFFF";
             context.strokeRect(left, top, tileSize - 3, tileSize - 3);
         }
-
-        window.requestAnimationFrame(this.render.bind(this));
     }
 
     updateStructure(row: number, column: number, value: string) {
