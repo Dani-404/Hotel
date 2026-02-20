@@ -11,6 +11,7 @@ export type RoomStructure = {
         id: string;
         thickness: number;
         hidden: boolean;
+        height?: number;
     }
 
     floor: {

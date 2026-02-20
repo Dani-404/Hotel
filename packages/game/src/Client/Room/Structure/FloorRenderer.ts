@@ -134,7 +134,7 @@ export default class FloorRenderer {
         });
 
         const width = (this.rows * this.fullSize) + (this.columns * this.fullSize) + (this.structure.wall.thickness * 2);
-        const height = (this.rows * this.halfSize) + (this.columns * this.halfSize) + (this.depth * this.halfSize) + ((this.structure.wall.thickness + this.structure.floor.thickness) * 2) + this.halfSize;
+        const height = (this.rows * this.halfSize) + (this.columns * this.halfSize) + (this.depth * this.fullSize) + ((this.structure.wall.thickness + this.structure.floor.thickness) * 2) + this.halfSize;
 
         const canvas = new OffscreenCanvas(width, height);
 
@@ -161,7 +161,7 @@ export default class FloorRenderer {
 
     private renderLeftEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
-        context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
+        context.setTransform(1, .5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.fullSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(const index in rectangles) {
@@ -189,7 +189,7 @@ export default class FloorRenderer {
 
     private renderRightEdges(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
-        context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
+        context.setTransform(1, -.5, 0, 1, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.fullSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
 
         for(const index in rectangles) {
@@ -222,7 +222,7 @@ export default class FloorRenderer {
 
     private renderTiles(context: OffscreenCanvasRenderingContext2D, rectangles: FloorRectangle[], image: ImageBitmap) {
         context.beginPath();
-        context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.halfSize) + this.structure.wall.thickness);
+        context.setTransform(1, .5, -1, .5, this.structure.wall.thickness + this.rows * this.fullSize, ((this.depth + 1) * this.fullSize) + this.structure.wall.thickness);
         context.fillStyle = context.createPattern(image, "repeat")!;
                 
         const tiles = new Path2D();

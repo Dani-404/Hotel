@@ -7,6 +7,7 @@ import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { RoomStructureEventData } from "@shared/Communications/Responses/Rooms/RoomStructureEventData.js";
 import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
 import { RoomInformationData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
+import RoomFloorplanHelper from "./RoomFloorplanHelper.js";
 
 export default class Room {
     public readonly users: RoomUser[] = [];
@@ -133,7 +134,7 @@ export default class Room {
                 return 0;
             }
 
-            return parseInt(this.model.structure.grid[position.row]![position.column]!)
+            return RoomFloorplanHelper.parseDepth(this.model.structure.grid[position.row]![position.column]!)
         }
 
         if(furniture.model.furniture.flags.sitable) {

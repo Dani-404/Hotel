@@ -11,6 +11,7 @@ import { UserActionEventData } from "@shared/Communications/Responses/Rooms/User
 import { AStarFinder } from "astar-typescript";
 import { UserPositionEventData } from "@shared/Communications/Responses/Rooms/Users/UserPositionEventData.js";
 import { UserChatEventData } from "@shared/Communications/Responses/Rooms/Users/UserChatEventData.js";
+import RoomFloorplanHelper from "../RoomFloorplanHelper.js";
 
 export default class RoomUser {
     public preoccupiedByActionHandler: boolean = false;
@@ -30,7 +31,7 @@ export default class RoomUser {
         this.position = initialPosition ?? {
             row: room.model.structure.door?.row ?? 0,
             column: room.model.structure.door?.column ?? 0,
-            depth: parseInt(room.model.structure.grid[room.model.structure.door?.row ?? 0]?.[room.model.structure.door?.column ?? 0]!)
+            depth: RoomFloorplanHelper.parseDepth(room.model.structure.grid[room.model.structure.door?.row ?? 0]?.[room.model.structure.door?.column ?? 0]!)
         };
 
         this.direction = 2;

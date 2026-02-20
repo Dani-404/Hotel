@@ -12,6 +12,7 @@ import { UserFurnitureEventData } from "@Shared/Communications/Responses/Invento
 import { PlaceFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PlaceFurnitureEventData";
 import { PlaceRoomContentFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PlaceRoomContentFurnitureEventData";
 import { useDialogs } from "../../../hooks/useDialogs";
+import DialogItem from "../../Dialog/Item/DialogItem";
 
 export default function InventoryFurnitureTab() {
     const { setDialogHidden } = useDialogs();
@@ -176,33 +177,10 @@ export default function InventoryFurnitureTab() {
                 overflowY: "scroll"
             }}>
                 {userFurniture?.map((userFurniture) => (
-                    <div key={(userFurniture.furniture.flags.inventoryStackable)?(userFurniture.furniture.id):(userFurniture.id)} style={{
-                        display: "flex",
-
-                        width: 40,
-                        height: 40,
-
-                        boxSizing: "border-box",
-
-                        border: "1px solid black",
-                        borderRadius: 6,
-
-                        cursor: "pointer",
-
-                        position: "relative"
-                    }} onClick={() => setActiveFurniture(userFurniture)}>
-                        <div style={{
-                            flex: 1,
-
-                            border: (activeFurniture?.id === userFurniture.id)?("2px solid white"):("none"),
-                            borderRadius: 6,
-
-                            background: "#CBCBCB",
-
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center"
-                        }}>
+                    <DialogItem
+                        key={(userFurniture.furniture.flags.inventoryStackable)?(userFurniture.furniture.id):(userFurniture.id)}
+                        active={activeFurniture?.id === userFurniture.id}
+                        onClick={() => setActiveFurniture(userFurniture)}>
                             <FurnitureIcon furnitureData={userFurniture.furniture}/>
 
                             {(userFurniture.quantity > 1) && (
@@ -223,8 +201,7 @@ export default function InventoryFurnitureTab() {
                                     {userFurniture.quantity}
                                 </div>
                             )}
-                        </div>
-                    </div>
+                    </DialogItem>
                 ))}
             </div>
 

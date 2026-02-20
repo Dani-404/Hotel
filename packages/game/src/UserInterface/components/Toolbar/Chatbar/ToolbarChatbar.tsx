@@ -22,22 +22,38 @@ export default function ToolbarChatbar() {
 
             const command = input[0].substring(1);
 
-            if(command === "furni") {
-                dialogs.addUniqueDialog("room-furni");
+            switch(command) {
+                case "furni": {
+                    dialogs.addUniqueDialog("room-furni");
 
-                return;
-            }
+                    return;
+                }
 
-            if(command === "enable" && input.length === 1) {
-                dialogs.addUniqueDialog("figure-catalog");
-                
-                return;
-            }
+                case "enable": {
+                    if(input.length === 1) {
+                        dialogs.addUniqueDialog("figure-catalog");
 
-            if(command === "carry" && input.length === 1) {
-                dialogs.addUniqueDialog("figure-catalog");
-                
-                return;
+                        return;
+                    }
+
+                    break;
+                }
+
+                case "carry": {
+                    if(input.length === 1) {
+                        dialogs.addUniqueDialog("figure-catalog");
+
+                        return;
+                    }
+
+                    break;
+                }
+
+                case "floor": {
+                    dialogs.addUniqueDialog("room-floorplan");
+                    
+                    return;
+                }
             }
         }
 

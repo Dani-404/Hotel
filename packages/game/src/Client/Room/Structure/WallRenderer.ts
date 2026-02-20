@@ -61,6 +61,10 @@ export default class WallRenderer {
             }
         }
 
+        if(structure.wall.height) {
+            this.depth += structure.wall.height;
+        }
+
         this.fullSize = this.size / 2;
         this.halfSize = this.fullSize / 2;
     }
@@ -172,7 +176,7 @@ export default class WallRenderer {
         const doorMask = await this.getDoorMask(data);
         
         const width = (this.rows * this.fullSize) + (this.columns * this.fullSize) + (this.structure.floor.thickness * 2);
-        const height = (this.rows * this.halfSize) + (this.columns * this.halfSize) + (this.depth * this.halfSize) + this.structure.wall.thickness + this.structure.floor.thickness + (this.size * 2);
+        const height = (this.rows * this.halfSize) + (this.columns * this.halfSize) + (this.depth * this.fullSize) + this.structure.wall.thickness + this.structure.floor.thickness + (this.size * 2);
 
         const canvas = new OffscreenCanvas(width, height);
 

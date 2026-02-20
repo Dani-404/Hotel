@@ -6,9 +6,11 @@ export type InputProps = {
     style?: CSSProperties;
     value: string;
     onChange: (value: string) => void;
+    min?: number;
+    max?: number;
 }
 
-export default function Input({ style, type = "text", placeholder, value, onChange }: InputProps) {
+export default function Input({ style, type = "text", placeholder, value, onChange, min, max }: InputProps) {
     return (
         <div style={{
             borderBottom: "1px solid #FFFFFF",
@@ -29,6 +31,8 @@ export default function Input({ style, type = "text", placeholder, value, onChan
                     placeholder={placeholder}
                     value={value}
                     onChange={(event) => onChange((event.currentTarget as HTMLInputElement).value)}
+                    min={min}
+                    max={max}
                     style={{
                         flex: 1,
                         background: "none",

@@ -17,6 +17,7 @@ import { ShopPageData } from "@Shared/Communications/Responses/Shop/ShopPagesEve
 import EditShopFurnitureDialog from "../Shop/Development/EditShopFurnitureDialog";
 import RoomFurnitureDialog from "../Room/Furniture/Dialogs/RoomFurnitureDialog";
 import FigureCatalogDialog from "../Catalogs/FigureCatalogDialog";
+import RoomFloorPlanDialog from "../Room/FloorPlan/RoomFloorPlanDialog";
 
 export default function DialogInstances() {
     const { dialogs, closeDialog } = useDialogs();
@@ -57,6 +58,9 @@ export default function DialogInstances() {
                         
                     case "room-furni":
                         return (<RoomFurnitureDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+
+                    case "room-floorplan":
+                        return (<RoomFloorPlanDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
 
                     case "report-issue":
                         return (<ReportIssueDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);

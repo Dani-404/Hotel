@@ -10,6 +10,12 @@ export default class UpdateRoomStructureEvent implements IncomingEvent<UpdateRoo
             throw new Error("User is not in a room.");
         }
 
+        const roomUser = user.room.getRoomUser(user);
+
+        if(!roomUser.hasRights()) {
+            throw new Error("User does not have room rights.");
+        }
+
         const structure = user.room.getStructure();
 
         if(event.floorThickness !== undefined && [0, 4, 8, 12, 16].includes(event.floorThickness)) {

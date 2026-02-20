@@ -230,6 +230,20 @@ export default class RoomFurniture {
         }
     }
 
+    public async setPosition(position: RoomPosition) {
+        this.model.position = position;
+
+        if(this.model.changed()) {
+            await this.model.save();
+
+            this.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
+                furnitureUpdated: [
+                    this.getFurnitureData()
+                ]
+            }));
+        }
+    }
+
     public async handleActionsInterval() {
         const logic = this.getCategoryLogic();
 

@@ -288,7 +288,7 @@ export default class FigureRenderer {
                 const setPartAssetData = this.getAssetForSetPart(setPartData.id, setPartData.type);
 
                 if(!setPartAssetData) {
-                    console.log("Set part asset data does not exist for set part id " + setPartData.id + ", type " + setPartData.type + ".");
+                    //console.log("Set part asset data does not exist for set part id " + setPartData.id + ", type " + setPartData.type + ".");
 
                     continue;
                 }

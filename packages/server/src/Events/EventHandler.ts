@@ -39,6 +39,7 @@ import UpdateShopPageEvent from "../Communication/Game/Shop/Development/UpdateSh
 import UpdateShopFurnitureEvent from "../Communication/Game/Shop/Development/UpdateShopFurnitureEvent.js";
 import ImportRoomFurnitureEvent from "../Communication/Game/Rooms/Furniture/Development/ImportRoomFurnitureEvent.js";
 import GetRoomMapsEvent from "../Communication/Game/Navigator/GetRoomMapsEvent.js";
+import UpdateRoomFloorplanEvent from "../Communication/Game/Rooms/Floorplan/UpdateRoomFloorplanEvent.js";
 
 export default class EventHandler extends EventEmitter {
     constructor() {
@@ -133,6 +134,9 @@ export default class EventHandler extends EventEmitter {
 
         this
             .addIncomingEvent(new ImportRoomFurnitureEvent());
+
+        this
+            .addIncomingEvent(new UpdateRoomFloorplanEvent());
 
         this.addIncomingEvent(new PingEvent());
     }
