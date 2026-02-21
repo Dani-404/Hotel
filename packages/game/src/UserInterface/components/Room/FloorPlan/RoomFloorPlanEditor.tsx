@@ -5,7 +5,7 @@ import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
 import { RoomFloorplanEditData } from "@Shared/Interfaces/Room/Floorplan/RoomFloorplanEditData";
 import RoomFloorplanHelper from "@Shared/Helpers/RoomFloorplanHelper";
 
-export type RoomFloorPlanTool = "add_tile" | "remove_tile" | "raise_tile" | "sink_tile" | "enter_tile";
+export type RoomFloorPlanTool = "add_tile" | "remove_tile" | "raise_tile" | "sink_tile" | "enter_tile" | "tile_picker";
 
 export default class RoomFloorPlanEditor {
     private data?: RoomFloorplanEditData;
@@ -34,7 +34,7 @@ export default class RoomFloorPlanEditor {
 
     private mousePosition: MousePosition | null = null;
 
-    constructor(private readonly canvas: HTMLCanvasElement, private update: (data: RoomFloorplanEditData) => void) {
+    constructor(private readonly canvas: HTMLCanvasElement, private updateDepth: (value: number) => void, private update: (data: RoomFloorplanEditData) => void) {
         canvas.addEventListener("mousedown", this.mousedown.bind(this));
         canvas.addEventListener("mousemove", this.mousemove.bind(this));
         canvas.addEventListener("mouseleave", this.mouseleave.bind(this));
@@ -185,6 +185,23 @@ export default class RoomFloorPlanEditor {
             };
 
             this.update(this.data);
+        }
+        else if(this.tool === "tile_picker") {
+            const coordinate = this.getMousePosition();
+
+            if(!coordinate) {
+                return;
+            }
+
+            const value = this.data?.structure.grid[coordinate.row][coordinate.column];
+
+            if(value === undefined || value === 'X') {
+                return;
+            }
+
+            const depth = RoomFloorplanHelper.parseDepth(value);
+
+            this.updateDepth(depth);
         }
     }
 
