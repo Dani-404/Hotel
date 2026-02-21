@@ -64,7 +64,7 @@ export default function RoomMapImage({ crop = false, width, height, style, struc
             context.translate((floorRenderer.rows * fullSize), (wallRenderer.depth + 3.5) * fullSize);
 
             context.drawImage(wallImage, -(wallRenderer.rows * fullSize), -((wallRenderer.depth + 3.5) * fullSize) - wallRenderer.structure.wall.thickness);
-            context.drawImage(floorImage, -(floorRenderer.rows * fullSize), -(floorRenderer.depth * halfSize) - halfSize - (floorRenderer.structure.wall.thickness ?? 0));
+            context.drawImage(floorImage, -(floorRenderer.rows * fullSize), -(floorRenderer.depth * fullSize) - fullSize - (floorRenderer.structure.wall.thickness ?? 0));
             context.drawImage(doorMaskImage, -(wallRenderer.rows * fullSize), -((wallRenderer.depth + 3.5) * fullSize) - wallRenderer.structure.wall.thickness);
 
             const resultContext = canvasRef.current?.getContext("2d");
