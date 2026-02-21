@@ -2,6 +2,7 @@ import RoomFurnitureBackgroundDialog, { RoomFurnitureBackgroundDialogData } from
 import RoomFurnitureDimmerDialog, { RoomFurnitureDimmerData } from "./Dimmer/RoomFurnitureDimmerDialog";
 import RoomFurnitureStickiesDialog, { RoomFurnitureStickiesDialogData } from "./Stickies/RoomFurnitureStickiesDialog";
 import RoomFurnitureBackgroundTonerDialog, { RoomFurnitureBackgroundTonerDialogData } from "./Toner/RoomFurnitureBackgroundTonerDialog";
+import RoomFurnitureTrophyDialog, { RoomFurnitureTrophyDialogData } from "./Trophy/RoomFurnitureTrophyDialog";
 
 export type RoomFurnitureLogicDialogProps = {
     data: RoomFurnitureLogicDialogData;
@@ -13,7 +14,8 @@ export type RoomFurnitureLogicDialogData =
     RoomFurnitureDimmerData
     | RoomFurnitureBackgroundDialogData
     | RoomFurnitureBackgroundTonerDialogData
-    | RoomFurnitureStickiesDialogData;
+    | RoomFurnitureStickiesDialogData
+    | RoomFurnitureTrophyDialogData;
 
 export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialogProps) {
     switch(props.data.type) {
@@ -27,7 +29,10 @@ export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialog
             return (<RoomFurnitureStickiesDialog {...props}/>);
             
         case "furniture_background_color":
-            return (<RoomFurnitureBackgroundTonerDialog {...props}/>)
+            return (<RoomFurnitureBackgroundTonerDialog {...props}/>);
+            
+        case "trophy":
+            return (<RoomFurnitureTrophyDialog {...props}/>);
     }
 
     return null;

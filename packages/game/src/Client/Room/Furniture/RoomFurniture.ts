@@ -14,6 +14,7 @@ import { RoomFurnitureBackgroundTonerData } from "@Shared/Interfaces/Room/Furnit
 import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 import RoomFurnitureStickieLogic from "@Client/Room/Furniture/Logic/RoomFurnitureStickieLogic";
+import RoomFurnitureTrophyLogic from "@Client/Room/Furniture/Logic/RoomFurnitureTrophyLogic";
 
 export default class RoomFurniture {
     public readonly furniture: Furniture;
@@ -73,6 +74,9 @@ export default class RoomFurniture {
 
             case "dimmer":
                 return new FurnitureRoomDimmerLogic(this.instance, this);
+
+            case "trophy":
+                return new RoomFurnitureTrophyLogic(this.instance, this);
         }
 
         return new FurnitureDefaultLogic(this.instance, this);

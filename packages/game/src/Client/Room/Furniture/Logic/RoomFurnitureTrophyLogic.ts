@@ -2,14 +2,14 @@ import FurnitureLogic from "@Client/Furniture/Logic/Interfaces/FurnitureLogic";
 import RoomInstance from "@Client/Room/RoomInstance";
 import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
 import { clientInstance } from "../../../..";
-import { RoomFurnitureStickiesDialogData } from "../../../../UserInterface/components/Room/Furniture/Logic/Stickies/RoomFurnitureStickiesDialog";
+import { RoomFurnitureTrophyDialogData } from "../../../../UserInterface/components/Room/Furniture/Logic/Trophy/RoomFurnitureTrophyDialog";
 
-export default class RoomFurnitureStickieLogic implements FurnitureLogic {
+export default class RoomFurnitureTrophyLogic implements FurnitureLogic {
     constructor(private readonly room: RoomInstance, private readonly roomFurniture: RoomFurniture) {
     }
 
     isAvailable() {
-        return true;
+        return Boolean(this.roomFurniture.data.data);
     }
 
     use(): void {
@@ -24,8 +24,8 @@ export default class RoomFurnitureStickieLogic implements FurnitureLogic {
             type: "room-furniture-logic",
             data: {
                 furniture: this.roomFurniture,
-                type: "furniture_stickie"
-            } satisfies RoomFurnitureStickiesDialogData
+                type: "trophy"
+            } satisfies RoomFurnitureTrophyDialogData
         });
     }
 
