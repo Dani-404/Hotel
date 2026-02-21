@@ -20,6 +20,7 @@ export default class RoomUser {
     public position: RoomPosition;
     public direction: number;
     public actions: string[] = [];
+    public typing: boolean = false;
 
     public path?: Omit<RoomPosition, "depth">[] | undefined;
     public walkThroughFurniture?: boolean | undefined;
@@ -69,7 +70,8 @@ export default class RoomUser {
             direction: this.direction,
             
             hasRights: this.hasRights(),
-            actions: this.actions
+            actions: this.actions,
+            typing: this.typing
         };
     }
 

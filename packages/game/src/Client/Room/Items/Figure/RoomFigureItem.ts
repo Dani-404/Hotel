@@ -5,12 +5,15 @@ import Figure from "@Client/Figure/Figure";
 import RoomFigureSprite from "./RoomFigureSprite";
 import RoomFigureEffectSprite from "@Client/Room/Items/Figure/RoomFigureEffectSprite";
 import RoomRenderer from "@Client/Room/Renderer";
+import RoomFigureTypingSprite from "@Client/Room/Items/Figure/RoomFigureTypingSprite";
 
 export default class RoomFigureItem extends RoomItem {
     sprites: RoomItemSpriteInterface[] = [];
 
     public readonly id = Math.random();
     private currentFrame: number = 0;
+
+    public typing: boolean = false;
 
     constructor(public roomRenderer: RoomRenderer, public readonly figureRenderer: Figure, position: RoomPosition) {
         super(roomRenderer, "figure");
@@ -36,6 +39,10 @@ export default class RoomFigureItem extends RoomItem {
                 new RoomFigureSprite(this, result.figure),
                 ...result.effects.map((effect) => new RoomFigureEffectSprite(this, effect))
             ];
+
+            if(this.typing) {
+                this.sprites.push(new RoomFigureTypingSprite(this, result.figure));
+            }
         });
     }
 

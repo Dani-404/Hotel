@@ -42,6 +42,7 @@ import GetRoomMapsEvent from "../Communication/Game/Navigator/GetRoomMapsEvent.j
 import UpdateRoomFloorplanEvent from "../Communication/Game/Rooms/Floorplan/UpdateRoomFloorplanEvent.js";
 import GetFurnitureTypesEvent from "../Communication/Game/Furniture/GetFurnitureTypesEvent.js";
 import UpdateFurnitureEvent from "../Communication/Game/Furniture/UpdateFurnitureEvent.js";
+import SetTypingEvent from "../Communication/Game/Rooms/User/SetTypingEvent.js";
 
 export default class EventHandler extends EventEmitter {
     constructor() {
@@ -115,7 +116,8 @@ export default class EventHandler extends EventEmitter {
             .addIncomingEvent(new UpdateUserBadgeEvent())
             .addIncomingEvent(new SetRoomChatStyleEvent())
             .addIncomingEvent(new SetFigureConfigurationEvent())
-            .addIncomingEvent(new SetHomeRoomEvent());
+            .addIncomingEvent(new SetHomeRoomEvent())
+            .addIncomingEvent(new SetTypingEvent());
             
         this
             .addIncomingEvent(new CreateRoomEvent())

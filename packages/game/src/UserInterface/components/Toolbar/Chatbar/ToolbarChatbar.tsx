@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { webSocketClient } from "../../../..";
 import { SendUserMessageEventData } from "@Shared/Communications/Requests/Rooms/User/SendUserMessageEventData";
+import { SetTypingEventData } from "@Shared/Communications/Requests/Rooms/User/SetTypingEventData";
 import ToolbarChatbarStyles from "./ToolbarChatbarStyles";
 import { useDialogs } from "../../../hooks/useDialogs";
 
@@ -9,6 +10,18 @@ export default function ToolbarChatbar() {
 
     const [value, setValue] = useState("");
     const [roomChatStyles, setRoomChatStyles] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            webSocketClient.send<SetTypingEventData>("SetTypingEvent", {
+                typing: (value.length)?(true):(false)
+            });
+        }, 500);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [value]);
 
     const handleSubmit = useCallback(() => {
         if(!value.length) {

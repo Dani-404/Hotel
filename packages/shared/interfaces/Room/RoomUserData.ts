@@ -11,9 +11,8 @@ export type RoomUserData = {
         depth: number;
     };
 
+    typing: boolean;
     direction: number;
-
     hasRights: boolean;
-
     actions: string[];
 };
