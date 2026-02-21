@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useRoomInstance } from "../../../../hooks/useRoomInstance";
 import { useUser } from "../../../../hooks/useUser";
 import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
+import { usePermissionAction } from "../../../../hooks/usePermissionAction";
+import { useDialogs } from "../../../../hooks/useDialogs";
 
 export type RoomFurnitureProfileProps = {
     furniture: RoomFurniture;
@@ -15,6 +17,9 @@ export type RoomFurnitureProfileProps = {
 
 export default function RoomFurnitureProfile({ furniture }: RoomFurnitureProfileProps) {
     const user = useUser();
+    const dialogs = useDialogs();
+
+    const hasEditFurniturePermissions = usePermissionAction("furniture:edit");
 
     const room = useRoomInstance();
 
@@ -37,10 +42,27 @@ export default function RoomFurnitureProfile({ furniture }: RoomFurnitureProfile
 
                 display: "flex",
                 flexDirection: "column",
-                gap: 10
+                gap: 10,
+
+                pointerEvents: "auto"
             }}>
 
-                <b>{furniture.data.furniture.name}</b>
+                <div style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 5,
+
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                }}>
+                    <b>{furniture.data.furniture.name}</b>
+
+                    {(hasEditFurniturePermissions) && (
+                        <div className="sprite_room_user_motto_pen" style={{
+                            cursor: "pointer"
+                        }} onClick={() => dialogs.addUniqueDialog("edit-furniture", furniture.data.furniture)}/>
+                    )}
+                </div>
 
                 <div style={{
                     width: "100%",

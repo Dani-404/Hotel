@@ -94,6 +94,9 @@ export default function Selection({ value, items, onChange }: SelectionProps) {
                         background: "#FFFFFF",
                         border: "1px solid #808080",
                         borderRadius: 6,
+
+                        maxHeight: 200,
+                        overflowY: "scroll"
                     }}>
                         {items.map((item) => (
                             <div key={item.value} style={{
