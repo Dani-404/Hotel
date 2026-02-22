@@ -98,16 +98,16 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
             let x = assetData.x;
             let y = assetData.y;
 
+            if(assetData.flipHorizontal) {
+                x = (assetData.x * -1) - spriteData.width;
+            }
+
             if(directionLayerData?.x !== undefined) {
                 x += directionLayerData.x;
             }
             
             if(directionLayerData?.y !== undefined) {
                 y += directionLayerData.y;
-            }
-
-            if(assetData.flipHorizontal) {
-                x = (assetData.x * -1) - spriteData.width;
             }
 
             const assetSprite: FurnitureRendererSprite = {

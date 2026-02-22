@@ -14,6 +14,7 @@ import RoomFurnitureVendingMachineLogic from "./Logic/RoomFurnitureVendingMachin
 import RoomFurnitureDiceLogic from "./Logic/RoomFurnitureDiceLogic.js";
 import RoomFurnitureTeleportTileLogic from "./Logic/RoomFurnitureTeleportTileLogic.js";
 import RoomUser from "../Users/RoomUser.js";
+import RoomFurnitureFortunaLogic from "./Logic/RoomFurnitureFortunaLogic.js";
 
 export default class RoomFurniture {
     public preoccupiedByActionHandler: boolean = false;
@@ -174,6 +175,9 @@ export default class RoomFurniture {
 
                 case "roller":
                     return this.category = new RoomFurnitureRollerLogic(this);
+
+                case "fortuna":
+                    return this.category = new RoomFurnitureFortunaLogic(this);
             }
 
             if(!this.category) {
