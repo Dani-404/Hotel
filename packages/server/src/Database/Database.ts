@@ -23,6 +23,8 @@ import { initializeBadgeModel } from "./Models/Badges/BadgeModel.js";
 import { intitializePermissionModel } from "./Models/Permissions/PermissionModel.js";
 import { intitializePermissionRoleModel } from "./Models/Permissions/PermissionRoleModel.js";
 import { initializeShopPageFeatureModel } from "./Models/Shop/ShopPageFeatureModel.js";
+import { initializeShopPageBotModel } from "./Models/Shop/ShopPageBotModel.js";
+import { initializeUserBotModel } from "./Models/Users/Bots/UserBotModel.js";
 
 export const sequelize = new Sequelize(config.database);
 
@@ -34,6 +36,7 @@ export async function initializeModels() {
   initializeShopPageModel(sequelize);
   initializeShopPageFurnitureModel(sequelize);
   initializeShopPageFeatureModel(sequelize);
+  initializeShopPageBotModel(sequelize);
 
   initializeRoomMapModel(sequelize);
   initializeRoomCategoryModel(sequelize);
@@ -45,6 +48,7 @@ export async function initializeModels() {
   initializeRoomModel(sequelize);
   initializeRoomRightsModel(sequelize);
 
+  initializeUserBotModel(sequelize);
   initializeUserFurnitureModel(sequelize);
   initializeRoomChatStyleModel(sequelize);
 

@@ -9,9 +9,11 @@ import { RoomStructure } from "@shared/Interfaces/Room/RoomStructure.js";
 import { RoomInformationData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
 import RoomFloorplanHelper from "./RoomFloorplanHelper.js";
 import RoomFloorplan from "./Floorplan/RoomFloorplan.js";
+import RoomBot from "./Bots/RoomBot.js";
 
 export default class Room {
     public readonly users: RoomUser[] = [];
+    public readonly bots: RoomBot[] = [];
     public readonly furnitures: RoomFurniture[] = [];
 
     public readonly floorplan: RoomFloorplan;
@@ -23,6 +25,7 @@ export default class Room {
 
     constructor(public readonly model: RoomModel) {
         this.furnitures = model.roomFurnitures.map((roomFurniture) => new RoomFurniture(this, roomFurniture));
+        this.bots = model.roomBots.map((userBot) => new RoomBot(this, userBot));
 
         this.floorplan = new RoomFloorplan(this);
 
@@ -55,6 +58,10 @@ export default class Room {
 
     public getRoomUserAtPosition(position: Omit<RoomPosition, "depth">) {
         return this.users.find((user) => user.position.row === position.row && user.position.column === position.column);
+    }
+
+    public getBotAtPosition(position: Omit<RoomPosition, "depth">) {
+        return this.bots.find((bot) => bot.model.position.row === position.row && bot.model.position.column === position.column);
     }
 
     public getRoomUser(user: User) {

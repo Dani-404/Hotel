@@ -43,6 +43,11 @@ import UpdateRoomFloorplanEvent from "../Communication/Game/Rooms/Floorplan/Upda
 import GetFurnitureTypesEvent from "../Communication/Game/Furniture/GetFurnitureTypesEvent.js";
 import UpdateFurnitureEvent from "../Communication/Game/Furniture/UpdateFurnitureEvent.js";
 import SetTypingEvent from "../Communication/Game/Rooms/User/SetTypingEvent.js";
+import GetShopPageBotsEvent from "../Communication/Game/Shop/GetShopPageBotsEvent.js";
+import UpdateShopBotEvent from "../Communication/Game/Shop/Development/UpdateShopBotEvent.js";
+import PurchaseShopBotEvent from "../Communication/Game/Shop/PurchaseShopBotEvent.js";
+import GetUserBotsEvent from "../Communication/Game/Inventory/GetUserBotsEvent.js";
+import PlaceBotEvent from "../Communication/Game/Rooms/Furniture/PlaceBotEvent.js";
 
 export default class EventHandler extends EventEmitter {
     constructor() {
@@ -89,13 +94,16 @@ export default class EventHandler extends EventEmitter {
         this
             .addIncomingEvent(new GetShopPagesEvent())
             .addIncomingEvent(new GetShopPageFurnitureEvent())
-            .addIncomingEvent(new PurchaseShopFurnitureEvent());
+            .addIncomingEvent(new GetShopPageBotsEvent())
+            .addIncomingEvent(new PurchaseShopFurnitureEvent())
+            .addIncomingEvent(new PurchaseShopBotEvent());
             
         this
             .addIncomingEvent(new EnterRoomEvent())
             .addIncomingEvent(new EnterHomeRoomEvent())
             .addIncomingEvent(new LeaveRoomEvent())
             .addIncomingEvent(new PlaceFurnitureEvent())
+            .addIncomingEvent(new PlaceBotEvent())
             .addIncomingEvent(new PlaceRoomContentFurnitureEvent())
             .addIncomingEvent(new UseRoomFurnitureEvent())
             .addIncomingEvent(new UpdateRoomFurnitureEvent())
@@ -111,6 +119,7 @@ export default class EventHandler extends EventEmitter {
         this
             .addIncomingEvent(new GetUserEvent())
             .addIncomingEvent(new GetUserFurnitureEvent())
+            .addIncomingEvent(new GetUserBotsEvent())
             .addIncomingEvent(new GetUserProfileEvent())
             .addIncomingEvent(new GetInventoryBadgesEvent())
             .addIncomingEvent(new UpdateUserBadgeEvent())
@@ -131,7 +140,8 @@ export default class EventHandler extends EventEmitter {
 
         this
             .addIncomingEvent(new UpdateShopPageEvent())
-            .addIncomingEvent(new UpdateShopFurnitureEvent());
+            .addIncomingEvent(new UpdateShopFurnitureEvent())
+            .addIncomingEvent(new UpdateShopBotEvent());
 
         this
             .addIncomingEvent(new SetMottoEvent());

@@ -54,8 +54,10 @@ export default class RoomUser {
                 information: this.room.getInformationData(),
                 
                 structure: this.room.model.structure,
+                
                 users: this.room.users.map((user) => user.getRoomUserData()),
                 furnitures: this.room.furnitures.map((furniture) => furniture.getFurnitureData()),
+                bots: this.room.bots.map((bot) => bot.getBotData()),
 
                 hasRights: this.hasRights()
             }),

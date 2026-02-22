@@ -66,6 +66,12 @@ export default class RoomFloorplan {
             return 1;
         }
 
+        const bot = this.room.getBotAtPosition(position);
+
+        if(bot) {
+            return 1;
+        }
+
         return 0;
     }
 

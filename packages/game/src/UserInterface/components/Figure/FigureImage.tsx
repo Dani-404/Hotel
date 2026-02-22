@@ -8,13 +8,14 @@ export type FigureImageProps = {
     figureConfiguration: FigureConfiguration;
     direction: number;
     cropped?: boolean;
+    headOnly?: boolean;
 }
 
-export default function FigureImage({ actions, cropped = true, figureConfiguration, direction }: FigureImageProps) {
+export default function FigureImage({ actions, headOnly, cropped = true, figureConfiguration, direction }: FigureImageProps) {
     const [image, setImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        const furnitureRenderer = new Figure(figureConfiguration, direction, actions);
+        const furnitureRenderer = new Figure(figureConfiguration, direction, actions, headOnly);
 
         furnitureRenderer.renderToCanvas(Figure.figureWorker, 0, cropped).then(({ figure }) => {
             setImage(figure.image);

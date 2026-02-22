@@ -21,6 +21,7 @@ import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
 import ObservableProperty from "@Client/Utilities/ObservableProperty";
 import { RoomFurnitureBackgroundTonerData } from "@Shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundTonerData";
+import RoomBot from "@Client/Room/Bots/RoomBot";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -28,7 +29,6 @@ type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigure
 };
 
 export type RoomInstanceFurniture = RoomItem<RoomFurnitureData, RoomFurnitureItem>;
-
 
 export type RoomUser = RoomItem<RoomUserData, RoomFigureItem>;
 
@@ -41,6 +41,7 @@ export default class RoomInstance {
 
     private readonly users: RoomUser[] = [];
     public furnitures: RoomFurniture[] = [];
+    public bots: RoomBot[] = [];
 
     public information: RoomInformationData;
     public hasRights: boolean;
@@ -60,6 +61,7 @@ export default class RoomInstance {
 
         this.users = event.users.map((userData) => this.addUser(userData));
         this.furnitures = event.furnitures.map((furnitureData) => new RoomFurniture(this, furnitureData));
+        this.bots = event.bots.map((botData) => new RoomBot(this, botData));
 
         this.registerEventListeners();
     }
@@ -179,6 +181,16 @@ export default class RoomInstance {
         return user;
     }
 
+    public getBotById(id: string) {
+        const bot = this.bots.find((bot) => bot.data.id === id);
+
+        if(!bot) {
+            throw new Error("Bot does not exist in room.");
+        }
+
+        return bot;
+    }
+
     public getFurnitureById(id: string) {
         const furniture = this.furnitures.find((furniture) => furniture.data.id === id);
 
@@ -216,6 +228,15 @@ export default class RoomInstance {
 
         this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(furniture.item), 1);
         this.furnitures.splice(this.furnitures.indexOf(furniture), 1);
+
+        this.clientInstance.roomInstance.update();
+    }
+
+    public removeBot(botId: string) {
+        const bot = this.getBotById(botId);
+
+        this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(bot.item), 1);
+        this.bots.splice(this.bots.indexOf(bot), 1);
 
         this.clientInstance.roomInstance.update();
     }

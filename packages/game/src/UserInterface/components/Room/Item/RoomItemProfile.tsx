@@ -40,7 +40,7 @@ export default function RoomItemProfile({ room }: RoomItemProfileProps) {
             }
 
             if(event.otherEntity) {
-                if(event.otherEntity.item instanceof RoomFigureItem) {
+                if(event.otherEntity.item instanceof RoomFigureItem && event.otherEntity.item.type === "figure") {
                     const user = room.getUserByItem(event.otherEntity.item);
 
                     setFocusedItem({
@@ -112,11 +112,15 @@ export default function RoomItemProfile({ room }: RoomItemProfileProps) {
             right: 0,
             bottom: 50,
         }}>
-            {(focusedItem.type === "furniture")?(
-                <RoomFurnitureProfile furniture={focusedItem.furniture}/>
-            ):(
-                <RoomUserProfile user={focusedItem.user}/>
-            )}
+            {(() => {
+                switch(focusedItem.type) {
+                    case "furniture":
+                        return (<RoomFurnitureProfile furniture={focusedItem.furniture}/>);
+
+                    case "user":
+                        return (<RoomUserProfile user={focusedItem.user}/>);
+                }
+            })()}
         </div>
     );
 }

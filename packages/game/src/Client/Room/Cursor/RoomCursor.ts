@@ -93,7 +93,7 @@ export default class RoomCursor extends EventTarget {
     }
 
     private frame() {
-        const entity = this.roomRenderer.getItemAtPosition((item) => ["furniture", "figure"].includes(item.type));
+        const entity = this.roomRenderer.getItemAtPosition((item) => ["furniture", "figure", "bot"].includes(item.type));
 
         if(this.roomRenderer.roomInstance?.hoveredUser.value && (!entity || this.roomRenderer.items.indexOf(entity.item) !== this.roomRenderer.items.indexOf(this.roomRenderer.roomInstance?.hoveredUser.value.item))) {
             this.roomRenderer.roomInstance.hoveredUser.value = null;
@@ -108,7 +108,7 @@ export default class RoomCursor extends EventTarget {
         this.roomRenderer.element.style.cursor = "pointer";
 
         if(this.roomRenderer.roomInstance && !this.roomRenderer.roomInstance.hoveredUser.value) {
-            if(entity.item instanceof RoomFigureItem) {
+            if(entity.item instanceof RoomFigureItem && entity.item.type === "figure") {
                 const user = this.roomRenderer.roomInstance.getUserByItem(entity.item);
 
                 this.roomRenderer.roomInstance.hoveredUser.value = user;
@@ -166,7 +166,7 @@ export default class RoomCursor extends EventTarget {
         this.dispatchEvent(new RoomClickEvent(floorEntity, otherEntity));
 
         if(this.roomRenderer.roomInstance) {
-            if(otherEntity?.item instanceof RoomFigureItem) {
+            if(otherEntity?.item instanceof RoomFigureItem && otherEntity.item.type === "figure") {
                 if(this.roomRenderer.roomInstance.focusedUser.value?.item?.id !== otherEntity.item.id) {
                     const user = this.roomRenderer.roomInstance.getUserByItem(otherEntity.item);
 

@@ -373,10 +373,10 @@ export default class RoomRenderer extends EventTarget {
         return true;
     }
 
-    public isPositionInsideUser(position: RoomPosition, dimensions: RoomPosition) {
+    public isPositionInsideFigure(position: RoomPosition, dimensions: RoomPosition) {
         for(let row = position.row; row < position.row + dimensions.row; row++) {
             for(let column = position.column; column < position.column + dimensions.column; column++) {
-                if(this.items.some((item) => item.type === "figure" && item.position?.row === row && item.position.column === column)) {
+                if(this.items.some((item) => (item.type === "figure" || item.type === "bot") && item.position?.row === row && item.position.column === column)) {
                     return true;
                 }
             }   
