@@ -32,7 +32,16 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
                 let frameSequenceIndex = frame % animationLayer.frameSequence.length;
 
                 if(animationLayer.frameRepeat && animationLayer.frameRepeat > 1) {
-                    frameSequenceIndex = Math.floor((frame % (animationLayer.frameSequence.length * animationLayer.frameRepeat)) / animationLayer.frameRepeat);
+                    const loopCount = (animationLayer.loopCount === undefined)?(1):(animationLayer.loopCount);
+
+                    const maxFrames = (animationLayer.frameSequence.length * animationLayer.frameRepeat) * loopCount;
+
+                    if(frame >= maxFrames && loopCount !== 0) {
+                        frameSequenceIndex = animationLayer.frameSequence.length - 1;
+                    }
+                    else {
+                        frameSequenceIndex = Math.floor((frame % (animationLayer.frameSequence.length * animationLayer.frameRepeat)) / animationLayer.frameRepeat);
+                    }
                 }
 
                 if(!animationLayer?.frameSequence[frameSequenceIndex]) {
