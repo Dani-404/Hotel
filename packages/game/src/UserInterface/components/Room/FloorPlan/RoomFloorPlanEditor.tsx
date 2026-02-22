@@ -4,6 +4,7 @@ import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import { RoomStructure } from "@Shared/Interfaces/Room/RoomStructure";
 import { RoomFloorplanEditData } from "@Shared/Interfaces/Room/Floorplan/RoomFloorplanEditData";
 import RoomFloorplanHelper from "@Shared/Helpers/RoomFloorplanHelper";
+import { clientInstance } from "../../../..";
 
 export type RoomFloorPlanTool = "add_tile" | "remove_tile" | "raise_tile" | "sink_tile" | "enter_tile" | "tile_picker";
 
@@ -46,23 +47,17 @@ export default class RoomFloorPlanEditor {
 
     private process() {
         if(this.moving && !this.middleButton) {
-            if(this.tool === "add_tile") {
-                const coordinate = this.getMousePosition();
+            const coordinate = this.getMousePosition();
 
-                if(!coordinate) {
-                    return;
+            const anyFurnitureOnTile = coordinate && clientInstance.roomInstance.value?.furnitures.some((furniture) => furniture.isPositionInside(coordinate, { row: 1, column: 1, depth: 1 }));
+
+            if(coordinate && !anyFurnitureOnTile) {
+                if(this.tool === "add_tile") {
+                    this.updateStructure(coordinate.row, coordinate.column, RoomFloorplanHelper.getDepthCharacter(this.activeDepth));
                 }
-
-                this.updateStructure(coordinate.row, coordinate.column, RoomFloorplanHelper.getDepthCharacter(this.activeDepth));
-            }
-            else if(this.tool === "remove_tile") {
-                const coordinate = this.getMousePosition();
-
-                if(!coordinate) {
-                    return;
+                else if(this.tool === "remove_tile") {
+                    this.updateStructure(coordinate.row, coordinate.column, 'X');
                 }
-
-                this.updateStructure(coordinate.row, coordinate.column, 'X');
             }
         }
 
@@ -132,13 +127,33 @@ export default class RoomFloorPlanEditor {
             return;
         }
 
-        if(this.tool === "raise_tile") {
-            const coordinate = this.getMousePosition();
+        const coordinate = this.getMousePosition();
 
-            if(!coordinate) {
+        if(!coordinate) {
+            return;
+        }
+
+        if(this.tool === "tile_picker") {
+            const value = this.data?.structure.grid[coordinate.row][coordinate.column];
+
+            if(value === undefined || value === 'X') {
                 return;
             }
 
+            const depth = RoomFloorplanHelper.parseDepth(value);
+
+            this.updateDepth(depth);
+        }
+
+        if(clientInstance.roomInstance.value) {
+            const anyFurnitureOnTile = clientInstance.roomInstance.value.furnitures.some((furniture) => furniture.isPositionInside(coordinate, { row: 1, column: 1, depth: 1 }));
+
+            if(anyFurnitureOnTile) {
+                return;
+            }
+        }
+
+        if(this.tool === "raise_tile") {
             const value = this.data?.structure.grid[coordinate.row][coordinate.column];
 
             if(value !== undefined && value !== 'X') {
@@ -150,12 +165,6 @@ export default class RoomFloorPlanEditor {
             }
         }
         else if(this.tool === "sink_tile") {
-            const coordinate = this.getMousePosition();
-
-            if(!coordinate) {
-                return;
-            }
-
             const value = this.data?.structure.grid[coordinate.row][coordinate.column];
 
             if(value !== undefined && value !== 'X') {
@@ -167,12 +176,6 @@ export default class RoomFloorPlanEditor {
             }
         }
         else if(this.tool === "enter_tile") {
-            const coordinate = this.getMousePosition();
-
-            if(!coordinate) {
-                return;
-            }
-
             const value = this.data?.structure.grid[coordinate.row][coordinate.column];
 
             if(value === undefined || value === 'X') {
@@ -185,23 +188,6 @@ export default class RoomFloorPlanEditor {
             };
 
             this.update(this.data);
-        }
-        else if(this.tool === "tile_picker") {
-            const coordinate = this.getMousePosition();
-
-            if(!coordinate) {
-                return;
-            }
-
-            const value = this.data?.structure.grid[coordinate.row][coordinate.column];
-
-            if(value === undefined || value === 'X') {
-                return;
-            }
-
-            const depth = RoomFloorplanHelper.parseDepth(value);
-
-            this.updateDepth(depth);
         }
     }
 
@@ -304,6 +290,15 @@ export default class RoomFloorPlanEditor {
 
                 context.fillStyle = "hsl(" + (360 - ((360 / 100) * (34 + (depth * 3)))) + ", 100%, 50%)";
                 context.fillRect(left + 1, top + 1, tileSize - 2, tileSize - 2);
+
+                if(clientInstance.roomInstance.value) {
+                    const anyFurnitureOnTile = clientInstance.roomInstance.value.furnitures.some((furniture) => furniture.isPositionInside({ row, column }, { row: 1, column: 1, depth: 1 }));
+
+                    if(anyFurnitureOnTile) {
+                        context.fillStyle = "rgba(255, 255, 255, .4)";
+                        context.fillRect(left + 1, top + 1, tileSize - 2, tileSize - 2);
+                    }
+                }
             }
         }
 
