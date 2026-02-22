@@ -188,6 +188,8 @@ export default class Room {
     public async setStructure(structure: RoomStructure) {
         await this.model.update({ structure });
 
+        this.floorplan.regenerateStaticGrid();
+
         this.sendRoomEvent(new OutgoingEvent<RoomStructureEventData>("RoomStructureEvent", {
             structure: this.model.structure
         }));

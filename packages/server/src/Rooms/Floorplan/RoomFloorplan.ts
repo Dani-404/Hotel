@@ -19,6 +19,10 @@ export default class RoomFloorplan {
         });
     }
 
+    public regenerateStaticGrid() {
+        this.grid = this.generateStaticGrid();
+    }
+
     private getMutableGrid() {
         return [...this.grid];
     }
