@@ -29,7 +29,9 @@ export default class RoomFloorplan {
 
     public updatePosition(position: Omit<RoomPosition, "depth">, previousPosition?: Omit<RoomPosition, "depth">) {
         if(this.grid[position.row]?.[position.column] === undefined) {
-            throw new Error("Position does not exist in structure.");
+            console.warn("Position does not exist in structure.");
+
+            return;
         }
 
         this.grid[position.row]![position.column] = this.getPositionWeight(position);
