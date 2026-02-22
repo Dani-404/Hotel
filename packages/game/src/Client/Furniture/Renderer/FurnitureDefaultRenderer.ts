@@ -30,10 +30,9 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
 
             if(animationLayer?.frameSequence?.length) {
                 let frameSequenceIndex = frame % animationLayer.frameSequence.length;
+                const loopCount = (animationLayer.loopCount === undefined)?(1):(animationLayer.loopCount);
 
                 if(animationLayer.frameRepeat && animationLayer.frameRepeat > 1) {
-                    const loopCount = (animationLayer.loopCount === undefined)?(1):(animationLayer.loopCount);
-
                     const maxFrames = (animationLayer.frameSequence.length * animationLayer.frameRepeat) * loopCount;
 
                     if(frame >= maxFrames && loopCount !== 0) {
@@ -41,6 +40,13 @@ export default class FurnitureDefaultRenderer implements FurnitureRenderer {
                     }
                     else {
                         frameSequenceIndex = Math.floor((frame % (animationLayer.frameSequence.length * animationLayer.frameRepeat)) / animationLayer.frameRepeat);
+                    }
+                }
+                else {
+                    const maxFrames = animationLayer.frameSequence.length * loopCount;
+
+                    if(frame >= maxFrames && loopCount !== 0) {
+                        frameSequenceIndex = animationLayer.frameSequence.length - 1;
                     }
                 }
 
