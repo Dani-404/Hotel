@@ -21,6 +21,7 @@ export default class RoomUser {
     public direction: number;
     public actions: string[] = [];
     public typing: boolean = false;
+    public teleporting: boolean = false;
 
     public path?: Omit<RoomPosition, "depth">[] | undefined;
     public walkThroughFurniture?: boolean | undefined;
@@ -283,6 +284,28 @@ export default class RoomUser {
         this.room.requestActionsFrame();
     }
 
+    public teleportTo(position: Omit<RoomPosition, "depth">) {
+        if(this.room.model.structure.grid[position.row]?.[position.column] === undefined || this.room.model.structure.grid[position.row]?.[position.column] === 'X') {
+            return;
+        }
+
+        const furniture = this.room.getUpmostFurnitureAtPosition(position);
+
+        if(furniture) {
+            if(!furniture.isWalkable()) {
+                return;
+            }
+        }
+
+        const depth = this.room.getUpmostDepthAtPosition(position, furniture);
+
+        this.setPosition({
+            row: position.row,
+            column: position.column,
+            depth
+        }, undefined, true);
+    }
+
     public async finishPath() {
         if(this.path === undefined) {
             return;
@@ -328,7 +351,7 @@ export default class RoomUser {
         return position;
     }
 
-    public setPosition(position: RoomPosition, direction?: number) {
+    public setPosition(position: RoomPosition, direction?: number, usePath?: boolean) {
         this.position = position;
 
         if(direction !== undefined) {
@@ -342,7 +365,8 @@ export default class RoomUser {
             new OutgoingEvent<UserPositionEventData>("UserPositionEvent", {
                 userId: this.user.model.id,
                 position,
-                direction
+                direction,
+                usePath: usePath === true
             })
         );
     }
