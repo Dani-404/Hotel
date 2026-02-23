@@ -1,0 +1,16 @@
+{
+    "port": 8080,
+    
+    "authentication": {
+        "useAccessTokens": true
+    },
+    
+    "database": {
+        "dialect": "mysql",
+        "database": "DATABASE",
+        "username": "USERNAME",
+        "password": "PASSWORD",
+        "host": "localhost",
+        "port": 3306
+    }
+}
