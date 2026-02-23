@@ -1,13 +1,104 @@
 import './Header.css'
 import Logo from '../../Images/logo.gif'
 import Button from '../Button';
-import { NavLink, useNavigate } from 'react-router';
-import { use, useContext } from 'react';
+import { NavLink, useLocation, useMatch, useNavigate } from 'react-router';
+import { use, useContext, useEffect, useState } from 'react';
 import { ThemeContext } from '../../ThemeProvider';
+import { useCookies } from 'react-cookie';
 
 const Header = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const settingsMatch = useMatch("/settings/*");
+    const [usersOnlines, setUsersOnlines] = useState<number>(0);
     const { state: { currentUser }, dispatch } = useContext(ThemeContext);
+    const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
+
+    const fetchOnlines = () => {
+        fetch("/api/hotel/information", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                setUsersOnlines(result.usersOnline);
+            })
+            .catch((e) => {
+                console.log("(Error) Impossible to fetch server stats:", e)
+            })
+    }
+
+
+    useEffect(() => {
+        fetchOnlines();
+
+        const intervalId = setInterval(() => {
+            fetchOnlines();
+        }, 60000);
+
+        if (!currentUser && cookies.accessToken) {
+            fetch("/api/loginAuth", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name,
+                })
+            })
+                .then((response) => response.json())
+                .then((result) => {
+                    if (result.error) {
+                        dispatch({ currentUser: null })
+                        removeCookie("accessToken");
+                        return;
+                    }
+
+                    dispatch({ currentUser: result });
+                });
+        }
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [fetchOnlines, setInterval, clearInterval, cookies.accessToken, removeCookie, navigate, dispatch, currentUser]);
+
+    const generateSubMenu = () => {
+        switch (location.pathname) {
+            case "/community":
+            case "/article": 
+            {
+                return (
+                    <nav className='submenu'>
+                        <NavLink to="/community">Community</NavLink>
+                        <NavLink to="/article">Articles</NavLink>
+                        <NavLink to="/staff">Staff</NavLink>
+                        <NavLink to="/forums">Forums</NavLink>
+                    </nav>
+                )
+            }
+
+            default: {
+                if (currentUser)
+                    return (
+                        <nav className='submenu'>
+                            <NavLink to="/me">{currentUser.name}</NavLink>
+                            <NavLink to="/settings">Account Settings</NavLink>
+                        </nav>
+                    )
+                else
+                    return (
+                        <nav className='submenu'>
+                            <NavLink to="/">Login</NavLink>
+                            <NavLink to="/">Register</NavLink>
+                        </nav>
+                    )
+                break;
+            }
+        }
+    }
 
     return (
         <header>
@@ -21,9 +112,9 @@ const Header = () => {
 
                             <div className='navigation'>
                                 {currentUser !== null ?
-                                <a href="/logout">Logout</a>
-                                : 
-                                <a href="/">Login</a>
+                                    <a href="/logout">Logout</a>
+                                    :
+                                    <a href="/">Login</a>
                                 }
                             </div>
                         </div>
@@ -32,33 +123,19 @@ const Header = () => {
                     </div>
 
                     <div className='onlines'>
-                        <span>?</span> players online
+                        <span>{usersOnlines}</span> players online
                     </div>
 
-                    {currentUser !== null ?
-                        <nav>
-                            <NavLink to="/me">{currentUser.name}</NavLink>
-                            <NavLink to="/community">Community</NavLink>
-                            <NavLink to="/shop">Shop</NavLink>
-                        </nav>
-                        :
-                        <nav>
-                            <NavLink to="/">Login</NavLink>
-                        </nav>
-                    }
+                    <nav>
+                        {currentUser !== null ? <NavLink to="/me" className={({ isActive }) => isActive || settingsMatch ? "active" : ""}>{currentUser.name}</NavLink> : <NavLink to="/">Login</NavLink>}
+                        <NavLink to="/community">Community</NavLink>
+                        {currentUser !== null && <NavLink to="/shop">Shop</NavLink>}
+                    </nav>
                 </div>
             </div>
 
             <div className='resize'>
-                {currentUser !== null ?
-                    <nav className='submenu'>
-                        <NavLink to="/me">{currentUser.name}</NavLink>
-                        <NavLink to="/settings">Account Settings</NavLink>
-                    </nav>
-                    : <nav className='submenu'>
-                        <NavLink to="">Login</NavLink>
-                        <NavLink to="/">Register</NavLink>
-                    </nav>}
+                {generateSubMenu()}
             </div>
         </header>
     )

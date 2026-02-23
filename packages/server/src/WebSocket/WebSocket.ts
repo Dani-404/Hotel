@@ -2,8 +2,6 @@ import { WebSocketServer } from "ws";
 import { UserModel } from "../Database/Models/Users/UserModel.js";
 import { game } from "../index.js";
 import User from "../Users/User.js";
-import OutgoingEvent from "../Events/Interfaces/OutgoingEvent.js";
-import { HotelEventData } from "@shared/Communications/Responses/Hotel/HotelEventData.js";
 import { config } from "../Config/Config.js";
 import jsonWebToken from "jsonwebtoken";
 import { UserTokenModel } from "../Database/Models/Users/UserTokens/UserTokenModel.js";
@@ -80,6 +78,10 @@ export default class WebSocket {
                 return webSocket.close();
             }
 
+            await model.update({
+                online: true
+            });
+
             const existingUser = game.users.find((user) => user.model.id === model.id);
 
             if(existingUser) {
@@ -98,20 +100,20 @@ export default class WebSocket {
                 game.eventHandler.decodeAndDispatchMessages(user, rawData);
             });
 
-            webSocket.on("close", () => {
+            webSocket.on("close", async () => {
                 const index = game.users.indexOf(user);
-
+                
                 if(index !== -1) {
                     game.users.splice(index, 1);
                 }
 
                 user.emit("close", user);
-                
-                for(let user of game.users) {
-                    user.send(new OutgoingEvent<HotelEventData>("HotelEvent", {
-                        users: game.users.length
-                    }));
-                }
+
+                await model.update({
+                    online: false
+                });
+
+                await game.hotelInformation.updateUsersCount();
             });
 
             if(user.model.homeRoomId) {
@@ -150,11 +152,7 @@ export default class WebSocket {
                 }));
             }
 
-            for(let user of game.users) {
-                user.send(new OutgoingEvent<HotelEventData>("HotelEvent", {
-                    users: game.users.length
-                }));
-            }
+            await game.hotelInformation.updateUsersCount();
         });
     }
 }
