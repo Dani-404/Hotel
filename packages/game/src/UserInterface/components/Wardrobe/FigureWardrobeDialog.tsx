@@ -75,6 +75,7 @@ const wardrobeTabs = [
 
 export type FigureWardrobeDialogProps = {
     title: string;
+    header: string;
     initialFigureConfiguration: FigureConfiguration;
 
     hidden?: boolean;
@@ -83,7 +84,7 @@ export type FigureWardrobeDialogProps = {
     onApply: (figureConfiguration: FigureConfiguration) => void;
 };
 
-export default function FigureWardrobeDialog({ title, initialFigureConfiguration, hidden, onApply, onClose }: FigureWardrobeDialogProps) {
+export default function FigureWardrobeDialog({ title, header, initialFigureConfiguration, hidden, onApply, onClose }: FigureWardrobeDialogProps) {
     const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(initialFigureConfiguration);
 
     useEffect(() => {
@@ -91,8 +92,8 @@ export default function FigureWardrobeDialog({ title, initialFigureConfiguration
     }, [initialFigureConfiguration]);
     
     return (
-        <Dialog title="Wardrobe" hidden={hidden} onClose={onClose} width={500} height={530}>
-            <DialogTabs initialActiveIndex={0} header={{ title }} tabs={[
+        <Dialog title={title} hidden={hidden} onClose={onClose} width={500} height={530}>
+            <DialogTabs initialActiveIndex={0} header={{ title: header }} tabs={[
                 {
                     icon: (<div className="sprite_wardrobe_generic_tab"/>),
                     element: (

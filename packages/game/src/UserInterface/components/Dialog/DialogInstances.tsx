@@ -5,7 +5,7 @@ import InventoryDialog from "../Inventory/InventoryDialog";
 import NavigatorDialog from "../Navigator/NavigatorDialog";
 import RoomCreationDialog from "../Navigator/Rooms/Creator/RoomCreationDialog";
 import { useDialogs } from "../../hooks/useDialogs";
-import RoomFurnitureLogicDialog, { RoomFurnitureLogicDialogData } from "../Room/Furniture/Logic/RoomFurnitureLogicDialog";
+import RoomFurnitureLogicDialog from "../Room/Furniture/Logic/RoomFurnitureLogicDialog";
 import RoomSettingsDialog from "../Room/Settings/RoomSettingsDialog";
 import RoomInformationDialog from "../Room/Information/RoomInformationDialog";
 import ReportIssueDialog from "../Debug/Dialog/ReportIssueDialog";
@@ -13,7 +13,6 @@ import HotelAlertDialog from "../Hotel/Alert/HotelAlertDialog";
 import ViewIssuesDialog from "../Debug/Dialog/ViewIssuesDialog";
 import RoomSettingsThumbnailDialog from "../Room/Settings/Thumbnail/RoomSettingsThumbnailDialog";
 import EditShopPageDialog from "../Shop/Development/EditShopPageDialog";
-import { ShopPageData } from "@Shared/Communications/Responses/Shop/ShopPagesEventData";
 import EditShopFurnitureDialog from "../Shop/Development/EditShopFurnitureDialog";
 import RoomFurnitureDialog from "../Room/Furniture/Dialogs/RoomFurnitureDialog";
 import FigureCatalogDialog from "../Catalogs/FigureCatalogDialog";
@@ -21,6 +20,7 @@ import RoomFloorPlanDialog from "../Room/FloorPlan/RoomFloorPlanDialog";
 import EditFurnitureDialog from "../Furniture/Dialogs/EditFurnitureDialog";
 import EditShopBotDialog from "../Shop/Development/EditShopBotDialog";
 import EditShopBotFigureDialog from "../Shop/Development/EditShopBotFigureDialog";
+import BotWardrobeDialog from "../Bots/BotWardrobeDialog";
 
 export default function DialogInstances() {
     const { dialogs, closeDialog } = useDialogs();
@@ -28,66 +28,76 @@ export default function DialogInstances() {
     return (
         <Fragment>
             {dialogs.map((dialog) => {
+                const props = {
+                    key: dialog.id,
+                    data: dialog.data as any,
+                    hidden: dialog.hidden,
+                    onClose: () => closeDialog(dialog.id)
+                };
+
                 switch(dialog.type) {
                     case "alert":
-                        return (<HotelAlertDialog key={dialog.id} data={dialog.data} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<HotelAlertDialog {...props}/>);
 
                     case "wardrobe":
-                        return (<WardrobeDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<WardrobeDialog {...props}/>);
                         
                     case "shop":
-                        return (<ShopDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<ShopDialog {...props}/>);
                         
                     case "inventory":
-                        return (<InventoryDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<InventoryDialog {...props}/>);
                         
                     case "navigator":
-                        return (<NavigatorDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<NavigatorDialog {...props}/>);
 
                     case "room-information":
-                        return (<RoomInformationDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<RoomInformationDialog {...props}/>);
 
                     case "room-settings":
-                        return (<RoomSettingsDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<RoomSettingsDialog {...props}/>);
 
                     case "room-settings-thumbnail":
-                        return (<RoomSettingsThumbnailDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<RoomSettingsThumbnailDialog {...props}/>);
                         
                     case "room-creation":
-                        return (<RoomCreationDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<RoomCreationDialog {...props}/>);
 
                     case "room-furniture-logic":
-                        return (<RoomFurnitureLogicDialog key={dialog.id} data={dialog.data as RoomFurnitureLogicDialogData} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<RoomFurnitureLogicDialog {...props}/>);
                         
                     case "room-furni":
-                        return (<RoomFurnitureDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<RoomFurnitureDialog {...props}/>);
 
                     case "room-floorplan":
-                        return (<RoomFloorPlanDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<RoomFloorPlanDialog {...props}/>);
 
                     case "report-issue":
-                        return (<ReportIssueDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<ReportIssueDialog {...props}/>);
 
                     case "view-issues":
-                        return (<ViewIssuesDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<ViewIssuesDialog {...props}/>);
 
                     case "edit-shop-page":
-                        return (<EditShopPageDialog key={dialog.id} data={dialog.data as ShopPageData} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<EditShopPageDialog {...props}/>);
 
                     case "edit-shop-furniture":
-                        return (<EditShopFurnitureDialog key={dialog.id} data={dialog.data as any} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<EditShopFurnitureDialog {...props}/>);
 
                     case "edit-shop-bot":
-                        return (<EditShopBotDialog key={dialog.id} data={dialog.data as any} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<EditShopBotDialog {...props}/>);
 
                     case "edit-shop-bot-figure":
-                        return (<EditShopBotFigureDialog key={dialog.id} data={dialog.data as any} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<EditShopBotFigureDialog {...props}/>);
 
                     case "figure-catalog":
-                        return (<FigureCatalogDialog key={dialog.id} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<FigureCatalogDialog {...props}/>);
+
+                    case "bot-wardrobe":
+                        return (<BotWardrobeDialog {...props}/>);
 
                     case "edit-furniture":
-                        return (<EditFurnitureDialog key={dialog.id} data={dialog.data as any} hidden={dialog.hidden} onClose={() => closeDialog(dialog.id)}/>);
+                        return (<EditFurnitureDialog {...props}/>);
                 }
             })}
         </Fragment>

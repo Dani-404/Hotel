@@ -20,6 +20,6 @@ export default function WardrobeDialog(props: WardrobeDialogProps) {
     }, []);
 
     return (
-        <FigureWardrobeDialog title={user.name} initialFigureConfiguration={user.figureConfiguration} onApply={handleApply} {...props}/>
+        <FigureWardrobeDialog title="Wardrobe" header={user.name} initialFigureConfiguration={user.figureConfiguration} onApply={handleApply} {...props}/>
     );
 }

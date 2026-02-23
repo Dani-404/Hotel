@@ -20,6 +20,8 @@ export default class RoomBot {
     public updateData(data: UserBotData) {        
         this.data = data;
 
+        this.item.figureRenderer.configuration = this.data.figureConfiguration = data.figureConfiguration;
+
         this.item.figureRenderer.direction = this.data.direction = data.direction;
 
         if(data.position) {

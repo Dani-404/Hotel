@@ -15,6 +15,7 @@ import { PickupRoomBotEventData } from "@Shared/Communications/Requests/Rooms/Bo
 
 export default function UserContextMenu() {
     const room = useRoomInstance();
+    const dialogs = useDialogs();
 
     const focusedUser = useRoomFocusedUser(room);
     const hoveredUser = useRoomHoveredUser(room);
@@ -166,6 +167,10 @@ export default function UserContextMenu() {
 
                                         {(focusedUser.type === "bot" && focusedUser.bot.data.userId === user.id) && (
                                             <Fragment>
+                                                <UserContextMenuButton text={"Wardrobe"} onClick={() => {
+                                                    dialogs.addUniqueDialog("bot-wardrobe", focusedUser.bot.data);
+                                                }}/>
+
                                                 <UserContextMenuButton text={"Pick up"} onClick={() => {
                                                     webSocketClient.send<PickupRoomBotEventData>("PickupRoomBotEvent", {
                                                         userBotId: focusedUser.bot.data.id,

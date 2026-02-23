@@ -15,6 +15,6 @@ export type EditShopBotFigureDialogProps = {
 
 export default function EditShopBotFigureDialog(props: EditShopBotFigureDialogProps) {
     return (
-        <FigureWardrobeDialog title={props.data.name ?? "Bot"} initialFigureConfiguration={props.data.figureConfiguration} onApply={(figureConfiguration) => props.data.onChange(figureConfiguration)} {...props}/>
+        <FigureWardrobeDialog title="Bot Wardrobe" header={props.data.name ?? "Bot"} initialFigureConfiguration={props.data.figureConfiguration} onApply={(figureConfiguration) => props.data.onChange(figureConfiguration)} {...props}/>
     );
 }
