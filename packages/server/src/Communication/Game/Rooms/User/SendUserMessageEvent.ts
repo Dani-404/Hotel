@@ -2,7 +2,6 @@ import IncomingEvent from "../../../Interfaces/IncomingEvent.js";
 import User from "../../../../Users/User.js";
 import { SendUserMessageEventData } from "@shared/Communications/Requests/Rooms/User/SendUserMessageEventData.js";
 import OutgoingEvent from "../../../../Events/Interfaces/OutgoingEvent.js";
-import { UserChatEventData } from "@shared/Communications/Responses/Rooms/Users/UserChatEventData.js";
 import { game } from "../../../../index.js";
 import { UserTypingEventData } from "@shared/Communications/Responses/Rooms/Users/UserTypingEventData.js";
 

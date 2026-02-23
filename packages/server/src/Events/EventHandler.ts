@@ -50,6 +50,7 @@ import GetUserBotsEvent from "../Communication/Game/Inventory/GetUserBotsEvent.j
 import PlaceBotEvent from "../Communication/Game/Rooms/Bots/PlaceBotEvent.js";
 import PickupRoomBotEvent from "../Communication/Game/Rooms/Bots/PickupRoomBotEvent.js";
 import UpdateRoomBotEvent from "../Communication/Game/Rooms/Bots/UpdateRoomBotEvent.js";
+import GetRoomBotSpeechEvent from "../Communication/Game/Rooms/Bots/GetRoomBotSpeechEvent.js";
 
 export default class EventHandler extends EventEmitter {
     constructor() {
@@ -146,6 +147,8 @@ export default class EventHandler extends EventEmitter {
             .addIncomingEvent(new UpdateShopPageEvent())
             .addIncomingEvent(new UpdateShopFurnitureEvent())
             .addIncomingEvent(new UpdateShopBotEvent());
+
+        this.addIncomingEvent(new GetRoomBotSpeechEvent());
 
         this
             .addIncomingEvent(new SetMottoEvent());

@@ -4,6 +4,7 @@ import { UserBotData } from "@Shared/Interfaces/Room/RoomBotData";
 import { useCallback } from "react";
 import { webSocketClient } from "../../..";
 import { UpdateRoomBotEventData } from "@Shared/Communications/Requests/Rooms/Bots/UpdateRoomBotEventData";
+import { useDialogs } from "../../hooks/useDialogs";
 
 export type BotWardrobeDialogProps = {
     data: UserBotData;
@@ -12,11 +13,15 @@ export type BotWardrobeDialogProps = {
 }
 
 export default function BotWardrobeDialog(props: BotWardrobeDialogProps) {
+    const dialogs = useDialogs();
+
     const handleApply = useCallback((figureConfiguration: FigureConfiguration) => {
         webSocketClient.send<UpdateRoomBotEventData>("UpdateRoomBotEvent", {
             userBotId: props.data.id,
             figureConfiguration
-        })
+        });
+
+        dialogs.closeDialog("bot-wardrobe");
     }, [ props.data ]);
 
     return (

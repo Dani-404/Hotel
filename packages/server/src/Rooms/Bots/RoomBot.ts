@@ -5,6 +5,7 @@ import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition.js";
 import { game } from "../../index.js";
 import { RoomBotEventData } from "@shared/Communications/Responses/Rooms/Bots/RoomBotEventData.js";
 import { UserBotData } from "@shared/Interfaces/Room/RoomBotData.js";
+import { RoomChatEventData } from "@shared/Communications/Responses/Rooms/Chat/RoomChatEventData.js";
 
 export default class RoomBot {
     public preoccupiedByActionHandler: boolean = false;
@@ -91,5 +92,58 @@ export default class RoomBot {
                 ]
             }));
         }
+    }
+
+    private lastChatMessage: number = 0;
+    private lastChatMessageIndex: number | null = null;
+
+    public async handleActionsInterval() {
+        if(!this.model.speech.automaticChat) {
+            return;
+        }
+
+        const elapsedSinceLastChatMessage = performance.now() - this.lastChatMessage;
+
+        if(elapsedSinceLastChatMessage < this.model.speech.automaticChatDelay * 1000) {
+            return;
+        }
+
+        let message: string | null = null;
+
+        if(this.model.speech.randomizeMessages) {
+            message = this.model.speech.messages[Math.floor(Math.random() * this.model.speech.messages.length)] ?? null;
+        }
+        else {
+            let index: number;
+
+            if(this.lastChatMessageIndex === null) {
+                index = 0;
+            }
+            else {
+                index = this.lastChatMessageIndex + 1;
+
+                if(index >= this.model.speech.messages.length) {
+                    index = 0;
+                }
+            }
+
+            message = this.model.speech.messages[index] ?? null;
+
+            this.lastChatMessageIndex = index;
+        }
+
+        this.lastChatMessage = performance.now();
+
+        if(!message) {
+            return;
+        }
+
+        this.room.sendRoomEvent(new OutgoingEvent<RoomChatEventData>("RoomChatEvent", {
+            type: "bot",
+            botId: this.model.id,
+
+            message,
+            roomChatStyleId: "bot_guide"
+        }));
     }
 }

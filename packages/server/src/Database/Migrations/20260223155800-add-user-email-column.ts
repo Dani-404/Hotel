@@ -16,7 +16,7 @@ export default {
 
     down: (queryInterface: QueryInterface): Promise<void> => queryInterface.sequelize.transaction(
         async (transaction) => {
-            await queryInterface.removeColumn("users", "motto", { transaction });
+            await queryInterface.removeColumn("users", "email", { transaction });
         }
     )
 } satisfies Migration;

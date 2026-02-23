@@ -9,9 +9,11 @@ export type InputProps = {
     min?: number;
     max?: number;
     step?: number;
+    readonly?: boolean;
+    maxLength?: number;
 }
 
-export default function Input({ style, step, type = "text", placeholder, value, onChange, min, max }: InputProps) {
+export default function Input({ style, readonly, step, type = "text", placeholder, value, onChange, min, max, maxLength }: InputProps) {
     return (
         <div style={{
             borderBottom: "1px solid #FFFFFF",
@@ -29,12 +31,14 @@ export default function Input({ style, step, type = "text", placeholder, value, 
             }}>
                 <input
                     type={type}
+                    readOnly={readonly}
                     step={step}
                     placeholder={placeholder}
                     value={value}
                     onChange={(event) => onChange((event.currentTarget as HTMLInputElement).value)}
                     min={min}
                     max={max}
+                    maxLength={maxLength}
                     style={{
                         flex: 1,
                         background: "none",

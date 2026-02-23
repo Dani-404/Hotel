@@ -1,16 +1,21 @@
 import { ReactNode, useState } from "react";
 
 export type DialogTableProps = {
+    activeId?: any;
+
     columns: string[];
     items?: {
-        id: string;
+        id: any;
         values: ReactNode[];
+        tools?: ReactNode;
         onClick?: () => void;
     }[];
+
+    tools?: ReactNode;
 };
 
-export default function DialogTable({ columns, items }: DialogTableProps) {
-    const [activeId, setActiveId] = useState<string | null>(null);
+export default function DialogTable({ activeId, columns, items, tools }: DialogTableProps) {
+    const [_activeId, setActiveId] = useState<string | null>(null);
 
     return (
         <div style={{
@@ -46,6 +51,8 @@ export default function DialogTable({ columns, items }: DialogTableProps) {
                         </div>
                     </div>
                 ))}
+
+                {tools}
             </div>
 
             <div style={{
@@ -64,15 +71,15 @@ export default function DialogTable({ columns, items }: DialogTableProps) {
                         flexDirection: "row",
                         gap: 5,
                         padding: 4,
-                        cursor: "pointer",
-                        background: (activeId === item.id)?("#B8E2FC"):("transparent")
-                    }} onClick={() => {
-                        setActiveId(item.id);
-                        item.onClick?.();
+                        background: (item.id === (activeId ?? _activeId))?("#B8E2FC"):("transparent")
                     }}>
                         {item.values.map((value) => (
                             <div key={value?.toString()} style={{
-                                flex: 1
+                                flex: 1,
+                                cursor: "pointer",
+                            }} onClick={() => {
+                                setActiveId(item.id);
+                                item.onClick?.();
                             }}>
                                 <div style={{
                                     color: "#000",
@@ -82,6 +89,8 @@ export default function DialogTable({ columns, items }: DialogTableProps) {
                                 </div>
                             </div>
                         ))}
+
+                        {item.tools}
                     </div>
                 ))}
             </div>

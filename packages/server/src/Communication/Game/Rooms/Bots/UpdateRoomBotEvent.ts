@@ -34,6 +34,16 @@ export default class UpdateRoomBotEvent implements IncomingEvent<UpdateRoomBotEv
             bot.model.motto = event.motto;
         }
 
+        if(event.speech !== undefined) {
+            bot.model.speech = {
+                automaticChat: event.speech.automaticChat === true,
+                automaticChatDelay: Math.max(5, Math.min(5 * 60, event.speech.automaticChatDelay)),
+                randomizeMessages: event.speech.randomizeMessages === true,
+
+                messages: event.speech.messages.filter((message) => message.length > 0 && message.length < 128)
+            };
+        }
+
         await bot.model.save();
 
         user.room.sendRoomEvent(new OutgoingEvent<RoomBotEventData>("RoomBotEvent", {

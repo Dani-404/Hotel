@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import ToolbarToggle from "../../Toolbar/ToolbarToggle";
 import { useRoomInstance } from "../../../hooks/useRoomInstance";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
-import { UserChatEventData } from "@Shared/Communications/Responses/Rooms/Users/UserChatEventData";
+import { RoomChatEventData } from "@Shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
 import RoomChatRenderer from "@Client/Room/Chat/RoomChatRenderer";
 import { clientInstance, webSocketClient } from "../../../..";
 import OffscreenCanvasRender from "../../OffscreenCanvasRender";
@@ -39,7 +39,11 @@ export default function ToolbarRoomChat({ minimized, onMinimized }: ToolbarRoomC
             return;
         }
 
-        const userChatEventListener = async (event: WebSocketEvent<UserChatEventData>) => {
+        const listener = async (event: WebSocketEvent<RoomChatEventData>) => {
+            if(event.data.type !== "user") {
+                return;
+            }
+            
             const user = room.getUserById(event.data.userId);
 
             const image = await RoomChatRenderer.render(event.data.roomChatStyleId, user.data.name, user.data.figureConfiguration, event.data.message, {});
@@ -54,10 +58,10 @@ export default function ToolbarRoomChat({ minimized, onMinimized }: ToolbarRoomC
             clientInstance.roomHistory.update();
         };
 
-        webSocketClient.addEventListener<WebSocketEvent<UserChatEventData>>("UserChatEvent", userChatEventListener);
+        webSocketClient.addEventListener<WebSocketEvent<RoomChatEventData>>("RoomChatEvent", listener);
         
         return () => {
-            webSocketClient.removeEventListener<WebSocketEvent<UserChatEventData>>("UserChatEvent", userChatEventListener);
+            webSocketClient.removeEventListener<WebSocketEvent<RoomChatEventData>>("RoomChatEvent", listener);
         };
     }, [room, history]);
     

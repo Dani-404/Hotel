@@ -33,12 +33,12 @@ import { PermissionAction } from "@Shared/Interfaces/Permissions/PermissionMap";
 import { UserPermissionsEventData } from "@Shared/Communications/Responses/User/Permissions/UserPermissionsEventData";
 import UserPermissionsEvent from "@Client/Communications/User/Permissions/UserPermissionsEvent";
 import { FlyingFurnitureIconData } from "../UserInterface/components/Inventory/FlyingFurniture/FlyingFurnitureIcon";
-import UserChatEvent from "@Client/Communications/Room/User/UserChatEvent";
-import { UserChatEventData } from "@Shared/Communications/Responses/Rooms/Users/UserChatEventData";
+import RoomChatEvent from "@Client/Communications/Room/Chat/RoomChatEvent";
 import UserTypingEvent from "@Client/Communications/Room/User/UserTypingEvent";
 import { UserTypingEventData } from "@Shared/Communications/Responses/Rooms/Users/UserTypingEventData";
 import RoomBotEvent from "@Client/Communications/Room/Bots/RoomBotEvent";
 import { RoomBotEventData } from "@Shared/Communications/Responses/Rooms/Bots/RoomBotEventData";
+import { RoomChatEventData } from "@Shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
 
 export default class ClientInstance extends EventTarget {
     public roomInstance = new ObservableProperty<RoomInstance>();
@@ -77,7 +77,7 @@ export default class ClientInstance extends EventTarget {
         webSocketClient.addEventListener<WebSocketEvent<RoomUserRightsEventData>>("RoomUserRightsEvent", (event) => new RoomUserRightsEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserFigureConfigurationEventData>>("UserFigureConfigurationEvent", (event) => new UserFigureConfigurationEvent().handle(event));
 
-        webSocketClient.addEventListener<WebSocketEvent<UserChatEventData>>("UserChatEvent", (event) => new UserChatEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<RoomChatEventData>>("RoomChatEvent", (event) => new RoomChatEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserTypingEventData>>("UserTypingEvent", (event) => new UserTypingEvent().handle(event));
 
         webSocketClient.addEventListener<WebSocketEvent<RoomChatStylesEventData>>("RoomChatStylesEvent", (event) => {

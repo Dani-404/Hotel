@@ -169,6 +169,14 @@ export default function UserContextMenu() {
                                             <Fragment>
                                                 <UserContextMenuButton text={"Wardrobe"} onClick={() => {
                                                     dialogs.addUniqueDialog("bot-wardrobe", focusedUser.bot.data);
+
+                                                    setFolded(true);
+                                                }}/>
+
+                                                <UserContextMenuButton text={"Setup speech"} onClick={() => {
+                                                    dialogs.addUniqueDialog("bot-speech", focusedUser.bot.data);
+
+                                                    setFolded(true);
                                                 }}/>
 
                                                 <UserContextMenuButton text={"Pick up"} onClick={() => {

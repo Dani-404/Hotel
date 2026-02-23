@@ -10,7 +10,7 @@ import { LoadRoomEventData } from "@shared/Communications/Responses/Rooms/LoadRo
 import { UserActionEventData } from "@shared/Communications/Responses/Rooms/Users/UserActionEventData.js";
 import { AStarFinder } from "astar-typescript";
 import { UserPositionEventData } from "@shared/Communications/Responses/Rooms/Users/UserPositionEventData.js";
-import { UserChatEventData } from "@shared/Communications/Responses/Rooms/Users/UserChatEventData.js";
+import { RoomChatEventData } from "@shared/Communications/Responses/Rooms/Chat/RoomChatEventData.js";
 import RoomFloorplanHelper from "../RoomFloorplanHelper.js";
 import { game } from "../../index.js";
 
@@ -352,12 +352,11 @@ export default class RoomUser {
     }
 
     public sendRoomMessage(message: string) {
-        this.room.sendRoomEvent(new OutgoingEvent<UserChatEventData>("UserChatEvent", {
+        this.room.sendRoomEvent(new OutgoingEvent<RoomChatEventData>("RoomChatEvent", {
+            type: "user",
             userId: this.user.model.id,
             message,
             roomChatStyleId: this.user.model.roomChatStyleId
         }));
-
-        this.addAction("Talk", Math.max(800, message.length * 60));
     }
 }

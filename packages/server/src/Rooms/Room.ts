@@ -128,6 +128,10 @@ export default class Room {
             await user.handleActionsInterval();
         }
 
+        for(const bot of this.bots) {
+            await bot.handleActionsInterval();
+        }
+
         if(this.outgoingEvents.length) {
             this.sendRoomEvent(this.outgoingEvents);
         }

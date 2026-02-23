@@ -3,9 +3,11 @@ import RoomChatRenderer from "@Client/Room/Chat/RoomChatRenderer";
 import { useRoomInstance } from "../../../hooks/useRoomInstance";
 import { webSocketClient } from "../../../..";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
-import { UserChatEventData } from "@Shared/Communications/Responses/Rooms/Users/UserChatEventData";
+import { RoomChatEventData } from "@Shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
 import OffscreenCanvasRender from "../../OffscreenCanvasRender";
 import { useUser } from "../../../hooks/useUser";
+import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 
 type RoomChatMessage = {
     id: number;
@@ -109,14 +111,34 @@ export default function RoomChat() {
             return;
         }
 
-        const userChatEventListener = async (event: WebSocketEvent<UserChatEventData>) => {
-            const user = room.getUserById(event.data.userId);
+        const listener = async (event: WebSocketEvent<RoomChatEventData>) => {
+            let name: string;
+            let figureConfiguration: FigureConfiguration;
+            let position: RoomPosition;
 
-            const image = await RoomChatRenderer.render(event.data.roomChatStyleId, user.data.name, user.data.figureConfiguration, event.data.message, {});
+            if(event.data.type === "user") {
+               const user = room.getUserById(event.data.userId);
 
-            const position = room.roomRenderer.getCoordinatePosition(user.item.position!);
+               name = user.data.name;
+               figureConfiguration = user.data.figureConfiguration;
+               position = user.data.position;
+            }
+            else if(event.data.type === "bot") {
+               const bot = room.getBotById(event.data.botId);
 
-            const left = position.left - (image.width / 2) + 64;
+               name = bot.data.name;
+               figureConfiguration = bot.data.figureConfiguration;
+               position = bot.data.position;
+            }
+            else {
+                throw new Error("Unhandled room chat message type.");
+            }
+
+            const image = await RoomChatRenderer.render(event.data.roomChatStyleId, name, figureConfiguration, event.data.message, {});
+
+            const screenPosition = room.roomRenderer.getCoordinatePosition(position);
+
+            const left = screenPosition.left - (image.width / 2) + 64;
 
             const newMessage: RoomChatMessage = {
                 id: Math.random(),
@@ -134,10 +156,10 @@ export default function RoomChat() {
             setLatestMessage(performance.now());
         };
 
-        webSocketClient.addEventListener<WebSocketEvent<UserChatEventData>>("UserChatEvent", userChatEventListener);
+        webSocketClient.addEventListener<WebSocketEvent<RoomChatEventData>>("RoomChatEvent", listener);
         
         return () => {
-            webSocketClient.removeEventListener<WebSocketEvent<UserChatEventData>>("UserChatEvent", userChatEventListener);
+            webSocketClient.removeEventListener<WebSocketEvent<RoomChatEventData>>("RoomChatEvent", listener);
         };
     }, [room]);
 

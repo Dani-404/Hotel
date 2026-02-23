@@ -5,6 +5,7 @@ import { RoomModel } from "../../Rooms/RoomModel.js";
 import { UserModel } from "../UserModel.js";
 import { BotTypeData } from "@shared/Interfaces/Bots/BotTypeData.js";
 import { FigureConfiguration } from "@shared/Interfaces/Figure/FigureConfiguration.js";
+import { BotSpeechData } from "@shared/Interfaces/Bots/BotSpeechData.js";
 
 export class UserBotModel extends Model {
     declare id: string;
@@ -17,6 +18,7 @@ export class UserBotModel extends Model {
 
     declare position: RoomPosition;
     declare direction: number;
+    declare speech: BotSpeechData;
 
     declare room: NonAttribute<RoomModel | null>;
     declare user: NonAttribute<UserModel>;
@@ -55,6 +57,23 @@ export function initializeUserBotModel(sequelize: Sequelize) {
                     this.setDataValue("figureConfiguration", JSON.stringify(value));
                 },
                 allowNull: false
+            },
+            
+            speech: {
+                type: DataTypes.TEXT,
+                get: function () {
+                    return JSON.parse(this.getDataValue("speech"));
+                },
+                set: function (value) {
+                    this.setDataValue("speech", JSON.stringify(value));
+                },
+                allowNull: false,
+                defaultValue: JSON.stringify({
+                    automaticChat: false,
+                    automaticChatDelay: 30,
+                    messages: [],
+                    randomizeMessages: true
+                } satisfies BotSpeechData)
             },
 
             position: {
