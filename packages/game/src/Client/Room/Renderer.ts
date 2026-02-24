@@ -90,7 +90,7 @@ export default class RoomRenderer extends EventTarget {
         const millisecondsElapsedSinceLastFrame = performance.now() - this.lastFrameTimestamp;
 
         if(millisecondsElapsedSinceLastFrame >= this.millisecondsPerFrame) {
-            this.frame = (this.frame + 1) % this.framesPerSecond;
+            this.frame = ((this.frame + 1) % this.framesPerSecond);
             this.lastFrameTimestamp = performance.now();
 
             this.currentSize = this.size;

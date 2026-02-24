@@ -10,6 +10,7 @@ import { figurePartSets } from "@Client/Figure/Renderer/Geometry/FigurePartSets"
 import { FurnitureSprite } from "@Client/Interfaces/Furniture/FurnitureSprites";
 import { FurnitureAsset } from "@Client/Interfaces/Furniture/FurnitureAssets";
 import { getGlobalCompositeModeFromInkNumber } from "@Client/Renderers/GlobalCompositeModes";
+import { AvatarActionData } from "@Client/Interfaces/Figure/Avataractions";
 
 export type FigureRendererResult = {
     figure: FigureRendererSpriteResult;
@@ -55,7 +56,11 @@ type BodyPartAction = {
     };
     bodyParts: string[];
     assetPartDefinition: string;
-    y?: number;
+    
+    destinationX?: number;
+    destinationY?: number;
+    
+    frame?: number;
 };
 
 type EffectData = {
@@ -65,6 +70,8 @@ type EffectData = {
 };
 
 export default class FigureRenderer {
+    private avatarEffect?: FigureAnimationFrameEffectData;
+
     constructor(public readonly configuration: FigureConfiguration, public direction: number, public readonly actions: string[], public readonly frame: number, public readonly headOnly: boolean = false) {
 
     }
@@ -123,10 +130,10 @@ export default class FigureRenderer {
         return avatarActionsData;
     }
 
-    private async getActionsForBodyParts(effect?: EffectData) {
+    private async getActionsForBodyParts(actions: AvatarActionData[], effects: EffectData[]) {
         const result: BodyPartAction[] = [];
 
-        if(effect) {
+        for(const effect of effects) {
             const effectBodyParts = this.getEffectBodyParts(effect);
 
             // effect says bodypart id rightarm (geometry bodypart) is used for action CarryItem
@@ -137,7 +144,7 @@ export default class FigureRenderer {
                     const action = FigureAssets.avataractions.find((avatarAction) => avatarAction.id === effectBodyPart.action);
 
                     if(!action) {
-                        console.warn("Action is not found for effect " + effectBodyPart.id + ", " + effectBodyPart.action + ".");
+                        //console.warn("Action is not found for effect " + effectBodyPart.id + ", " + effectBodyPart.action + ".");
 
                         continue;
                     }
@@ -159,6 +166,9 @@ export default class FigureRenderer {
                         geometry,
                         assetPartDefinition: action.assetPartDefinition,
                         bodyParts: geometryBodyparts.parts,
+                        frame: effectBodyPart.frame,
+                        destinationX: effectBodyPart.destinationX,
+                        destinationY: effectBodyPart.destinationY,
                     });
 
                     // now we know handRight is occupied by CarryItem to use `crr`
@@ -167,10 +177,8 @@ export default class FigureRenderer {
             }
         }
 
-        const actions = this.getAvatarActions();
-
         for(const action of actions) {
-            if(action.id === "AvatarEffect") {
+            if(action.id === "AvatarEffect" || action.id === "Dance") {
                 continue;
             }
 
@@ -191,7 +199,7 @@ export default class FigureRenderer {
                 geometry,
                 assetPartDefinition: action.assetPartDefinition,
                 bodyParts: figurePartSet.parts,
-                y: (action.assetPartDefinition === "sit")?(16):(0)
+                destinationY: (action.assetPartDefinition === "sit")?(16):(0),
             });
 
             // now we know walk is occupied by Move to use `wlk`
@@ -264,7 +272,7 @@ export default class FigureRenderer {
             const settypeData = this.getSettypeForPartAndSet(configurationPart.type);
 
             if(!settypeData) {
-                console.warn("Settype does not exist for part and set.");
+                //console.warn("Settype does not exist for part and set.");
 
                 continue;
             }
@@ -272,7 +280,7 @@ export default class FigureRenderer {
             const setData = this.getSetFromSettype(settypeData, configurationPart.setId);
 
             if(!setData) {
-                console.warn("Set does not exist for set type.");
+                //console.warn("Set does not exist for set type.");
 
                 continue;
             }
@@ -283,7 +291,7 @@ export default class FigureRenderer {
 
             for(const setPartData of setData.parts) {
                 if(!setPartData) {
-                    console.error("???");
+                    //console.error("???");
 
                     continue;
                 }
@@ -317,24 +325,30 @@ export default class FigureRenderer {
         return filteredResult;
     }
 
-    private getDirectionFromEffect(effect?: EffectData) {
+    private getDirectionFromEffect(effects: EffectData[]) {
         let direction = this.direction;
 
-        if(effect?.data.animation?.direction) {
-            direction += effect.data.animation.direction.offset;
-        
-            direction %= 8;
+        for(const effect of effects) {
+            direction = this.direction;
+
+            if(effect?.data.animation?.direction) {
+                direction += effect.data.animation.direction.offset;
+            
+                direction %= 8;
+            }
         }
 
         return direction;
     }
 
     public async render() {
-        const effect = await this.getEffect();
+        const actions = this.getAvatarActions();
 
-        const direction = this.getDirectionFromEffect(effect);
+        const effects = await this.getEffects(actions);
 
-        const actionsForBodyParts = await this.getActionsForBodyParts(effect);
+        const direction = this.getDirectionFromEffect(effects);
+
+        const actionsForBodyParts = await this.getActionsForBodyParts(actions, effects);
 
         // TODO: already here filter out parts that will not be rendered to minimize the overhead
         const spritesFromConfiguration = this.getSpritesFromConfiguration();
@@ -354,11 +368,9 @@ export default class FigureRenderer {
             });
         }
 
-        const avatarEffect = await this.getEffectForAvatar();
-
         const sprites = await this.getFigureSprites(spritesFromConfiguration, actionsForBodyParts, direction);
 
-        const effectSprites = await this.getEffectSprites(effect, avatarEffect);
+        const effectSprites = await this.getEffectSprites(effects);
 
         return {
             sprites,
@@ -366,130 +378,138 @@ export default class FigureRenderer {
         };
     }
 
-    private async getEffectSprites(effect: EffectData | undefined, avatarEffect: FigureAnimationFrameEffectData | null): Promise<FigureRendererSprite[]> {
-        if(!effect) {
-            return [];
-        }
-
-        // TODO: add effects without animations
-        if(!effect.data.animation) {
-            return [];
-        }
-
-        const frame = this.getCurrentAnimationFrame(effect);
-
-        console.log("Frame " + this.frame + " becomes " + frame);
-
-        const animationFrame = effect.data.animation.frames[frame];
-
+    private async getEffectSprites(effects: EffectData[]): Promise<FigureRendererSprite[]> {
         const sprites: FigureRendererSprite[] = [];
 
-        function getIndexForAlignment(alignment: string) {
-            switch(alignment) {
-                case "top":
-                    return 1;
+        this.avatarEffect = undefined;
 
-                case "bottom":
-                    return -1;
+        for(const effect of effects) {
+            // TODO: add effects without animations
+            if(!effect.data.animation) {
+                return [];
             }
 
-            return 0;
-        }
+            const frame = this.getCurrentAnimationFrame(effect);
 
-        const animationSprites =
-            effect.data.animation.sprites
-            .concat(
-                effect.data.animation.add.map((add) => {
-                    const id = add.base ?? add.id;
+            //console.log("Frame " + this.frame + " becomes " + frame + " (" + effect.data.animation.frames.length + ")");
 
-                    return {
-                        id,
-                        member: `std_${id}_1`, // TODO: what's the 1 for?
-                        useDirections: true,
-                        directions: Array(8).fill(null).map((_, index) => {
-                            return {
-                                id: index,
-                                destinationX: undefined,
-                                destinationY: undefined,
-                                destinationZ: getIndexForAlignment(add.align)
-                            };
-                        }),
-                        destinationY: (avatarEffect?.destinationY ?? 0)
-                    }
-                })
-            );
+            const animationFrame = effect.data.animation.frames[frame];
 
-        if(effect.data.animation.shadow) {
-            // TODO: there's no shadow sprite provided?
+            const avatarBodypart = animationFrame.bodyParts.find((bodyPart) => bodyPart.id === "avatar");
 
-            /*animationSprites.push({
-                id: effect.data.animation.shadow.id,
-                member: effect.data.animation.shadow.id,
-                useDirections: false
-            });*/
-        }
-        
-        for(const sprite of animationSprites) {
-            if(sprite.id === "avatar") {
-                continue;
+            if(avatarBodypart) {
+                this.avatarEffect = avatarBodypart;
             }
 
-            const effectFrame = animationFrame?.effects.find((effect) => effect.id === sprite.id);
+            function getIndexForAlignment(alignment: string) {
+                switch(alignment) {
+                    case "top":
+                        return 1;
 
-            const direction = sprite.directions?.find((direction) => direction.id === this.direction);
+                    case "bottom":
+                        return -1;
+                }
 
-            if(sprite.useDirections && !direction) {
-                console.warn("Effect has no direction specified for " + this.direction);
-
-                continue;
+                return 0;
             }
 
-            const index = (direction)?(direction.destinationZ):(0);
+            const animationSprites =
+                effect.data.animation.sprites
+                .concat(
+                    effect.data.animation.add.map((add) => {
+                        const id = add.base ?? add.id;
 
-            const flipHorizontal = false;
+                        return {
+                            id,
+                            member: `std_${id}_1`, // TODO: what's the 1 for?
+                            useDirections: true,
+                            directions: Array(8).fill(null).map((_, index) => {
+                                return {
+                                    id: index,
+                                    destinationX: undefined,
+                                    destinationY: undefined,
+                                    destinationZ: getIndexForAlignment(add.align)
+                                };
+                            }),
+                            destinationY: (this.avatarEffect?.destinationY ?? 0)
+                        }
+                    })
+                );
 
-            const assetName = `h_${sprite.member}_${(sprite.useDirections)?(this.direction):(0)}_${effectFrame?.frame ?? 0}`;
+            if(effect.data.animation.shadow) {
+                // TODO: there's no shadow sprite provided?
 
-            const assetData = effect.data.assets.find((asset) => asset.name === assetName);
-
-            /*if(!assetData && (this.direction > 3 && this.direction < 7)) {
-                assetName = `h_${sprite.member}_${(sprite.useDirections)?(6 - this.direction):(0)}_${effectFrame?.frame ?? 0}`;
-
-                assetData = effect.data.assets.find((asset) => asset.name === assetName);
-
-                flipHorizontal = true;
-            }*/
-
-            if(!assetData) {
-                console.error("Can't find asset for " + assetName);
-
-                continue;
+                /*animationSprites.push({
+                    id: effect.data.animation.shadow.id,
+                    member: effect.data.animation.shadow.id,
+                    useDirections: false
+                });*/
             }
+            
+            for(const sprite of animationSprites) {
+                const effectFrame = animationFrame?.effects.find((effect) => effect.id === sprite.id);
+                
+                if(sprite.id === "avatar") {
+                    this.avatarEffect = effectFrame;
 
-            const sourceAssetName = assetData.source ?? assetData.name;
+                    continue;
+                }
 
-            const spriteData = effect.data.sprites.find((sprite) => sprite.name === sourceAssetName);
+                const direction = sprite.directions?.find((direction) => direction.id === this.direction);
 
-            if(!spriteData) {
-                console.error("Can't find sprite for source asset " + sourceAssetName);
+                if(sprite.useDirections && !direction) {
+                    //console.warn("Effect has no direction specified for " + this.direction);
 
-                continue;
-            }
+                    continue;
+                }
 
-            const destinationY = (sprite.destinationY ?? 0) + (effectFrame?.destinationY ?? 0);
+                const index = (direction)?(direction.destinationZ):(0);
 
-            const result = await this.getEffectSprite(effect.library, assetData, spriteData, index, destinationY, sprite.ink, flipHorizontal);
+                const flipHorizontal = false;
 
-            if(direction?.destinationX) {
-                result.x += direction.destinationX;
-            }
+                const assetName = `h_${sprite.member}_${(sprite.useDirections)?(this.direction):(0)}_${effectFrame?.frame ?? 0}`;
 
-            if(direction?.destinationY) {
-                result.y += direction.destinationY;
-            }
+                const assetData = effect.data.assets.find((asset) => asset.name === assetName);
 
-            if(result) {
-                sprites.push(result);
+                /*if(!assetData && (this.direction > 3 && this.direction < 7)) {
+                    assetName = `h_${sprite.member}_${(sprite.useDirections)?(6 - this.direction):(0)}_${effectFrame?.frame ?? 0}`;
+
+                    assetData = effect.data.assets.find((asset) => asset.name === assetName);
+
+                    flipHorizontal = true;
+                }*/
+
+                if(!assetData) {
+                    //console.error("Can't find asset for " + assetName);
+
+                    continue;
+                }
+
+                const sourceAssetName = assetData.source ?? assetData.name;
+
+                const spriteData = effect.data.sprites.find((sprite) => sprite.name === sourceAssetName);
+
+                if(!spriteData) {
+                    //console.error("Can't find sprite for source asset " + sourceAssetName);
+
+                    continue;
+                }
+
+                const destinationY = (sprite.destinationY ?? 0) + (effectFrame?.destinationY ?? 0);
+
+                const result = await this.getEffectSprite(effect.library, assetData, spriteData, index, destinationY, sprite.ink, flipHorizontal);
+
+                if(direction?.destinationX) {
+                    result.x += direction.destinationX;
+                }
+
+                if(direction?.destinationY) {
+                    result.y += direction.destinationY;
+                }
+
+                if(result) {
+                    sprites.push(result);
+                }
             }
         }
 
@@ -504,7 +524,7 @@ export default class FigureRenderer {
             const actionForSprite = actionsForBodyParts.find((action) => action.bodyParts.includes(spriteConfiguration.type));
         
             if(!actionForSprite) {
-                console.warn("Sprite has no action requesting it.");
+                //console.warn("Sprite has no action requesting it.");
 
                 return null
             }
@@ -512,7 +532,7 @@ export default class FigureRenderer {
             const figureData = await FigureAssets.getFigureData(spriteConfiguration.assetId);
 
             if(!figureData) {
-                console.error("Figure data does not exist for " + spriteConfiguration.assetId);
+                //console.error("Figure data does not exist for " + spriteConfiguration.assetId);
 
                 return null
             }
@@ -525,16 +545,18 @@ export default class FigureRenderer {
 
             const avatarAnimation = this.getAvatarAnimation(actionForSprite.actionId, geometryPart?.id, spriteConfiguration.type, direction, this.frame);
 
+            const frame = actionForSprite.frame ?? avatarAnimation?.spriteFrame ?? 0;
+
             let assetFlipped = false;
             let assetDirection = direction;
             let assetType = spriteConfiguration.type;
 
-            let assetName = `h_${avatarAnimation?.assetPartDefinition ?? actionForSprite.assetPartDefinition ?? "std"}_${assetType}_${spriteConfiguration.id}_${assetDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
+            let assetName = `h_${avatarAnimation?.assetPartDefinition ?? actionForSprite.assetPartDefinition ?? "std"}_${assetType}_${spriteConfiguration.id}_${assetDirection}_${frame}`;
 
             let asset = figureData.assets.find((asset) => asset.name === assetName);
 
             if(!asset && flipHorizontal) {
-                console.warn("Can't find asset for " + assetName + ", trying with flipped direction");
+                //console.warn("Can't find asset for " + assetName + ", trying with flipped direction");
 
                 if(assetType[1] !== 'g') {
                     if(assetType[0] == 'l') {
@@ -549,21 +571,29 @@ export default class FigureRenderer {
                 assetFlipped = flipHorizontal;
                 assetDirection = flippedDirection;
 
-                assetName = `h_${avatarAnimation?.assetPartDefinition ?? actionForSprite.assetPartDefinition ?? "std"}_${assetType}_${spriteConfiguration.id}_${assetDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
+                assetName = `h_${avatarAnimation?.assetPartDefinition ?? actionForSprite.assetPartDefinition ?? "std"}_${assetType}_${spriteConfiguration.id}_${assetDirection}_${frame}`;
 
                 asset = figureData.assets.find((asset) => asset.name === assetName);
             }
 
             if(!asset) {
-                console.warn("Can't find asset for " + assetName + ", trying with standing part definition.");
+                //console.warn("Can't find asset for " + assetName + ", trying with standing part definition.");
                 
-                assetName = `h_std_${assetType}_${spriteConfiguration.id}_${assetDirection}_${avatarAnimation?.spriteFrame ?? 0}`;
+                assetName = `h_std_${assetType}_${spriteConfiguration.id}_${assetDirection}_${frame}`;
 
                 asset = figureData.assets.find((asset) => asset.name === assetName);
             }
 
             if(!asset) {
-                console.error("Can't find asset for " + assetName);
+                //console.warn("Can't find asset for " + assetName + ", trying with standing part definition.");
+                
+                assetName = `h_std_${assetType}_${spriteConfiguration.id}_${assetDirection}_${0}`;
+
+                asset = figureData.assets.find((asset) => asset.name === assetName);
+            }
+
+            if(!asset) {
+                //console.error("Can't find asset for " + assetName);
 
                 return null
             }
@@ -584,6 +614,14 @@ export default class FigureRenderer {
             const result = await this.getFigureSprite(assetType, spriteConfiguration, sprite, asset, paletteColor?.color, assetDirection, assetFlipped);
 
             if(result) {
+                if(actionForSprite.destinationX) {
+                    result.x += actionForSprite.destinationX;
+                }
+
+                if(actionForSprite.destinationY) {
+                    result.y += actionForSprite.destinationY;
+                }
+
                 const actionForSit = this.actions.some((action) => action === "Sit");
 
                 if(actionForSit) {
@@ -695,28 +733,6 @@ export default class FigureRenderer {
         return spriteFrame;
     }
 
-    private async getEffectForAvatar() {
-        const effectData = await this.getEffect();
-
-        if(!effectData?.data.animation) {
-            return null;
-        }
-
-        const frame = this.getCurrentAnimationFrame(effectData);
-
-        if(!effectData.data.animation.frames[frame]) {
-            return null;
-        }
-
-        const avatarEffect = effectData.data.animation.frames[frame].effects.find((effect) => effect.id === "avatar");
-
-        if(!avatarEffect) {
-            return null;
-        }
-
-        return avatarEffect;
-    }
-
     public async renderToCanvas(cropped: boolean = false) {
         return await (async () => {
             const { sprites, effectSprites } = await this.render();
@@ -778,11 +794,8 @@ export default class FigureRenderer {
                 context.restore();
             }
 
-            // TODO: rewrite this to not require an asynchronous action to determine
-            const avatarEffect = await this.getEffectForAvatar();
-
-            if(avatarEffect?.destinationY) {
-                minimumY -= avatarEffect.destinationY;
+            if(this.avatarEffect?.destinationY) {
+                minimumY -= this.avatarEffect.destinationY;
             }
 
             return {
@@ -804,26 +817,45 @@ export default class FigureRenderer {
         return this.configuration.parts.map((section) => [section.type, section.setId, ...section.colors].filter(Boolean).join('-')).join('.');
     }
     
-    private async getEffect() {
-        const action = this.actions.find((action) => action.split('.')[0] === "AvatarEffect");
-
-        if(!action) {
-            return;
-        }
+    private async getEffects(actions: AvatarActionData[]) {
+        const results = [];
         
-        const id = parseInt(action.split('.')[1]);
+        for(const action of actions) {
+            if(!["AvatarEffect", "Dance"].includes(action.id)) {
+                continue;
+            }
 
-        const library = this.getEffectLibrary(id);
+            const actionKey = this.actions.find((actionId) => actionId.split('.')[0] === action.id);
 
-        if(!library) {
-            return;
+            if(!actionKey) {
+                continue;
+            }
+            
+            const id = parseInt(actionKey.split('.')[1]);
+
+            if(action.id === "AvatarEffect") {
+                const library = this.getEffectLibrary(id);
+
+                if(!library) {
+                    continue;
+                }
+
+                results.push({
+                    id: library.id,
+                    library: library.library,
+                    data: await FigureAssets.getEffectData(library.library)
+                });
+            }
+            else if(action.id === "Dance") {
+                results.push({
+                    id: id,
+                    library: `Dance${id}`,
+                    data: await FigureAssets.getEffectData(`Dance${id}`)
+                });
+            }
         }
 
-        return {
-            id: library.id,
-            library: library.library,
-            data: await FigureAssets.getEffectData(library.library)
-        };
+        return results;
     }
 
     private getActionParamId(actionId: string) {

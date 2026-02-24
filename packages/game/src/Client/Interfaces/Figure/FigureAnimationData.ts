@@ -41,6 +41,7 @@ export type FigureAnimationData = {
             action: string;
             frame: number;
 
+            destinationX?: number;
             destinationY?: number;
         }[];
 
