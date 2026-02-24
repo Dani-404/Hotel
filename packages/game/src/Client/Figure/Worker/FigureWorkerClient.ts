@@ -22,7 +22,7 @@ export default class FigureWorkerClient {
                 effects: event.data.effects
             });
 
-            this.canvasRequests.slice(this.canvasRequests.indexOf(request), 1);
+            this.canvasRequests.splice(this.canvasRequests.indexOf(request), 1);
         };
 
         worker.onerror = (event: ErrorEvent) => {

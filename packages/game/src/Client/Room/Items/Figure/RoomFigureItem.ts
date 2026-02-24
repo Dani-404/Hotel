@@ -36,7 +36,7 @@ export default class RoomFigureItem extends RoomItem {
             if(frame !== this.currentFrame) {
                 return;
             }
-            
+
             this.sprites = [
                 new RoomFigureSprite(this, result.figure),
                 ...result.effects.map((effect) => new RoomFigureEffectSprite(this, effect))

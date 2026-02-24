@@ -1,5 +1,5 @@
 import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
-import { FigureRendererSprite } from "../Renderer/FigureRenderer";
+import { FigureRendererSpriteResult } from "../Renderer/FigureRenderer";
 
 export type FigureRenderEvent = {
     id: number;
@@ -13,6 +13,6 @@ export type FigureRenderEvent = {
 
 export type FigureRenderResultEvent = {
     id: number;
-    figure: FigureRendererSprite;
-    effects: FigureRendererSprite[];
+    figure: FigureRendererSpriteResult;
+    effects: FigureRendererSpriteResult[];
 };

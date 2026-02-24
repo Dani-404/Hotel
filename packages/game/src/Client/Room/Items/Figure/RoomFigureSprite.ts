@@ -1,12 +1,12 @@
 import { MousePosition } from "@Client/Interfaces/MousePosition";
 import RoomSprite from "../RoomSprite";
 import RoomFigureItem from "./RoomFigureItem";
-import { FigureRendererSprite } from "@Client/Figure/Renderer/FigureRenderer";
+import { FigureRendererSpriteResult } from "@Client/Figure/Renderer/FigureRenderer";
 
 export default class RoomFigureSprite extends RoomSprite {
     public offset: MousePosition;
 
-    constructor(public readonly item: RoomFigureItem, public readonly sprite: FigureRendererSprite) {
+    constructor(public readonly item: RoomFigureItem, public readonly sprite: FigureRendererSpriteResult) {
         super(item);
 
         this.priority = this.sprite.index;
@@ -41,9 +41,9 @@ export default class RoomFigureSprite extends RoomSprite {
             return null;
         }
 
-        const pixel = ((relativePosition.left + relativePosition.top * this.sprite.imageData.width) * 4) + 3;
+        const pixel = ((relativePosition.left + relativePosition.top * this.sprite.image.width) * 4) + 3;
 
-        if(this.sprite.imageData.data[pixel] < 50) {
+        if(this.sprite.imageData[pixel] < 50) {
             return null;
         }
 

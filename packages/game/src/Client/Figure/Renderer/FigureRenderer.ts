@@ -12,13 +12,16 @@ import { FurnitureAsset } from "@Client/Interfaces/Furniture/FurnitureAssets";
 import { getGlobalCompositeModeFromInkNumber } from "@Client/Renderers/GlobalCompositeModes";
 
 export type FigureRendererResult = {
-    figure: FigureRendererSprite;
-    effects: FigureRendererSprite[];
+    figure: FigureRendererSpriteResult;
+    effects: FigureRendererSpriteResult[];
+};
+
+export type FigureRendererSpriteResult = FigureRendererSprite & {
+    imageData: Uint8Array;
 };
 
 export type FigureRendererSprite = {
     image: ImageBitmap;
-    imageData: ImageData;
 
     x: number;
     y: number;
@@ -625,7 +628,6 @@ export default class FigureRenderer {
 
         return {
             image: await createImageBitmap(sprite.image),
-            imageData: sprite.imageData,
             
             x: x - 32,
             y: destinationY + assetData.y + 32,
@@ -673,7 +675,6 @@ export default class FigureRenderer {
 
         return {
             image: await createImageBitmap(sprite.image),
-            imageData: sprite.imageData,
             
             x: x - 32,
             y: y + 32,
@@ -787,7 +788,7 @@ export default class FigureRenderer {
             return {
                 figure: {
                     image: await createImageBitmap(canvas),
-                    imageData: context.getImageData(0, 0, canvas.width, canvas.height),
+                    imageData: new Uint8Array(context.getImageData(0, 0, canvas.width, canvas.height).data),
 
                     x: -minimumX,
                     y: -minimumY,
