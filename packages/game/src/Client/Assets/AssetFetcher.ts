@@ -157,7 +157,14 @@ export default class AssetFetcher {
                 imageData = (await existingSpriteWithImageData.sprite).imageData;
             }
             else {
-                imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                if(!canvas.width || canvas.height) {
+                    imageData = new ImageData(canvas.width, canvas.height);
+                }
+                else {
+                    console.log("Generating new image data");
+
+                    imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                }
             }
         }
         else {

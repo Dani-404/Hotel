@@ -13,12 +13,20 @@ export default class FigureAssets {
     public static avatarAnimations: FigureAvatarAnimationData;
     public static effectmap: { id: number; library: string; }[];
 
+    private static loaded = false;
+
     public static async loadAssets() {
+        if(FigureAssets.loaded) {
+            return;
+        }
+
         FigureAssets.figuremap = await FigureAssets.getFiguremapData();
         FigureAssets.figuredata = await FigureAssets.getFiguredataData();
         FigureAssets.avataractions = await FigureAssets.getAvataractionsData();
         FigureAssets.effectmap = await FigureAssets.getEffectMapData();
         FigureAssets.avatarAnimations = await AssetFetcher.fetchJson<FigureAvatarAnimationData>(`/assets/figure/AvatarAnimations.json`);
+
+        FigureAssets.loaded = true;
     }
     
     public static async getEffectMapData() {

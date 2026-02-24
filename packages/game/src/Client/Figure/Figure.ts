@@ -1,4 +1,3 @@
-import FigureAssets from "@Client/Assets/FigureAssets";
 import FigureWorkerClient from "./Worker/FigureWorkerClient";
 import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 
@@ -9,6 +8,10 @@ export default class Figure {
 
     constructor(public configuration: FigureConfiguration, public direction: number, actions: string[] = [], public headOnly: boolean = false) {
         this.actions.push(...actions);
+    }
+
+    public async preload(worker: FigureWorkerClient) {
+        await worker.preload(this);
     }
 
     public async renderToCanvas(worker: FigureWorkerClient, frame: number, cropped: boolean = false) {

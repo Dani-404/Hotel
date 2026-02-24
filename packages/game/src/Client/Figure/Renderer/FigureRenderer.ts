@@ -78,6 +78,78 @@ export default class FigureRenderer {
 
     }
 
+    public async heavilyPreloadFigureSprites() {
+        const assets: {
+            assetId: string;
+            partId: string;
+            partType: string;
+        }[] = [];
+
+        for(const configurationPart of this.configuration.parts) {
+            const settypeData = this.getSettypeForPartAndSet(configurationPart.type);
+
+            if(!settypeData) {
+                continue;
+            }
+
+            const setData = this.getSetFromSettype(settypeData, configurationPart.setId);
+
+            if(!setData) {
+                continue;
+            }
+
+            for(const setPartData of setData.parts) {
+                if(!setPartData) {
+                    continue;
+                }
+                
+                const setPartAssetData = this.getAssetForSetPart(setPartData.id, setPartData.type);
+
+                if(!setPartAssetData) {
+                    continue;
+                }
+
+                assets.push({
+                    assetId: setPartAssetData.id,
+                    partId: setPartData.id,
+                    partType: setPartData.type
+                });
+            }
+        }
+
+        console.time("Prepare");
+
+        await Promise.allSettled(assets.map(async ({ assetId, partId, partType}) => {
+            const figureData = await FigureAssets.getFigureData(assetId);
+
+            if(!figureData) {
+                return null
+            }
+
+            for(const sprite of figureData.sprites) {
+                if(!sprite.name.includes(`${partType}_${partId}`)) {
+                    continue;
+                }
+
+                const asset = figureData.assets.find((asset) => asset.name === sprite.name);
+
+                await FigureAssets.getFigureSprite(assetId, {
+                    x: sprite.x,
+                    y: sprite.y,
+
+                    width: sprite.width,
+                    height: sprite.height,
+
+                    flipHorizontal: asset?.flipHorizontal,
+
+                    ignoreImageData: false
+                });
+            }
+        }));
+
+        console.timeEnd("Prepare");
+    }
+
     private getSettypeForPartAndSet(part: FigurePartKeyAbbreviation) {
         return FigureAssets.figuredata!.settypes.find((settype) => settype.type === part);
     }
@@ -810,7 +882,7 @@ export default class FigureRenderer {
             //Performance.endPerformanceCheck("getImageData");
 
             //const imageDataArray = new Uint8Array(imageData);
-            const imageDataArray: number[] = new Array(256 * 256 * 4).fill(0);
+            const imageDataArray = new Uint8Array(256 * 256 * 4).fill(0);
 
             for(const sprite of sprites) {
                 if(sprite.imageData) {

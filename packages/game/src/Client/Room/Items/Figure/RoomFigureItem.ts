@@ -21,6 +21,9 @@ export default class RoomFigureItem extends RoomItem {
     public typing: boolean = false;
     public idling: boolean = false;
 
+    private preloaded = false;
+    private preloading = false;
+
     constructor(public roomRenderer: RoomRenderer, public readonly figureRenderer: Figure, position: RoomPosition | null) {
         super(roomRenderer, "figure");
 
@@ -36,16 +39,26 @@ export default class RoomFigureItem extends RoomItem {
     }
 
     render(_frame: number = 0) {
+        if(!this.preloaded) {
+            if(this.preloading) {
+                return;
+            }
+
+            this.preloading = true;
+
+            this.figureRenderer.preload(Figure.figureWorker).then(() => {
+                this.preloaded = true;
+            });
+
+            return;
+        }
+
         this.frame++;
 
         const frame = this.frame;
 
-        //console.time("Figure render " + frame);
-
         this.figureRenderer.renderToCanvas(Figure.figureWorker, this.frame).then((result) => {
-            //console.timeEnd("Figure render " + frame);
-
-            if(this.renderedFrame > frame) {
+            if(frame !== this.frame) {
                 return;
             }
 
