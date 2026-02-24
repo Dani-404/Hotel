@@ -1,6 +1,8 @@
 import ContextNotAvailableError from "../Exceptions/ContextNotAvailableError";
 
 export type AssetSpriteProperties = {
+    id?: number;
+
     x: number;
     y: number;
 
@@ -93,6 +95,8 @@ export default class AssetFetcher {
         }
 
         return (async () => {
+            properties.id ??= Math.random();
+
             const result: AssetSpriteProperties & { sprite: Promise<{ image: ImageBitmap, imageData: ImageData }> } = {
                 sprite: this.drawSprite(url, properties),
                 ...properties
@@ -144,9 +148,25 @@ export default class AssetFetcher {
             context.drawImage(colorCanvas, 0, 0);
         }
 
+        let imageData: ImageData;
+
+        if(!properties.ignoreImageData) {
+            const existingSpriteWithImageData = this.sprites[url].find(({ id, x, y, width, height, flipHorizontal, destinationWidth, destinationHeight, ignoreImageData }) => properties.id !== id && properties.x === x && properties.y === y && properties.width === width && properties.height === height && properties.flipHorizontal === flipHorizontal && properties.destinationWidth === destinationWidth && properties.destinationHeight === destinationHeight && !ignoreImageData);
+
+            if(existingSpriteWithImageData) {
+                imageData = (await existingSpriteWithImageData.sprite).imageData;
+            }
+            else {
+                imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            }
+        }
+        else {
+            imageData = new ImageData(canvas.width, canvas.height);
+        }
+
         return {
             image: await createImageBitmap(canvas),
-            imageData: (!properties.ignoreImageData)?(context.getImageData(0, 0, canvas.width, canvas.height)):(new ImageData(canvas.width, canvas.height))
+            imageData
         };
     }
 }

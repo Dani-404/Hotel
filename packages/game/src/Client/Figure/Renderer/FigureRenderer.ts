@@ -11,6 +11,7 @@ import { FurnitureSprite } from "@Client/Interfaces/Furniture/FurnitureSprites";
 import { FurnitureAsset } from "@Client/Interfaces/Furniture/FurnitureAssets";
 import { getGlobalCompositeModeFromInkNumber } from "@Client/Renderers/GlobalCompositeModes";
 import { AvatarActionData } from "@Client/Interfaces/Figure/Avataractions";
+import Performance from "@Client/Utilities/Performance";
 
 export type FigureRendererResult = {
     figure: FigureRendererSpriteResult;
@@ -23,6 +24,7 @@ export type FigureRendererSpriteResult = FigureRendererSprite & {
 
 export type FigureRendererSprite = {
     image: ImageBitmap;
+    imageData?: ImageData;
 
     x: number;
     y: number;
@@ -368,7 +370,9 @@ export default class FigureRenderer {
             });
         }
 
+        Performance.startPerformanceCheck("getFigureSprites", 2);
         const sprites = await this.getFigureSprites(spritesFromConfiguration, actionsForBodyParts, direction);
+        Performance.endPerformanceCheck("getFigureSprites");
 
         const effectSprites = await this.getEffectSprites(effects);
 
@@ -688,7 +692,7 @@ export default class FigureRenderer {
 
             color: (spriteConfiguration.colorable && spriteConfiguration.colors[spriteConfiguration.colorIndex - 1] && type !== "ey")?(color):(undefined),
 
-            ignoreImageData: true
+            ignoreImageData: false
         });
 
         const priorityTypes: Partial<Record<string, FigurePartKeyAbbreviation>> = {
@@ -713,6 +717,7 @@ export default class FigureRenderer {
 
         return {
             image: await createImageBitmap(sprite.image),
+            imageData: sprite.imageData,
             
             x: x - 32,
             y: y + 32,
@@ -798,10 +803,38 @@ export default class FigureRenderer {
                 minimumY -= this.avatarEffect.destinationY;
             }
 
+            const image = await createImageBitmap(canvas);
+
+            //Performance.startPerformanceCheck("getImageData", 1);
+            //const imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+            //Performance.endPerformanceCheck("getImageData");
+
+            //const imageDataArray = new Uint8Array(imageData);
+            const imageDataArray: number[] = new Array(256 * 256 * 4).fill(0);
+
+            for(const sprite of sprites) {
+                if(sprite.imageData) {
+                    for(let x = 0; x < sprite.image.width; x++) {
+                        for(let y = 0; y < sprite.image.height; y++) {
+                            const alpha = sprite.imageData.data[((x + y * sprite.imageData.width) * 4) + 3];
+
+                            if(alpha > 0) {
+                                for(let index = 0; index < 4; index++) {
+                                    imageDataArray[(((x + 128 + sprite.x) + (y + 128 + sprite.y) * 256) * 4) + 0] = sprite.imageData.data[((x + y * sprite.imageData.width) * 4) + 0];
+                                    imageDataArray[(((x + 128 + sprite.x) + (y + 128 + sprite.y) * 256) * 4) + 1] = sprite.imageData.data[((x + y * sprite.imageData.width) * 4) + 1];
+                                    imageDataArray[(((x + 128 + sprite.x) + (y + 128 + sprite.y) * 256) * 4) + 2] = sprite.imageData.data[((x + y * sprite.imageData.width) * 4) + 2];
+                                    imageDataArray[(((x + 128 + sprite.x) + (y + 128 + sprite.y) * 256) * 4) + 3] = sprite.imageData.data[((x + y * sprite.imageData.width) * 4) + 3];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             return {
                 figure: {
-                    image: await createImageBitmap(canvas),
-                    imageData: new Uint8Array(context.getImageData(0, 0, canvas.width, canvas.height).data),
+                    image,
+                    imageData: imageDataArray,
 
                     x: -minimumX,
                     y: -minimumY,

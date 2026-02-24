@@ -16,6 +16,7 @@ export default class RoomFigureItem extends RoomItem {
 
     public readonly id = Math.random();
     private frame: number = 0;
+    private renderedFrame: number = 0;
 
     public typing: boolean = false;
     public idling: boolean = false;
@@ -39,10 +40,16 @@ export default class RoomFigureItem extends RoomItem {
 
         const frame = this.frame;
 
+        //console.time("Figure render " + frame);
+
         this.figureRenderer.renderToCanvas(Figure.figureWorker, this.frame).then((result) => {
-            if(frame !== this.frame) {
-                //return;
+            //console.timeEnd("Figure render " + frame);
+
+            if(this.renderedFrame > frame) {
+                return;
             }
+
+            this.renderedFrame = frame;
 
             this.sprites = [
                 new RoomFigureSprite(this, result.figure),
