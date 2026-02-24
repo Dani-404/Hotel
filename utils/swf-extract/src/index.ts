@@ -45,7 +45,7 @@ let assetNames = process.argv.slice(2).filter((argument) => !argument.startsWith
     }
 
     if(process.argv[2] === "regenerate-figures") {
-        assetNames = readdirSync(path.join("..", "..", "assets", "figure"), { withFileTypes: true })
+        assetNames = readdirSync(path.join("..", "..", "assets", "figure", "clothing"), { withFileTypes: true })
         .filter((directory) => directory.isDirectory())
         .map((directory) => directory.name);
     }
