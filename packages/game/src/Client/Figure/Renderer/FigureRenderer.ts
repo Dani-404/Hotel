@@ -279,7 +279,7 @@ export default class FigureRenderer {
                 geometry,
                 assetPartDefinition: action.assetPartDefinition,
                 bodyParts: figurePartSet.parts,
-                destinationY: (action.assetPartDefinition === "sit")?(16):(0),
+                destinationY: 0,//(action.assetPartDefinition === "sit")?(16):(0),
             });
 
             // now we know walk is occupied by Move to use `wlk`
@@ -606,7 +606,7 @@ export default class FigureRenderer {
             const actionForSprite = actionsForBodyParts.find((action) => action.bodyParts.includes(spriteConfiguration.type));
         
             if(!actionForSprite) {
-                //console.warn("Sprite has no action requesting it.");
+                //console.warn("Sprite " + spriteConfiguration.type + " has no action requesting it.");
 
                 return null
             }
@@ -646,7 +646,6 @@ export default class FigureRenderer {
                     }
                     else if(assetType[0] == 'r') {
                         assetType = 'l' + assetType.substring(1);
-
                     }
                 }
 
