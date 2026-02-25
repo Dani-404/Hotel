@@ -15,7 +15,7 @@ export class UserModel extends Model {
     declare online: boolean;
 }
 
-export function initializeUserModel(sequelize: Sequelize) {
+export function initialize(sequelize: Sequelize) {
     UserModel.init(
         {
             id: {
