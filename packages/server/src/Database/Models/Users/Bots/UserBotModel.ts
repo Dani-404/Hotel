@@ -19,6 +19,7 @@ export class UserBotModel extends Model {
     declare position: RoomPosition;
     declare direction: number;
     declare speech: BotSpeechData;
+    declare relaxed: boolean;
 
     declare room: NonAttribute<RoomModel | null>;
     declare user: NonAttribute<UserModel>;
@@ -87,11 +88,18 @@ export function initializeUserBotModel(sequelize: Sequelize) {
                 allowNull: true,
                 defaultValue: null
             },
+
             direction: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
                 defaultValue: null
             },
+
+            relaxed: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            }
         },
         {
           tableName: 'user_bots',

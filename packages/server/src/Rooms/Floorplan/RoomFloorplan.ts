@@ -3,6 +3,7 @@ import Room from "../Room";
 import RoomUser from "../Users/RoomUser";
 import { RoomPosition } from "@shared/Interfaces/Room/RoomPosition";
 import RoomFurniture from "../Furniture/RoomFurniture";
+import RoomActor from "../Actor/RoomActor";
 
 export default class RoomFloorplan {
     private grid: number[][];
@@ -75,7 +76,7 @@ export default class RoomFloorplan {
         return 0;
     }
 
-    public getAstarFinder(roomUser: RoomUser, targetPosition: Omit<RoomPosition, "depth">, walkThroughFurniture: boolean = false) {
+    public getAstarFinder(actor: RoomActor, targetPosition: Omit<RoomPosition, "depth">, walkThroughFurniture: boolean = false) {
         const grid = this.getMutableGrid();
 
         if(walkThroughFurniture) {
@@ -86,16 +87,10 @@ export default class RoomFloorplan {
             }
         }
 
-        grid[roomUser.position.row]![roomUser.position.column] = 0;
+        grid[actor.position.row]![actor.position.column] = 0;
         
         if(grid[targetPosition.row] && grid[targetPosition.row]?.[targetPosition.column]) {
             grid[targetPosition.row]![targetPosition.column] = this.getPositionWeight(targetPosition, walkThroughFurniture, true);
-        }
-
-        const usersAtTargetPosition = this.room.users.filter((user) => user.position.row === targetPosition.row && user.position.column === targetPosition.column);
-
-        for(const userAtTargetPosition of usersAtTargetPosition) {
-            //grid[targetPosition.row]![targetPosition.column] = 0;
         }
 
         const columns = grid[0]!.map((_, colIndex) => grid.map(row => row[colIndex]!));

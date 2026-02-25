@@ -19,4 +19,6 @@ export type UserBotData = {
     };
     
     direction: number;
+
+    relaxed: boolean;
 };

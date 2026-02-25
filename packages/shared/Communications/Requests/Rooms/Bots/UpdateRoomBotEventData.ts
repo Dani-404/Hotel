@@ -12,4 +12,5 @@ export type UpdateRoomBotEventData = {
     figureConfiguration?: FigureConfiguration;
 
     speech?: BotSpeechData;
+    relaxed?: boolean;
 };

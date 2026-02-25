@@ -70,6 +70,13 @@ export default class Room {
         return this.users.find((user) => user.position.row === position.row && user.position.column === position.column);
     }
 
+    public getActorAtPosition(position: Omit<RoomPosition, "depth">) {
+        const user = this.users.find((user) => user.position.row === position.row && user.position.column === position.column);
+        const bot = this.bots.find((bot) => bot.position.row === position.row && bot.position.column === position.column);
+
+        return user || bot;
+    }
+
     public getBotAtPosition(position: Omit<RoomPosition, "depth">) {
         return this.bots.find((bot) => bot.model.position.row === position.row && bot.model.position.column === position.column);
     }

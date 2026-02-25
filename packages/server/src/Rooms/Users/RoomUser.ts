@@ -14,9 +14,14 @@ import { RoomChatEventData } from "@shared/Communications/Responses/Rooms/Chat/R
 import RoomFloorplanHelper from "../RoomFloorplanHelper.js";
 import { game } from "../../index.js";
 import { UserIdlingEventData } from "@shared/Communications/Responses/Rooms/Users/UserIdlingEventData.js";
+import RoomActor from "../Actor/RoomActor.js";
+import RoomFurniture from "../Furniture/RoomFurniture.js";
+import RoomActorPath from "../Actor/Path/RoomActorPath.js";
 
-export default class RoomUser {
+export default class RoomUser implements RoomActor {
     public preoccupiedByActionHandler: boolean = false;
+
+    public path: RoomActorPath;
     
     public position: RoomPosition;
     public direction: number;
@@ -45,11 +50,6 @@ export default class RoomUser {
             );
         }
     }
-
-    public path?: Omit<RoomPosition, "depth">[] | undefined;
-    public walkThroughFurniture?: boolean | undefined;
-    public pathOnFinish: (() => void) | undefined;
-    public pathOnCancel: (() => void) | undefined;
 
     constructor(public readonly room: Room, public readonly user: User, initialPosition?: RoomPosition) {
         this.user.room = room;
@@ -86,6 +86,8 @@ export default class RoomUser {
             }),
             userEnteredRoomEvent
         ]);
+
+        this.path = new RoomActorPath(this);
     }
     
     private getRoomUserData(): RoomUserData {
@@ -124,76 +126,7 @@ export default class RoomUser {
             );
         }
 
-        if(this.path === undefined) {
-            return;
-        }
-
-        const nextPosition = this.path[0];
-
-        if(!nextPosition) {
-            await this.finishPath();
-
-            return;
-        }
-
-        // TODO: use room floor plan
-
-        const user = this.room.getRoomUserAtPosition(nextPosition);
-
-        if(user && user.user.model.id !== this.user.model.id) {
-            console.log("User path cancelled, user is obstructing");
-
-            this.path = undefined;
-            this.pathOnCancel?.();
-
-            return;
-        }
-
-        const furniture = this.room.getUpmostFurnitureAtPosition(nextPosition);
-
-        if(furniture) {
-            if(!this.walkThroughFurniture && !furniture.isWalkable(this.path.length === 1)) {
-                console.log("User path cancelled");
-
-                this.path = undefined;
-                this.pathOnCancel?.();
-
-                return;
-            }
-        }
-
-        const depth = this.room.getUpmostDepthAtPosition(nextPosition, furniture);
-
-        const previousPosition = {...this.position};
-
-        if(this.actions.includes("Sit")) {
-            const furnitureAtPreviousPosition = this.room.getUpmostFurnitureAtPosition(previousPosition);
-
-            if(furnitureAtPreviousPosition?.model.furniture.flags.sitable) {
-                previousPosition.depth = furnitureAtPreviousPosition.model.position.depth + 0.01;
-            }
-        }
-
-        const position = {
-            row: nextPosition.row,
-            column: nextPosition.column,
-            depth: depth + 0.01
-        };
-
-        this.removeAction("Sit");
-
-        this.room.outgoingEvents.push(new OutgoingEvent<UserWalkToEventData>("UserWalkToEvent", {
-            userId: this.user.model.id,
-            from: previousPosition,
-            to: position
-        }));
-
-        this.position = position;
-        this.path!.splice(0, 1);
-
-        this.room.floorplan.updatePosition(position, previousPosition);
-
-        this.lastActivity = performance.now();
+        this.path.handleActionsInterval();
     }
 
     private readonly disconnectListener = this.disconnect.bind(this);
@@ -215,6 +148,10 @@ export default class RoomUser {
         if(!this.room.users.length) {
             game.roomManager.unloadRoom(this.room);
         }
+    }
+
+    public hasAction(actionId: string): boolean {
+        return this.actions.includes(actionId);
     }
 
     public addAction(action: string, removeAfterMs?: number) {
@@ -263,89 +200,27 @@ export default class RoomUser {
         );
     }
 
-    public walkTo(position: Omit<RoomPosition, "depth">, walkThroughFurniture: boolean = false, onFinish: ((() => void) | undefined) = undefined, onCancel: ((() => void) | undefined) = undefined) {
-        const astarFinder = this.room.floorplan.getAstarFinder(this, position, walkThroughFurniture);
-
-        const result = astarFinder.findPath({
-            x: this.position.row,
-            y: this.position.column,
-        }, {
-            x: position.row,
-            y: position.column,
-        });
-
-        const path = result.map((position) => {
-            return {
-                row: position[0]!,
-                column: position[1]!
-            }
-        });
-
-        path.splice(0, 1);
-
-        this.path = path;
-        this.walkThroughFurniture = walkThroughFurniture;
-        this.pathOnFinish = onFinish;
-        this.pathOnCancel = onCancel;
-
-        console.log("Result: " + JSON.stringify(path));
-
-        this.room.requestActionsFrame();
+    public sendWalkEvent(previousPosition: RoomPosition): void {
+        this.room.outgoingEvents.push(new OutgoingEvent<UserWalkToEventData>("UserWalkToEvent", {
+            userId: this.user.model.id,
+            from: previousPosition,
+            to: this.position
+        }));
     }
 
-    public teleportTo(position: Omit<RoomPosition, "depth">) {
-        if(this.room.model.structure.grid[position.row]?.[position.column] === undefined || this.room.model.structure.grid[position.row]?.[position.column] === 'X') {
-            return;
-        }
-
-        const furniture = this.room.getUpmostFurnitureAtPosition(position);
-
-        if(furniture) {
-            if(!furniture.isWalkable(true)) {
-                return;
-            }
-        }
-
-        const depth = this.room.getUpmostDepthAtPosition(position, furniture);
-
-        this.setPosition({
-            row: position.row,
-            column: position.column,
-            depth
-        }, undefined, true);
+    public sendPositionEvent(usePath: boolean) {
+        this.room.outgoingEvents.push(
+            new OutgoingEvent<UserPositionEventData>("UserPositionEvent", {
+                userId: this.user.model.id,
+                position: this.position,
+                direction: this.direction,
+                usePath: usePath === true
+            })
+        );
     }
 
-    public async finishPath() {
-        if(this.path === undefined) {
-            return;
-        }
-
-        const furniture = this.room.getUpmostFurnitureAtPosition(this.position);
-
-        if(furniture) {
-            if(furniture.model.furniture.flags.sitable) {
-                const newPosition = {
-                    row: this.position.row,
-                    column: this.position.column,
-                    depth: furniture.model.position.depth + furniture.model.furniture.dimensions.depth - 0.5
-                };
-
-                this.setPosition(newPosition, furniture.model.direction);
-                this.addAction("Sit");
-                this.removeAction("Dance");
-            }
-
-            const currentFurniture = this.room.getUpmostFurnitureAtPosition(this.position);
-
-            if(currentFurniture) {
-                await currentFurniture.userWalkOn(this);
-            }
-        }
-
-        console.log("User path finished");
-
-        this.path = undefined;
-        this.pathOnFinish?.();
+    public async walkOn(roomFurniture: RoomFurniture): Promise<void> {
+        await roomFurniture.userWalkOn(this);
     }
 
     public getOffsetPosition(direction: number, offset: number) {
@@ -359,32 +234,6 @@ export default class RoomUser {
         }
 
         return position;
-    }
-
-    public setPosition(position: RoomPosition, direction?: number, usePath?: boolean) {
-        const previousPosition = this.position;
-
-        this.position = position;
-
-        this.room.floorplan.updatePosition(position, previousPosition);
-
-        if(direction !== undefined) {
-            this.direction = direction;
-        }
-
-        this.path = undefined;
-        this.pathOnCancel?.();
-        
-        this.room.outgoingEvents.push(
-            new OutgoingEvent<UserPositionEventData>("UserPositionEvent", {
-                userId: this.user.model.id,
-                position,
-                direction,
-                usePath: usePath === true
-            })
-        );
-
-        this.lastActivity = performance.now();
     }
 
     public hasRights() {

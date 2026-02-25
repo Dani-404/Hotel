@@ -12,6 +12,7 @@ import { UpdateUserRightsEventData } from "@Shared/Communications/Requests/Rooms
 import { useRoomHoveredUser } from "../../../hooks/useRoomHoveredUser";
 import { useRoomFocusedUser } from "../../../hooks/useRoomFocusedUser";
 import { PickupRoomBotEventData } from "@Shared/Communications/Requests/Rooms/Bots/PickupRoomBotEventData"
+import { UpdateRoomBotEventData } from "@Shared/Communications/Requests/Rooms/Bots/UpdateRoomBotEventData";
 
 export default function UserContextMenu() {
     const room = useRoomInstance();
@@ -171,6 +172,13 @@ export default function UserContextMenu() {
                                                     dialogs.addUniqueDialog("bot-wardrobe", focusedUser.bot.data);
 
                                                     setFolded(true);
+                                                }}/>
+
+                                                <UserContextMenuButton text={(focusedUser.bot.data.relaxed)?("Stiffen"):("Relax")} onClick={() => {
+                                                    webSocketClient.send<UpdateRoomBotEventData>("UpdateRoomBotEvent", {
+                                                        userBotId: focusedUser.bot.data.id,
+                                                        relaxed: !focusedUser.bot.data.relaxed
+                                                    });
                                                 }}/>
 
                                                 <UserContextMenuButton text={"Setup speech"} onClick={() => {

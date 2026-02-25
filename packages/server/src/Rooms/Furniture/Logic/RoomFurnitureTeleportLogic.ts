@@ -21,14 +21,14 @@ export default class RoomFurnitureTeleportLogic implements RoomFurnitureLogic {
             console.log("User is not in entrance position, starting walk to position");
 
             await new Promise<void>((resolve, reject) => {
-                roomUser.walkTo(offsetPosition, undefined, resolve, reject);
+                roomUser.path.walkTo(offsetPosition, undefined, resolve, reject);
             });
         }
 
         await this.roomFurniture.setAnimation(1);
 
         await new Promise<void>((resolve, reject) => {
-            roomUser.walkTo(this.roomFurniture.model.position, true, resolve, reject);
+            roomUser.path.walkTo(this.roomFurniture.model.position, true, resolve, reject);
         });
 
         await this.roomFurniture.setAnimation(2);
@@ -95,7 +95,7 @@ export default class RoomFurnitureTeleportLogic implements RoomFurnitureLogic {
             }, 500);
         });
 
-        roomUser.setPosition({
+        roomUser.path.setPosition({
             ...targetFurniture.model.position,
             depth: targetFurniture.model.position.depth + 0.01
         });
@@ -105,7 +105,7 @@ export default class RoomFurnitureTeleportLogic implements RoomFurnitureLogic {
         const targetOffsetPosition = targetFurniture.getOffsetPosition(1);
 
         await new Promise<void>((resolve, reject) => {
-            roomUser.walkTo(targetOffsetPosition, undefined, resolve, reject);
+            roomUser.path.walkTo(targetOffsetPosition, undefined, resolve, reject);
         });
 
         await targetFurniture.setAnimation(0);

@@ -2,6 +2,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts",
+    "build": "npx tsc",
     "dev": "tsx --watch src/index.ts",
     "init": "tsx src/index.ts --init",
     "migrate": "npx sequelize-cli db:migrate",

@@ -19,7 +19,7 @@ export default class RoomFurnitureVendingMachineLogic implements RoomFurnitureLo
 
         if(offsetPosition.row !== roomUser.position.row || offsetPosition.column !== roomUser.position.column) {
             await new Promise<void>((resolve, reject) => {
-                roomUser.walkTo(offsetPosition, undefined, resolve, reject);
+                roomUser.path.walkTo(offsetPosition, undefined, resolve, reject);
             });
         }
 

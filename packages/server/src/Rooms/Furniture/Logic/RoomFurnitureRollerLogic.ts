@@ -65,7 +65,7 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
 
                 const nextFurniture = room.getUpmostFurnitureAtPosition(offsetPosition);
                 
-                if(nextFurniture && !nextFurniture.isWalkable()) {
+                if(nextFurniture && !nextFurniture.isWalkable(true)) {
                     continue;
                 }
 

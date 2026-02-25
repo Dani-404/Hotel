@@ -13,10 +13,10 @@ export default class StartWalkingEvent implements IncomingEvent<StartWalkingEven
         const roomUser = user.room.getRoomUser(user);
 
         if(roomUser.teleporting) {
-            roomUser.teleportTo(event.target);
+            roomUser.path.teleportTo(event.target);
         }
         else {
-            roomUser.walkTo(event.target);
+            roomUser.path.walkTo(event.target);
         }
     }
 }
