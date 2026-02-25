@@ -170,7 +170,7 @@ export default class RoomUser {
             const furnitureAtPreviousPosition = this.room.getUpmostFurnitureAtPosition(previousPosition);
 
             if(furnitureAtPreviousPosition?.model.furniture.flags.sitable) {
-                previousPosition.depth = furnitureAtPreviousPosition.model.position.depth;
+                previousPosition.depth = furnitureAtPreviousPosition.model.position.depth + 0.01;
             }
         }
 
