@@ -57,7 +57,7 @@ export class ModelManager {
                 }
 
             } catch (err) {
-                console.error(`Erreur ${fullPath}`, err);
+                console.error(`Error on Model path ${fullPath}`, err);
             }
         }
 

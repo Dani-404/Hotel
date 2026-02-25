@@ -79,7 +79,7 @@ export class ApiManager {
                 });
 
             } catch (err) {
-                console.error(`Erreur ${fullPath}`, err);
+                console.error(`Error on API path ${fullPath}`, err);
             }
         }
 
