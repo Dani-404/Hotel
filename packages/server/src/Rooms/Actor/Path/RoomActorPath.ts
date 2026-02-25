@@ -170,7 +170,7 @@ export default class RoomActorPath {
         const sitableFurniture = this.actor.room.getSitableFurnitureAtPosition(this.actor.position);
 
         if(sitableFurniture) {
-            this.setPosition(sitableFurniture.getSitPosition(), sitableFurniture.model.direction);
+            this.setPosition(sitableFurniture.getSitPosition(this.actor), sitableFurniture.model.direction);
 
             this.actor.addAction("Sit");
             this.actor.removeAction("Dance");

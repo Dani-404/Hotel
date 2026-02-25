@@ -15,6 +15,7 @@ import RoomFurnitureDiceLogic from "./Logic/RoomFurnitureDiceLogic.js";
 import RoomFurnitureTeleportTileLogic from "./Logic/RoomFurnitureTeleportTileLogic.js";
 import RoomUser from "../Users/RoomUser.js";
 import RoomFurnitureFortunaLogic from "./Logic/RoomFurnitureFortunaLogic.js";
+import RoomActor from "../Actor/RoomActor.js";
 
 export default class RoomFurniture {
     public preoccupiedByActionHandler: boolean = false;
@@ -234,7 +235,6 @@ export default class RoomFurniture {
 
     public async setPosition(position: RoomPosition, save: boolean = true) {
         const previousPosition = this.model.position;
-        const previousSitPosition = this.getSitPosition();
 
         this.model.position = position;
 
@@ -248,7 +248,7 @@ export default class RoomFurniture {
                 for(const actor of actorsAtPreviousPosition) {
                     actor.addAction("Sit");
                     actor.removeAction("Dance");
-                    actor.path.setPosition(sitableFurnitureAtPreviousPosition.getSitPosition(), this.model.direction);
+                    actor.path.setPosition(sitableFurnitureAtPreviousPosition.getSitPosition(actor), this.model.direction);
                 }
             }
             else {
@@ -266,7 +266,7 @@ export default class RoomFurniture {
             for(const actor of actorsAtPosition) {
                 actor.addAction("Sit");
                 actor.removeAction("Dance");
-                actor.path.setPosition(this.getSitPosition(), this.model.direction);
+                actor.path.setPosition(this.getSitPosition(actor), this.model.direction);
             }
         }
 
@@ -281,9 +281,9 @@ export default class RoomFurniture {
         }
     }
 
-    public getSitPosition() {
+    public getSitPosition(actor: RoomActor) {
         return {
-            ...this.model.position,
+            ...actor.position,
             depth: this.model.position.depth + this.model.furniture.dimensions.depth - 0.5
         };
     }
@@ -298,7 +298,7 @@ export default class RoomFurniture {
 
             for(const actor of actorsAtPosition) {
                 actor.addAction("Sit");
-                actor.path.setPosition(this.getSitPosition(), this.model.direction);
+                actor.path.setPosition(this.getSitPosition(actor), this.model.direction);
             }
         }
 
