@@ -67,17 +67,34 @@ export default class RoomFigureItem extends RoomItem {
 
             if(this.typing) {
                 if(!this.typingSprite) {
-                    this.typingSprite = new RoomFigureTypingSprite(this, result.figure);
+                    this.typingSprite = new RoomFigureTypingSprite(this, {
+                        left: result.figure.x,
+                        top: result.figure.y,
+                    });
                 }
+                else {
+                    this.typingSprite.figureOffsets = {
+                        left: result.figure.x,
+                        top: result.figure.y,
+                    };
+                }
+
 
                 this.sprites.push(this.typingSprite);
             }
-
-            if(this.idling) {
+            else if(this.idling) {
                 if(!this.idlingSprite) {
-                    this.idlingSprite = new RoomFigureIdlingSprite(this, result.figure);
+                    this.idlingSprite = new RoomFigureIdlingSprite(this, {
+                        left: result.figure.x,
+                        top: result.figure.y,
+                    });
                 }
                 else {
+                    this.idlingSprite.figureOffsets = {
+                        left: result.figure.x,
+                        top: result.figure.y,
+                    };
+
                     this.idlingSprite.process();
                 }
 
