@@ -39,7 +39,7 @@ export default class RoomFigureItem extends RoomItem {
     }
 
     render(_frame: number = 0) {
-        if(!this.preloaded) {
+        /*if(!this.preloaded) {
             if(!this.preloading) {
                 this.preloading = true;
 
@@ -47,7 +47,7 @@ export default class RoomFigureItem extends RoomItem {
                     this.preloaded = true;
                 });
             }
-        }
+        }*/
         
         this.frame++;
 
