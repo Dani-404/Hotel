@@ -164,6 +164,16 @@ export default class RoomUser {
 
         const depth = this.room.getUpmostDepthAtPosition(nextPosition, furniture);
 
+        const previousPosition = {...this.position};
+
+        if(this.actions.includes("Sit")) {
+            const furnitureAtPreviousPosition = this.room.getUpmostFurnitureAtPosition(previousPosition);
+
+            if(furnitureAtPreviousPosition?.model.furniture.flags.sitable) {
+                previousPosition.depth = furnitureAtPreviousPosition.model.position.depth;
+            }
+        }
+
         const position = {
             row: nextPosition.row,
             column: nextPosition.column,
@@ -174,11 +184,9 @@ export default class RoomUser {
 
         this.room.outgoingEvents.push(new OutgoingEvent<UserWalkToEventData>("UserWalkToEvent", {
             userId: this.user.model.id,
-            from: this.position,
+            from: previousPosition,
             to: position
         }));
-
-        const previousPosition = this.position;
 
         this.position = position;
         this.path!.splice(0, 1);
