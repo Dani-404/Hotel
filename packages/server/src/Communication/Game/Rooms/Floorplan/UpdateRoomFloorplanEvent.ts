@@ -37,7 +37,7 @@ export default class UpdateRoomFloorplanEvent implements IncomingEvent<UpdateRoo
             }
             
             for(const roomUser of user.room.users) {
-                roomUser.setPosition({
+                roomUser.path.setPosition({
                     row: roomUser.position.row + event.offsets.row,
                     column: roomUser.position.column + event.offsets.column,
                     depth: roomUser.position.depth
