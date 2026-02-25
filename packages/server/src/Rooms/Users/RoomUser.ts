@@ -177,7 +177,7 @@ export default class RoomUser {
         const position = {
             row: nextPosition.row,
             column: nextPosition.column,
-            depth
+            depth: depth + 0.01
         };
 
         this.removeAction("Sit");
