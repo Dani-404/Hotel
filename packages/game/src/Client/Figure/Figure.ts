@@ -2,7 +2,7 @@ import FigureWorkerClient from "./Worker/FigureWorkerClient";
 import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 
 export default class Figure {
-    public static readonly figureWorker: FigureWorkerClient = new FigureWorkerClient(false);
+    public static readonly figureWorker: FigureWorkerClient = new FigureWorkerClient();
 
     public actions: string[] = ["Default"]
 
