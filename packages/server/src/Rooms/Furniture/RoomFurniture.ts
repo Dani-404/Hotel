@@ -65,6 +65,7 @@ export default class RoomFurniture {
         this.room.furnitures.splice(this.room.furnitures.indexOf(this), 1);
 
         this.room.floorplan.updatePosition(this.model.position, this.getDimensions());
+        this.room.refreshActorsSitting(this.model.position, this.getDimensions());
 
         this.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
             furnitureRemoved: [
