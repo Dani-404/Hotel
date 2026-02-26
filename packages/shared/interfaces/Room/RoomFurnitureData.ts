@@ -19,7 +19,7 @@ export type FurnitureData = {
     customParams: unknown[] | null;
 };
 
-export type RoomFurnitureData = {
+export type RoomFurnitureData<Data = unknown> = {
     id: string;
     userId: string;
     furniture: FurnitureData;
@@ -31,5 +31,5 @@ export type RoomFurnitureData = {
     direction: number;
     animation: number;
     color: number | null;
-    data: unknown;
+    data: Data | null;
 };

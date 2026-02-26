@@ -3,9 +3,10 @@ import RoomFurnitureDimmerDialog, { RoomFurnitureDimmerData } from "./Dimmer/Roo
 import RoomFurnitureStickiesDialog, { RoomFurnitureStickiesDialogData } from "./Stickies/RoomFurnitureStickiesDialog";
 import RoomFurnitureBackgroundTonerDialog, { RoomFurnitureBackgroundTonerDialogData } from "./Toner/RoomFurnitureBackgroundTonerDialog";
 import RoomFurnitureTrophyDialog, { RoomFurnitureTrophyDialogData } from "./Trophy/RoomFurnitureTrophyDialog";
+import WiredTriggerSaysSomethingDialog, { WiredTriggerSaysSomethingDialogData } from "./Wired/Trigger/WiredTriggerSaysSomethingDialog";
 
-export type RoomFurnitureLogicDialogProps = {
-    data: RoomFurnitureLogicDialogData;
+export type RoomFurnitureLogicDialogProps<T = any> = {
+    data: T;
     hidden?: boolean;
     onClose: () => void;
 }
@@ -15,9 +16,10 @@ export type RoomFurnitureLogicDialogData =
     | RoomFurnitureBackgroundDialogData
     | RoomFurnitureBackgroundTonerDialogData
     | RoomFurnitureStickiesDialogData
-    | RoomFurnitureTrophyDialogData;
+    | RoomFurnitureTrophyDialogData
+    | WiredTriggerSaysSomethingDialogData;
 
-export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialogProps) {
+export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialogProps<any>) {
     switch(props.data.type) {
         case "furniture_roomdimmer":
             return (<RoomFurnitureDimmerDialog {...props}/>);
@@ -33,6 +35,9 @@ export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialog
             
         case "trophy":
             return (<RoomFurnitureTrophyDialog {...props}/>);
+
+        case "wf_trg_says_something":
+            return (<WiredTriggerSaysSomethingDialog {...props}/>);
     }
 
     return null;

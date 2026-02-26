@@ -100,6 +100,15 @@ export default class SetFurnitureDataEvent implements IncomingEvent<SetFurniture
                 ]
             }));
         }
+        else if(furniture.model.furniture.interactionType.startsWith("wf_")) {
+            furniture.model.data = event.data;
+
+            user.room.sendRoomEvent(new OutgoingEvent<RoomFurnitureEventData>("RoomFurnitureEvent", {
+                furnitureUpdated: [
+                    furniture.getFurnitureData()
+                ]
+            }));
+        }
     }
 
     private furnitureIsDimmer(furniture: RoomFurniture, data: unknown): data is RoomMoodlightData {

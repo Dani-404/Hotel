@@ -24,7 +24,7 @@ export default class FurnitureRoomDimmerLogic implements FurnitureLogic {
                 id: Math.random().toString(),
                 type: "room-furniture-logic",
                 data: {
-                    furniture: this.roomFurniture,
+                    furniture: this.roomFurniture as any,
                     type: "furniture_roomdimmer"
                 } satisfies RoomFurnitureDimmerData
             }

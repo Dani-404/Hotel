@@ -16,6 +16,7 @@ import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 import RoomFurnitureStickieLogic from "@Client/Room/Furniture/Logic/RoomFurnitureStickieLogic";
 import RoomFurnitureTrophyLogic from "@Client/Room/Furniture/Logic/RoomFurnitureTrophyLogic";
 import RoomFurnitureFortunaLogic from "@Client/Room/Furniture/Logic/RoomFurnitureFortunaLogic";
+import RoomFurnitureWiredTriggerLogic from "@Client/Room/Furniture/Logic/Wired/Trigger/RoomFurnitureWiredTriggerLogic";
 
 export default class RoomFurniture {
     public readonly furniture: Furniture;
@@ -81,6 +82,10 @@ export default class RoomFurniture {
 
             case "trophy":
                 return new RoomFurnitureTrophyLogic(this.instance, this);
+        }
+
+        if(this.data.furniture.interactionType.startsWith("wf_trg")) {
+            return new RoomFurnitureWiredTriggerLogic(this.instance, this);
         }
 
         return new FurnitureDefaultLogic(this.instance, this);

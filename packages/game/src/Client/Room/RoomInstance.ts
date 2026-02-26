@@ -28,7 +28,7 @@ type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigure
     item: ItemType;
 };
 
-export type RoomInstanceFurniture = RoomItem<RoomFurnitureData, RoomFurnitureItem>;
+export type RoomInstanceFurniture<T = unknown> = RoomItem<RoomFurnitureData<T>, RoomFurnitureItem>;
 
 export type RoomUser = RoomItem<RoomUserData, RoomFigureItem>;
 
