@@ -22,5 +22,7 @@ export default class ActorActionEvent implements IncomingEvent<WebSocketEvent<Ac
                 actor.item.figureRenderer.removeAction(action);
             }
         }
+
+        clientInstance.roomInstance.value.focusedUser.update();
     }
 }

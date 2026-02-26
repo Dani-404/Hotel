@@ -13,6 +13,7 @@ import { useRoomHoveredUser } from "../../../hooks/useRoomHoveredUser";
 import { useRoomFocusedUser } from "../../../hooks/useRoomFocusedUser";
 import { PickupRoomBotEventData } from "@Shared/Communications/Requests/Rooms/Bots/PickupRoomBotEventData"
 import { UpdateRoomBotEventData } from "@Shared/Communications/Requests/Rooms/Bots/UpdateRoomBotEventData";
+import { SendUserMessageEventData } from "@Shared/Communications/Requests/Rooms/User/SendUserMessageEventData";
 
 export default function UserContextMenu() {
     const room = useRoomInstance();
@@ -28,6 +29,7 @@ export default function UserContextMenu() {
     const elementRef = useRef<HTMLDivElement>(null);
 
     const [folded, setFolded] = useState<boolean>(false);
+    const [tab, setTab] = useState<null | "dance">(null);
 
     useEffect(() => {
         if(!elementRef.current) {
@@ -95,6 +97,9 @@ export default function UserContextMenu() {
         };
     }, [hoveredUser, room, focusedUser, elementRef.current]);
 
+    useEffect(() => {
+        setTab(null);
+    }, [focusedUser, hoveredUser]);
 
     const toggleFolded = useCallback(() => {
         setFolded(!folded);
@@ -140,61 +145,118 @@ export default function UserContextMenu() {
                                         {(focusedUser.type === "user")?(focusedUser.user.data.name):(focusedUser.bot.data.name)}
                                     </UserContextMenuElement>
 
-                                    <UserContextMenuList>
-                                        {(focusedUser.type === "user") && (
-                                            (user?.id === focusedUser.user.data.id)?(
-                                                <UserContextMenuButton text="Wardrobe" onClick={() => {
-                                                    addUniqueDialog("wardrobe");
-                                                    
-                                                    setFolded(true);
-                                                }}/>
-                                            ):(
-                                                <Fragment>
-                                                    {(room?.information.owner.id === user?.id) && (
-                                                        <UserContextMenuButton text={(focusedUser.user.data.hasRights)?("Revoke rights"):("Give rights")} onClick={() => {
-                                                            webSocketClient.send<UpdateUserRightsEventData>("UpdateUserRightsEvent", {
-                                                                userId: focusedUser.user.data.id,
-                                                                hasRights: !focusedUser.user.data.hasRights
-                                                            });
+                                    {(tab === null) && (
+                                        <UserContextMenuList>
+                                            {(focusedUser.type === "user") && (
+                                                (user?.id === focusedUser.user.data.id)?(
+                                                    <Fragment>
+                                                        <UserContextMenuButton text="Wardrobe" onClick={() => {
+                                                            addUniqueDialog("wardrobe");
+                                                            
+                                                            setFolded(true);
                                                         }}/>
-                                                    )}
-
-                                                    <UserContextMenuButton text="123" onClick={() => {
                                                         
+                                                        <UserContextMenuButton text={focusedUser.item.figureRenderer.hasAction("Dance")?("Stop dancing"):("Dance")} hasDropdown={!focusedUser.item.figureRenderer.hasAction("Dance")} onClick={() => {
+                                                            if(focusedUser.item.figureRenderer.hasAction("Dance")) {
+                                                                webSocketClient.send<SendUserMessageEventData>("SendUserMessageEvent", {
+                                                                    message: ":dance 0"
+                                                                });
+
+                                                                setTab(null);
+                                                            }
+                                                            else {
+                                                                setTab("dance");
+                                                            }
+                                                        }}/>
+                                                    </Fragment>
+                                                ):(
+                                                    <Fragment>
+                                                        {(room?.information.owner.id === user?.id) && (
+                                                            <UserContextMenuButton text={(focusedUser.user.data.hasRights)?("Revoke rights"):("Give rights")} onClick={() => {
+                                                                webSocketClient.send<UpdateUserRightsEventData>("UpdateUserRightsEvent", {
+                                                                    userId: focusedUser.user.data.id,
+                                                                    hasRights: !focusedUser.user.data.hasRights
+                                                                });
+                                                            }}/>
+                                                        )}
+
+                                                        <UserContextMenuButton text="123" onClick={() => {
+                                                            
+                                                        }}/>
+                                                    </Fragment>
+                                                )
+                                            )}
+
+                                            {(focusedUser.type === "bot" && focusedUser.bot.data.userId === user.id) && (
+                                                <Fragment>
+                                                    <UserContextMenuButton text={"Wardrobe"} onClick={() => {
+                                                        dialogs.addUniqueDialog("bot-wardrobe", focusedUser.bot.data);
+
+                                                        setFolded(true);
+                                                    }}/>
+
+                                                    <UserContextMenuButton text={(focusedUser.bot.data.relaxed)?("Stiffen"):("Relax")} onClick={() => {
+                                                        webSocketClient.send<UpdateRoomBotEventData>("UpdateRoomBotEvent", {
+                                                            userBotId: focusedUser.bot.data.id,
+                                                            relaxed: !focusedUser.bot.data.relaxed
+                                                        });
+                                                    }}/>
+
+                                                    <UserContextMenuButton text={"Setup speech"} onClick={() => {
+                                                        dialogs.addUniqueDialog("bot-speech", focusedUser.bot.data);
+
+                                                        setFolded(true);
+                                                    }}/>
+
+                                                    <UserContextMenuButton text={"Pick up"} onClick={() => {
+                                                        webSocketClient.send<PickupRoomBotEventData>("PickupRoomBotEvent", {
+                                                            userBotId: focusedUser.bot.data.id,
+                                                        });
                                                     }}/>
                                                 </Fragment>
-                                            )
-                                        )}
+                                            )}
+                                        </UserContextMenuList>
+                                    )}
 
-                                        {(focusedUser.type === "bot" && focusedUser.bot.data.userId === user.id) && (
-                                            <Fragment>
-                                                <UserContextMenuButton text={"Wardrobe"} onClick={() => {
-                                                    dialogs.addUniqueDialog("bot-wardrobe", focusedUser.bot.data);
+                                    {(tab === "dance") && (
+                                        <UserContextMenuList>
+                                            <UserContextMenuButton text={"Dance"} onClick={() => {
+                                                webSocketClient.send<SendUserMessageEventData>("SendUserMessageEvent", {
+                                                    message: ":dance 1"
+                                                });
 
-                                                    setFolded(true);
-                                                }}/>
+                                                setTab(null);
+                                            }}/>
+                                            
+                                            <UserContextMenuButton text={"Pogo Mogo"} onClick={() => {
+                                                webSocketClient.send<SendUserMessageEventData>("SendUserMessageEvent", {
+                                                    message: ":dance 2"
+                                                });
 
-                                                <UserContextMenuButton text={(focusedUser.bot.data.relaxed)?("Stiffen"):("Relax")} onClick={() => {
-                                                    webSocketClient.send<UpdateRoomBotEventData>("UpdateRoomBotEvent", {
-                                                        userBotId: focusedUser.bot.data.id,
-                                                        relaxed: !focusedUser.bot.data.relaxed
-                                                    });
-                                                }}/>
+                                                setTab(null);
+                                            }}/>
+                                            
+                                            <UserContextMenuButton text={"Duck Funk"} onClick={() => {
+                                                webSocketClient.send<SendUserMessageEventData>("SendUserMessageEvent", {
+                                                    message: ":dance 3"
+                                                });
 
-                                                <UserContextMenuButton text={"Setup speech"} onClick={() => {
-                                                    dialogs.addUniqueDialog("bot-speech", focusedUser.bot.data);
+                                                setTab(null);
+                                            }}/>
+                                            
+                                            <UserContextMenuButton text={"The Rollie"} onClick={() => {
+                                                webSocketClient.send<SendUserMessageEventData>("SendUserMessageEvent", {
+                                                    message: ":dance 4"
+                                                });
 
-                                                    setFolded(true);
-                                                }}/>
-
-                                                <UserContextMenuButton text={"Pick up"} onClick={() => {
-                                                    webSocketClient.send<PickupRoomBotEventData>("PickupRoomBotEvent", {
-                                                        userBotId: focusedUser.bot.data.id,
-                                                    });
-                                                }}/>
-                                            </Fragment>
-                                        )}
-                                    </UserContextMenuList>
+                                                setTab(null);
+                                            }}/>
+                                            
+                                            <UserContextMenuButton text={"Back"} hasBack onClick={() => {
+                                                setTab(null);
+                                            }}/>
+                                        </UserContextMenuList>
+                                    )}
                                 </Fragment>
                             )}
 

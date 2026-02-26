@@ -48,6 +48,10 @@ export default class Figure {
         this.actions.push(id);
     }
 
+    public hasAction(id: string) {
+        return this.actions.some((action) => action.split('.')[0] === id);
+    }
+
     public removeAction(id: string) {
         const actionId = id.split('.')[0];
 
