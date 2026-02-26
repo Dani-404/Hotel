@@ -5,11 +5,8 @@ import OutgoingEvent from "../../Events/Interfaces/OutgoingEvent.js";
 import { UserLeftRoomEventData } from "@shared/Communications/Responses/Rooms/Users/UserLeftRoomEventData.js";
 import { UserEnteredRoomEventData } from "@shared/Communications/Responses/Rooms/Users/UserEnteredRoomEventData.js";
 import { RoomUserData } from "@shared/Interfaces/Room/RoomUserData.js";
-import { UserWalkToEventData } from "@shared/Communications/Responses/Rooms/Users/UserWalkToEventData.js";
 import { LoadRoomEventData } from "@shared/Communications/Responses/Rooms/LoadRoomEventData.js";
-import { UserActionEventData } from "@shared/Communications/Responses/Rooms/Users/UserActionEventData.js";
 import { AStarFinder } from "astar-typescript";
-import { UserPositionEventData } from "@shared/Communications/Responses/Rooms/Users/UserPositionEventData.js";
 import { RoomChatEventData } from "@shared/Communications/Responses/Rooms/Chat/RoomChatEventData.js";
 import RoomFloorplanHelper from "../RoomFloorplanHelper.js";
 import { game } from "../../index.js";
@@ -17,6 +14,9 @@ import { UserIdlingEventData } from "@shared/Communications/Responses/Rooms/User
 import RoomActor from "../Actor/RoomActor.js";
 import RoomFurniture from "../Furniture/RoomFurniture.js";
 import RoomActorPath from "../Actor/Path/RoomActorPath.js";
+import { ActorActionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorActionEventData.js";
+import { ActorPositionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorPositionEventData.js";
+import { ActorWalkToEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData.js";
 
 export default class RoomUser implements RoomActor {
     public preoccupiedByActionHandler: boolean = false;
@@ -162,8 +162,10 @@ export default class RoomUser implements RoomActor {
         this.actions.push(action);
 
         this.room.outgoingEvents.push(
-            new OutgoingEvent<UserActionEventData>("UserActionEvent", {
+            new OutgoingEvent<ActorActionEventData>("ActorActionEvent", {
+                type: "user",
                 userId: this.user.model.id,
+
                 actionsAdded: [action],
             })
         );
@@ -193,16 +195,20 @@ export default class RoomUser implements RoomActor {
         this.actions.splice(existingActionIndex, 1);
 
         this.room.outgoingEvents.push(
-            new OutgoingEvent<UserActionEventData>("UserActionEvent", {
+            new OutgoingEvent<ActorActionEventData>("ActorActionEvent", {
+                type: "user",
                 userId: this.user.model.id,
+                
                 actionsRemoved: [actionId],
             })
         );
     }
 
     public sendWalkEvent(previousPosition: RoomPosition): void {
-        this.room.outgoingEvents.push(new OutgoingEvent<UserWalkToEventData>("UserWalkToEvent", {
+        this.room.outgoingEvents.push(new OutgoingEvent<ActorWalkToEventData>("ActorWalkToEvent", {
+            type: "user",
             userId: this.user.model.id,
+
             from: previousPosition,
             to: this.position
         }));
@@ -210,8 +216,10 @@ export default class RoomUser implements RoomActor {
 
     public sendPositionEvent(usePath: boolean) {
         this.room.outgoingEvents.push(
-            new OutgoingEvent<UserPositionEventData>("UserPositionEvent", {
+            new OutgoingEvent<ActorPositionEventData>("ActorPositionEvent", {
+                type: "user",
                 userId: this.user.model.id,
+
                 position: this.position,
                 direction: this.direction,
                 usePath: usePath === true

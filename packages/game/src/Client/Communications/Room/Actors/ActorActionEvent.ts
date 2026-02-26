@@ -1,25 +1,25 @@
 import IncomingEvent from "@Client/Communications/IncomingEvent";
-import { RoomBotActionEventData } from "@Shared/Communications/Responses/Rooms/Bots/RoomBotActionEventData";
+import { ActorActionEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorActionEventData";
 import { clientInstance } from "../../../..";
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 
-export default class RoomBotActionEvent implements IncomingEvent<WebSocketEvent<RoomBotActionEventData>> {
-    async handle(event: WebSocketEvent<RoomBotActionEventData>) {
+export default class ActorActionEvent implements IncomingEvent<WebSocketEvent<ActorActionEventData>> {
+    async handle(event: WebSocketEvent<ActorActionEventData>) {
         if(!clientInstance.roomInstance.value) {
             throw new Error("Room instance is not created.");
         }
-        
-        const bot = clientInstance.roomInstance.value.getBotById(event.data.botId);
+
+        const actor = clientInstance.roomInstance.value.getActor(event.data);
 
         if(event.data.actionsAdded) {
             for(const action of event.data.actionsAdded) {
-                bot.item.figureRenderer.addAction(action);
+                actor.item.figureRenderer.addAction(action);
             }
         }
 
         if(event.data.actionsRemoved) {
             for(const action of event.data.actionsRemoved) {
-                bot.item.figureRenderer.removeAction(action);
+                actor.item.figureRenderer.removeAction(action);
             }
         }
     }

@@ -22,6 +22,7 @@ import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
 import ObservableProperty from "@Client/Utilities/ObservableProperty";
 import { RoomFurnitureBackgroundTonerData } from "@Shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundTonerData";
 import RoomBot from "@Client/Room/Bots/RoomBot";
+import { ActorIdentifierEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorIdentifierEventData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -210,6 +211,18 @@ export default class RoomInstance {
         }
 
         return bot;
+    }
+
+    public getActor(data: ActorIdentifierEventData) {
+        switch(data.type) {
+            case "user":
+                return this.getUserById(data.userId);
+
+            case "bot":
+                return this.getBotById(data.botId);
+        }
+
+        throw new Error("Unhandled actor type.");
     }
 
     public getBotById(id: string) {

@@ -7,10 +7,10 @@ import { RoomBotEventData } from "@shared/Communications/Responses/Rooms/Bots/Ro
 import { UserBotData } from "@shared/Interfaces/Room/RoomBotData.js";
 import { RoomChatEventData } from "@shared/Communications/Responses/Rooms/Chat/RoomChatEventData.js";
 import RoomActor from "../Actor/RoomActor.js";
-import { RoomBotWalkToEventData } from "@shared/Communications/Responses/Rooms/Bots/RoomBotWalkToEventData.js";
 import RoomActorPath from "../Actor/Path/RoomActorPath.js";
-import { RoomBotActionEventData } from "@shared/Communications/Responses/Rooms/Bots/RoomBotActionEventData.js";
 import { RoomBotPositionEventData } from "@shared/Communications/Responses/Rooms/Bots/RoomBotPositionEventData.js";
+import { ActorActionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorActionEventData.js";
+import { ActorWalkToEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData.js";
 
 export default class RoomBot implements RoomActor {
     public preoccupiedByActionHandler: boolean = false;
@@ -83,8 +83,10 @@ export default class RoomBot implements RoomActor {
         this.actions.push(action);
 
         this.room.outgoingEvents.push(
-            new OutgoingEvent<RoomBotActionEventData>("RoomBotActionEvent", {
+            new OutgoingEvent<ActorActionEventData>("ActorActionEvent", {
+                type: "bot",
                 botId: this.model.id,
+
                 actionsAdded: [action],
             })
         );
@@ -102,16 +104,20 @@ export default class RoomBot implements RoomActor {
         this.actions.splice(existingActionIndex, 1);
 
         this.room.outgoingEvents.push(
-            new OutgoingEvent<RoomBotActionEventData>("RoomBotActionEvent", {
+            new OutgoingEvent<ActorActionEventData>("ActorActionEvent", {
+                type: "bot",
                 botId: this.model.id,
+
                 actionsRemoved: [actionId],
             })
         );
     }
     
     public sendWalkEvent(previousPosition: RoomPosition): void {
-        this.room.outgoingEvents.push(new OutgoingEvent<RoomBotWalkToEventData>("RoomBotWalkToEvent", {
+        this.room.outgoingEvents.push(new OutgoingEvent<ActorWalkToEventData>("ActorWalkToEvent", {
+            type: "bot",
             botId: this.model.id,
+
             from: previousPosition,
             to: this.position
         }));

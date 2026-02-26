@@ -6,8 +6,6 @@ import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/F
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { RoomStructureEventData } from "@Shared/Communications/Responses/Rooms/RoomStructureEventData";
 import RoomStructureEvent from "@Client/Communications/Room/RoomStructureEvent";
-import { UserActionEventData } from "@Shared/Communications/Responses/Rooms/Users/UserActionEventData";
-import UserActionEvent from "@Client/Communications/Room/User/UserActionEvent";
 import ObservableProperty from "@Client/Utilities/ObservableProperty";
 import { RoomChatStyleData, RoomChatStylesEventData } from "@Shared/Communications/Responses/Rooms/Chat/Styles/RoomChatStylesEventData";
 import { UserFigureConfigurationEventData } from "@Shared/Communications/Responses/Rooms/Users/UserFigureConfigurationEventData";
@@ -15,9 +13,7 @@ import UserFigureConfigurationEvent from "@Client/Communications/Room/User/UserF
 import { Dialog } from "../UserInterface/contexts/AppContext";
 import { RoomInformationEventData } from "@Shared/Communications/Responses/Rooms/RoomInformationEventData";
 import RoomInformationEvent from "@Client/Communications/Room/RoomInformationEvent";
-import { UserPositionEventData } from "@Shared/Communications/Responses/Rooms/Users/UserPositionEventData";
 import { RoomUserRightsEventData } from "@Shared/Communications/Responses/Rooms/Users/RoomUserRightsEventData";
-import UserPositionEvent from "@Client/Communications/Room/User/UserPositionEvent";
 import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
 import UserEvent from "@Client/Communications/Room/User/UserEvent";
 import RoomUserRightsEvent from "@Client/Communications/Room/User/RoomUserRightsEvent";
@@ -41,12 +37,12 @@ import { RoomBotEventData } from "@Shared/Communications/Responses/Rooms/Bots/Ro
 import { RoomChatEventData } from "@Shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
 import { UserIdlingEventData } from "@Shared/Communications/Responses/Rooms/Users/UserIdlingEventData";
 import UserIdlingEvent from "@Client/Communications/Room/User/UserIdlingEvent";
-import { RoomBotWalkToEventData } from "@Shared/Communications/Responses/Rooms/Bots/RoomBotWalkToEventData";
-import RoomBotWalkToEvent from "@Client/Communications/Room/Bots/RoomBotWalkToEvent";
-import { RoomBotActionEventData } from "@Shared/Communications/Responses/Rooms/Bots/RoomBotActionEventData";
-import RoomBotActionEvent from "@Client/Communications/Room/Bots/RoomBotActionEvent";
-import RoomBotPositionEvent from "@Client/Communications/Room/Bots/RoomBotPositionEvent";
-import { RoomBotPositionEventData } from "@Shared/Communications/Responses/Rooms/Bots/RoomBotPositionEventData";
+import { ActorActionEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorActionEventData";
+import ActorActionEvent from "@Client/Communications/Room/Actors/ActorActionEvent";
+import { ActorPositionEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorPositionEventData";
+import ActorPositionEvent from "@Client/Communications/Room/Actors/ActorPositionEvent";
+import { ActorWalkToEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData";
+import ActorWalkToEvent from "@Client/Communications/Room/Actors/ActorWalkToEvent";
 
 export default class ClientInstance extends EventTarget {
     public roomInstance = new ObservableProperty<RoomInstance>();
@@ -80,8 +76,6 @@ export default class ClientInstance extends EventTarget {
         webSocketClient.addEventListener<WebSocketEvent<MoveRoomFurnitureEventData>>("MoveRoomFurnitureEvent", (event) => new MoveRoomFurnitureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomStructureEventData>>("RoomStructureEvent", (event) => new RoomStructureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomInformationEventData>>("RoomInformationEvent", (event) => new RoomInformationEvent().handle(event));
-        webSocketClient.addEventListener<WebSocketEvent<UserActionEventData>>("UserActionEvent", (event) => new UserActionEvent().handle(event));
-        webSocketClient.addEventListener<WebSocketEvent<UserPositionEventData>>("UserPositionEvent", (event) => new UserPositionEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomUserRightsEventData>>("RoomUserRightsEvent", (event) => new RoomUserRightsEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserFigureConfigurationEventData>>("UserFigureConfigurationEvent", (event) => new UserFigureConfigurationEvent().handle(event));
 
@@ -90,9 +84,9 @@ export default class ClientInstance extends EventTarget {
         webSocketClient.addEventListener<WebSocketEvent<UserTypingEventData>>("UserTypingEvent", (event) => new UserTypingEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserIdlingEventData>>("UserIdlingEvent", (event) => new UserIdlingEvent().handle(event));
         
-        webSocketClient.addEventListener<WebSocketEvent<RoomBotWalkToEventData>>("RoomBotWalkToEvent", (event) => new RoomBotWalkToEvent().handle(event));
-        webSocketClient.addEventListener<WebSocketEvent<RoomBotPositionEventData>>("RoomBotPositionEvent", (event) => new RoomBotPositionEvent().handle(event));
-        webSocketClient.addEventListener<WebSocketEvent<RoomBotActionEventData>>("RoomBotActionEvent", (event) => new RoomBotActionEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<ActorWalkToEventData>>("ActorWalkToEvent", (event) => new ActorWalkToEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<ActorActionEventData>>("ActorActionEvent", (event) => new ActorActionEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<ActorPositionEventData>>("ActorPositionEvent", (event) => new ActorPositionEvent().handle(event));
 
         webSocketClient.addEventListener<WebSocketEvent<RoomChatStylesEventData>>("RoomChatStylesEvent", (event) => {
             this.roomChatStyles.value = event.data.roomChatStyles;
