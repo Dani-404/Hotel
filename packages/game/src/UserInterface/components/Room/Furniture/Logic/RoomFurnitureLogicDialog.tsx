@@ -6,6 +6,7 @@ import RoomFurnitureTrophyDialog, { RoomFurnitureTrophyDialogData } from "./Trop
 import WiredActionShowMessageDialog from "./Wired/Action/WiredActionShowMessageDialog";
 import WiredActionTeleportToFurnitureDialog from "./Wired/Action/WiredActionTeleportToFurnitureDialog";
 import WiredTriggerSaysSomethingDialog, { WiredTriggerSaysSomethingDialogData } from "./Wired/Trigger/WiredTriggerSaysSomethingDialog";
+import WiredTriggerUserEntersRoomDialog from "./Wired/Trigger/WiredTriggerUserEntersRoomDialog";
 
 export type RoomFurnitureLogicDialogProps<T = any> = {
     data: T;
@@ -40,6 +41,9 @@ export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialog
 
         case "wf_trg_says_something":
             return (<WiredTriggerSaysSomethingDialog {...props}/>);
+
+        case "wf_trg_enter_room":
+            return (<WiredTriggerUserEntersRoomDialog {...props}/>);
 
         case "wf_act_show_message":
             return (<WiredActionShowMessageDialog {...props}/>);

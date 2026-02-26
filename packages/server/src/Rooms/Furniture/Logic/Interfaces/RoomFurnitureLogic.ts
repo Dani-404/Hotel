@@ -7,6 +7,7 @@ export default interface RoomFurnitureLogic {
     use?(roomUser: RoomUser, event: UseRoomFurnitureEventData): Promise<void>;
     walkOn?(roomUser: RoomUser): Promise<void>;
 
+    handleUserEnteredRoom?(roomUser: RoomUser): Promise<void>;
     handleUserChat?(roomUser: RoomUser, message: string): Promise<RoomFurnitureHandleUserChatResult>;
     
     handleActionsInterval?(): Promise<void>;

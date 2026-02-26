@@ -29,6 +29,7 @@ export default class RoomUser implements RoomActor {
     public typing: boolean = false;
     public teleporting: boolean = false;
     public idling: boolean = false;
+    public ready: boolean = false;
 
     private _lastActivity: number = performance.now();
 

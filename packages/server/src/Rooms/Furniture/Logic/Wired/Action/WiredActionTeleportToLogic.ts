@@ -9,7 +9,6 @@ export type DelayedMessageData = {
 };
 
 export default class WiredActionTeleportToLogic extends WiredLogic<WiredActionTeleportToFurnitureData> {
-    
     constructor(roomFurniture: RoomFurniture<WiredActionTeleportToFurnitureData>) {
         super(roomFurniture);
     }
