@@ -43,6 +43,7 @@ import { ActorPositionEventData } from "@Shared/Communications/Responses/Rooms/A
 import ActorPositionEvent from "@Client/Communications/Room/Actors/ActorPositionEvent";
 import { ActorWalkToEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData";
 import ActorWalkToEvent from "@Client/Communications/Room/Actors/ActorWalkToEvent";
+import { LocalSettings } from "../UserInterface/components/Settings/Interfaces/LocalSettings";
 
 export default class ClientInstance extends EventTarget {
     public roomInstance = new ObservableProperty<RoomInstance>();
@@ -58,10 +59,20 @@ export default class ClientInstance extends EventTarget {
     
     public roomCategories = new ObservableProperty<RoomCategoriesEventData>([]);
 
+    public settings = new ObservableProperty<LocalSettings>({});
+
     constructor(public readonly element: HTMLElement) {
         super();
 
         //element.style.background = "#9ED5EC";
+
+        const settings = localStorage.getItem("settings");
+
+        if(settings) {
+            this.settings.value = JSON.parse(settings);
+        }
+
+        this.settings.subscribe((value) => localStorage.setItem("settings", JSON.stringify(value)));
 
         registerRoomEvents(this);
 

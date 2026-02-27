@@ -24,6 +24,7 @@ import BotWardrobeDialog from "../Bots/BotWardrobeDialog";
 import BotSpeechDialog from "../Bots/BotSpeechDialog";
 import FigureDialog from "../Figure/FigureDialog";
 import RoomChatCommandsDialog from "../Room/Chat/Commands/RoomChatCommandsDialog";
+import SettingsDialog from "../Settings/SettingsDialog";
 
 export default function DialogInstances() {
     const { dialogs, closeDialog } = useDialogs();
@@ -39,6 +40,9 @@ export default function DialogInstances() {
                 };
 
                 switch(dialog.type) {
+                    case "settings":
+                        return (<SettingsDialog {...props} key={dialog.id}/>);
+                        
                     case "alert":
                         return (<HotelAlertDialog {...props} key={dialog.id}/>);
 
