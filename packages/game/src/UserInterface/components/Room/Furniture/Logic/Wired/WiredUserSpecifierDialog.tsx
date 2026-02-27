@@ -1,28 +1,28 @@
-import WiredDialog from "../../../../../Dialog/Wired/WiredDialog";
+import WiredDialog from "../../../../Dialog/Wired/WiredDialog";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
-import { RoomFurnitureLogicDialogProps } from "../../RoomFurnitureLogicDialog";
-import WiredFurniture from "../../../../../Dialog/Wired/WiredFurniture";
-import WiredDivider from "../../../../../Dialog/Wired/WiredDivider";
-import WiredSection from "../../../../../Dialog/Wired/WiredSection";
-import WiredInput from "../../../../../Dialog/Wired/WiredInput";
+import { RoomFurnitureLogicDialogProps } from "../RoomFurnitureLogicDialog";
+import WiredFurniture from "../../../../Dialog/Wired/WiredFurniture";
+import WiredDivider from "../../../../Dialog/Wired/WiredDivider";
+import WiredSection from "../../../../Dialog/Wired/WiredSection";
+import WiredInput from "../../../../Dialog/Wired/WiredInput";
 import { useCallback, useState } from "react";
-import WiredRadio from "../../../../../Dialog/Wired/WiredRadio";
-import WiredButton from "../../../../../Dialog/Wired/WiredButton";
-import { WiredTriggerUserEntersRoomData } from "@Shared/Interfaces/Room/Furniture/Wired/Trigger/WiredTriggerUserEntersRoomData";
-import { webSocketClient } from "../../../../../../..";
+import WiredRadio from "../../../../Dialog/Wired/WiredRadio";
+import WiredButton from "../../../../Dialog/Wired/WiredButton";
+import { WiredUserSpecifierData } from "@Shared/Interfaces/Room/Furniture/Wired/WiredUserSpecifierData";
+import { webSocketClient } from "../../../../../..";
 import { SetFurnitureDataEventData } from "@Shared/Communications/Requests/Rooms/Furniture/SetFurnitureDataEventData";
 
-export type WiredTriggerUserEntersRoomDialogData = {
-    furniture: RoomInstanceFurniture<WiredTriggerUserEntersRoomData>;
+export type WiredUserSpecifierDialogData = {
+    furniture: RoomInstanceFurniture<WiredUserSpecifierData>;
     type: "wf_trg_enter_room";
 };
 
-export default function WiredTriggerUserEntersRoomDialog({ data, onClose }: RoomFurnitureLogicDialogProps<WiredTriggerUserEntersRoomDialogData>) {
+export default function WiredUserSpecifierDialog({ data, onClose }: RoomFurnitureLogicDialogProps<WiredUserSpecifierDialogData>) {
     const [match, setMatch] = useState(data.furniture.data.data?.match ?? "all");
     const [matchUser, setMatchUser] = useState(data.furniture.data.data?.matchUser ?? "");
 
     const handleApply = useCallback(() => {
-        webSocketClient.send<SetFurnitureDataEventData<WiredTriggerUserEntersRoomData>>("SetFurnitureDataEvent", {
+        webSocketClient.send<SetFurnitureDataEventData<WiredUserSpecifierData>>("SetFurnitureDataEvent", {
             furnitureId: data.furniture.data.id,
             data: {
                 match,

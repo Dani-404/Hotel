@@ -22,12 +22,11 @@ import { WiredActionShowMessageData } from "@shared/Interfaces/Room/Furniture/Wi
 import WiredActionTeleportToLogic from "./Logic/Wired/Action/WiredActionTeleportToLogic.js";
 import { WiredActionTeleportToFurnitureData } from "@shared/Interfaces/Room/Furniture/Wired/Action/WiredActionTeleportToFurnitureData.js";
 import WiredTriggerUserEntersRoomLogic from "./Logic/Wired/Trigger/WiredTriggerUserEntersRoomLogic.js";
-import { WiredTriggerUserEntersRoomData } from "@shared/Interfaces/Room/Furniture/Wired/Trigger/WiredTriggerUserEntersRoomData.js";
-import WiredTriggerLogic from "./Logic/Wired/WiredTriggerLogic.js";
 import WiredTriggerUserWalksOnFurnitureLogic from "./Logic/Wired/Trigger/WiredTriggerUserWalksOnFurnitureLogic.js";
 import WiredTriggerUserWalksOffFurnitureLogic from "./Logic/Wired/Trigger/WiredTriggerUserWalksOffFurnitureLogic.js";
 import WiredTriggerStateChangedLogic from "./Logic/Wired/Trigger/WiredTriggerStateChangedLogic.js";
 import WiredTriggerStuffStateLogic from "./Logic/Wired/Trigger/WiredTriggerStuffStateLogic.js";
+import WiredTriggerUserLeavesRoomLogic from "./Logic/Wired/Trigger/WiredTriggerUserLeavesRoomLogic.js";
 
 export default class RoomFurniture<T = unknown> {
     public preoccupiedByActionHandler: boolean = false;
@@ -203,7 +202,10 @@ export default class RoomFurniture<T = unknown> {
                     return this.category = new WiredTriggerUserSaysSomethingLogic(this as RoomFurniture<WiredTriggerUserSaysSomethingData>);
 
                 case "wf_trg_enter_room":
-                    return this.category = new WiredTriggerUserEntersRoomLogic(this as RoomFurniture<WiredTriggerUserEntersRoomData>);
+                    return this.category = new WiredTriggerUserEntersRoomLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_leave_room":
+                    return this.category = new WiredTriggerUserLeavesRoomLogic(this as RoomFurniture<any>);
 
                 case "wf_trg_walks_on_furni":
                     return this.category = new WiredTriggerUserWalksOnFurnitureLogic(this as RoomFurniture<any>);

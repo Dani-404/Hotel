@@ -17,6 +17,7 @@ import RoomActorPath from "../Actor/Path/RoomActorPath.js";
 import { ActorActionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorActionEventData.js";
 import { ActorPositionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorPositionEventData.js";
 import { ActorWalkToEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData.js";
+import WiredTriggerUserLeavesRoomLogic from "../Furniture/Logic/Wired/Trigger/WiredTriggerUserLeavesRoomLogic.js";
 
 export default class RoomUser implements RoomActor {
     public preoccupiedByActionHandler: boolean = false;
@@ -141,6 +142,12 @@ export default class RoomUser implements RoomActor {
         }));
 
         this.user.room?.floorplan.updatePosition(this.position);
+
+        const wiredUserLeavesRoomLogics = this.room.getFurnitureWithCategory(WiredTriggerUserLeavesRoomLogic);
+
+        for(const logic of wiredUserLeavesRoomLogics) {
+            logic.handleUserLeftRoom(this);
+        }
 
         delete this.user.room;
 

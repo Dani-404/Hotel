@@ -1,4 +1,4 @@
-export type WiredTriggerUserEntersRoomData = {
+export type WiredUserSpecifierData = {
     match: "all" | "user";
     matchUser: string;
 };
