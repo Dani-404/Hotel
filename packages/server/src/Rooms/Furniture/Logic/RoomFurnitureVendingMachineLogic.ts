@@ -25,6 +25,8 @@ export default class RoomFurnitureVendingMachineLogic implements RoomFurnitureLo
 
         await this.roomFurniture.setAnimation(1);
 
+        await this.roomFurniture.room.handleUserUseFurniture(roomUser, this.roomFurniture);
+
         await new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();

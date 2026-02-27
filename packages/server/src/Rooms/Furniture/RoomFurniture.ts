@@ -26,6 +26,7 @@ import { WiredTriggerUserEntersRoomData } from "@shared/Interfaces/Room/Furnitur
 import WiredTriggerLogic from "./Logic/Wired/WiredTriggerLogic.js";
 import WiredTriggerUserWalksOnFurnitureLogic from "./Logic/Wired/Trigger/WiredTriggerUserWalksOnFurnitureLogic.js";
 import WiredTriggerUserWalksOffFurnitureLogic from "./Logic/Wired/Trigger/WiredTriggerUserWalksOffFurnitureLogic.js";
+import WiredTriggerStateChangedLogic from "./Logic/Wired/Trigger/WiredTriggerStateChangedLogic.js";
 
 export default class RoomFurniture<T = unknown> {
     public preoccupiedByActionHandler: boolean = false;
@@ -208,6 +209,9 @@ export default class RoomFurniture<T = unknown> {
 
                 case "wf_trg_walks_off_furni":
                     return this.category = new WiredTriggerUserWalksOffFurnitureLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_state_changed":
+                    return this.category = new WiredTriggerStateChangedLogic(this as RoomFurniture<any>);
                     
                 case "wf_act_show_message":
                     return this.category = new WiredActionShowMessageLogic(this as RoomFurniture<WiredActionShowMessageData>);

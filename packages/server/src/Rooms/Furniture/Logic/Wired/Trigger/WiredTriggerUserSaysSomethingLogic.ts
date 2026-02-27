@@ -24,8 +24,7 @@ export default class WiredTriggerUserSaysSomethingLogic extends WiredLogic<Wired
             return null;
         }
 
-        this.lastTriggered = performance.now();
-        this.roomFurniture.setAnimation(101);
+        this.setActive();
 
         this.handleTrigger(roomUser);
 

@@ -12,6 +12,8 @@ import RoomFloorplan from "./Floorplan/RoomFloorplan.js";
 import RoomBot from "./Bots/RoomBot.js";
 import RoomActor from "./Actor/RoomActor.js";
 import WiredTriggerLogic from "./Furniture/Logic/Wired/WiredTriggerLogic.js";
+import RoomFurnitureLogic from "./Furniture/Logic/Interfaces/RoomFurnitureLogic.js";
+import WiredTriggerStateChangedLogic from "./Furniture/Logic/Wired/Trigger/WiredTriggerStateChangedLogic.js";
 
 export default class Room {
     public readonly users: RoomUser[] = [];
@@ -339,28 +341,36 @@ export default class Room {
             maxUsers: this.model.maxUsers
         };
     }
+    
+    public getFurnitureWithCategory<T>(category: (new (...args: any[]) => T)) {
+        return this.furnitures.filter((furniture) => furniture.getCategoryLogic() instanceof category).map((furniture) => furniture.getCategoryLogic() as T);
+    }
 
     public async handleUserWalksOnFurniture(roomUser: RoomUser, roomFurniture: RoomFurniture) {
         await roomFurniture.handleUserWalksOnFurniture(roomUser);
 
-        for(const furniture of this.furnitures) {
-            const category = furniture.getCategoryLogic();
+        const wiredTriggerLogic = this.getFurnitureWithCategory(WiredTriggerLogic);
 
-            if(category instanceof WiredTriggerLogic) {
-                await category.handleUserWalksOnFurniture?.(roomUser, roomFurniture);
-            }
+        for(const logic of wiredTriggerLogic) {
+            logic.handleUserWalksOnFurniture?.(roomUser, roomFurniture);
         }
     }
 
     public async handleUserWalksOffFurniture(roomUser: RoomUser, roomFurniture: RoomFurniture) {
-        await roomFurniture.handleUserWalksOffFurniture(roomUser);
+        await roomFurniture.handleUserWalksOnFurniture(roomUser);
 
-        for(const furniture of this.furnitures) {
-            const category = furniture.getCategoryLogic();
+        const wiredTriggerLogic = this.getFurnitureWithCategory(WiredTriggerLogic);
 
-            if(category instanceof WiredTriggerLogic) {
-                await category.handleUserWalksOffFurniture?.(roomUser, roomFurniture);
-            }
+        for(const logic of wiredTriggerLogic) {
+            logic.handleUserWalksOffFurniture?.(roomUser, roomFurniture);
+        }
+    }
+
+    public async handleUserUseFurniture(roomUser: RoomUser, roomFurniture: RoomFurniture) {
+        const wiredStateChangedLogic = this.getFurnitureWithCategory(WiredTriggerStateChangedLogic);
+
+        for(const logic of wiredStateChangedLogic) {
+            logic.handleUserUsesFurniture(roomUser, roomFurniture);
         }
     }
 }

@@ -39,11 +39,7 @@ export default class WiredActionShowMessageLogic extends WiredLogic<WiredActionS
                 continue;
             }
 
-            this.lastTriggered = performance.now();
-            
-            if(this.roomFurniture.model.animation !== 101) {
-                this.roomFurniture.setAnimation(101);
-            }
+            this.setActive();
 
             roomUser.user.send(new OutgoingEvent<RoomChatEventData>("RoomChatEvent", {
                 type: "user",

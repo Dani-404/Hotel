@@ -27,6 +27,8 @@ export default class RoomFurnitureDiceLogic implements RoomFurnitureLogic {
             return;
         }
 
+        await this.roomFurniture.room.handleUserUseFurniture(roomUser, this.roomFurniture);
+
         // Close the dice if deactivating
         if(event.tag === "deactivate" && this.roomFurniture.model.animation !== 0) {
             await this.roomFurniture.setAnimation(0);

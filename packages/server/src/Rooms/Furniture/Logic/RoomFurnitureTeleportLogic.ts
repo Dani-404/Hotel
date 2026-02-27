@@ -25,6 +25,8 @@ export default class RoomFurnitureTeleportLogic implements RoomFurnitureLogic {
             });
         }
 
+        await this.roomFurniture.room.handleUserUseFurniture(roomUser, this.roomFurniture);
+
         await this.roomFurniture.setAnimation(1);
 
         await new Promise<void>((resolve, reject) => {

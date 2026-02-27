@@ -44,4 +44,9 @@ export default class WiredLogic<T> implements RoomFurnitureLogic {
 
         connectedWired?.handleTrigger(roomUser);
     }
+
+    public setActive() {
+        this.lastTriggered = performance.now();
+        this.roomFurniture.setAnimation(101);
+    }
 }
