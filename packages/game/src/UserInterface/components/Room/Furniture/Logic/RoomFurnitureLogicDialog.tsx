@@ -8,6 +8,7 @@ import WiredActionTeleportToFurnitureDialog from "./Wired/Action/WiredActionTele
 import WiredTriggerSaysSomethingDialog, { WiredTriggerSaysSomethingDialogData } from "./Wired/Trigger/WiredTriggerSaysSomethingDialog";
 import WiredUserSpecifierDialog from "./Wired/WiredUserSpecifierDialog";
 import WiredTriggerStuffStateDialog from "./Wired/Trigger/WiredTriggerStuffStateDialog";
+import WiredTriggerUserClicksOnTileDialog from "./Wired/Trigger/WiredTriggerUserClicksOnTileDialog";
 import WiredFurnitureSelectionDialog from "./Wired/WiredFurnitureSelectionDialog";
 
 export type RoomFurnitureLogicDialogProps<T = any> = {
@@ -46,15 +47,20 @@ export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialog
 
         case "wf_trg_enter_room":
         case "wf_trg_leave_room":
+        case "wf_trg_click_user":
             return (<WiredUserSpecifierDialog {...props}/>);
 
         case "wf_trg_walks_on_furni":
         case "wf_trg_walks_off_furni":
         case "wf_trg_state_changed":
+        case "wf_trg_click_furni":
             return (<WiredFurnitureSelectionDialog {...props}/>);
 
         case "wf_trg_stuff_state":
             return (<WiredTriggerStuffStateDialog {...props}/>);
+
+        case "wf_trg_click_tile":
+            return (<WiredTriggerUserClicksOnTileDialog {...props}/>);
 
         case "wf_act_show_message":
             return (<WiredActionShowMessageDialog {...props}/>);

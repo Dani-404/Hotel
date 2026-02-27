@@ -6,12 +6,13 @@ import RoomFurnitureItem from "@Client/Room/Items/Furniture/RoomFurnitureItem";
 
 export type WiredFurniturePickerProps = {
     maxFurniture: number;
+    restrictedToFurnitureTypes?: string[];
 
     value: string[];
     onChange: (value: string[]) => void;
 };
 
-export default function WiredFurniturePicker({ maxFurniture, value, onChange }: WiredFurniturePickerProps) {
+export default function WiredFurniturePicker({ restrictedToFurnitureTypes, maxFurniture, value, onChange }: WiredFurniturePickerProps) {
     const room = useRoomInstance();
 
     const furnitureIds = useRef<string[]>(value);
@@ -47,6 +48,10 @@ export default function WiredFurniturePicker({ maxFurniture, value, onChange }: 
 
             const furniture = room.getFurnitureByItem(event.otherEntity.item);
 
+            if(restrictedToFurnitureTypes && !restrictedToFurnitureTypes.includes(furniture.data.furniture.type)) {
+                return;
+            }
+
             if(furnitureIds.current.includes(furniture.data.id)) {
                 furniture.furniture.grayscaled = false;
 
@@ -74,7 +79,7 @@ export default function WiredFurniturePicker({ maxFurniture, value, onChange }: 
                 furniture.furniture.grayscaled = false;
             }
         };
-    }, [room, furnitureIds, maxFurniture, onChange]);
+    }, [room, furnitureIds, maxFurniture, restrictedToFurnitureTypes, onChange]);
 
     return (
         <WiredSection>

@@ -22,6 +22,7 @@ import ObservableProperty from "@Client/Utilities/ObservableProperty";
 import { RoomFurnitureBackgroundTonerData } from "@Shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundTonerData";
 import RoomBot from "@Client/Room/Bots/RoomBot";
 import { ActorIdentifierEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorIdentifierEventData";
+import { RoomClickEventData } from "@Shared/Communications/Requests/Rooms/RoomClickEventData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
@@ -127,9 +128,41 @@ export default class RoomInstance {
         this.removeUser(event.data);
     }
 
+    private lastSentClickEvent: number = 0;
+
     private click(event: Event) {
         if(!(event instanceof RoomClickEvent)) {
             return;
+        }
+
+        if(performance.now() - this.lastSentClickEvent >= 500) {
+            if(event.otherEntity) {
+                if(event.otherEntity.item instanceof RoomFurnitureItem) {
+                    const roomFurniture = this.getFurnitureByItem(event.otherEntity.item);
+
+                    webSocketClient.send<RoomClickEventData>("RoomClickEvent", {
+                        furnitureId: roomFurniture.data.id
+                    });
+
+                    this.lastSentClickEvent = performance.now();
+                }
+                else if(event.otherEntity.item instanceof RoomFigureItem && event.otherEntity.item.type === "figure") {
+                    const roomFurniture = this.getUserByItem(event.otherEntity.item);
+
+                    webSocketClient.send<RoomClickEventData>("RoomClickEvent", {
+                        userId: roomFurniture.data.id
+                    });
+
+                    this.lastSentClickEvent = performance.now();
+                }
+            }
+            else if(event.floorEntity?.position) {
+                webSocketClient.send<RoomClickEventData>("RoomClickEvent", {
+                    position: event.floorEntity.position
+                });
+
+                this.lastSentClickEvent = performance.now();
+            }
         }
 
         if(this.roomRenderer.cursor?.cursorDisabled) {

@@ -27,6 +27,9 @@ import WiredTriggerUserWalksOffFurnitureLogic from "./Logic/Wired/Trigger/WiredT
 import WiredTriggerStateChangedLogic from "./Logic/Wired/Trigger/WiredTriggerStateChangedLogic.js";
 import WiredTriggerStuffStateLogic from "./Logic/Wired/Trigger/WiredTriggerStuffStateLogic.js";
 import WiredTriggerUserLeavesRoomLogic from "./Logic/Wired/Trigger/WiredTriggerUserLeavesRoomLogic.js";
+import WiredTriggerUserClickFurniLogic from "./Logic/Wired/Trigger/WiredTriggerUserClickFurniLogic.js";
+import WiredTriggerUserClickUserLogic from "./Logic/Wired/Trigger/WiredTriggerUserClickUserLogic.js";
+import WiredTriggerUserClickTileLogic from "./Logic/Wired/Trigger/WiredTriggerUserClickTileLogic.js";
 
 export default class RoomFurniture<T = unknown> {
     public preoccupiedByActionHandler: boolean = false;
@@ -218,6 +221,15 @@ export default class RoomFurniture<T = unknown> {
 
                 case "wf_trg_stuff_state":
                     return this.category = new WiredTriggerStuffStateLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_click_furni":
+                    return this.category = new WiredTriggerUserClickFurniLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_click_user":
+                    return this.category = new WiredTriggerUserClickUserLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_click_tile":
+                    return this.category = new WiredTriggerUserClickTileLogic(this as RoomFurniture<any>);
                     
                 case "wf_act_show_message":
                     return this.category = new WiredActionShowMessageLogic(this as RoomFurniture<WiredActionShowMessageData>);
