@@ -19,12 +19,16 @@ export default class WiredTriggerUserPerformsActionLogic extends WiredTriggerLog
             if(this.roomFurniture.model.data?.filter && ["Dance", "Sign"].includes(this.roomFurniture.model.data.action)) {
                 if(actionNumber && parseInt(actionNumber) === this.roomFurniture.model.data.filterId) {
                     this.setActive();
-                    this.handleTrigger(roomUser);
+                    this.handleTrigger({
+                        roomUser
+                    });
                 }
             }
             else {
                 this.setActive();
-                this.handleTrigger(roomUser);
+                this.handleTrigger({
+                    roomUser
+                });
             }
         }
     }

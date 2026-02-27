@@ -13,13 +13,17 @@ export default class WiredTriggerUserEntersRoomLogic extends WiredLogic<WiredUse
             if(roomUser.user.model.name === this.roomFurniture.model.data.matchUser) {
                 this.setActive();
                 
-                this.handleTrigger(roomUser);
+                this.handleTrigger({
+                    roomUser
+                });
             }
         }
         else {
             this.setActive();
             
-            this.handleTrigger(roomUser);
+            this.handleTrigger({
+                roomUser
+            });
         }
     }
 }

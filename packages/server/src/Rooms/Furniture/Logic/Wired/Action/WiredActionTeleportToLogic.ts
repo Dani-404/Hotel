@@ -1,6 +1,6 @@
 import RoomFurniture from "../../../RoomFurniture";
 import RoomUser from "../../../../Users/RoomUser";
-import WiredLogic from "../WiredLogic";
+import WiredLogic, { WiredTriggerOptions } from "../WiredLogic";
 import { WiredActionTeleportToFurnitureData } from "@shared/Interfaces/Room/Furniture/Wired/Action/WiredActionTeleportToFurnitureData";
 
 export type DelayedMessageData = {
@@ -13,8 +13,8 @@ export default class WiredActionTeleportToLogic extends WiredLogic<WiredActionTe
         super(roomFurniture);
     }
 
-    public async handleTrigger(roomUser?: RoomUser): Promise<void> {
-        if(roomUser) {
+    public async handleTrigger(options?: WiredTriggerOptions): Promise<void> {
+        if(options?.roomUser) {
             if(this.roomFurniture.model.data?.furnitureIds.length) {
                 const availableFurnitures = this.roomFurniture.room.furnitures.filter((furniture) => this.roomFurniture.model.data?.furnitureIds.includes(furniture.model.id));
 
@@ -23,11 +23,11 @@ export default class WiredActionTeleportToLogic extends WiredLogic<WiredActionTe
                 if(randomFurniture) {
                     this.setActive();
                     
-                    roomUser.path.teleportTo(randomFurniture.model.position);
+                    options.roomUser.path.teleportTo(randomFurniture.model.position);
                 }
             }
         }
 
-        return super.handleTrigger(roomUser);
+        return super.handleTrigger(options);
     }
 }

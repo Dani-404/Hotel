@@ -13,7 +13,10 @@ export default class WiredTriggerStateChangedLogic extends WiredTriggerLogic<Wir
             if(this.roomFurniture.model.data.furnitureIds.includes(roomFurniture.model.id)) {
                 this.setActive();
                 
-                this.handleTrigger(roomUser);
+                this.handleTrigger({
+                    roomFurniture,
+                    roomUser
+                });
             }
         }
     }

@@ -1,6 +1,5 @@
 import RoomFurniture from "../../../RoomFurniture";
-import RoomUser from "../../../../Users/RoomUser";
-import WiredLogic from "../WiredLogic";
+import WiredLogic, { WiredTriggerOptions } from "../WiredLogic";
 import { WiredFurnitureSelectionData } from "@shared/Interfaces/Room/Furniture/Wired/WiredFurnitureSelectionData";
 import WiredTriggerReceiveSignalLogic from "../Trigger/WiredTriggerReceiveSignalLogic";
 
@@ -9,11 +8,11 @@ export default class WiredActionSendSignalLogic extends WiredLogic<WiredFurnitur
         super(roomFurniture);
     }
 
-    public async handleTrigger(roomUser?: RoomUser): Promise<void> {
+    public async handleTrigger(options?: WiredTriggerOptions): Promise<void> {
         for(const logic of this.roomFurniture.room.getFurnitureWithCategory(WiredTriggerReceiveSignalLogic)) {
-            await logic.handleWiredSignal(this.roomFurniture);
+            await logic.handleWiredSignal(this.roomFurniture, options);
         }
 
-        return super.handleTrigger(roomUser);
+        return super.handleTrigger(options);
     }
 }

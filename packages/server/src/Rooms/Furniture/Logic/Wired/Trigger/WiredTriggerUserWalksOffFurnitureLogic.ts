@@ -13,7 +13,9 @@ export default class WiredTriggerUserWalksOffFurnitureLogic extends WiredTrigger
             if(this.roomFurniture.model.data.furnitureIds.includes(roomFurniture.model.id)) {
                 this.setActive();
                 
-                this.handleTrigger(roomUser);
+                this.handleTrigger({
+                    roomUser
+                });
             }
         }
     }

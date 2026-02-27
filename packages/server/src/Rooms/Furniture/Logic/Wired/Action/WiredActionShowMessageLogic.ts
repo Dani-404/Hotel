@@ -1,6 +1,6 @@
 import RoomFurniture from "../../../RoomFurniture";
 import RoomUser from "../../../../Users/RoomUser";
-import WiredLogic from "../WiredLogic";
+import WiredLogic, { WiredTriggerOptions } from "../WiredLogic";
 import { WiredActionShowMessageData } from "@shared/Interfaces/Room/Furniture/Wired/Action/WiredActionShowMessageData";
 import OutgoingEvent from "../../../../../Events/Interfaces/OutgoingEvent";
 import { RoomChatEventData } from "@shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
@@ -55,16 +55,16 @@ export default class WiredActionShowMessageLogic extends WiredLogic<WiredActionS
         }
     }
 
-    public async handleTrigger(roomUser?: RoomUser): Promise<void> {
-        if(roomUser) {
+    public async handleTrigger(options?: WiredTriggerOptions): Promise<void> {
+        if(options?.roomUser) {
             if(this.roomFurniture.model.data?.message.length) {
                 this.messages.push({
-                    userId: roomUser.user.model.id,
+                    userId: options.roomUser.user.model.id,
                     timestamp: performance.now()
                 });
             }
         }
 
-        return super.handleTrigger(roomUser);
+        return super.handleTrigger(options);
     }
 }

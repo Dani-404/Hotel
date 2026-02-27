@@ -15,7 +15,9 @@ export default class WiredTriggerStuffStateLogic extends WiredTriggerLogic<Wired
                 if(this.roomFurniture.model.data.trigger === "all") {
                     this.setActive();
                     
-                    this.handleTrigger();
+                    this.handleTrigger({
+                        roomFurniture
+                    });
                 }
                 else if(this.roomFurniture.model.data.trigger === "state") {
                     const expectedState = this.roomFurniture.model.data.furnitureTriggerStates.at(index);
@@ -24,7 +26,9 @@ export default class WiredTriggerStuffStateLogic extends WiredTriggerLogic<Wired
                         if(roomFurniture.model.animation === expectedState) {
                             this.setActive();
                             
-                            this.handleTrigger();
+                            this.handleTrigger({
+                                roomFurniture
+                            });
                         }
                     }
                 }

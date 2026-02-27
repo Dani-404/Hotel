@@ -14,7 +14,9 @@ export default class WiredTriggerUserClickTileLogic extends WiredTriggerLogic<Wi
             if(this.roomFurniture.model.data.furnitureIds.some((furnitureId) => this.roomFurniture.room.furnitures.find((furniture) => furniture.model.id === furnitureId)?.isPositionInside(position))) {
                 this.setActive();
                 
-                this.handleTrigger(roomUser);
+                this.handleTrigger({
+                    roomUser
+                });
             }
         }
     }

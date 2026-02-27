@@ -26,7 +26,9 @@ export default class WiredTriggerUserSaysSomethingLogic extends WiredLogic<Wired
 
         this.setActive();
 
-        this.handleTrigger(roomUser);
+        this.handleTrigger({
+            roomUser
+        });
 
         return {
             blockUserChat: this.roomFurniture.model.data.hideMessage === true
