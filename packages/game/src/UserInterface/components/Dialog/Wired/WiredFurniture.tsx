@@ -27,6 +27,10 @@ export default function WiredFurniture({ furniture }: WiredFurnitureProps) {
                     {furniture.furniture.name}
                 </div>
             </div>
+
+            {(furniture.furniture.description) && (
+                <div>{furniture.furniture.description}</div>
+            )}
         </WiredSection>
     )
 }

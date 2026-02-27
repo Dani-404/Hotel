@@ -6,9 +6,11 @@ export type WiredSliderProps = {
 
     min: number;
     max: number;
+
+    step?: number;
 }
 
-export default function WiredSlider({ min, max, value, onChange }: WiredSliderProps) {
+export default function WiredSlider({ min, max, value, step, onChange }: WiredSliderProps) {
     return (
         <div style={{
             display: "flex",
@@ -21,15 +23,15 @@ export default function WiredSlider({ min, max, value, onChange }: WiredSliderPr
             <div className="sprite_dialog_wired_arrow-right" style={{
                 transform: "rotateZ(180deg)",
                 cursor: "pointer"
-            }} onClick={() => onChange(Math.max(0, value - 1))}/>
+            }} onClick={() => onChange(Math.max(min, value - (step ?? 1)))}/>
 
             <div className="wired-slider sprite_dialog_wired_slider-background">
-                <input type="range" min={min} max={max} value={value} onChange={(event) => onChange(parseInt((event.target as HTMLInputElement).value))}/>
+                <input type="range" step={step} min={min} max={max} value={value} onChange={(event) => onChange(Math.max(0.5, Math.floor(parseFloat((event.target as HTMLInputElement).value))))}/>
             </div>
 
             <div className="sprite_dialog_wired_arrow-right" style={{
                 cursor: "pointer"
-            }} onClick={() => onChange(Math.min(10, value + 1))}/>
+            }} onClick={() => onChange(Math.min(max, Math.floor(value + (step ?? 1))))}/>
         </div>
     );
 }
