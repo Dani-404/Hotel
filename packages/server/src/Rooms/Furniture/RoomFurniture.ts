@@ -32,6 +32,7 @@ import WiredTriggerUserClickUserLogic from "./Logic/Wired/Trigger/WiredTriggerUs
 import WiredTriggerUserClickTileLogic from "./Logic/Wired/Trigger/WiredTriggerUserClickTileLogic.js";
 import RoomInvisibleFurnitureControlLogic from "./Logic/RoomInvisibleFurnitureControlLogic.js";
 import WiredTriggerPeriodicallyLogic from "./Logic/Wired/Trigger/WiredTriggerPeriodicallyLogic.js";
+import WiredTriggerUserPerformsActionLogic from "./Logic/Wired/Trigger/WiredTriggerUserPerformsActionLogic.js";
 
 export default class RoomFurniture<T = unknown> {
     public preoccupiedByActionHandler: boolean = false;
@@ -240,6 +241,9 @@ export default class RoomFurniture<T = unknown> {
                 case "wf_trg_period_short":
                 case "wf_trg_period_long":
                     return this.category = new WiredTriggerPeriodicallyLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_user_performs_action":
+                    return this.category = new WiredTriggerUserPerformsActionLogic(this as RoomFurniture<any>);
                     
                 case "wf_act_show_message":
                     return this.category = new WiredActionShowMessageLogic(this as RoomFurniture<WiredActionShowMessageData>);

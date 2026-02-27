@@ -18,6 +18,7 @@ import { ActorActionEventData } from "@shared/Communications/Responses/Rooms/Act
 import { ActorPositionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorPositionEventData.js";
 import { ActorWalkToEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData.js";
 import WiredTriggerUserLeavesRoomLogic from "../Furniture/Logic/Wired/Trigger/WiredTriggerUserLeavesRoomLogic.js";
+import WiredTriggerUserPerformsActionLogic from "../Furniture/Logic/Wired/Trigger/WiredTriggerUserPerformsActionLogic.js";
 
 export default class RoomUser implements RoomActor {
     public preoccupiedByActionHandler: boolean = false;
@@ -177,6 +178,10 @@ export default class RoomUser implements RoomActor {
                 actionsAdded: [action],
             })
         );
+
+        for(const logic of this.room.getFurnitureWithCategory(WiredTriggerUserPerformsActionLogic)) {
+            logic.handleUserAction(this, action);
+        }
 
         // TODO: move this to the client?
         if(removeAfterMs !== undefined) {

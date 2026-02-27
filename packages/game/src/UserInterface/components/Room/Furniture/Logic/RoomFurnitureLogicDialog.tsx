@@ -12,6 +12,7 @@ import WiredTriggerUserClicksOnTileDialog from "./Wired/Trigger/WiredTriggerUser
 import WiredTriggerPeriodicallyDialog from "./Wired/Trigger/WiredTriggerPeriodicallyDialog";
 import WiredTriggerPeriodicallyShortDialog from "./Wired/Trigger/WiredTriggerPeriodicallyShortDialog";
 import WiredTriggerPeriodicallyLongDialog from "./Wired/Trigger/WiredTriggerPeriodicallyLongDialog";
+import WiredTriggerUserPerformsActionDialog from "./Wired/Trigger/WiredTriggerUserPerformsActionDialog";
 import WiredFurnitureSelectionDialog from "./Wired/WiredFurnitureSelectionDialog";
 
 export type RoomFurnitureLogicDialogProps<T = any> = {
@@ -79,6 +80,9 @@ export default function RoomFurnitureLogicDialog(props: RoomFurnitureLogicDialog
 
         case "wf_trg_period_long":
             return (<WiredTriggerPeriodicallyLongDialog {...props}/>);
+
+        case "wf_trg_user_performs_action":
+            return (<WiredTriggerUserPerformsActionDialog {...props}/>);
     }
 
     return null;
