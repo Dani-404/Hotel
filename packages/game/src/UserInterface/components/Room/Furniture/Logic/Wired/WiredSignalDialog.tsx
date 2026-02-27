@@ -1,23 +1,23 @@
-import WiredDialog from "../../../../../Dialog/Wired/WiredDialog";
+import WiredDialog from "../../../../Dialog/Wired/WiredDialog";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
-import { RoomFurnitureLogicDialogProps } from "../../RoomFurnitureLogicDialog";
-import WiredFurniture from "../../../../../Dialog/Wired/WiredFurniture";
-import WiredDivider from "../../../../../Dialog/Wired/WiredDivider";
-import WiredSection from "../../../../../Dialog/Wired/WiredSection";
+import { RoomFurnitureLogicDialogProps } from "../RoomFurnitureLogicDialog";
+import WiredFurniture from "../../../../Dialog/Wired/WiredFurniture";
+import WiredDivider from "../../../../Dialog/Wired/WiredDivider";
+import WiredSection from "../../../../Dialog/Wired/WiredSection";
 import { useCallback, useState } from "react";
-import WiredButton from "../../../../../Dialog/Wired/WiredButton";
+import WiredButton from "../../../../Dialog/Wired/WiredButton";
 import { WiredFurnitureSelectionData } from "@Shared/Interfaces/Room/Furniture/Wired/WiredFurnitureSelectionData";
-import { webSocketClient } from "../../../../../../..";
+import { webSocketClient } from "../../../../../..";
 import { SetFurnitureDataEventData } from "@Shared/Communications/Requests/Rooms/Furniture/SetFurnitureDataEventData";
-import WiredFurniturePicker from "../../../../../Dialog/Wired/WiredFurniturePicker";
-import WiredFurnitureSource from "../../../../../Dialog/Wired/WiredFurnitureSource";
+import WiredFurniturePicker from "../../../../Dialog/Wired/WiredFurniturePicker";
+import WiredFurnitureSource from "../../../../Dialog/Wired/WiredFurnitureSource";
 
-export type WiredTriggerReceiveSignalDialog = {
+export type WiredTriggerSignalDialogDialog = {
     furniture: RoomInstanceFurniture<WiredFurnitureSelectionData>;
     type: "wf_trg_says_something";
 };
 
-export default function WiredTriggerReceiveSignalDialog({ data, onClose }: RoomFurnitureLogicDialogProps<WiredTriggerReceiveSignalDialog>) {
+export default function WiredSignalDialog({ data, onClose }: RoomFurnitureLogicDialogProps<WiredTriggerSignalDialogDialog>) {
     const [furnitureIds, setFurnitureIds] = useState(data.furniture.data.data?.furnitureIds ?? []);
     const [furnitureSource, setFurnitureSource] = useState(data.furniture.data.data?.furnitureSource ?? "list");
 

@@ -34,6 +34,8 @@ import RoomInvisibleFurnitureControlLogic from "./Logic/RoomInvisibleFurnitureCo
 import WiredTriggerPeriodicallyLogic from "./Logic/Wired/Trigger/WiredTriggerPeriodicallyLogic.js";
 import WiredTriggerUserPerformsActionLogic from "./Logic/Wired/Trigger/WiredTriggerUserPerformsActionLogic.js";
 import WiredTriggerCollisionLogic from "./Logic/Wired/Trigger/WiredTriggerCollisionLogic.js";
+import WiredActionSendSignalLogic from "./Logic/Wired/Action/WiredActionSendSignalLogic.js";
+import WiredTriggerReceiveSignalLogic from "./Logic/Wired/Trigger/WiredTriggerReceiveSignalLogic.js";
 
 export default class RoomFurniture<T = unknown> {
     public preoccupiedByActionHandler: boolean = false;
@@ -254,6 +256,12 @@ export default class RoomFurniture<T = unknown> {
 
                 case "wf_act_teleport_to":
                     return this.category = new WiredActionTeleportToLogic(this as RoomFurniture<WiredActionTeleportToFurnitureData>);
+
+                case "wf_act_send_signal":
+                    return this.category = new WiredActionSendSignalLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_recv_signal":
+                    return this.category = new WiredTriggerReceiveSignalLogic(this as RoomFurniture<any>);
             }
 
             if(!this.category) {
