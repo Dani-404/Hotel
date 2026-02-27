@@ -1,16 +1,16 @@
-import WiredDialog from "../../../../../Dialog/Wired/WiredDialog";
+import WiredDialog from "../../../../Dialog/Wired/WiredDialog";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
-import { RoomFurnitureLogicDialogProps } from "../../RoomFurnitureLogicDialog";
-import WiredFurniture from "../../../../../Dialog/Wired/WiredFurniture";
-import WiredDivider from "../../../../../Dialog/Wired/WiredDivider";
-import WiredSection from "../../../../../Dialog/Wired/WiredSection";
+import { RoomFurnitureLogicDialogProps } from "../RoomFurnitureLogicDialog";
+import WiredFurniture from "../../../../Dialog/Wired/WiredFurniture";
+import WiredDivider from "../../../../Dialog/Wired/WiredDivider";
+import WiredSection from "../../../../Dialog/Wired/WiredSection";
 import { useCallback, useState } from "react";
-import WiredButton from "../../../../../Dialog/Wired/WiredButton";
+import WiredButton from "../../../../Dialog/Wired/WiredButton";
 import { WiredFurnitureSelectionData } from "@Shared/Interfaces/Room/Furniture/Wired/WiredFurnitureSelectionData";
-import { webSocketClient } from "../../../../../../..";
+import { webSocketClient } from "../../../../../..";
 import { SetFurnitureDataEventData } from "@Shared/Communications/Requests/Rooms/Furniture/SetFurnitureDataEventData";
-import WiredFurniturePicker from "../../../../../Dialog/Wired/WiredFurniturePicker";
-import WiredFurnitureSource from "../../../../../Dialog/Wired/WiredFurnitureSource";
+import WiredFurniturePicker from "../../../../Dialog/Wired/WiredFurniturePicker";
+import WiredFurnitureSource from "../../../../Dialog/Wired/WiredFurnitureSource";
 
 export type WiredFurnitureSelectionDialog = {
     furniture: RoomInstanceFurniture<WiredFurnitureSelectionData>;

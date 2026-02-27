@@ -27,6 +27,7 @@ import WiredTriggerLogic from "./Logic/Wired/WiredTriggerLogic.js";
 import WiredTriggerUserWalksOnFurnitureLogic from "./Logic/Wired/Trigger/WiredTriggerUserWalksOnFurnitureLogic.js";
 import WiredTriggerUserWalksOffFurnitureLogic from "./Logic/Wired/Trigger/WiredTriggerUserWalksOffFurnitureLogic.js";
 import WiredTriggerStateChangedLogic from "./Logic/Wired/Trigger/WiredTriggerStateChangedLogic.js";
+import WiredTriggerStuffStateLogic from "./Logic/Wired/Trigger/WiredTriggerStuffStateLogic.js";
 
 export default class RoomFurniture<T = unknown> {
     public preoccupiedByActionHandler: boolean = false;
@@ -212,6 +213,9 @@ export default class RoomFurniture<T = unknown> {
 
                 case "wf_trg_state_changed":
                     return this.category = new WiredTriggerStateChangedLogic(this as RoomFurniture<any>);
+
+                case "wf_trg_stuff_state":
+                    return this.category = new WiredTriggerStuffStateLogic(this as RoomFurniture<any>);
                     
                 case "wf_act_show_message":
                     return this.category = new WiredActionShowMessageLogic(this as RoomFurniture<WiredActionShowMessageData>);
@@ -264,6 +268,12 @@ export default class RoomFurniture<T = unknown> {
                 this.getFurnitureData()
             ]
         }));
+
+        const wiredTriggerStuffStateLogics = this.room.getFurnitureWithCategory(WiredTriggerStuffStateLogic);
+
+        for(const logic of wiredTriggerStuffStateLogics) {
+            logic.handleFurnitureAnimationChange(this);
+        }
     }
 
     public async setPosition(position: RoomPosition, save: boolean = true) {
