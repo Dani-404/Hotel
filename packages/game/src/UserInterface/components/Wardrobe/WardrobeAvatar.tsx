@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
 import Figure from "@Client/Figure/Figure";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import { defaultFigureWorkerClient } from "@Client/Figure/Worker/FigureWorkerClient";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type WardrobeAvatarProps = {
-    configuration: FigureConfiguration;
+    configuration: FigureConfigurationData;
 };
 
 export default function WardrobeAvatar({ configuration }: WardrobeAvatarProps) {

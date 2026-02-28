@@ -1,5 +1,5 @@
 import { BotTypeData } from "../Bots/BotTypeData.js";
-import { FigureConfiguration } from "../Figure/FigureConfiguration.js";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type UserBotData = {
     id: string;
@@ -10,7 +10,7 @@ export type UserBotData = {
     name: string;
     motto: string | null;
 
-    figureConfiguration: FigureConfiguration;
+    figureConfiguration: FigureConfigurationData;
     
     position: {
         row: number;

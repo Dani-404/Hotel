@@ -1,7 +1,7 @@
-import { FigureConfiguration } from "../../../../Interfaces/Figure/FigureConfiguration.js";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type UserFigureConfigurationEventData = {
     userId: string;
 
-    figureConfiguration: FigureConfiguration;
+    figureConfiguration: FigureConfigurationData;
 };

@@ -1,13 +1,13 @@
 import { CSSProperties, useEffect, useState } from "react";
 import OffscreenCanvasRender from "../OffscreenCanvasRender";
 import Figure from "@Client/Figure/Figure";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import { defaultFigureWorkerClient } from "@Client/Figure/Worker/FigureWorkerClient";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type FigureImageProps = {
     actions?: string[];
     frame?: number;
-    figureConfiguration: FigureConfiguration;
+    figureConfiguration: FigureConfigurationData;
     direction: number;
     cropped?: boolean;
     headOnly?: boolean;

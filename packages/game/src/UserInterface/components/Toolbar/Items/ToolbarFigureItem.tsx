@@ -11,7 +11,7 @@ export default function ToolbarFigureItem() {
     const [figureImage, setFigureImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        if(!user) {
+        if(!user.figureConfiguration) {
             return;
         }
 

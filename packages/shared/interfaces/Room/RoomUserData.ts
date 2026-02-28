@@ -1,9 +1,9 @@
-import { FigureConfiguration } from "../Figure/FigureConfiguration.js";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type RoomUserData = {
     id: string;
     name: string;
-    figureConfiguration: FigureConfiguration;
+    figureConfiguration: FigureConfigurationData;
     
     position: {
         row: number;

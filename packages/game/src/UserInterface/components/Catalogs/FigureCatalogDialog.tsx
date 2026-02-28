@@ -16,6 +16,10 @@ export default function FigureCatalogDialog({ hidden, onClose }: FigureCatalogDi
 
     const [action, setAction] = useState<string | null>(null);
 
+    if(!user.figureConfiguration) {
+        return null;
+    }
+
     return (
         <Dialog title="Figure Catalog" hidden={hidden} onClose={onClose} width={410} height={560} initialPosition="center">
             <DialogTabs withoutHeader tabs={[

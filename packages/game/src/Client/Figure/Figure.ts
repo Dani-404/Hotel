@@ -1,11 +1,11 @@
 import FigureWorkerInterface from "@Client/Figure/Worker/Interfaces/FigureWorkerInterface";
 import FigureWorkerClient from "./Worker/FigureWorkerClient";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export default class Figure {
     public actions: string[] = ["Default"]
 
-    constructor(public configuration: FigureConfiguration, public direction: number, actions: string[] = [], public headOnly: boolean = false) {
+    constructor(public configuration: FigureConfigurationData, public direction: number, actions: string[] = [], public headOnly: boolean = false) {
         this.actions.push(...actions);
     }
 

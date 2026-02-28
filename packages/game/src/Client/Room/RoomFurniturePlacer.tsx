@@ -4,11 +4,11 @@ import { FurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
 import RoomInstance from "@Client/Room/RoomInstance";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import Figure from "@Client/Figure/Figure";
 import RoomItem from "@Client/Room/Items/RoomItem";
 import RoomFigureItem from "@Client/Room/Items/Figure/RoomFigureItem";
 import { defaultFigureWorkerClient } from "@Client/Figure/Worker/FigureWorkerClient";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export default class RoomFurniturePlacer {
     private paused: boolean = true;
@@ -34,7 +34,7 @@ export default class RoomFurniturePlacer {
         return new RoomFurniturePlacer(roomInstance, roomFurnitureItem, true);
     }
 
-    public static fromFigureConfiguration(roomInstance: RoomInstance, figureConfiguration: FigureConfiguration) {
+    public static fromFigureConfiguration(roomInstance: RoomInstance, figureConfiguration: FigureConfigurationData) {
         const roomFurnitureItem = new RoomFigureItem(
             roomInstance.roomRenderer,
             new Figure(figureConfiguration, 2),
