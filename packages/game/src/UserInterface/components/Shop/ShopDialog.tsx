@@ -39,7 +39,13 @@ export default function ShopDialog({ hidden, onClose }: ShopDialogProps) {
 
         const listener = (event: WebSocketEvent<ShopPagesEventData>) => {
             if(event.data.category === category) {
-                setShopPages(event.data.pages);
+                setShopPages(event.data.pages.sort((a, b) => {
+                    if (a.index !== b.index) {
+                        return a.index - b.index;
+                    }
+
+                    return a.title.localeCompare(b.title);
+                }));
 
                 if(requestedShopPage?.category === category) {
                     setActiveShopPage(shopPages.find((shopPage) => shopPage.id === requestedShopPage.id));
