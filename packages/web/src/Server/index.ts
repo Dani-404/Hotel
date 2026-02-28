@@ -703,6 +703,11 @@ app.post('/api/settings/friends', async (request, response) => {
     }
 });
 
-app.listen(config.port);
+if(config.hostname) {
+    app.listen(config.port, config.hostname);
+}
+else {
+    app.listen(config.port);
+}
 
 console.log('Server listening on port ' + config.port);

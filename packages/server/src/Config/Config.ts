@@ -3,6 +3,7 @@ import { Options, Sequelize } from "sequelize";
 
 export type Config = {
     port?: number;
+    hostname?: string;
     
     authentication: {
         useAccessTokens: boolean;
