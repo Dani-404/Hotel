@@ -6,11 +6,28 @@ import { game } from "../../index.js";
 import { RoomBotEventData } from "@shared/Communications/Responses/Rooms/Bots/RoomBotEventData.js";
 import { UserBotData } from "@shared/Interfaces/Room/RoomBotData.js";
 import { RoomChatEventData } from "@shared/Communications/Responses/Rooms/Chat/RoomChatEventData.js";
+import RoomActor from "../Actor/RoomActor.js";
+import RoomActorPath from "../Actor/Path/RoomActorPath.js";
+import { RoomBotPositionEventData } from "@shared/Communications/Responses/Rooms/Bots/RoomBotPositionEventData.js";
+import { ActorActionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorActionEventData.js";
+import { ActorWalkToEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData.js";
 
-export default class RoomBot {
+export default class RoomBot implements RoomActor {
     public preoccupiedByActionHandler: boolean = false;
 
+    public actions: string[] = [];
+    public position: RoomPosition;
+    public direction: number;
+
+    public path: RoomActorPath;
+
+    public lastActivity: number = 0;
+
     constructor(public readonly room: Room, public readonly model: UserBotModel) {
+        this.position = model.position;
+        this.direction = model.direction;
+
+        this.path = new RoomActorPath(this);
     }
 
     public static async place(room: Room, userBot: UserBotModel, position: RoomPosition, direction: number) {
@@ -40,8 +57,8 @@ export default class RoomBot {
             id: this.model.id,
             userId: this.model.user.id,
             
-            position: this.model.position,
-            direction: this.model.direction,
+            position: this.position,
+            direction: this.direction,
 
             type: this.model.type,
 
@@ -49,7 +66,72 @@ export default class RoomBot {
             motto: this.model.motto,
 
             figureConfiguration: this.model.figureConfiguration,
+
+            relaxed: this.model.relaxed,
         };
+    }
+
+    public hasAction(actionId: string): boolean {
+        return this.actions.includes(actionId);
+    }
+
+    public addAction(action: string) {
+        if(this.actions.includes(action)) {
+            return;
+        }
+
+        this.actions.push(action);
+
+        this.room.outgoingEvents.push(
+            new OutgoingEvent<ActorActionEventData>("ActorActionEvent", {
+                type: "bot",
+                botId: this.model.id,
+
+                actionsAdded: [action],
+            })
+        );
+    }
+
+    public removeAction(action: string) {
+        const actionId = action.split('.')[0]!;
+
+        const existingActionIndex = this.actions.findIndex((action) => action.split('.')[0] === actionId);
+
+        if(existingActionIndex === -1) {
+            return;
+        }
+
+        this.actions.splice(existingActionIndex, 1);
+
+        this.room.outgoingEvents.push(
+            new OutgoingEvent<ActorActionEventData>("ActorActionEvent", {
+                type: "bot",
+                botId: this.model.id,
+
+                actionsRemoved: [actionId],
+            })
+        );
+    }
+    
+    public sendWalkEvent(previousPosition: RoomPosition): void {
+        this.room.outgoingEvents.push(new OutgoingEvent<ActorWalkToEventData>("ActorWalkToEvent", {
+            type: "bot",
+            botId: this.model.id,
+
+            from: previousPosition,
+            to: this.position
+        }));
+    }
+
+    public sendPositionEvent(usePath: boolean) {
+        this.room.outgoingEvents.push(
+            new OutgoingEvent<RoomBotPositionEventData>("RoomBotPositionEvent", {
+                botId: this.model.id,
+                position: this.position,
+                direction: this.direction,
+                usePath: usePath === true
+            })
+        );
     }
 
     public async pickup() {
@@ -79,9 +161,10 @@ export default class RoomBot {
     public async setPosition(position: RoomPosition, save: boolean = true) {
         const previousPosition = this.model.position;
 
-        this.model.position = position;
+        this.position = position;
 
-        this.room.floorplan.updatePosition(position, previousPosition);
+        this.room.floorplan.updatePosition(previousPosition);
+        this.room.floorplan.updatePosition(position);
 
         if(save && this.model.changed()) {
             await this.model.save();
@@ -98,6 +181,18 @@ export default class RoomBot {
     private lastChatMessageIndex: number | null = null;
 
     public async handleActionsInterval() {
+        if(this.model.speech.automaticChat) {
+            await this.handleAutomaticChat();
+        }
+
+        if(this.model.relaxed) {
+            await this.handleRelaxed();
+        }
+
+        this.path.handleActionsInterval();
+    }
+
+    public async handleAutomaticChat() {
         if(!this.model.speech.automaticChat) {
             return;
         }
@@ -145,5 +240,32 @@ export default class RoomBot {
             message,
             roomChatStyleId: "bot_guide"
         }));
+    }
+
+    private lastMovement: number = 0;
+
+    public async handleRelaxed() {
+        const elapsedSinceLastMovement = performance.now() - this.lastMovement;
+
+        if(elapsedSinceLastMovement < 5 * 1000) {
+            return;
+        }
+
+        if(this.path.path) {
+            return;
+        }
+
+        this.lastMovement = performance.now();
+
+        const targetPosition: Omit<RoomPosition, "depth"> = {
+            row: this.model.position.row + Math.floor(Math.random() * 7) - 3,
+            column: this.model.position.column + Math.floor(Math.random() * 7) - 3,
+        };
+
+        if(this.room.model.structure.door?.row === targetPosition.row && this.room.model.structure.door?.column === targetPosition.column) {
+            return;
+        }
+
+        this.path.walkTo(targetPosition);
     }
 }

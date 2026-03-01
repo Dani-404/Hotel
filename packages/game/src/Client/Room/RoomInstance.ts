@@ -8,7 +8,6 @@ import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { RoomFurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import RoomFurnitureItem from "./Items/Furniture/RoomFurnitureItem";
 import RoomClickEvent from "@Client/Events/RoomClickEvent";
-import { UserWalkToEventData } from "@Shared/Communications/Responses/Rooms/Users/UserWalkToEventData";
 import { UserLeftRoomEventData } from "@Shared/Communications/Responses/Rooms/Users/UserLeftRoomEventData";
 import { webSocketClient } from "../..";
 import { LoadRoomEventData, RoomInformationData } from "@Shared/Communications/Responses/Rooms/LoadRoomEventData";
@@ -22,13 +21,15 @@ import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
 import ObservableProperty from "@Client/Utilities/ObservableProperty";
 import { RoomFurnitureBackgroundTonerData } from "@Shared/Interfaces/Room/Furniture/RoomFurnitureBackgroundTonerData";
 import RoomBot from "@Client/Room/Bots/RoomBot";
+import { ActorIdentifierEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorIdentifierEventData";
+import { RoomClickEventData } from "@Shared/Communications/Requests/Rooms/RoomClickEventData";
 
 type RoomItem<DataType = RoomUserData | RoomFurnitureData, ItemType = RoomFigureItem | RoomFurnitureItem> = {
     data: DataType;
     item: ItemType;
 };
 
-export type RoomInstanceFurniture = RoomItem<RoomFurnitureData, RoomFurnitureItem>;
+export type RoomInstanceFurniture<T = unknown> = RoomItem<RoomFurnitureData<T>, RoomFurnitureItem>;
 
 export type RoomUser = RoomItem<RoomUserData, RoomFigureItem>;
 
@@ -69,9 +70,17 @@ export default class RoomInstance {
 
         this.setStructure(event.structure);
 
-        this.users = event.users.map((userData) => this.addUser(userData));
-        this.furnitures = event.furnitures.map((furnitureData) => new RoomFurniture(this, furnitureData));
-        this.bots = event.bots.map((botData) => new RoomBot(this, botData));
+        for(const user of event.users) {
+            this.users.push(this.addUser(user));
+        }
+
+        for(const furniture of event.furnitures) {
+            this.furnitures.push(new RoomFurniture(this, furniture));
+        }
+
+        for(const bot of event.bots) {
+            this.bots.push(new RoomBot(this, bot));
+        }
 
         this.registerEventListeners();
     }
@@ -101,7 +110,6 @@ export default class RoomInstance {
     private registerEventListeners() {
         webSocketClient.addEventListener<WebSocketEvent<UserEnteredRoomEventData>>("UserEnteredRoomEvent", this.userEnteredRoomListener);
         webSocketClient.addEventListener<WebSocketEvent<UserLeftRoomEventData>>("UserLeftRoomEvent", this.userLeftRoomListener);
-        webSocketClient.addEventListener<WebSocketEvent<UserWalkToEventData>>("UserWalkToEvent", this.userWalkToListener);
         webSocketClient.addEventListener("LeaveRoomEvent", this.leaveRoomListener);
         this.roomRenderer.cursor?.addEventListener("click", this.click.bind(this));
     }
@@ -109,7 +117,6 @@ export default class RoomInstance {
     private removeEventListeners() {
         webSocketClient.removeEventListener<WebSocketEvent<UserEnteredRoomEventData>>("UserEnteredRoomEvent", this.userEnteredRoomListener);
         webSocketClient.removeEventListener<WebSocketEvent<UserLeftRoomEventData>>("UserLeftRoomEvent", this.userLeftRoomListener);
-        webSocketClient.removeEventListener<WebSocketEvent<UserWalkToEventData>>("UserWalkToEvent", this.userWalkToListener);
         webSocketClient.removeEventListener("LeaveRoomEvent", this.leaveRoomListener);
         this.roomRenderer.cursor?.removeEventListener("click", this.click.bind(this));
     }
@@ -129,23 +136,50 @@ export default class RoomInstance {
         this.removeUser(event.data);
     }
 
-    private userWalkToListener = this.userWalkTo.bind(this);
-    private userWalkTo(event: WebSocketEvent<UserWalkToEventData>) {
-        const user = this.getUserById(event.data.userId);
-
-        user.item.setPositionPath(event.data.from, event.data.to/*, event.delay*/);
-    }
+    private lastSentClickEvent: number = 0;
 
     private click(event: Event) {
         if(!(event instanceof RoomClickEvent)) {
             return;
         }
 
+        if(performance.now() - this.lastSentClickEvent >= 500) {
+            if(event.otherEntity) {
+                if(event.otherEntity.item instanceof RoomFurnitureItem) {
+                    const roomFurniture = this.getFurnitureByItem(event.otherEntity.item);
+
+                    webSocketClient.send<RoomClickEventData>("RoomClickEvent", {
+                        furnitureId: roomFurniture.data.id,
+                        position: event.floorEntity?.position
+                    });
+
+                    this.lastSentClickEvent = performance.now();
+                }
+                else if(event.otherEntity.item instanceof RoomFigureItem && event.otherEntity.item.type === "figure") {
+                    const roomFurniture = this.getUserByItem(event.otherEntity.item);
+
+                    webSocketClient.send<RoomClickEventData>("RoomClickEvent", {
+                        userId: roomFurniture.data.id,
+                        position: event.floorEntity?.position
+                    });
+
+                    this.lastSentClickEvent = performance.now();
+                }
+            }
+            else if(event.floorEntity?.position) {
+                webSocketClient.send<RoomClickEventData>("RoomClickEvent", {
+                    position: event.floorEntity.position
+                });
+
+                this.lastSentClickEvent = performance.now();
+            }
+        }
+
         if(this.roomRenderer.cursor?.cursorDisabled) {
             return;
         }
 
-        if(event.floorEntity?.position) {
+        if(event.floorEntity?.position && !(event.otherEntity?.item instanceof RoomFigureItem)) {
             webSocketClient.send<StartWalkingEventData>("StartWalkingEvent", {
                 target: event.floorEntity.position
             });
@@ -210,6 +244,18 @@ export default class RoomInstance {
         }
 
         return bot;
+    }
+
+    public getActor(data: ActorIdentifierEventData) {
+        switch(data.type) {
+            case "user":
+                return this.getUserById(data.userId);
+
+            case "bot":
+                return this.getBotById(data.botId);
+        }
+
+        throw new Error("Unhandled actor type.");
     }
 
     public getBotById(id: string) {

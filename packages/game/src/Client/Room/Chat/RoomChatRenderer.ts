@@ -1,15 +1,12 @@
 import AssetFetcher from "@Client/Assets/AssetFetcher";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
 import Figure from "@Client/Figure/Figure";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
-
-export type RoomChatRendererOptions = {
-    italic?: boolean;
-    hideUsername?: boolean;
-};
+import { RoomChatOptionsData } from "../../../../../shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
+import { defaultFigureWorkerClient } from "@Client/Figure/Worker/FigureWorkerClient";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export default class RoomChatRenderer {
-    public static async render(style: string, user: string, figureConfiguration: FigureConfiguration, message: string, options: RoomChatRendererOptions) {
+    public static async render(style: string, user: string, figureConfiguration: FigureConfigurationData, message: string, options?: RoomChatOptionsData) {
         const roomChatStyles = await AssetFetcher.fetchJson<any[]>("/assets/room/RoomChatStyles.json");
 
         const chatStyleImage = await AssetFetcher.fetchImage(`/assets/room/chat/${style}_chat_bubble_base_png.png`);
@@ -22,10 +19,10 @@ export default class RoomChatRenderer {
             throw new ContextNotAvailableError();
         }
 
-        context.font = `${(options.italic)?("italic"):("")} 12px "Ubuntu Bold"`;
-        const userText = (options.hideUsername)?({ width: 0 }):(context.measureText(`${user}: `));
+        context.font = `${(options?.italic)?("italic"):("")} 12px "Ubuntu Bold"`;
+        const userText = (options?.hideUsername)?({ width: 0 }):(context.measureText(`${user}: `));
 
-        context.font = `${(options.italic)?("italic"):("")} 12px "Ubuntu"`;
+        context.font = `${(options?.italic)?("italic"):("")} 12px "Ubuntu"`;
         const messageText = context.measureText(message);
 
         const textWidth = Math.ceil(userText.width + messageText.width);
@@ -58,16 +55,17 @@ export default class RoomChatRenderer {
         );
 
         context.textBaseline = "top";
-
-        if(!options.hideUsername) {
-            context.font = `${(options.italic)?("italic"):("")} 12px "Ubuntu Bold"`;
-            context.fillText(`${user}: `, roomChatStyle.text.left + 2, roomChatStyle.text.top + 2);
-        }
-        else {
+        
+        if(options?.transparent) {
             context.globalAlpha = 0.75;
         }
 
-        context.font = `${(options.italic)?("italic"):("")} 12px "Ubuntu"`;
+        if(!options?.hideUsername) {
+            context.font = `${(options?.italic)?("italic"):("")} 12px "Ubuntu Bold"`;
+            context.fillText(`${user}: `, roomChatStyle.text.left + 2, roomChatStyle.text.top + 2);
+        }
+
+        context.font = `${(options?.italic)?("italic"):("")} 12px "Ubuntu"`;
         context.fillText(message, roomChatStyle.text.left + 2 + userText.width, roomChatStyle.text.top + 2);
 
         context.globalAlpha = 1;
@@ -75,7 +73,7 @@ export default class RoomChatRenderer {
         if(roomChatStyle.figure) {
             const figureRenderer = new Figure(figureConfiguration, 2, undefined, false);
 
-            const { figure } = await figureRenderer.renderToCanvas(Figure.figureWorker, 0, false);
+            const { figure } = await figureRenderer.renderToCanvas(defaultFigureWorkerClient, 0, false);
             
             context.drawImage(
                 figure.image,
@@ -84,6 +82,6 @@ export default class RoomChatRenderer {
             );
         }
 
-        return await createImageBitmap(canvas);
+        return canvas.transferToImageBitmap();
     }
 }

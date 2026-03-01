@@ -4,10 +4,11 @@ import { FurnitureData } from "@Shared/Interfaces/Room/RoomFurnitureData";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
 import ContextNotAvailableError from "@Client/Exceptions/ContextNotAvailableError";
 import RoomInstance from "@Client/Room/RoomInstance";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import Figure from "@Client/Figure/Figure";
 import RoomItem from "@Client/Room/Items/RoomItem";
 import RoomFigureItem from "@Client/Room/Items/Figure/RoomFigureItem";
+import { defaultFigureWorkerClient } from "@Client/Figure/Worker/FigureWorkerClient";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export default class RoomFurniturePlacer {
     private paused: boolean = true;
@@ -33,7 +34,7 @@ export default class RoomFurniturePlacer {
         return new RoomFurniturePlacer(roomInstance, roomFurnitureItem, true);
     }
 
-    public static fromFigureConfiguration(roomInstance: RoomInstance, figureConfiguration: FigureConfiguration) {
+    public static fromFigureConfiguration(roomInstance: RoomInstance, figureConfiguration: FigureConfigurationData) {
         const roomFurnitureItem = new RoomFigureItem(
             roomInstance.roomRenderer,
             new Figure(figureConfiguration, 2),
@@ -106,7 +107,7 @@ export default class RoomFurniturePlacer {
             });
         }
         else if(this.roomFurnitureItem instanceof RoomFigureItem) {
-            new Figure(this.roomFurnitureItem.figureRenderer.configuration, 3, undefined, true).renderToCanvas(Figure.figureWorker, 0, true).then((result) => {
+            new Figure(this.roomFurnitureItem.figureRenderer.configuration, 3, undefined, true).renderToCanvas(defaultFigureWorkerClient, 0, true).then((result) => {
                 this.iconElement.width = result.figure.image.width;
                 this.iconElement.height = result.figure.image.height;
 
@@ -268,7 +269,7 @@ export default class RoomFurniturePlacer {
             depth: (furnitureAtPosition)?(furnitureAtPosition.data.position.depth + furnitureAtPosition.getDimensionDepth() + 0.0001):(entity.position.depth)
         }):(null);
 
-        if(!entity || !position) {
+        if(!entity || !position || this.roomFurnitureItem.disabled) {
             if(this.originalPosition) {
                this.roomFurnitureItem.position = this.originalPosition;
             }

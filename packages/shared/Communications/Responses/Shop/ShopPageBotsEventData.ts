@@ -1,5 +1,5 @@
+import { FigureConfigurationData } from "@pixel63/events";
 import { BotTypeData } from "../../../Interfaces/Bots/BotTypeData.js";
-import { FigureConfiguration } from "../../../Interfaces/Figure/FigureConfiguration.js";
 
 export type ShopPageBotData = {
     id: string;
@@ -8,7 +8,7 @@ export type ShopPageBotData = {
     duckets?: number | undefined;
     diamonds?: number | undefined;
 
-    figureConfiguration: FigureConfiguration;
+    figureConfiguration: FigureConfigurationData;
 
     name: string;
     motto: string | null;

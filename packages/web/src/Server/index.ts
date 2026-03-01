@@ -63,7 +63,13 @@ class App {
             root: path.join((this.config as Config).static, "web")
         }));
 
-        this.expressApp.listen(this.config.port);
+        if (this.config.hostname) {
+            this.expressApp.listen(this.config.port, this.config.hostname);
+        }
+        else {
+            this.expressApp.listen(this.config.port);
+        }
+
     }
 }
 

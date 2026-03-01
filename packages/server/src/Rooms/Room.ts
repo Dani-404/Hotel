@@ -10,6 +10,10 @@ import { RoomInformationData } from "@shared/Communications/Responses/Rooms/Load
 import RoomFloorplanHelper from "./RoomFloorplanHelper.js";
 import RoomFloorplan from "./Floorplan/RoomFloorplan.js";
 import RoomBot from "./Bots/RoomBot.js";
+import RoomActor from "./Actor/RoomActor.js";
+import WiredTriggerLogic from "./Furniture/Logic/Wired/WiredTriggerLogic.js";
+import RoomFurnitureLogic from "./Furniture/Logic/Interfaces/RoomFurnitureLogic.js";
+import WiredTriggerStateChangedLogic from "./Furniture/Logic/Wired/Trigger/WiredTriggerStateChangedLogic.js";
 
 export default class Room {
     public readonly users: RoomUser[] = [];
@@ -70,6 +74,86 @@ export default class Room {
         return this.users.find((user) => user.position.row === position.row && user.position.column === position.column);
     }
 
+    public getActorAtPosition(position: Omit<RoomPosition, "depth">) {
+        const user = this.users.find((user) => user.position.row === position.row && user.position.column === position.column);
+        const bot = this.bots.find((bot) => bot.position.row === position.row && bot.position.column === position.column);
+
+        return user || bot;
+    }
+
+    public getActorsAtPosition(position: Omit<RoomPosition, "depth">, dimensions?: RoomPosition): RoomActor[] {
+        const actors: RoomActor[] = [];
+
+        for(const actor of this.users) {
+            if(actor.position.row < position.row) {
+                continue;
+            }
+
+            if(actor.position.column < position.column) {
+                continue;
+            }
+
+            if(dimensions) {
+                if(position.row + dimensions.row <= actor.position.row) {
+                    continue;
+                }
+
+                if(position.column + dimensions.column <= actor.position.column) {
+                    continue;
+                }
+            }
+
+            actors.push(actor);
+        }
+
+        for(const actor of this.bots) {
+            if(actor.position.row < position.row) {
+                continue;
+            }
+
+            if(actor.position.column < position.column) {
+                continue;
+            }
+
+            if(dimensions) {
+                if(position.row + dimensions.row <= actor.position.row) {
+                    continue;
+                }
+
+                if(position.column + dimensions.column <= actor.position.column) {
+                    continue;
+                }
+            }
+
+            actors.push(actor);
+        }
+
+        return actors;
+    }
+
+    public refreshActorsSitting(position: RoomPosition, dimensions: RoomPosition) {
+        const actors = this.getActorsAtPosition(position, dimensions);
+
+        for(const actor of actors) {
+            const sitableFurniture = this.getSitableFurnitureAtPosition(actor.position);
+
+            if(sitableFurniture) {
+                actor.addAction("Sit");
+                actor.path.setPosition({
+                    ...actor.position,
+                    depth: sitableFurniture.model.position.depth + sitableFurniture.model.furniture.dimensions.depth - 0.5
+                }, sitableFurniture.model.direction);
+            }
+            else {
+                actor.removeAction("Sit");
+                actor.path.setPosition({
+                    ...actor.position,
+                    depth: this.getUpmostDepthAtPosition(actor.position)
+                });
+            }
+        }
+    }
+
     public getBotAtPosition(position: Omit<RoomPosition, "depth">) {
         return this.bots.find((bot) => bot.model.position.row === position.row && bot.model.position.column === position.column);
     }
@@ -115,10 +199,10 @@ export default class Room {
             user.preoccupiedByActionHandler = false;
         }
 
-        const furnitureWithActions = this.furnitures.filter((furniture) => furniture.model.furniture.category === "roller");
+        const furnitureWithActions = this.furnitures.filter((furniture) => furniture.getCategoryLogic()?.handleActionsInterval !== undefined);
 
         for(let furniture of furnitureWithActions) {
-            await furniture.handleActionsInterval();
+            await furniture.getCategoryLogic()?.handleActionsInterval?.();
         }
 
         // TODO: change so that the clients get the full path immediately, and only use this interval to cancel due to obstructions in the path?
@@ -141,6 +225,19 @@ export default class Room {
 
             delete this.actionsInterval;
         }*/
+    }
+
+    public getSitableFurnitureAtPosition(position: Omit<RoomPosition, "depth">) {
+        const furniture =
+            this.getAllFurnitureAtPosition(position)
+                .filter((furniture) => furniture.model.furniture.flags.sitable)
+                .toSorted((a, b) => b.model.position.depth - a.model.position.depth);
+
+        if(!furniture.length) {
+            return undefined;
+        }
+
+        return furniture[0];
     }
 
     public getUpmostFurnitureAtPosition(position: Omit<RoomPosition, "depth">) {
@@ -243,5 +340,37 @@ export default class Room {
 
             maxUsers: this.model.maxUsers
         };
+    }
+    
+    public getFurnitureWithCategory<T>(category: (new (...args: any[]) => T)) {
+        return this.furnitures.filter((furniture) => furniture.getCategoryLogic() instanceof category).map((furniture) => furniture.getCategoryLogic() as T);
+    }
+
+    public async handleUserWalksOnFurniture(roomUser: RoomUser, roomFurniture: RoomFurniture) {
+        await roomFurniture.handleUserWalksOnFurniture(roomUser);
+
+        const wiredTriggerLogic = this.getFurnitureWithCategory(WiredTriggerLogic);
+
+        for(const logic of wiredTriggerLogic) {
+            logic.handleUserWalksOnFurniture?.(roomUser, roomFurniture);
+        }
+    }
+
+    public async handleUserWalksOffFurniture(roomUser: RoomUser, roomFurniture: RoomFurniture) {
+        await roomFurniture.handleUserWalksOnFurniture(roomUser);
+
+        const wiredTriggerLogic = this.getFurnitureWithCategory(WiredTriggerLogic);
+
+        for(const logic of wiredTriggerLogic) {
+            logic.handleUserWalksOffFurniture?.(roomUser, roomFurniture);
+        }
+    }
+
+    public async handleUserUseFurniture(roomUser: RoomUser, roomFurniture: RoomFurniture) {
+        const wiredStateChangedLogic = this.getFurnitureWithCategory(WiredTriggerStateChangedLogic);
+
+        for(const logic of wiredStateChangedLogic) {
+            logic.handleUserUsesFurniture(roomUser, roomFurniture);
+        }
     }
 }

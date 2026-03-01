@@ -148,12 +148,8 @@ export default function ShopDefaultPage({ editMode, page }: ShopPageProps) {
         });
     }, [activeFurniture, activeFurnitureRef, roomFurniturePlacer]);
 
-    const onMouseDown = useCallback(() => {
+    const onMouseDown = useCallback((furniture: ShopPageFurnitureData) => {
         if(!clientInstance.roomInstance.value) {
-            return;
-        }
-
-        if(!activeFurniture) {
             return;
         }
 
@@ -165,7 +161,7 @@ export default function ShopDefaultPage({ editMode, page }: ShopPageProps) {
             document.body.removeEventListener("mousemove", mousemove);
 
             if(room) {                
-                setRoomFurniturePlacer(RoomFurniturePlacer.fromFurnitureData(room, activeFurniture.furniture));
+                setRoomFurniturePlacer(RoomFurniturePlacer.fromFurnitureData(room, furniture.furniture));
             }
         };
 
@@ -189,7 +185,7 @@ export default function ShopDefaultPage({ editMode, page }: ShopPageProps) {
 
             overflow: "hidden"
         }}>
-            <div onClick={onRoomRendererClick} onMouseDown={onMouseDown} style={{
+            <div onClick={onRoomRendererClick} onMouseDown={() => activeFurniture && onMouseDown(activeFurniture)} style={{
 
                 height: 240,
                 width: "100%",
@@ -274,7 +270,7 @@ export default function ShopDefaultPage({ editMode, page }: ShopPageProps) {
 
                                 position: "relative"
                             }}>
-                                <div style={{ height: 30, display: "flex", justifyContent: "center", alignItems: "center" }} onMouseDown={onMouseDown}>
+                                <div style={{ height: 30, display: "flex", justifyContent: "center", alignItems: "center" }} onMouseDown={() => onMouseDown(furniture)}>
                                     <FurnitureIcon ref={(activeFurniture?.id === furniture.id)?(activeFurnitureRef):(undefined)} furnitureData={furniture.furniture}/>
                                 </div>
 

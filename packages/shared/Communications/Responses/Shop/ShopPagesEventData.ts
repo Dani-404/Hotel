@@ -14,6 +14,7 @@ export type ShopPageFeatureData = {
 
 export type ShopPageData = {
     id: string;
+    parentId: string | undefined;
     category: ShopPageCategory;
     
     title: string;
@@ -28,8 +29,6 @@ export type ShopPageData = {
     index: number;
 
     features: ShopPageFeatureData[] | undefined;
-
-    children?: Omit<ShopPageData, "children">[];
 };
 
 export type ShopPagesEventData = {

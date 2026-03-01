@@ -1,13 +1,13 @@
 import { ShopPageData } from "@Shared/Communications/Responses/Shop/ShopPagesEventData";
 import { ShopPageBotData } from "@Shared/Communications/Responses/Shop/ShopPageBotsEventData";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import FigureWardrobeDialog from "../../Wardrobe/FigureWardrobeDialog";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type EditShopBotFigureDialogProps = {
     data: Partial<ShopPageBotData> & {
         page: ShopPageData;
-        figureConfiguration: FigureConfiguration;
-        onChange: (figureConfiguration: FigureConfiguration) => void;
+        figureConfiguration: FigureConfigurationData;
+        onChange: (figureConfiguration: FigureConfigurationData) => void;
     };
     hidden?: boolean;
     onClose?: () => void;

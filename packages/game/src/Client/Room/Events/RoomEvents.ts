@@ -14,5 +14,7 @@ export default function registerRoomEvents(clientInstance: ClientInstance) {
         }
 
         clientInstance.roomInstance.value = new RoomInstance(clientInstance, event.data);
+
+        webSocketClient.send("RoomReadyEvent", null);
     });
 }

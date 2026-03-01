@@ -22,6 +22,8 @@ export default class RoomFurnitureFortunaLogic implements RoomFurnitureLogic {
             return;
         }
 
+        await this.roomFurniture.room.handleUserUseFurniture(roomUser, this.roomFurniture);
+
         await this.roomFurniture.setAnimation(32);
 
         await new Promise<void>((resolve) => {

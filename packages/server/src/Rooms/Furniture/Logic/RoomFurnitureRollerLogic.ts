@@ -5,7 +5,7 @@ import RoomFurnitureLogic from "./Interfaces/RoomFurnitureLogic.js";
 import OutgoingEvent from "../../../Events/Interfaces/OutgoingEvent.js";
 import { MoveRoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/MoveRoomFurnitureEventData.js";
 import { RoomFurnitureEventData } from "@shared/Communications/Responses/Rooms/Furniture/RoomFurnitureEventData.js";
-import { UserPositionEventData } from "@shared/Communications/Responses/Rooms/Users/UserPositionEventData.js";
+import { ActorPositionEventData } from "@shared/Communications/Responses/Rooms/Actors/ActorPositionEventData.js";
 
 export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
     constructor(private readonly roomFurniture: RoomFurniture) {
@@ -65,7 +65,7 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
 
                 const nextFurniture = room.getUpmostFurnitureAtPosition(offsetPosition);
                 
-                if(nextFurniture && !nextFurniture.isWalkable()) {
+                if(nextFurniture && !nextFurniture.isWalkable(true)) {
                     continue;
                 }
 
@@ -82,11 +82,7 @@ export default class RoomFurnitureRollerLogic implements RoomFurnitureLogic {
 
                 user.position = offsetPosition;
 
-                outgoingEvents.push(new OutgoingEvent<UserPositionEventData>("UserPositionEvent", {
-                    userId: user.user.model.id,
-                    position: user.position,
-                    usePath: true
-                }));
+                user.sendPositionEvent(true);
             }
 
             for(const furniture of furnitureInteractingWithRoller) {

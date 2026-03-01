@@ -1,12 +1,11 @@
+import FigureWorkerInterface from "@Client/Figure/Worker/Interfaces/FigureWorkerInterface";
 import FigureWorkerClient from "./Worker/FigureWorkerClient";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export default class Figure {
-    public static readonly figureWorker: FigureWorkerClient = new FigureWorkerClient();
-
     public actions: string[] = ["Default"]
 
-    constructor(public configuration: FigureConfiguration, public direction: number, actions: string[] = [], public headOnly: boolean = false) {
+    constructor(public configuration: FigureConfigurationData, public direction: number, actions: string[] = [], public headOnly: boolean = false) {
         this.actions.push(...actions);
     }
 
@@ -14,7 +13,7 @@ export default class Figure {
         await worker.preload(this);
     }
 
-    public async renderToCanvas(worker: FigureWorkerClient, frame: number, cropped: boolean = false) {
+    public async renderToCanvas(worker: FigureWorkerInterface, frame: number, cropped: boolean = false) {
         /*let renderName = `${this.getConfigurationAsString()}_${this.direction}_${frame}_${this.actions.join('_')}`;
 
         if(this.headOnly) {
@@ -46,6 +45,10 @@ export default class Figure {
         }
 
         this.actions.push(id);
+    }
+
+    public hasAction(id: string) {
+        return this.actions.some((action) => action.split('.')[0] === id);
     }
 
     public removeAction(id: string) {

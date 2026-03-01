@@ -34,6 +34,10 @@ export default class UpdateRoomBotEvent implements IncomingEvent<UpdateRoomBotEv
             bot.model.motto = event.motto;
         }
 
+        if(event.relaxed !== undefined) {
+            bot.model.relaxed = event.relaxed === true;
+        }
+
         if(event.speech !== undefined) {
             bot.model.speech = {
                 automaticChat: event.speech.automaticChat === true,

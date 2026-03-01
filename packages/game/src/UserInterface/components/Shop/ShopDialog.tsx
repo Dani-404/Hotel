@@ -39,26 +39,16 @@ export default function ShopDialog({ hidden, onClose }: ShopDialogProps) {
 
         const listener = (event: WebSocketEvent<ShopPagesEventData>) => {
             if(event.data.category === category) {
-                setShopPages(event.data.pages);
+                setShopPages(event.data.pages.sort((a, b) => {
+                    if (a.index !== b.index) {
+                        return a.index - b.index;
+                    }
+
+                    return a.title.localeCompare(b.title);
+                }));
 
                 if(requestedShopPage?.category === category) {
-                    for(const page of event.data.pages) {
-                        if(page.id === requestedShopPage.id) {
-                            setActiveShopPage(page);
-
-                            break;
-                        }
-
-                        if(page.children) {
-                            for(const child of page.children) {
-                                if(child.id === requestedShopPage.id) {
-                                    setActiveShopPage(child);
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    setActiveShopPage(shopPages.find((shopPage) => shopPage.id === requestedShopPage.id));
                 }
                 else {
                     setActiveShopPage(event.data.pages[0]);
@@ -86,23 +76,7 @@ export default function ShopDialog({ hidden, onClose }: ShopDialogProps) {
             setActiveIndex(categories.indexOf(shopPage.category));
         }
         else {
-            for(const page of shopPages) {
-                if(page.id === shopPage.id) {
-                    setActiveShopPage(page);
-
-                    break;
-                }
-
-                if(page.children) {
-                    for(const child of page.children) {
-                        if(child.id === shopPage.id) {
-                            setActiveShopPage(child);
-
-                            break;
-                        }
-                    }
-                }
-            }
+            setActiveShopPage(shopPages.find((_shopPage) => _shopPage.id === shopPage.id));
         }
     }, [activeIndex, shopPages]);
 

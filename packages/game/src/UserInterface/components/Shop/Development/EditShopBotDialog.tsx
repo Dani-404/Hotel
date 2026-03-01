@@ -9,9 +9,9 @@ import { UpdateShopBotEventData } from "@Shared/Communications/Requests/Shop/Dev
 import { useDialogs } from "../../../hooks/useDialogs";
 import { ShopPageBotData } from "@Shared/Communications/Responses/Shop/ShopPageBotsEventData";
 import { BotTypeData } from "@Shared/Interfaces/Bots/BotTypeData";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import FigureImage from "../../Figure/FigureImage";
 import { useUser } from "../../../hooks/useUser";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type EditShopBotDialogProps = {
     data: Partial<ShopPageBotData> & {
@@ -30,7 +30,7 @@ export default function EditShopBotDialog({ hidden, data, onClose }: EditShopBot
 
     const [type, setType] = useState<BotTypeData>(data?.type ?? "default");
 
-    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfiguration>(data?.figureConfiguration ?? user.figureConfiguration);
+    const [figureConfiguration, setFigureConfiguration] = useState<FigureConfigurationData>(data?.figureConfiguration ?? user.figureConfiguration ?? { gender: "male", parts: [] });
 
     const [credits, setCredits] = useState(data?.credits ?? 0);
     const [duckets, setDuckets] = useState(data?.duckets ?? 0);
@@ -88,7 +88,7 @@ export default function EditShopBotDialog({ hidden, data, onClose }: EditShopBot
 
                     <DialogButton onClick={() => dialogs.addUniqueDialog("edit-shop-bot-figure", {
                         ...data,
-                        onChange: (figureConfiguration: FigureConfiguration) => setFigureConfiguration(figureConfiguration)
+                        onChange: (figureConfiguration: FigureConfigurationData) => setFigureConfiguration(figureConfiguration)
                     })}>Change figure</DialogButton>
 
                     <b>Bot type</b>

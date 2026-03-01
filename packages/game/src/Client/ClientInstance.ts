@@ -6,8 +6,6 @@ import { RoomFurnitureEventData } from "@Shared/Communications/Responses/Rooms/F
 import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { RoomStructureEventData } from "@Shared/Communications/Responses/Rooms/RoomStructureEventData";
 import RoomStructureEvent from "@Client/Communications/Room/RoomStructureEvent";
-import { UserActionEventData } from "@Shared/Communications/Responses/Rooms/Users/UserActionEventData";
-import UserActionEvent from "@Client/Communications/Room/User/UserActionEvent";
 import ObservableProperty from "@Client/Utilities/ObservableProperty";
 import { RoomChatStyleData, RoomChatStylesEventData } from "@Shared/Communications/Responses/Rooms/Chat/Styles/RoomChatStylesEventData";
 import { UserFigureConfigurationEventData } from "@Shared/Communications/Responses/Rooms/Users/UserFigureConfigurationEventData";
@@ -15,11 +13,8 @@ import UserFigureConfigurationEvent from "@Client/Communications/Room/User/UserF
 import { Dialog } from "../UserInterface/contexts/AppContext";
 import { RoomInformationEventData } from "@Shared/Communications/Responses/Rooms/RoomInformationEventData";
 import RoomInformationEvent from "@Client/Communications/Room/RoomInformationEvent";
-import { UserPositionEventData } from "@Shared/Communications/Responses/Rooms/Users/UserPositionEventData";
 import { RoomUserRightsEventData } from "@Shared/Communications/Responses/Rooms/Users/RoomUserRightsEventData";
-import UserPositionEvent from "@Client/Communications/Room/User/UserPositionEvent";
-import { UserEventData } from "@Shared/Communications/Responses/User/UserEventData";
-import UserEvent from "@Client/Communications/Room/User/UserEvent";
+import UserEvent from "@Client/Communications/User/UserEvent";
 import RoomUserRightsEvent from "@Client/Communications/Room/User/RoomUserRightsEvent";
 import { RoomHistory } from "../UserInterface/components/Room/Toolbar/ToolbarRoomChat";
 import { HotelEventData } from "@Shared/Communications/Responses/Hotel/HotelEventData";
@@ -41,12 +36,20 @@ import { RoomBotEventData } from "@Shared/Communications/Responses/Rooms/Bots/Ro
 import { RoomChatEventData } from "@Shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
 import { UserIdlingEventData } from "@Shared/Communications/Responses/Rooms/Users/UserIdlingEventData";
 import UserIdlingEvent from "@Client/Communications/Room/User/UserIdlingEvent";
+import { ActorActionEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorActionEventData";
+import ActorActionEvent from "@Client/Communications/Room/Actors/ActorActionEvent";
+import { ActorPositionEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorPositionEventData";
+import ActorPositionEvent from "@Client/Communications/Room/Actors/ActorPositionEvent";
+import { ActorWalkToEventData } from "@Shared/Communications/Responses/Rooms/Actors/ActorWalkToEventData";
+import ActorWalkToEvent from "@Client/Communications/Room/Actors/ActorWalkToEvent";
+import { LocalSettings } from "../UserInterface/components/Settings/Interfaces/LocalSettings";
+import { UserData } from "@pixel63/events";
 
 export default class ClientInstance extends EventTarget {
     public roomInstance = new ObservableProperty<RoomInstance>();
     public roomChatStyles = new ObservableProperty<RoomChatStyleData[]>();
     public dialogs = new ObservableProperty<Dialog[]>([]);
-    public user = new ObservableProperty<UserEventData>();
+    public user = new ObservableProperty<UserData>();
     public roomHistory = new ObservableProperty<RoomHistory[]>([]);
     public hotel = new ObservableProperty<HotelEventData>();
     public navigator = new ObservableProperty<NavigatorRoomsEventData>([]);
@@ -56,16 +59,27 @@ export default class ClientInstance extends EventTarget {
     
     public roomCategories = new ObservableProperty<RoomCategoriesEventData>([]);
 
+    public settings = new ObservableProperty<LocalSettings>({});
+
     constructor(public readonly element: HTMLElement) {
         super();
 
         //element.style.background = "#9ED5EC";
 
+        const settings = localStorage.getItem("settings");
+
+        if(settings) {
+            this.settings.value = JSON.parse(settings);
+        }
+
+        this.settings.subscribe((value) => localStorage.setItem("settings", JSON.stringify(value)));
+
         registerRoomEvents(this);
+
+        webSocketClient.addProtobuffListener(UserData, new UserEvent());
 
         webSocketClient.addEventListener<WebSocketEvent<NavigatorRoomsEventData>>("NavigatorRoomsEvent", (event) => new NavigatorRoomsEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<HotelEventData>>("HotelEvent", (event) => new HotelEvent().handle(event));
-        webSocketClient.addEventListener<WebSocketEvent<UserEventData>>("UserEvent", (event) => new UserEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserPermissionsEventData>>("UserPermissionsEvent", (event) => new UserPermissionsEvent().handle(event));
         
         webSocketClient.addEventListener<WebSocketEvent<RoomFurnitureEventData>>("RoomFurnitureEvent", (event) => new RoomFurnitureEvent().handle(event));
@@ -74,14 +88,17 @@ export default class ClientInstance extends EventTarget {
         webSocketClient.addEventListener<WebSocketEvent<MoveRoomFurnitureEventData>>("MoveRoomFurnitureEvent", (event) => new MoveRoomFurnitureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomStructureEventData>>("RoomStructureEvent", (event) => new RoomStructureEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomInformationEventData>>("RoomInformationEvent", (event) => new RoomInformationEvent().handle(event));
-        webSocketClient.addEventListener<WebSocketEvent<UserActionEventData>>("UserActionEvent", (event) => new UserActionEvent().handle(event));
-        webSocketClient.addEventListener<WebSocketEvent<UserPositionEventData>>("UserPositionEvent", (event) => new UserPositionEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<RoomUserRightsEventData>>("RoomUserRightsEvent", (event) => new RoomUserRightsEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserFigureConfigurationEventData>>("UserFigureConfigurationEvent", (event) => new UserFigureConfigurationEvent().handle(event));
 
         webSocketClient.addEventListener<WebSocketEvent<RoomChatEventData>>("RoomChatEvent", (event) => new RoomChatEvent().handle(event));
+
         webSocketClient.addEventListener<WebSocketEvent<UserTypingEventData>>("UserTypingEvent", (event) => new UserTypingEvent().handle(event));
         webSocketClient.addEventListener<WebSocketEvent<UserIdlingEventData>>("UserIdlingEvent", (event) => new UserIdlingEvent().handle(event));
+        
+        webSocketClient.addEventListener<WebSocketEvent<ActorWalkToEventData>>("ActorWalkToEvent", (event) => new ActorWalkToEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<ActorActionEventData>>("ActorActionEvent", (event) => new ActorActionEvent().handle(event));
+        webSocketClient.addEventListener<WebSocketEvent<ActorPositionEventData>>("ActorPositionEvent", (event) => new ActorPositionEvent().handle(event));
 
         webSocketClient.addEventListener<WebSocketEvent<RoomChatStylesEventData>>("RoomChatStylesEvent", (event) => {
             this.roomChatStyles.value = event.data.roomChatStyles;

@@ -1,4 +1,6 @@
+import ProtobuffListener from "@Client/Communications/ProtobuffListener.js";
 import WebSocketEvent from "../../../shared/WebSocket/Events/WebSocketEvent.js";
+import { MessageType } from "@pixel63/events";
 
 export default class WebSocketClient extends EventTarget {
     private readonly socket: WebSocket;
@@ -8,17 +10,32 @@ export default class WebSocketClient extends EventTarget {
 
         this.socket = new WebSocket(`${(secure)?("wss"):("ws")}://${hostname}:${port}?${new URLSearchParams(options).toString()}`);
 
+        this.socket.binaryType = "arraybuffer";
+
         this.socket.addEventListener("message", (event) => {
-            const events: [string, any, number | undefined][] = JSON.parse(event.data);
+            if(event.data.toString() !== "[object ArrayBuffer]") {
+                const events: [string, any, number | undefined][] = JSON.parse(event.data);
 
-            for(const [type, data, timestamp] of events) {
-                console.log("Received " + type + " from server", data);
+                for(const [type, data, timestamp] of events) {
+                    console.log("Received " + type + " from server", data);
 
-                if(timestamp !== undefined) {
-                    console.debug("Message received after " + (Date.now() - timestamp) + "ms");
+                    if(timestamp !== undefined) {
+                        console.debug("Message received after " + (Date.now() - timestamp) + "ms");
+                    }
+
+                    this.dispatchEvent(new WebSocketEvent(type, data, (timestamp !== undefined)?(Date.now() - timestamp):(undefined)));
                 }
+            }
+            else {
+                const data = new Uint8Array(event.data);
 
-                this.dispatchEvent(new WebSocketEvent(type, data, (timestamp !== undefined)?(Date.now() - timestamp):(undefined)));
+                const sep = data.indexOf("|".charCodeAt(0));
+                const type = new TextDecoder().decode(data.slice(0, sep));
+                const payload = data.slice(sep + 1);
+
+                console.log("Received222 " + type);
+
+                this.dispatchEvent(new WebSocketEvent(type, payload, undefined));
             }
         });
 
@@ -50,6 +67,13 @@ export default class WebSocketClient extends EventTarget {
 
     public close() {
         this.socket.close();
+    }
+
+    addProtobuffListener<T>(message: MessageType, listener: ProtobuffListener<T>) {
+        console.log("addd " + message.$type)
+        this.addEventListener(message.$type, (event: WebSocketEvent<Uint8Array>) => {
+            listener.handle(message.decode(event.data) as T);
+        });
     }
 
     addEventListener<T>(type: string, callback: ((event: T) => void) | null, options?: AddEventListenerOptions | boolean): void {

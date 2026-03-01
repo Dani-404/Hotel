@@ -5,13 +5,14 @@ import { FurnitureModel } from "../../Furniture/FurnitureModel.js";
 import { RoomModel } from "../../Rooms/RoomModel.js";
 import { UserModel } from "../UserModel.js";
 
-export class UserFurnitureModel extends Model {
+export class UserFurnitureModel<T = unknown> extends Model {
     declare id: string;
     declare position: RoomPosition;
     declare direction: number;
     declare animation: number;
     declare color: number | null;
-    declare data: unknown;
+    declare data: T | null;
+    declare hidden: boolean;
 
     declare room: NonAttribute<RoomModel | null>;
     declare user: NonAttribute<UserModel>;
@@ -58,7 +59,7 @@ export function initializeUserFurnitureModel(sequelize: Sequelize) {
                   this.setDataValue("data", JSON.stringify(value));
               },
               allowNull: true
-          },
+          }
         },
         {
           tableName: 'user_furnitures',

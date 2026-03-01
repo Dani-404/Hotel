@@ -22,10 +22,12 @@ export default class RoomFurnitureDiceLogic implements RoomFurnitureLogic {
         if(Math.abs(relativePosition.row) > 1 || Math.abs(relativePosition.column) > 1) {
             console.log("User is too far away, " + JSON.stringify(relativePosition));
 
-            roomUser.walkTo(this.roomFurniture.getOffsetPosition(1));
+            roomUser.path.walkTo(this.roomFurniture.getOffsetPosition(1));
 
             return;
         }
+
+        await this.roomFurniture.room.handleUserUseFurniture(roomUser, this.roomFurniture);
 
         // Close the dice if deactivating
         if(event.tag === "deactivate" && this.roomFurniture.model.animation !== 0) {

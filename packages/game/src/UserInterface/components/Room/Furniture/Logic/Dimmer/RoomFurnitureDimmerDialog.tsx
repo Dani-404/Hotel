@@ -11,17 +11,17 @@ import { RoomMoodlightData } from "@Shared/Interfaces/Room/RoomMoodlightData";
 import { RoomInstanceFurniture } from "@Client/Room/RoomInstance";
 
 export type RoomFurnitureDimmerData = {
-    furniture: RoomInstanceFurniture;
+    furniture: RoomInstanceFurniture<RoomMoodlightData>;
     type: "furniture_roomdimmer";
 };
 
-export default function RoomFurnitureDimmerDialog({ data, hidden, onClose }: RoomFurnitureLogicDialogProps) {
+export default function RoomFurnitureDimmerDialog({ data, hidden, onClose }: RoomFurnitureLogicDialogProps<RoomFurnitureDimmerData>) {
     const { elementRef, onDialogFocus, onMouseDown } = useDialogMovement();
 
-    const [enabled, setEnabled] = useState((data.furniture.data.data as RoomMoodlightData)?.enabled ?? false);
-    const [color, setColor] = useState((data.furniture.data.data as RoomMoodlightData)?.color ?? "#FF3333");
-    const [alpha, setAlpha] = useState((data.furniture.data.data as RoomMoodlightData)?.alpha ?? 128);
-    const [backgroundOnly, setBackgroundOnly] = useState((data.furniture.data.data as RoomMoodlightData)?.backgroundOnly ?? false);
+    const [enabled, setEnabled] = useState(data.furniture.data.data?.enabled ?? false);
+    const [color, setColor] = useState(data.furniture.data.data?.color ?? "#FF3333");
+    const [alpha, setAlpha] = useState(data.furniture.data.data?.alpha ?? 128);
+    const [backgroundOnly, setBackgroundOnly] = useState(data.furniture.data.data?.backgroundOnly ?? false);
 
     const handleToggle = useCallback(() => {
         setEnabled(!enabled);

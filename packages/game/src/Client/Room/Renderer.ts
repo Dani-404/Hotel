@@ -41,7 +41,13 @@ export default class RoomRenderer extends EventTarget {
 
     private readonly framesPerSecond: number = 24;
     private readonly millisecondsPerFrame: number = 1000 / this.framesPerSecond;
+    
+
+    private readonly cappedFramesPerSecond: number = 60;
+    private readonly cappedMillisecondsPerFrame: number = 1000 / this.cappedFramesPerSecond;
+
     private lastFrameTimestamp: number = performance.now();
+    private lastCappedFrameTimestamp: number = performance.now();
 
     private center: MousePosition = {
         left: 0,
@@ -87,6 +93,14 @@ export default class RoomRenderer extends EventTarget {
         }
 
         const millisecondsElapsedSinceLastFrame = performance.now() - this.lastFrameTimestamp;
+        
+        if(this.clientInstance?.settings.value?.limitRoomFrames && (performance.now() - this.lastCappedFrameTimestamp) < this.cappedMillisecondsPerFrame) {
+            window.requestAnimationFrame(this.render.bind(this));
+
+            return;
+        }
+        
+        this.lastCappedFrameTimestamp = performance.now();
 
         if(millisecondsElapsedSinceLastFrame >= this.millisecondsPerFrame) {
             this.frame = ((this.frame + 1) % this.framesPerSecond);

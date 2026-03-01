@@ -4,7 +4,7 @@ import { UpdateRoomFurnitureEventData } from "@Shared/Communications/Requests/Ro
 import { PickupRoomFurnitureEventData } from "@Shared/Communications/Requests/Rooms/Furniture/PickupRoomFurnitureEventData";
 
 import "./RoomFurnitureProfile.css"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRoomInstance } from "../../../../hooks/useRoomInstance";
 import { useUser } from "../../../../hooks/useUser";
 import RoomFurniture from "@Client/Room/Furniture/RoomFurniture";
@@ -23,7 +23,11 @@ export default function RoomFurnitureProfile({ furniture }: RoomFurnitureProfile
 
     const room = useRoomInstance();
 
-    const [logic] = useState(furniture.getLogic());
+    const [logic, setLogic] = useState(furniture.getLogic());
+
+    useEffect(() => {
+        setLogic(furniture.getLogic());
+    }, [furniture]);
 
     return (
         <div style={{

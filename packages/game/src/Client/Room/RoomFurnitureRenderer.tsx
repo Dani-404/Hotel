@@ -8,10 +8,10 @@ import FurnitureAssets from "@Client/Assets/FurnitureAssets";
 import Furniture from "@Client/Furniture/Furniture";
 import RoomFloorItem from "./Items/Map/RoomFloorItem";
 import { clientInstance } from "../..";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import Figure from "@Client/Figure/Figure";
 import RoomFigureItem from "@Client/Room/Items/Figure/RoomFigureItem";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export type RoomFurnitureRendererOptions = {
     rows?: number;
@@ -76,7 +76,7 @@ export default class RoomFurnitureRenderer {
         this.roomRenderer.items.push(this.floorItem);
     }
 
-    async setFigure(figureConfiguration: FigureConfiguration, actions?: string[], position?: RoomPosition) {
+    async setFigure(figureConfiguration: FigureConfigurationData, actions?: string[], position?: RoomPosition) {
         if(this.roomItem) {
             this.roomRenderer.items.splice(this.roomRenderer.items.indexOf(this.roomItem), 1);
         }

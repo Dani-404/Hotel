@@ -1,6 +1,6 @@
 import { BelongsToManyAddAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManySetAssociationsMixin, DataTypes, Model, NonAttribute, Sequelize } from "sequelize";
-import { FigureConfiguration } from "@shared/Interfaces/Figure/FigureConfiguration.js";
 import { PermissionRoleModel } from "../Permissions/PermissionRoleModel.js";
+import { FigureConfigurationData } from "@pixel63/events";
 
 export class UserModel extends Model {
   declare id: string;
@@ -8,7 +8,7 @@ export class UserModel extends Model {
   declare password: string;
   declare email: string;
   declare lastLogin: Date | null;
-  declare figureConfiguration: FigureConfiguration;
+  declare figureConfiguration: FigureConfigurationData;
   declare credits: number;
   declare diamonds: number;
   declare duckets: number;

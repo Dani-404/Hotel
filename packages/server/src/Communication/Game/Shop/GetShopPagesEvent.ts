@@ -23,7 +23,6 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
         const shopPages: ShopPageModel[] = await ShopPageModel.findAll({
             where: {
                 category: event.category,
-                parentId: null
             },
             include: [
                 {
@@ -38,11 +37,6 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                         }
                     ]
                 },
-                {
-                    model: ShopPageModel,
-                    as: "children",
-                    order: ["index"]
-                },
             ],
             order: ["index"]
         });
@@ -52,6 +46,7 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
             pages: shopPages.sort((a, b) => a.index - b.index).map((shopPage) => {
                 return {
                     id: shopPage.id,
+                    parentId: shopPage.parentId,
                     category: shopPage.category,
 
                     title: shopPage.title,
@@ -76,26 +71,6 @@ export default class GetShopPagesEvent implements IncomingEvent<GetShopPagesEven
                                 id: feature.featuredPage.id,
                                 category: feature.featuredPage.category
                             }
-                        };
-                    }),
-                    
-                    children: shopPage.children.sort((a, b) => a.index - b.index).map((childShopPage) => {
-                        return {
-                            id: childShopPage.id,
-                            category: shopPage.category,
-
-                            title: childShopPage.title,
-                            description: childShopPage.description,
-                            
-                            type: childShopPage.type,
-                            
-                            icon: childShopPage.icon ?? undefined,
-                            header: childShopPage.header ?? shopPage.header ?? undefined,
-                            teaser: childShopPage.teaser ?? shopPage.teaser ?? undefined,
-
-                            features: undefined,
-
-                            index: childShopPage.index
                         };
                     })
                 };

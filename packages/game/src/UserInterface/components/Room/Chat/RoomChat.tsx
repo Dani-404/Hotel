@@ -6,8 +6,8 @@ import WebSocketEvent from "@Shared/WebSocket/Events/WebSocketEvent";
 import { RoomChatEventData } from "@Shared/Communications/Responses/Rooms/Chat/RoomChatEventData";
 import OffscreenCanvasRender from "../../OffscreenCanvasRender";
 import { useUser } from "../../../hooks/useUser";
-import { FigureConfiguration } from "@Shared/Interfaces/Figure/FigureConfiguration";
 import { RoomPosition } from "@Client/Interfaces/RoomPosition";
+import { FigureConfigurationData } from "@pixel63/events";
 
 type RoomChatMessage = {
     id: number;
@@ -57,10 +57,6 @@ export default function RoomChat() {
             return;
         }
 
-        if(!user) {
-            return;
-        }
-
         if(!messages) {
             return;
         }
@@ -70,16 +66,22 @@ export default function RoomChat() {
         }
 
         (async () => {
+            if(!user.figureConfiguration) {
+                return;
+            }
+
             const roomUser = room.getUserById(user.id);
 
             const image = await RoomChatRenderer.render("generic", user.name, user.figureConfiguration, "Welcome to Pixel63, this is a live demo that may contain bugs and glitches.", {
                 hideUsername: true,
-                italic: true
+                italic: true,
+                transparent: true
             });
 
             const image2 = await RoomChatRenderer.render("generic", user.name, user.figureConfiguration, "Please feel free to report issues in the top left corner, or join our Discord to participate in discussions!", {
                 hideUsername: true,
-                italic: true
+                italic: true,
+                transparent: true
             });
 
             if(messages.current.length !== 0) {
@@ -113,7 +115,7 @@ export default function RoomChat() {
 
         const listener = async (event: WebSocketEvent<RoomChatEventData>) => {
             let name: string;
-            let figureConfiguration: FigureConfiguration;
+            let figureConfiguration: FigureConfigurationData;
             let position: RoomPosition;
 
             if(event.data.type === "user") {
@@ -139,7 +141,7 @@ export default function RoomChat() {
                 throw new Error("Unhandled room chat message type.");
             }
 
-            const image = await RoomChatRenderer.render(event.data.roomChatStyleId, name, figureConfiguration, event.data.message, {});
+            const image = await RoomChatRenderer.render(event.data.roomChatStyleId, name, figureConfiguration, event.data.message, event.data.options);
 
             const screenPosition = room.roomRenderer.getCoordinatePosition(position);
 
