@@ -1,5 +1,8 @@
 build/**/*
 
+!packages/events/build/
+packages/events/build/*
+
 !build/game/
 build/game/*
 
