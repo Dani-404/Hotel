@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
             online: true
         },
         order: Sequelize.literal('rand()'),
-        limit: limit
+        limit: parseInt(limit)
     });
 
     const usersData: Array<any> = [];
