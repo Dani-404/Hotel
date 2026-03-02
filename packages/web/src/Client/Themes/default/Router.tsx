@@ -9,6 +9,7 @@ import ErrorPage from "./Pages/ErrorPage/ErrorPage";
 import SettingsPage from "./Pages/SettingsPage/SettingsPage";
 import CommunityPage from "./Pages/CommunityPage/CommunityPage";
 import ArticlePage from "./Pages/ArticlePage/ArticlePage";
+import SafetyPage from "./Pages/SafetyPage/SafetyPage";
 
 const Layout = () => (
   <>
@@ -61,6 +62,13 @@ export const routes = [
     element: <Layout />,
     children: [
       { index: true, element: <ArticlePage /> }, 
+    ]
+  },
+  {
+    path: "/safety/:section?",
+    element: <Layout />,
+    children: [
+      { index: true, element: <SafetyPage /> }, 
     ]
   },
   {
