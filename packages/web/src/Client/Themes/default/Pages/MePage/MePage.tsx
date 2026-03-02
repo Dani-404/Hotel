@@ -11,15 +11,10 @@ import discordIcon from '../../Images/me/discord.png'
 import diamondsIcon from '../../Images/me/diamonds.png'
 import NewsContainer from '../../Components/NewsContainer/NewsContainer';
 import UnknowUserImage from '../../Images/unknow_user.gif';
-
-// TODO: add type declarations
-//@ts-expect-error
-import { FigureAssets, Figure, FigureWorkerMainThread } from "@pixel63/game";
+import AvatarImager from '../../../../Utils/AvatarImager/AvatarImager';
 
 const MePage = () => {
     const navigate = useNavigate();
-    
-    const figureCanvasRef = useRef<HTMLCanvasElement>(null);
 
     const [myAvatar, setMyAvatar] = useState<string>(UnknowUserImage);
 
@@ -29,26 +24,13 @@ const MePage = () => {
         if (!currentUser) {
             navigate("/");
         } else {
-            if(figureCanvasRef.current) {
-                FigureAssets.loadAssets().then(() => {
-                    const figure = new Figure(currentUser.figureConfiguration, 2);
-
-                    figure.renderToCanvas(new FigureWorkerMainThread(), 0, false).then(({ figure }: any) => {
-                        const context = figureCanvasRef.current?.getContext("2d");
-
-                        if(!context) {
-                            throw new Error();
-                        }
-
-                        context.canvas.width = figure.image.width;
-                        context.canvas.height = figure.image.height;
-
-                        context.drawImage(figure.image, 0, 0);
-                    });
-                });
-            }
+            AvatarImager(currentUser.figureConfiguration).then((avatarData: Base64URLString) => {
+                setMyAvatar(avatarData);
+            }).catch((e: any) => {
+                console.log("Failed to load avatar image:", e);
+            });
         }
-    }, [figureCanvasRef, currentUser, navigate]);
+    }, [currentUser, navigate]);
 
     return (
         <div className='me_page resize'>
@@ -64,11 +46,7 @@ const MePage = () => {
                         <div className='my_data'>
                             <div className='my_avatar'>
                                 <div className='avatar'>
-                                    <div className='avatar_img'>
-                                        <canvas ref={figureCanvasRef} style={{
-                                            transform: "translate(-84px, -60px)"
-                                        }}/>
-                                    </div>
+                                    <div className='avatar_img' style={{ backgroundImage: `url(${myAvatar})` }}></div>
                                 </div>
 
                                 <div className='motto'><span>{currentUser?.name}: </span> {currentUser?.motto}</div>
