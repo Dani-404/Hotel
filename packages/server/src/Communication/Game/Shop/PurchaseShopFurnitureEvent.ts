@@ -102,7 +102,11 @@ export default class PurchaseShopFurnitureEvent implements ProtobuffListener<Pur
                 position: null,
                 direction: null,
                 animation: 0,
-                data: userFurniture.id,
+                data: UserFurnitureCustomData.create({
+                    teleport: {
+                        furnitureId: userFurniture.id
+                    }
+                }),
                 
                 roomId: null,
                 userId: user.model.id,
