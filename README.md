@@ -30,7 +30,7 @@ Close the server and then run `npm run migrate`.
 ### Starting
 #### Events
 ```sh
-cd packages/event
+cd packages/events
 npm run generate
 ```
 
