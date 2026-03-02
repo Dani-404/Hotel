@@ -198,16 +198,31 @@ export default class Room {
         const furnitureWithActions = this.furnitures.filter((furniture) => furniture.getCategoryLogic()?.handleActionsInterval !== undefined);
 
         for(let furniture of furnitureWithActions) {
-            await furniture.getCategoryLogic()?.handleActionsInterval?.();
+            try {
+                await furniture.getCategoryLogic()?.handleActionsInterval?.();
+            }
+            catch(error) {
+                console.error("Failed to handle furniture actions interval", error);
+            }
         }
 
         // TODO: change so that the clients get the full path immediately, and only use this interval to cancel due to obstructions in the path?
         for(const user of this.users) {
-            await user.handleActionsInterval();
+            try {
+                await user.handleActionsInterval();
+            }
+            catch(error) {
+                console.error("Failed to handle user actions interval", error);
+            }
         }
 
         for(const bot of this.bots) {
-            await bot.handleActionsInterval();
+            try {
+                await bot.handleActionsInterval();
+            }
+            catch(error) {
+                console.error("Failed to handle bot actions interval", error);
+            }
         }
 
         /*if(!this.users.some((user) => user.path?.length)) {
