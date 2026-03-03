@@ -114,7 +114,7 @@ export default function UserContextMenu() {
 
                         width: (!folded)?(100):("max-content"),
 
-                        transform: "translate(64px, -64px) translate(-50%, -100%)",
+                        transform: "translate(64px, -58px) translate(-50%, -100%)",
 
                         background: "#2C2B2A",
                         border: "1px solid #000000",
