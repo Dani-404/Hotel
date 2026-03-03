@@ -13,14 +13,30 @@ export default class GetNavigatorRoomsEvent implements ProtobuffListener<GetNavi
 
     async handle(user: User, payload: GetNavigatorData): Promise<void> {
         if(payload.search) {
-            const roomModels = await RoomModel.findAll({
-                where: {
-                    name: {
-                        [Op.like]: `%${payload.search}%`
+            let roomModels;
+
+            if(payload.category === "mine") {
+                roomModels = await RoomModel.findAll({
+                    where: {
+                        name: {
+                            [Op.like]: `%${payload.search}%`
+                        },
+                        ownerId: user.model.id
                     }
-                },
-                limit: 20
-            });
+                });
+                (payload.category === "mine")?(user.model.id):(undefined)
+            }
+            else {
+                roomModels = await RoomModel.findAll({
+                    where: {
+                        name: {
+                            [Op.like]: `%${payload.search}%`
+                        },
+                        type: (payload.category === "public")?("public"):("private"),
+                    },
+                    limit: 20
+                });
+            }
 
             user.sendProtobuff(NavigatorData, NavigatorData.create({
                 categories: [

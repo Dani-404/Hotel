@@ -25,6 +25,7 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
         <Dialog title="Navigator" hidden={hidden} onClose={onClose} width={420} height={530}>
             <DialogTabs initialActiveIndex={1} withoutHeader onChange={(index) => {
                 setTab(["public", "all", "events", "mine"][index]);
+                setSearch("");
             }} tabs={[
                 {
                     icon: "Public",
@@ -37,6 +38,10 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                             display: "flex",
                             flexDirection: "column"
                         }}>
+                            <Input placeholder="Search for a room name..." value={search} onChange={setSearch}>
+                                <div className="sprite_room_user_motto_pen"/>
+                            </Input>
+
                             {navigator?.map((navigator) => (
                                 <NavigatorRoomList thumbnail={true} key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
                                     webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
@@ -91,6 +96,10 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                             display: "flex",
                             flexDirection: "column"
                         }}>
+                            <Input placeholder="Search for a room name..." value={search} onChange={setSearch}>
+                                <div className="sprite_room_user_motto_pen"/>
+                            </Input>
+                            
                             {navigator?.map((navigator) => (
                                 <NavigatorRoomList key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
                                     webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
