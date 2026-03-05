@@ -55,10 +55,6 @@ export default function ShopDefaultPage({ editMode, page }: ShopPageProps) {
             return;
         }
 
-        if(!room?.hasRights) {
-            return;
-        }
-
         if(roomFurniturePlacer) {
             roomFurniturePlacer.destroy();
 
