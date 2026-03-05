@@ -55,6 +55,10 @@ export default function ShopDefaultPage({ editMode, page }: ShopPageProps) {
             return;
         }
 
+        if(!room?.hasRights) {
+            return;
+        }
+
         if(roomFurniturePlacer) {
             roomFurniturePlacer.destroy();
 
@@ -76,6 +80,10 @@ export default function ShopDefaultPage({ editMode, page }: ShopPageProps) {
 
     useEffect(() => {
         if(!roomFurniturePlacer) {
+            return;
+        }
+
+        if(!room?.hasRights) {
             return;
         }
 
