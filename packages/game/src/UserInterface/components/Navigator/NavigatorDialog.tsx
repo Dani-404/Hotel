@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useNavigator } from "../../hooks/useNavigator";
 import Input from "../Form/Input";
 import { EnterRoomData } from "@pixel63/events";
+import DialogScrollArea from "../Dialog/Scroll/DialogScrollArea";
 
 export type NavigatorDialogProps = {
     hidden?: boolean;
@@ -25,27 +26,34 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
         <Dialog title="Navigator" hidden={hidden} onClose={onClose} width={420} height={530}>
             <DialogTabs initialActiveIndex={1} withoutHeader onChange={(index) => {
                 setTab(["public", "all", "events", "mine"][index]);
+                setSearch("");
             }} tabs={[
                 {
                     icon: "Public",
                     element: (
                         <div style={{
-                            flex: "1 1 0",
-
-                            overflowY: "overlay",
+                            flex: 1,
 
                             display: "flex",
-                            flexDirection: "column"
-                        }}>
-                            {navigator?.map((navigator) => (
-                                <NavigatorRoomList thumbnail={true} key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
-                                    webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
-                                        id: room.id
-                                    }));
+                            flexDirection: "column",
 
-                                    closeDialog("navigator");
-                                }}/>
-                            ))}
+                            gap: 5
+                        }}>
+                            <Input placeholder="Search for a room name..." value={search} onChange={setSearch}>
+                                <div className="sprite_room_user_motto_pen"/>
+                            </Input>
+
+                            <DialogScrollArea>
+                                {navigator?.map((navigator) => (
+                                    <NavigatorRoomList thumbnail={true} key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
+                                        webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
+                                            id: room.id
+                                        }));
+
+                                        closeDialog("navigator");
+                                    }}/>
+                                ))}
+                            </DialogScrollArea>
                         </div>
                     ),
                 },
@@ -53,26 +61,28 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                     icon: "All Rooms",
                     element: (
                         <div style={{
-                            flex: "1 1 0",
-
-                            overflowY: "overlay",
+                            flex: 1,
 
                             display: "flex",
-                            flexDirection: "column"
+                            flexDirection: "column",
+
+                            gap: 5
                         }}>
                             <Input placeholder="Search for a room name..." value={search} onChange={setSearch}>
                                 <div className="sprite_room_user_motto_pen"/>
                             </Input>
 
-                            {navigator?.map((navigator) => (
-                                <NavigatorRoomList key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
-                                    webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
-                                        id: room.id
-                                    }));
+                            <DialogScrollArea>
+                                {navigator?.map((navigator) => (
+                                    <NavigatorRoomList key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
+                                        webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
+                                            id: room.id
+                                        }));
 
-                                    closeDialog("navigator");
-                                }}/>
-                            ))}
+                                        closeDialog("navigator");
+                                    }}/>
+                                ))}
+                            </DialogScrollArea>
                         </div>
                     ),
                 },
@@ -84,22 +94,28 @@ export default function NavigatorDialog({ hidden, onClose }: NavigatorDialogProp
                     icon: "My Rooms",
                     element: (
                         <div style={{
-                            flex: "1 1 0",
-
-                            overflowY: "overlay",
+                            flex: 1,
 
                             display: "flex",
-                            flexDirection: "column"
-                        }}>
-                            {navigator?.map((navigator) => (
-                                <NavigatorRoomList key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
-                                    webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
-                                        id: room.id
-                                    }));
+                            flexDirection: "column",
 
-                                    closeDialog("navigator");
-                                }}/>
-                            ))}
+                            gap: 5
+                        }}>
+                            <Input placeholder="Search for a room name..." value={search} onChange={setSearch}>
+                                <div className="sprite_room_user_motto_pen"/>
+                            </Input>
+                            
+                            <DialogScrollArea>
+                                {navigator?.map((navigator) => (
+                                    <NavigatorRoomList key={navigator.title} title={navigator.title} rooms={navigator.rooms} onClick={(room) => {
+                                        webSocketClient.sendProtobuff(EnterRoomData, EnterRoomData.create({
+                                            id: room.id
+                                        }));
+
+                                        closeDialog("navigator");
+                                    }}/>
+                                ))}
+                            </DialogScrollArea>
                         </div>
                     ),
                 }

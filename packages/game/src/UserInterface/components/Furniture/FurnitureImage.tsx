@@ -11,7 +11,7 @@ export default function FurnitureImage({ furnitureData }: FurnitureImageProps) {
     const [image, setImage] = useState<ImageBitmap>();
 
     useEffect(() => {
-        if(!furnitureData) {
+        if(!furnitureData?.type) {
             return;
         }
 
