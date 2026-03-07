@@ -100,7 +100,7 @@ const ArticlePage = () => {
     }, [navigate])
 
     const toggleLike = () => {
-        if(!articleData || !currentUser)
+        if (!articleData || !currentUser)
             return;
 
         fetch("/api/articles/like", {
@@ -113,11 +113,11 @@ const ArticlePage = () => {
             })
         })
             .then((response) => response.json())
-            .then((result) => {                
-                if(result.error)
+            .then((result) => {
+                if (result.error)
                     console.log("(Error) Can't like article:", result.error)
                 else {
-                    setArticleData({...articleData, likes: result})
+                    setArticleData({ ...articleData, likes: result })
                 }
             })
             .catch((e) => {
@@ -160,31 +160,40 @@ const ArticlePage = () => {
                     {articleDataLoading ?
                         <Loading />
                         :
-                        <div className='box articleContent'>
-                            {articleData &&
-                                <div>
-                                    <div className='title'>{articleData.title}</div>
-                                    <div className='content' dangerouslySetInnerHTML={{ __html: articleData.content }}></div>
-                                    <div className='footer'>
-                                        {articleData.author &&
-                                            <div className='author'>
-                                                <div className='avatar'>
-                                                    <img src={articleAuthorAvatar} alt="Avatar" />
-                                                </div>
+                        <div>
+                            <div className='box articleContent'>
+                                {articleData &&
+                                    <div>
+                                        <div className='title'>{articleData.title}</div>
+                                        <div className='content' dangerouslySetInnerHTML={{ __html: articleData.content }}></div>
+                                        <div className='footer'>
+                                            {articleData.author &&
+                                                <div className='author'>
+                                                    <div className='avatar'>
+                                                        <img src={articleAuthorAvatar} alt="Avatar" />
+                                                    </div>
 
-                                                <div className='data'>
-                                                    <div className='username'>{articleData.author.name}</div>
-                                                    <div className='date'>{new Date(articleData.createdAt).toLocaleString().replace(" ", " at ")}</div>
+                                                    <div className='data'>
+                                                        <div className='username'>{articleData.author.name}</div>
+                                                        <div className='date'>{new Date(articleData.createdAt).toLocaleString().replace(" ", " at ")}</div>
+                                                    </div>
                                                 </div>
+                                            }
+
+                                            <div className='infos'>
+                                                <div className='row' onClick={() => toggleLike()}><img src={currentUser === null || !articleData.likes.includes(currentUser.id) ? likeInactiveIcon : likeIcon} alt="Like Icon" /> {articleData.likes.length}</div>
+                                                <div className='row'><img src={commentIcon} alt="Comment Icon" /> 0</div>
                                             </div>
-                                        }
-
-                                        <div className='infos'>
-                                            <div className='row' onClick={() => toggleLike()}><img src={currentUser === null || !articleData.likes.includes(currentUser.id) ? likeInactiveIcon : likeIcon} alt="Like Icon"/> {articleData.likes.length}</div>
-                                            <div className='row'><img src={commentIcon} alt="Comment Icon" /> 0</div>
                                         </div>
                                     </div>
-                                </div>
+                                }
+                            </div>
+
+                            {currentUser && 
+                            <form>
+                                <textarea maxLength={500} name="comment" placeholder='Adding a new comment...'></textarea>
+                                <button><img src={commentIcon} alt="Comment Icon" /> Send my comment</button>
+                            </form>
                             }
                         </div>
                     }

@@ -18,23 +18,18 @@ router.post("/", async (req, res) => {
         const lastArticles = await WebArticleModel.findAll({
             offset: (!isNaN(parseInt(skip)) && parseInt(skip) > 0) ? parseInt(skip) : 0,
             order: [['createdAt', 'DESC']],
-            limit: parseInt(limit)
+            limit: parseInt(limit),
+            include: [{ model: UserModel, as: "author" }]
         });
 
         const articles: Array<any> = [];
         for await (const article of lastArticles) {
-            const authorData = await UserModel.findOne({
-                where: {
-                    id: article.authorId
-                }
-            });
-
             let author: any = null;
-            if (authorData) {
+            if (article.author) {
                 author = {
-                    id: authorData.id,
-                    name: authorData.name,
-                    figureConfiguration: authorData.figureConfiguration
+                    id: article.author.id,
+                    name: article.author.name,
+                    figureConfiguration: article.author.figureConfiguration
                 }
             }
 
@@ -67,7 +62,8 @@ router.post("/", async (req, res) => {
             where: {
                 title: decodeURI(title),
                 createdAt: new Date(+parseInt(date))
-            }
+            },
+            include: [{ model: UserModel, as: "author" }]
         });
 
         if (!article)
@@ -75,18 +71,12 @@ router.post("/", async (req, res) => {
                 error: "Article not found."
             });
 
-        const authorData = await UserModel.findOne({
-            where: {
-                id: article.authorId
-            }
-        });
-
         let author: any = null;
-        if (authorData) {
+        if (article.author) {
             author = {
-                id: authorData.id,
-                name: authorData.name,
-                figureConfiguration: authorData.figureConfiguration
+                id: article.author.id,
+                name: article.author.name,
+                figureConfiguration: article.author.figureConfiguration
             }
         }
 

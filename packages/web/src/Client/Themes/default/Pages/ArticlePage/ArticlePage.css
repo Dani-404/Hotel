@@ -11,7 +11,6 @@
 
             span {
                 background-color: rgba(0, 0, 0, 0.10);
-                display: block;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -195,6 +194,64 @@
                     margin-bottom: 0;
                 }
             }
+        }
+    }
+
+    form {
+        margin-top: 15px;
+        padding: 5px;
+        background-color: #fff;
+        -webkit-box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, .2);
+        box-shadow: 0 2px 0 1px #0003;
+        border-radius: 8px;
+        border: 1px solid #afafaf;
+
+        textarea,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 0, 0, .1);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        button {
+            transition-duration: .5s;
+            opacity: .8;
+            background-color: #c1c1c1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            margin-bottom: 0;
+
+            img {
+                margin-right: 10px;
+                transition-duration: 0.5s;
+            }
+        }
+
+        button:hover {
+            opacity: 1;
+            cursor: pointer;
+
+            img {
+                transform: rotate(360deg);
+            }
+        }
+
+        textarea {
+            width: calc(100% - 20px);
+            font-family: 'Ubuntu';
+            height: 80px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.02);
         }
     }
 }
