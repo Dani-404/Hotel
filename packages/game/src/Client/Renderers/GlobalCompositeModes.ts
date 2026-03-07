@@ -32,6 +32,9 @@ export function getGlobalCompositeModeFromInk(initialInk?: string): GlobalCompos
         case "screen":
             return ink;
 
+        case "div":
+            return "color-dodge";
+
         case undefined:
             return undefined;
 

@@ -95,7 +95,7 @@ export default class EventHandler extends EventEmitter {
     addProtobuffListener<T>(message: MessageType, protobuffListener: ProtobuffListener<T>) {
         super.addListener(message.$type, async (user, event) => {
             try {
-                protobuffListener.handle(user, message.decode(event) as T);
+                await protobuffListener.handle(user, message.decode(event) as T);
             }
             catch(error) {
                 console.error("Failed to process event", error);

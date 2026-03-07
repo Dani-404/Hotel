@@ -16,7 +16,8 @@ export function useNavigator(category: string, search?: string) {
     useEffect(() => {
         if (search?.length) {
             webSocketClient.sendProtobuff(GetNavigatorData, GetNavigatorData.create({
-                search
+                search,
+                category
             }));
         }
         else {

@@ -136,8 +136,10 @@ export default class PurchaseShopFurnitureEvent implements ProtobuffListener<Pur
 
         await userFurniture.save();
 
-        if(user.room && payload.position && payload.direction !== undefined) {
-            RoomFurniture.place(user.room, userFurniture, payload.position, payload.direction);
+        const roomUser = user.room?.getRoomUser(user);
+
+        if(roomUser?.hasRights() && payload.position && payload.direction !== undefined) {
+            RoomFurniture.place(roomUser.room, userFurniture, payload.position, payload.direction);
         }
         else {
             await user.getInventory().addFurniture(userFurniture);

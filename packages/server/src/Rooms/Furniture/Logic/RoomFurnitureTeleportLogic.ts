@@ -44,6 +44,12 @@ export default class RoomFurnitureTeleportLogic implements RoomFurnitureLogic {
 
         await this.roomFurniture.setAnimation(0);
 
+        if(!this.roomFurniture.model.data?.teleport?.furnitureId) {
+            console.warn("Teleport does not have a second furniture.");
+            
+            return;
+        }
+
         const targetUserFurniture = await UserFurnitureModel.findOne({
             where: {
                 id: this.roomFurniture.model.data?.teleport?.furnitureId
